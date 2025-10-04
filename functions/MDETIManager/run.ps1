@@ -8,18 +8,32 @@ Write-Host "MDETIManager function processed a request."
 # Get parameters
 $action = $Request.Query.action ?? $Request.Body.action
 $tenantId = $Request.Query.tenantId ?? $Request.Body.tenantId
-$spnId = $Request.Query.spnId ?? $Request.Body.spnId
 $indicators = $Request.Query.indicators ?? $Request.Body.indicators
 $title = $Request.Query.title ?? $Request.Body.title
 $severity = $Request.Query.severity ?? $Request.Body.severity
 $recommendedAction = $Request.Query.recommendedAction ?? $Request.Body.recommendedAction
 
+# Get app credentials from environment variables
+$appId = $env:APPID
+$secretId = $env:SECRETID
+
 # Validate required parameters
-if (-not $action -or -not $tenantId -or -not $spnId) {
+if (-not $action -or -not $tenantId) {
     Push-OutputBinding -Name Response -Value ([HttpResponseContext]@{
         StatusCode = [HttpStatusCode]::BadRequest
         Body = @{
-            error = "Missing required parameters"
+            error = "Missing required parameters: action and tenantId are required"
+        } | ConvertTo-Json
+    })
+    return
+}
+
+# Validate environment variables are configured
+if (-not $appId -or -not $secretId) {
+    Push-OutputBinding -Name Response -Value ([HttpResponseContext]@{
+        StatusCode = [HttpStatusCode]::InternalServerError
+        Body = @{
+            error = "Function app not configured: APPID and SECRETID environment variables must be set"
         } | ConvertTo-Json
     })
     return
@@ -29,8 +43,8 @@ try {
     # Import MDEAutomator module
     # Import-Module MDEAutomator -ErrorAction Stop
     
-    # Connect to MDE
-    # $token = Connect-MDE -SpnId $spnId -ManagedIdentityId $env:MSI_CLIENT_ID -TenantId $tenantId
+    # Connect to MDE using App Registration with Client Secret
+    # $token = Connect-MDE -AppId $appId -ClientSecret $secretId -TenantId $tenantId
 
     $result = @{
         action = $action

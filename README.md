@@ -74,15 +74,16 @@ All MDEAutomator capabilities replicated through Azure Workbooks:
 │  (User Interface)   │
 └──────────┬──────────┘
            │
-           │ Parameters: tenantId, spnId
+           │ Parameters: tenantId
            ▼
 ┌─────────────────────┐
 │  Azure Function App │
 │  (PowerShell)       │
-│  + Managed Identity │
+│  Env: APPID,        │
+│       SECRETID      │
 └──────────┬──────────┘
            │
-           │ Federated Auth
+           │ Client Credentials Auth
            ▼
 ┌─────────────────────┐
 │  Multi-tenant       │
@@ -112,9 +113,12 @@ All MDEAutomator capabilities replicated through Azure Workbooks:
 2. Click "New registration"
    - Name: `MDE-Automator-MultiTenant`
    - Supported account types: **Accounts in any organizational directory (Any Azure AD directory - Multitenant)**
-3. Configure API Permissions (see [Required Permissions](#required-permissions))
-4. Grant admin consent for all permissions
-5. Copy the **Application (client) ID** - you'll need this for deployment
+3. Create a Client Secret:
+   - Click "Certificates & secrets" > "New client secret"
+   - Copy the **secret value** immediately (you won't see it again)
+4. Configure API Permissions (see [Required Permissions](#required-permissions))
+5. Grant admin consent for all permissions
+6. Copy the **Application (client) ID** - you'll need this for deployment
 
 ### Step 2: Deploy Function App
 
@@ -125,11 +129,15 @@ Click the button below or use the ARM template in `/deployment`:
 **Parameters:**
 - `functionAppName`: Globally unique name for your function app
 - `spnId`: Application (client) ID from Step 1
+- `spnSecret`: Client secret from Step 1
+- `projectTag`: Project name (required by Azure Policy)
+- `createdByTag`: Your name/email (required by Azure Policy)
+- `deleteAtTag`: Deletion date or 'Never' (required by Azure Policy)
 - `enableManagedIdentity`: `true` (recommended)
 
 **Note the outputs:**
 - `functionAppUrl` - You'll use this in the workbook
-- `managedIdentityPrincipalId` - You'll use this for federated credentials
+- `storageAccountName` - Automatically created
 
 **For other deployment methods** (Azure CLI, PowerShell, or manual template deployment), see the [deployment folder documentation](deployment/README.md).
 
@@ -176,9 +184,10 @@ Open your deployed workbook and configure:
 
 1. **Subscription** - Select your Azure subscriptions
 2. **Workspace** - Select your Log Analytics workspace(s)
-3. **Target Tenant ID** - The tenant where MDE is deployed
+3. **Target Tenant ID** - The tenant where MDE is deployed (can be changed per request)
 4. **Function App Base URL** - From deployment output (e.g., `https://your-function-app.azurewebsites.net`)
-5. **Service Principal (App) ID** - From Step 1
+
+**Note:** The Application ID and Client Secret are securely stored in the Function App's environment variables and are not entered in the workbook.
 
 ## Required Permissions
 

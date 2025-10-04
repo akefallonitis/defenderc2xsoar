@@ -8,8 +8,20 @@
     "spnId": {
       "value": "GEN-GUID"
     },
+    "spnSecret": {
+      "value": "GEN-PASSWORD"
+    },
     "enableManagedIdentity": {
       "value": true
+    },
+    "projectTag": {
+      "value": "DefenderC2XSOAR"
+    },
+    "createdByTag": {
+      "value": "GEN-UNIQUE"
+    },
+    "deleteAtTag": {
+      "value": "Never"
     }
   }
 }

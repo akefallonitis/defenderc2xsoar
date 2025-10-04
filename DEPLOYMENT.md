@@ -108,7 +108,15 @@ This app registration will be used across all tenants and function executions.
    - On the Overview page, copy the **Application (client) ID**
    - Save this value - you'll need it for deployment and workbook configuration
 
-4. **Configure API Permissions**
+4. **Create Client Secret**
+   - Click **Certificates & secrets** > **New client secret**
+   - **Description**: `MDE-Automator-Secret`
+   - **Expires**: Choose an appropriate expiration period (e.g., 12 months, 24 months)
+   - Click **Add**
+   - **IMPORTANT**: Copy the **Value** immediately (you won't be able to see it again)
+   - Save this secret value securely - you'll need it during deployment
+
+5. **Configure API Permissions**
 
    Click **API permissions** > **Add a permission**
 
@@ -142,7 +150,7 @@ This app registration will be used across all tenants and function executions.
      - `ThreatIndicators.ReadWrite.OwnedBy`
      - `SecurityIncident.ReadWrite.All`
 
-5. **Grant Admin Consent**
+6. **Grant Admin Consent**
    - Click **Grant admin consent for [Your Tenant]**
    - Confirm the consent
 
@@ -161,12 +169,19 @@ You can deploy using the Azure Portal button or CLI/PowerShell.
    > **⚠️ If the button fails:** See [Option D: Manual Template Deployment](#option-d-manual-template-deployment) below for alternative deployment methods.
 
 2. Fill in the parameters:
-   - **Subscription**: Select your Azure subscription
-   - **Resource Group**: Create new or select existing
-   - **Region**: Choose your preferred region
+   
+   **Basic Settings:**
    - **Function App Name**: Enter a globally unique name (e.g., `mde-automator-func-prod`)
    - **Spn Id**: Paste the Application (client) ID from Step 1
-   - **Enable Managed Identity**: Leave as `true`
+   - **Spn Secret**: Paste the Client Secret value from Step 1
+   
+   **Function App Settings:**
+   - **Enable Managed Identity**: Leave as `true` (recommended)
+   
+   **Resource Tags** (required by Azure Policy):
+   - **Project Tag**: Enter your project name (e.g., `DefenderC2XSOAR`)
+   - **CreatedBy Tag**: Enter your name or email (e.g., `john.doe@example.com`)
+   - **DeleteAt Tag**: Enter deletion date (YYYY-MM-DD) or `Never`
 
 3. Click **Review + create** > **Create**
 
@@ -186,6 +201,10 @@ RG_NAME="rg-mde-automator"
 LOCATION="eastus"
 FUNCTION_NAME="mde-automator-func-prod"
 SPN_ID="<your-app-id-from-step-1>"
+SPN_SECRET="<your-client-secret-from-step-1>"
+PROJECT_TAG="DefenderC2XSOAR"
+CREATED_BY_TAG="john.doe@example.com"
+DELETE_AT_TAG="Never"
 
 # Create resource group
 az group create --name $RG_NAME --location $LOCATION
@@ -194,7 +213,12 @@ az group create --name $RG_NAME --location $LOCATION
 az deployment group create \
   --resource-group $RG_NAME \
   --template-file deployment/azuredeploy.json \
-  --parameters functionAppName=$FUNCTION_NAME spnId=$SPN_ID
+  --parameters functionAppName=$FUNCTION_NAME \
+               spnId=$SPN_ID \
+               spnSecret=$SPN_SECRET \
+               projectTag=$PROJECT_TAG \
+               createdByTag=$CREATED_BY_TAG \
+               deleteAtTag=$DELETE_AT_TAG
 
 # Get outputs
 az deployment group show \
@@ -215,6 +239,10 @@ $rgName = "rg-mde-automator"
 $location = "eastus"
 $functionName = "mde-automator-func-prod"
 $spnId = "<your-app-id-from-step-1>"
+$spnSecret = ConvertTo-SecureString "<your-client-secret-from-step-1>" -AsPlainText -Force
+$projectTag = "DefenderC2XSOAR"
+$createdByTag = "john.doe@example.com"
+$deleteAtTag = "Never"
 
 # Create resource group
 New-AzResourceGroup -Name $rgName -Location $location
@@ -224,7 +252,11 @@ New-AzResourceGroupDeployment `
   -ResourceGroupName $rgName `
   -TemplateFile deployment/azuredeploy.json `
   -functionAppName $functionName `
-  -spnId $spnId
+  -spnId $spnId `
+  -spnSecret $spnSecret `
+  -projectTag $projectTag `
+  -createdByTag $createdByTag `
+  -deleteAtTag $deleteAtTag
 
 # Get outputs
 (Get-AzResourceGroupDeployment -ResourceGroupName $rgName -Name azuredeploy).Outputs
@@ -247,7 +279,11 @@ If the "Deploy to Azure" button fails with an error like *"There was an error do
    - **Region**: Your preferred Azure region
    - **Function App Name**: Globally unique name (e.g., `mde-automator-func-prod`)
    - **Spn Id**: Application (client) ID from Step 1
+   - **Spn Secret**: Client Secret value from Step 1
    - **Enable Managed Identity**: `true` (default)
+   - **Project Tag**: Your project name (e.g., `DefenderC2XSOAR`)
+   - **CreatedBy Tag**: Your name or email
+   - **DeleteAt Tag**: Deletion date (YYYY-MM-DD) or `Never`
 9. Click **"Review + create"** > **"Create"**
 10. Note the deployment outputs after completion
 
@@ -257,28 +293,27 @@ If the "Deploy to Azure" button fails with an error like *"There was an error do
 - Browser CORS restrictions
 - Repository access issues
 
-### Step 3: Configure Federated Identity Credential
+### Step 3: Verify Function App Configuration
 
-This step links the function app's managed identity to the app registration, enabling authentication without secrets.
+The function app has been configured with the necessary environment variables for multi-tenant authentication.
 
-1. **Go to App Registration**
-   - Azure Portal > Entra ID > App registrations
-   - Select your `MDE-Automator-MultiTenant` app
+**Environment Variables Set:**
+- `APPID`: The Application (client) ID from your app registration
+- `SECRETID`: The client secret (stored securely)
+- `FUNCTIONS_WORKER_RUNTIME`: PowerShell
+- `FUNCTIONS_EXTENSION_VERSION`: ~4
 
-2. **Add Federated Credential**
-   - Click **Certificates & secrets** > **Federated credentials** tab
-   - Click **Add credential**
+**How Authentication Works:**
+1. Workbook sends request with `tenantId` parameter to the function
+2. Function reads `APPID` and `SECRETID` from environment variables
+3. Function authenticates to the specified tenant using client credentials flow
+4. Function calls Microsoft Defender for Endpoint APIs with the acquired token
 
-3. **Configure Credential**
-   - **Federated credential scenario**: Select **Other issuer**
-   - **Issuer**: `https://login.microsoftonline.com/<YOUR_TENANT_ID>/v2.0`
-     - Replace `<YOUR_TENANT_ID>` with your tenant ID
-   - **Subject identifier**: Paste the `managedIdentityPrincipalId` from Step 2 deployment outputs
-   - **Name**: `FunctionAppManagedIdentity`
-   - **Description**: `Federated credential for MDE Automator Function App`
-   - **Audience**: `api://AzureADTokenExchange`
-
-4. **Click Add**
+This approach enables:
+- ✅ Multi-tenant support (tenant ID passed per request)
+- ✅ Secure credential storage (client secret in function app settings)
+- ✅ No secrets in workbook or user-facing configuration
+- ✅ Single deployment for all tenants
 
 ### Step 4: Deploy Function Code
 
@@ -349,11 +384,12 @@ Open your saved workbook and configure the parameters at the top:
 
 1. **Subscription**: Select your Azure subscription(s)
 2. **Workspace**: Select your Log Analytics workspace(s) where MDE data is collected
-3. **Target Tenant ID**: Enter the tenant ID where MDE is deployed
+3. **Target Tenant ID**: Enter the tenant ID where MDE is deployed (this is sent to the function with each request)
 4. **Function App Base URL**: Enter the URL from Step 2 (e.g., `https://mde-automator-func-prod.azurewebsites.net`)
-5. **Service Principal (App) ID**: Enter the Application ID from Step 1
 
 **Save the workbook** after configuring parameters.
+
+**Note:** The Application ID and Client Secret are no longer configured in the workbook. They are stored securely as environment variables in the Function App (configured during deployment in Step 2).
 
 ## Post-Deployment Configuration
 
