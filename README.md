@@ -122,6 +122,8 @@ Click the button below or use the ARM template in `/deployment`:
 - `functionAppUrl` - You'll use this in the workbook
 - `managedIdentityPrincipalId` - You'll use this for federated credentials
 
+**For other deployment methods** (Azure CLI, PowerShell, or manual template deployment), see the [deployment folder documentation](deployment/README.md).
+
 ### Step 3: Configure Federated Identity
 
 1. Go to your App Registration > Certificates & secrets > Federated credentials
@@ -237,6 +239,27 @@ Configure these permissions for the multi-tenant app registration:
 3. Set **Hunt Name**: `Suspicious PowerShell Activity`
 4. Enable **Save Results to Storage** if desired
 5. Click **Execute Hunt**
+
+## Workbook Examples
+
+This repository includes several example workbooks that demonstrate advanced functionality and patterns you can incorporate into your own workbooks. These examples showcase:
+
+- Advanced parameter handling and cascading
+- Complex visualizations and dashboards
+- Multi-step workflows and guided processes
+- Investigation and remediation consoles
+- Audit and compliance tracking
+- MDR/SOC analyst workflows
+
+**Available Examples:**
+- `Advanced Workbook Concepts.json` - Comprehensive feature showcase
+- `DefenderC2 Advanced Console.json` - Streamlined C2 interface
+- `Investigation Insights.json` - Security investigation workflows
+- `Sentinel360 XDR Investigation-Remediation Console Enhanced.json` - XDR console
+- `Sentinel360-MDR-Console.json` - MDR analyst interface
+- `Sentinel360-XDR-Auditing.json` - Audit and compliance reporting
+
+**Learn More:** See [WORKBOOK_EXAMPLES.md](WORKBOOK_EXAMPLES.md) for detailed descriptions, usage instructions, and integration tips.
 
 ## Security Considerations
 
