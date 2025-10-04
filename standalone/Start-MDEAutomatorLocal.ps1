@@ -32,10 +32,13 @@ Import-Module "$ScriptRoot\modules\MDEHunting.psm1" -Force
 Import-Module "$ScriptRoot\modules\MDEIncident.psm1" -Force
 Import-Module "$ScriptRoot\modules\MDEDetection.psm1" -Force
 Import-Module "$ScriptRoot\modules\MDEConfig.psm1" -Force
+Import-Module "$ScriptRoot\modules\MDELiveResponse.psm1" -Force
 
 # Global variables
 $script:Token = $null
 $script:Config = $null
+$script:LiveResponseSession = $null
+$script:CommandHistory = @()
 
 function Show-Banner {
     Clear-Host
@@ -204,14 +207,441 @@ function Show-LiveResponseMenu {
     Write-Host " Live Response Menu" -ForegroundColor White
     Write-Host "═══════════════════════════════════════════════════════════════════════" -ForegroundColor Cyan
     Write-Host ""
-    Write-Host " 1.  Run Live Response Script" -ForegroundColor White
-    Write-Host " 2.  Get File from Device" -ForegroundColor White
-    Write-Host " 3.  Put File to Device" -ForegroundColor White
-    Write-Host " 4.  List Available Scripts in Library" -ForegroundColor White
+    Write-Host " 1.  Interactive Shell (Connect to Device)" -ForegroundColor White
+    Write-Host " 2.  Run Live Response Script" -ForegroundColor White
+    Write-Host " 3.  Get File from Device" -ForegroundColor White
+    Write-Host " 4.  Put File to Device" -ForegroundColor White
+    Write-Host " 5.  List Available Scripts in Library" -ForegroundColor White
+    Write-Host " 6.  View Active Sessions" -ForegroundColor White
     Write-Host " 0.  Back to Main Menu" -ForegroundColor White
     Write-Host ""
     Write-Host "═══════════════════════════════════════════════════════════════════════" -ForegroundColor Cyan
     Write-Host ""
+}
+
+function Show-InteractiveShellBanner {
+    param(
+        [string]$DeviceId,
+        [string]$SessionId,
+        [string]$Status
+    )
+    
+    Clear-Host
+    # Black background with green text theme
+    Write-Host "╔═══════════════════════════════════════════════════════════════════════╗" -ForegroundColor Green -BackgroundColor Black
+    Write-Host "║              LIVE RESPONSE - INTERACTIVE SHELL                        ║" -ForegroundColor Green -BackgroundColor Black
+    Write-Host "╚═══════════════════════════════════════════════════════════════════════╝" -ForegroundColor Green -BackgroundColor Black
+    Write-Host ""
+    Write-Host "Device ID    : " -NoNewline -ForegroundColor Green -BackgroundColor Black
+    Write-Host $DeviceId -ForegroundColor Yellow -BackgroundColor Black
+    Write-Host "Session ID   : " -NoNewline -ForegroundColor Green -BackgroundColor Black
+    Write-Host $SessionId -ForegroundColor Yellow -BackgroundColor Black
+    Write-Host "Status       : " -NoNewline -ForegroundColor Green -BackgroundColor Black
+    Write-Host $Status -ForegroundColor $(if ($Status -eq "Active") { "Green" } else { "Red" }) -BackgroundColor Black
+    Write-Host ""
+    Write-Host "═══════════════════════════════════════════════════════════════════════" -ForegroundColor Green -BackgroundColor Black
+    Write-Host ""
+}
+
+function Show-CommandHistoryPanel {
+    param(
+        [array]$History,
+        [int]$MaxLines = 10
+    )
+    
+    Write-Host "╔═══════════════════════════════════════════════════════════════════════╗" -ForegroundColor Green -BackgroundColor Black
+    Write-Host "║  COMMAND HISTORY (Last $MaxLines)                                      " -ForegroundColor Green -BackgroundColor Black -NoNewline
+    Write-Host "║" -ForegroundColor Green -BackgroundColor Black
+    Write-Host "╚═══════════════════════════════════════════════════════════════════════╝" -ForegroundColor Green -BackgroundColor Black
+    
+    $recentHistory = $History | Select-Object -Last $MaxLines
+    foreach ($entry in $recentHistory) {
+        $timestamp = $entry.Timestamp.ToString("HH:mm:ss")
+        $statusIcon = switch ($entry.Status) {
+            "Completed" { "✓" }
+            "Failed" { "✗" }
+            "InProgress" { "⏳" }
+            "Pending" { "⏸" }
+            default { "?" }
+        }
+        
+        $statusColor = switch ($entry.Status) {
+            "Completed" { "Green" }
+            "Failed" { "Red" }
+            "InProgress" { "Yellow" }
+            "Pending" { "Gray" }
+            default { "White" }
+        }
+        
+        Write-Host "[$timestamp] " -NoNewline -ForegroundColor Gray -BackgroundColor Black
+        Write-Host "$statusIcon " -NoNewline -ForegroundColor $statusColor -BackgroundColor Black
+        Write-Host $entry.Command -ForegroundColor White -BackgroundColor Black
+    }
+    Write-Host ""
+}
+
+function Invoke-InteractiveShell {
+    param(
+        [hashtable]$Token,
+        [string]$DeviceId,
+        [string]$SessionId
+    )
+    
+    $continue = $true
+    
+    while ($continue) {
+        # Get session status
+        try {
+            $session = Get-MDELiveResponseSession -Token $Token -SessionId $SessionId
+            $sessionStatus = $session.status
+        } catch {
+            $sessionStatus = "Unknown"
+        }
+        
+        # Split screen display
+        Show-InteractiveShellBanner -DeviceId $DeviceId -SessionId $SessionId -Status $sessionStatus
+        Show-CommandHistoryPanel -History $script:CommandHistory
+        
+        # Command prompt
+        Write-Host "Commands: " -NoNewline -ForegroundColor Green -BackgroundColor Black
+        Write-Host "help, dir <path>, getfile, putfile, runscript, exit" -ForegroundColor Yellow -BackgroundColor Black
+        Write-Host ""
+        Write-Host "LR> " -NoNewline -ForegroundColor Green -BackgroundColor Black
+        $input = Read-Host
+        
+        if ([string]::IsNullOrWhiteSpace($input)) {
+            continue
+        }
+        
+        # Parse command
+        $parts = $input -split '\s+', 2
+        $command = $parts[0].ToLower()
+        $args = if ($parts.Length -gt 1) { $parts[1] } else { "" }
+        
+        switch ($command) {
+            "help" {
+                Write-Host ""
+                Write-Host "Available Commands:" -ForegroundColor Green -BackgroundColor Black
+                Write-Host "  help              - Show this help message" -ForegroundColor White -BackgroundColor Black
+                Write-Host "  dir <path>        - List directory contents" -ForegroundColor White -BackgroundColor Black
+                Write-Host "  getfile <path>    - Download file from device" -ForegroundColor White -BackgroundColor Black
+                Write-Host "  putfile <path>    - Upload file to device" -ForegroundColor White -BackgroundColor Black
+                Write-Host "  runscript <name>  - Execute script from library" -ForegroundColor White -BackgroundColor Black
+                Write-Host "  run <command>     - Execute arbitrary command" -ForegroundColor White -BackgroundColor Black
+                Write-Host "  history           - Show command history" -ForegroundColor White -BackgroundColor Black
+                Write-Host "  clear             - Clear screen" -ForegroundColor White -BackgroundColor Black
+                Write-Host "  exit              - Close session and return" -ForegroundColor White -BackgroundColor Black
+                Write-Host ""
+                Write-Host "Press any key to continue..."
+                $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+            }
+            "dir" {
+                $path = if ([string]::IsNullOrWhiteSpace($args)) { "C:\" } else { $args }
+                
+                Write-Host ""
+                Write-Host "⏳ Listing directory: $path" -ForegroundColor Yellow -BackgroundColor Black
+                
+                try {
+                    $params = @{
+                        Path = $path
+                    }
+                    
+                    $cmd = Invoke-MDELiveResponseCommand -Token $Token -SessionId $SessionId -Command "dir" -Parameters $params
+                    
+                    # Add to history
+                    $script:CommandHistory += @{
+                        Timestamp = Get-Date
+                        Command = "dir $path"
+                        Status = "Pending"
+                        CommandId = $cmd.id
+                    }
+                    
+                    # Wait for result
+                    $result = Wait-MDELiveResponseCommand -Token $Token -CommandId $cmd.id -PollingIntervalSeconds 3
+                    
+                    # Update history
+                    $historyEntry = $script:CommandHistory | Where-Object { $_.CommandId -eq $cmd.id }
+                    if ($historyEntry) {
+                        $historyEntry.Status = $result.status
+                    }
+                    
+                    if ($result.status -eq "Completed") {
+                        Write-Host ""
+                        Write-Host "✓ Directory listing:" -ForegroundColor Green -BackgroundColor Black
+                        Write-Host $result.value -ForegroundColor White -BackgroundColor Black
+                    } else {
+                        Write-Host ""
+                        Write-Host "✗ Command failed: $($result.error)" -ForegroundColor Red -BackgroundColor Black
+                    }
+                    
+                } catch {
+                    Write-Host ""
+                    Write-Host "✗ Error: $($_.Exception.Message)" -ForegroundColor Red -BackgroundColor Black
+                }
+                
+                Write-Host ""
+                Write-Host "Press any key to continue..."
+                $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+            }
+            "getfile" {
+                if ([string]::IsNullOrWhiteSpace($args)) {
+                    Write-Host ""
+                    Write-Host "✗ Usage: getfile <remote_path>" -ForegroundColor Red -BackgroundColor Black
+                    Write-Host ""
+                    Write-Host "Press any key to continue..."
+                    $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+                    continue
+                }
+                
+                $remotePath = $args
+                Write-Host ""
+                Write-Host "Enter local destination path: " -NoNewline -ForegroundColor Green -BackgroundColor Black
+                $localPath = Read-Host
+                
+                if ([string]::IsNullOrWhiteSpace($localPath)) {
+                    $localPath = Join-Path $env:TEMP (Split-Path -Leaf $remotePath)
+                }
+                
+                Write-Host ""
+                Write-Host "⏳ Downloading file: $remotePath" -ForegroundColor Yellow -BackgroundColor Black
+                
+                try {
+                    $success = Get-MDELiveResponseFile -Token $Token -SessionId $SessionId -FilePath $remotePath -DestinationPath $localPath
+                    
+                    $script:CommandHistory += @{
+                        Timestamp = Get-Date
+                        Command = "getfile $remotePath"
+                        Status = if ($success) { "Completed" } else { "Failed" }
+                        CommandId = $null
+                    }
+                    
+                    if ($success) {
+                        Write-Host ""
+                        Write-Host "✓ File downloaded to: $localPath" -ForegroundColor Green -BackgroundColor Black
+                    } else {
+                        Write-Host ""
+                        Write-Host "✗ File download failed" -ForegroundColor Red -BackgroundColor Black
+                    }
+                    
+                } catch {
+                    Write-Host ""
+                    Write-Host "✗ Error: $($_.Exception.Message)" -ForegroundColor Red -BackgroundColor Black
+                }
+                
+                Write-Host ""
+                Write-Host "Press any key to continue..."
+                $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+            }
+            "putfile" {
+                if ([string]::IsNullOrWhiteSpace($args)) {
+                    Write-Host ""
+                    Write-Host "✗ Usage: putfile <local_path>" -ForegroundColor Red -BackgroundColor Black
+                    Write-Host ""
+                    Write-Host "Press any key to continue..."
+                    $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+                    continue
+                }
+                
+                $localPath = $args
+                
+                if (-not (Test-Path $localPath)) {
+                    Write-Host ""
+                    Write-Host "✗ File not found: $localPath" -ForegroundColor Red -BackgroundColor Black
+                    Write-Host ""
+                    Write-Host "Press any key to continue..."
+                    $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+                    continue
+                }
+                
+                Write-Host ""
+                Write-Host "Enter remote destination path: " -NoNewline -ForegroundColor Green -BackgroundColor Black
+                $remotePath = Read-Host
+                
+                if ([string]::IsNullOrWhiteSpace($remotePath)) {
+                    $remotePath = "C:\Temp\" + (Split-Path -Leaf $localPath)
+                }
+                
+                Write-Host ""
+                Write-Host "⏳ Uploading file: $localPath" -ForegroundColor Yellow -BackgroundColor Black
+                
+                try {
+                    $success = Send-MDELiveResponseFile -Token $Token -SessionId $SessionId -SourcePath $localPath -DestinationPath $remotePath
+                    
+                    $script:CommandHistory += @{
+                        Timestamp = Get-Date
+                        Command = "putfile $localPath"
+                        Status = if ($success) { "Completed" } else { "Failed" }
+                        CommandId = $null
+                    }
+                    
+                    if ($success) {
+                        Write-Host ""
+                        Write-Host "✓ File uploaded to: $remotePath" -ForegroundColor Green -BackgroundColor Black
+                    } else {
+                        Write-Host ""
+                        Write-Host "✗ File upload failed" -ForegroundColor Red -BackgroundColor Black
+                    }
+                    
+                } catch {
+                    Write-Host ""
+                    Write-Host "✗ Error: $($_.Exception.Message)" -ForegroundColor Red -BackgroundColor Black
+                }
+                
+                Write-Host ""
+                Write-Host "Press any key to continue..."
+                $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+            }
+            "runscript" {
+                if ([string]::IsNullOrWhiteSpace($args)) {
+                    Write-Host ""
+                    Write-Host "✗ Usage: runscript <script_name> [arguments]" -ForegroundColor Red -BackgroundColor Black
+                    Write-Host ""
+                    Write-Host "Press any key to continue..."
+                    $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+                    continue
+                }
+                
+                $scriptParts = $args -split '\s+', 2
+                $scriptName = $scriptParts[0]
+                $scriptArgs = if ($scriptParts.Length -gt 1) { $scriptParts[1] } else { "" }
+                
+                Write-Host ""
+                Write-Host "⏳ Running script: $scriptName" -ForegroundColor Yellow -BackgroundColor Black
+                
+                try {
+                    $result = Invoke-MDELiveResponseScript -Token $Token -SessionId $SessionId -ScriptName $scriptName -Arguments $scriptArgs
+                    
+                    $script:CommandHistory += @{
+                        Timestamp = Get-Date
+                        Command = "runscript $scriptName"
+                        Status = $result.status
+                        CommandId = $result.id
+                    }
+                    
+                    if ($result.status -eq "Completed") {
+                        Write-Host ""
+                        Write-Host "✓ Script completed:" -ForegroundColor Green -BackgroundColor Black
+                        Write-Host $result.value -ForegroundColor White -BackgroundColor Black
+                    } else {
+                        Write-Host ""
+                        Write-Host "✗ Script failed: $($result.error)" -ForegroundColor Red -BackgroundColor Black
+                    }
+                    
+                } catch {
+                    Write-Host ""
+                    Write-Host "✗ Error: $($_.Exception.Message)" -ForegroundColor Red -BackgroundColor Black
+                }
+                
+                Write-Host ""
+                Write-Host "Press any key to continue..."
+                $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+            }
+            "run" {
+                if ([string]::IsNullOrWhiteSpace($args)) {
+                    Write-Host ""
+                    Write-Host "✗ Usage: run <command>" -ForegroundColor Red -BackgroundColor Black
+                    Write-Host ""
+                    Write-Host "Press any key to continue..."
+                    $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+                    continue
+                }
+                
+                Write-Host ""
+                Write-Host "⏳ Executing: $args" -ForegroundColor Yellow -BackgroundColor Black
+                
+                try {
+                    $params = @{
+                        CommandLine = $args
+                    }
+                    
+                    $cmd = Invoke-MDELiveResponseCommand -Token $Token -SessionId $SessionId -Command "RunCommand" -Parameters $params
+                    
+                    $script:CommandHistory += @{
+                        Timestamp = Get-Date
+                        Command = "run $args"
+                        Status = "Pending"
+                        CommandId = $cmd.id
+                    }
+                    
+                    $result = Wait-MDELiveResponseCommand -Token $Token -CommandId $cmd.id -PollingIntervalSeconds 3
+                    
+                    $historyEntry = $script:CommandHistory | Where-Object { $_.CommandId -eq $cmd.id }
+                    if ($historyEntry) {
+                        $historyEntry.Status = $result.status
+                    }
+                    
+                    if ($result.status -eq "Completed") {
+                        Write-Host ""
+                        Write-Host "✓ Command output:" -ForegroundColor Green -BackgroundColor Black
+                        Write-Host $result.value -ForegroundColor White -BackgroundColor Black
+                    } else {
+                        Write-Host ""
+                        Write-Host "✗ Command failed: $($result.error)" -ForegroundColor Red -BackgroundColor Black
+                    }
+                    
+                } catch {
+                    Write-Host ""
+                    Write-Host "✗ Error: $($_.Exception.Message)" -ForegroundColor Red -BackgroundColor Black
+                }
+                
+                Write-Host ""
+                Write-Host "Press any key to continue..."
+                $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+            }
+            "history" {
+                Write-Host ""
+                Write-Host "Command History:" -ForegroundColor Green -BackgroundColor Black
+                Write-Host ""
+                
+                foreach ($entry in $script:CommandHistory) {
+                    $timestamp = $entry.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")
+                    $statusIcon = switch ($entry.Status) {
+                        "Completed" { "✓" }
+                        "Failed" { "✗" }
+                        "InProgress" { "⏳" }
+                        "Pending" { "⏸" }
+                        default { "?" }
+                    }
+                    
+                    Write-Host "[$timestamp] $statusIcon $($entry.Command)" -ForegroundColor White -BackgroundColor Black
+                }
+                
+                Write-Host ""
+                Write-Host "Press any key to continue..."
+                $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+            }
+            "clear" {
+                # Just continue to refresh
+                continue
+            }
+            "exit" {
+                Write-Host ""
+                Write-Host "Closing session..." -ForegroundColor Yellow -BackgroundColor Black
+                
+                try {
+                    Stop-MDELiveResponseSession -Token $Token -SessionId $SessionId
+                    Write-Host "✓ Session closed" -ForegroundColor Green -BackgroundColor Black
+                } catch {
+                    Write-Host "✗ Error closing session: $($_.Exception.Message)" -ForegroundColor Red -BackgroundColor Black
+                }
+                
+                $script:LiveResponseSession = $null
+                $continue = $false
+                
+                Write-Host ""
+                Write-Host "Press any key to continue..."
+                $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+            }
+            default {
+                Write-Host ""
+                Write-Host "✗ Unknown command: $command" -ForegroundColor Red -BackgroundColor Black
+                Write-Host "Type 'help' for available commands" -ForegroundColor Yellow -BackgroundColor Black
+                Write-Host ""
+                Write-Host "Press any key to continue..."
+                $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+            }
+        }
+    }
 }
 
 function Invoke-Authentication {
@@ -533,6 +963,289 @@ function Invoke-DeviceActionsMenu {
     } while ($true)
 }
 
+function Invoke-LiveResponseMenu {
+    do {
+        Show-LiveResponseMenu
+        $choice = Read-Host "Enter your choice"
+        
+        switch ($choice) {
+            "1" {
+                # Interactive Shell
+                if (-not $script:Token) {
+                    Write-Host "✗ Please authenticate first (Option 1 in Main Menu)" -ForegroundColor Red
+                    Start-Sleep -Seconds 2
+                    continue
+                }
+                
+                Write-Host ""
+                $deviceId = Read-Host "Enter Device ID to connect"
+                
+                if ([string]::IsNullOrWhiteSpace($deviceId)) {
+                    Write-Host "✗ Device ID is required" -ForegroundColor Red
+                    Start-Sleep -Seconds 2
+                    continue
+                }
+                
+                try {
+                    Write-Host ""
+                    Write-Host "⏳ Initiating Live Response session..." -ForegroundColor Yellow
+                    $session = Start-MDELiveResponseSession -Token $script:Token -DeviceId $deviceId -Comment "Interactive Shell Session"
+                    
+                    Write-Host "⏳ Waiting for session to become active..." -ForegroundColor Yellow
+                    
+                    # Wait for session to become active
+                    $maxWait = 60
+                    $waited = 0
+                    $sessionStatus = "Pending"
+                    
+                    while ($sessionStatus -ne "Active" -and $waited -lt $maxWait) {
+                        Start-Sleep -Seconds 3
+                        $waited += 3
+                        
+                        $sessionInfo = Get-MDELiveResponseSession -Token $script:Token -SessionId $session.id
+                        $sessionStatus = $sessionInfo.status
+                        
+                        Write-Host "  Status: $sessionStatus" -ForegroundColor Gray
+                    }
+                    
+                    if ($sessionStatus -eq "Active") {
+                        Write-Host "✓ Session established!" -ForegroundColor Green
+                        Write-Host ""
+                        Write-Host "Press any key to enter interactive shell..."
+                        $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+                        
+                        $script:LiveResponseSession = $session
+                        $script:CommandHistory = @()
+                        
+                        # Enter interactive shell
+                        Invoke-InteractiveShell -Token $script:Token -DeviceId $deviceId -SessionId $session.id
+                    } else {
+                        Write-Host "✗ Session failed to become active (Status: $sessionStatus)" -ForegroundColor Red
+                        Write-Host ""
+                        Write-Host "Press any key to continue..."
+                        $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+                    }
+                    
+                } catch {
+                    Write-Host "✗ Failed to start session: $($_.Exception.Message)" -ForegroundColor Red
+                    Write-Host ""
+                    Write-Host "Press any key to continue..."
+                    $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+                }
+            }
+            "2" {
+                # Run Live Response Script
+                if (-not $script:Token) {
+                    Write-Host "✗ Please authenticate first (Option 1 in Main Menu)" -ForegroundColor Red
+                    Start-Sleep -Seconds 2
+                    continue
+                }
+                
+                Write-Host ""
+                $deviceId = Read-Host "Enter Device ID"
+                $scriptName = Read-Host "Enter script name from library"
+                $scriptArgs = Read-Host "Enter script arguments (optional)"
+                
+                try {
+                    Write-Host ""
+                    Write-Host "⏳ Starting Live Response session..." -ForegroundColor Yellow
+                    $session = Start-MDELiveResponseSession -Token $script:Token -DeviceId $deviceId -Comment "Run Script: $scriptName"
+                    
+                    # Wait for session
+                    Start-Sleep -Seconds 5
+                    
+                    Write-Host "⏳ Running script..." -ForegroundColor Yellow
+                    $result = Invoke-MDELiveResponseScript -Token $script:Token -SessionId $session.id -ScriptName $scriptName -Arguments $scriptArgs
+                    
+                    if ($result.status -eq "Completed") {
+                        Write-Host ""
+                        Write-Host "✓ Script completed successfully!" -ForegroundColor Green
+                        Write-Host ""
+                        Write-Host "Output:" -ForegroundColor Yellow
+                        Write-Host $result.value -ForegroundColor White
+                    } else {
+                        Write-Host ""
+                        Write-Host "✗ Script failed: $($result.error)" -ForegroundColor Red
+                    }
+                    
+                    # Clean up session
+                    Stop-MDELiveResponseSession -Token $script:Token -SessionId $session.id | Out-Null
+                    
+                } catch {
+                    Write-Host "✗ Failed: $($_.Exception.Message)" -ForegroundColor Red
+                }
+                
+                Write-Host ""
+                Write-Host "Press any key to continue..."
+                $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+            }
+            "3" {
+                # Get File from Device
+                if (-not $script:Token) {
+                    Write-Host "✗ Please authenticate first (Option 1 in Main Menu)" -ForegroundColor Red
+                    Start-Sleep -Seconds 2
+                    continue
+                }
+                
+                Write-Host ""
+                $deviceId = Read-Host "Enter Device ID"
+                $remotePath = Read-Host "Enter remote file path"
+                $localPath = Read-Host "Enter local destination path"
+                
+                if ([string]::IsNullOrWhiteSpace($localPath)) {
+                    $localPath = Join-Path $env:TEMP (Split-Path -Leaf $remotePath)
+                }
+                
+                try {
+                    Write-Host ""
+                    Write-Host "⏳ Starting Live Response session..." -ForegroundColor Yellow
+                    $session = Start-MDELiveResponseSession -Token $script:Token -DeviceId $deviceId -Comment "Get File: $remotePath"
+                    
+                    # Wait for session
+                    Start-Sleep -Seconds 5
+                    
+                    Write-Host "⏳ Downloading file..." -ForegroundColor Yellow
+                    $success = Get-MDELiveResponseFile -Token $script:Token -SessionId $session.id -FilePath $remotePath -DestinationPath $localPath
+                    
+                    if ($success) {
+                        Write-Host ""
+                        Write-Host "✓ File downloaded to: $localPath" -ForegroundColor Green
+                    } else {
+                        Write-Host ""
+                        Write-Host "✗ File download failed" -ForegroundColor Red
+                    }
+                    
+                    # Clean up session
+                    Stop-MDELiveResponseSession -Token $script:Token -SessionId $session.id | Out-Null
+                    
+                } catch {
+                    Write-Host "✗ Failed: $($_.Exception.Message)" -ForegroundColor Red
+                }
+                
+                Write-Host ""
+                Write-Host "Press any key to continue..."
+                $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+            }
+            "4" {
+                # Put File to Device
+                if (-not $script:Token) {
+                    Write-Host "✗ Please authenticate first (Option 1 in Main Menu)" -ForegroundColor Red
+                    Start-Sleep -Seconds 2
+                    continue
+                }
+                
+                Write-Host ""
+                $deviceId = Read-Host "Enter Device ID"
+                $localPath = Read-Host "Enter local file path"
+                
+                if (-not (Test-Path $localPath)) {
+                    Write-Host "✗ File not found: $localPath" -ForegroundColor Red
+                    Start-Sleep -Seconds 2
+                    continue
+                }
+                
+                $remotePath = Read-Host "Enter remote destination path"
+                
+                if ([string]::IsNullOrWhiteSpace($remotePath)) {
+                    $remotePath = "C:\Temp\" + (Split-Path -Leaf $localPath)
+                }
+                
+                try {
+                    Write-Host ""
+                    Write-Host "⏳ Starting Live Response session..." -ForegroundColor Yellow
+                    $session = Start-MDELiveResponseSession -Token $script:Token -DeviceId $deviceId -Comment "Put File: $(Split-Path -Leaf $localPath)"
+                    
+                    # Wait for session
+                    Start-Sleep -Seconds 5
+                    
+                    Write-Host "⏳ Uploading file..." -ForegroundColor Yellow
+                    $success = Send-MDELiveResponseFile -Token $script:Token -SessionId $session.id -SourcePath $localPath -DestinationPath $remotePath
+                    
+                    if ($success) {
+                        Write-Host ""
+                        Write-Host "✓ File uploaded to: $remotePath" -ForegroundColor Green
+                    } else {
+                        Write-Host ""
+                        Write-Host "✗ File upload failed" -ForegroundColor Red
+                    }
+                    
+                    # Clean up session
+                    Stop-MDELiveResponseSession -Token $script:Token -SessionId $session.id | Out-Null
+                    
+                } catch {
+                    Write-Host "✗ Failed: $($_.Exception.Message)" -ForegroundColor Red
+                }
+                
+                Write-Host ""
+                Write-Host "Press any key to continue..."
+                $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+            }
+            "5" {
+                # List Available Scripts
+                if (-not $script:Token) {
+                    Write-Host "✗ Please authenticate first (Option 1 in Main Menu)" -ForegroundColor Red
+                    Start-Sleep -Seconds 2
+                    continue
+                }
+                
+                try {
+                    Write-Host ""
+                    Write-Host "⏳ Retrieving library scripts..." -ForegroundColor Yellow
+                    $scripts = Get-MDELiveResponseLibraryScripts -Token $script:Token
+                    
+                    Write-Host ""
+                    Write-Host "Available Scripts in Library:" -ForegroundColor Green
+                    Write-Host ""
+                    
+                    if ($scripts.Count -eq 0) {
+                        Write-Host "No scripts found in the library" -ForegroundColor Yellow
+                    } else {
+                        $scripts | Format-Table -Property fileName, description -AutoSize
+                    }
+                    
+                } catch {
+                    Write-Host "✗ Failed: $($_.Exception.Message)" -ForegroundColor Red
+                }
+                
+                Write-Host ""
+                Write-Host "Press any key to continue..."
+                $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+            }
+            "6" {
+                # View Active Sessions
+                if (-not $script:Token) {
+                    Write-Host "✗ Please authenticate first (Option 1 in Main Menu)" -ForegroundColor Red
+                    Start-Sleep -Seconds 2
+                    continue
+                }
+                
+                Write-Host ""
+                if ($script:LiveResponseSession) {
+                    Write-Host "Active Session:" -ForegroundColor Green
+                    Write-Host "  Session ID: $($script:LiveResponseSession.id)" -ForegroundColor White
+                    Write-Host "  Device ID: $($script:LiveResponseSession.machineId)" -ForegroundColor White
+                    Write-Host "  Status: $($script:LiveResponseSession.status)" -ForegroundColor White
+                    Write-Host ""
+                    Write-Host "Command History: $($script:CommandHistory.Count) commands" -ForegroundColor Gray
+                } else {
+                    Write-Host "No active sessions" -ForegroundColor Yellow
+                }
+                
+                Write-Host ""
+                Write-Host "Press any key to continue..."
+                $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+            }
+            "0" {
+                return
+            }
+            default {
+                Write-Host "Invalid choice. Please try again." -ForegroundColor Red
+                Start-Sleep -Seconds 1
+            }
+        }
+    } while ($true)
+}
+
 # Main program loop
 try {
     do {
@@ -563,8 +1276,7 @@ try {
                 Start-Sleep -Seconds 2
             }
             "8" { 
-                Write-Host "Live Response Operations - Coming soon in this menu!" -ForegroundColor Yellow
-                Start-Sleep -Seconds 2
+                Invoke-LiveResponseMenu
             }
             "9" {
                 Show-Banner
