@@ -37,16 +37,27 @@ Click the "Deploy to Azure" button in the main README.md
 az deployment group create \
   --resource-group <your-resource-group> \
   --template-file azuredeploy.json \
-  --parameters functionAppName=<your-unique-name> spnId=<your-app-id>
+  --parameters functionAppName=<your-unique-name> \
+               spnId=<your-app-id> \
+               spnSecret=<your-client-secret> \
+               projectTag=<project-name> \
+               createdByTag=<your-email> \
+               deleteAtTag=<date-or-Never>
 ```
 
 ### Option 3: PowerShell
 ```powershell
+$spnSecret = ConvertTo-SecureString "<your-client-secret>" -AsPlainText -Force
+
 New-AzResourceGroupDeployment `
   -ResourceGroupName <your-resource-group> `
   -TemplateFile azuredeploy.json `
   -functionAppName <your-unique-name> `
-  -spnId <your-app-id>
+  -spnId <your-app-id> `
+  -spnSecret $spnSecret `
+  -projectTag <project-name> `
+  -createdByTag <your-email> `
+  -deleteAtTag <date-or-Never>
 ```
 
 ## Parameters
@@ -55,6 +66,10 @@ New-AzResourceGroupDeployment `
 |-----------|----------|-------------|
 | `functionAppName` | Yes | Globally unique name for your function app (3-60 characters, lowercase letters, numbers, and hyphens only) |
 | `spnId` | Yes | Application (client) ID from your multi-tenant app registration |
+| `spnSecret` | Yes | Client secret from your multi-tenant app registration (stored securely) |
+| `projectTag` | Yes | Value for the 'Project' tag required by Azure Policy |
+| `createdByTag` | Yes | Value for the 'CreatedBy' tag required by Azure Policy |
+| `deleteAtTag` | Yes | Value for the 'DeleteAt' tag required by Azure Policy (e.g., '2025-12-31' or 'Never') |
 | `location` | No | Azure region for deployment (defaults to resource group location) |
 | `runtime` | No | Function runtime (defaults to "powershell") |
 | `enableManagedIdentity` | No | Enable system-assigned managed identity (defaults to true) |
@@ -65,9 +80,14 @@ After successful deployment, you'll need to:
 
 1. **Note the outputs:**
    - `functionAppUrl` - Use this in the workbook configuration
-   - `managedIdentityPrincipalId` - Use this for federated credentials
+   - `storageAccountName` - Automatically created and configured
+   - `managedIdentityPrincipalId` - System-assigned managed identity (if enabled)
 
-2. **Configure federated identity credentials** (see main documentation)
+2. **Verify environment variables** are set in the Function App:
+   - `APPID` - Application (client) ID
+   - `SECRETID` - Client secret (stored securely)
+   - `FUNCTIONS_WORKER_RUNTIME` - PowerShell
+   - `FUNCTIONS_EXTENSION_VERSION` - ~4
 
 3. **Deploy function code** to the Function App
 
@@ -120,7 +140,12 @@ cd defenderc2xsoar/deployment
 az deployment group create \
   --resource-group <your-resource-group> \
   --template-file azuredeploy.json \
-  --parameters functionAppName=<your-unique-name> spnId=<your-app-id>
+  --parameters functionAppName=<your-unique-name> \
+               spnId=<your-app-id> \
+               spnSecret=<your-client-secret> \
+               projectTag=<project-name> \
+               createdByTag=<your-email> \
+               deleteAtTag=<date-or-Never>
 ```
 
 **Solution 3: Direct Template Link**

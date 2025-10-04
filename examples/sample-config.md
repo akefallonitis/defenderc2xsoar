@@ -9,9 +9,10 @@ Subscription: /subscriptions/12345678-1234-1234-1234-123456789abc
 Workspace: /subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/rg-sentinel/providers/Microsoft.OperationalInsights/workspaces/workspace-sentinel
 Target Tenant ID: 87654321-4321-4321-4321-cba987654321
 Function App Base URL: https://mde-automator-prod.azurewebsites.net
-Service Principal (App) ID: abcdef12-3456-7890-abcd-ef1234567890
 Time Range: Last 30 days
 ```
+
+**Note:** The Application ID and Client Secret are stored securely in the Function App's environment variables (configured during deployment). They are no longer entered in the workbook.
 
 ## Example Device Actions
 
@@ -197,7 +198,6 @@ If you manage multiple tenants:
 ```
 Target Tenant ID: aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa
 Function App Base URL: https://mde-automator-prod.azurewebsites.net
-Service Principal (App) ID: your-multi-tenant-app-id
 ```
 
 ### Tenant B (Development)
@@ -205,10 +205,9 @@ Service Principal (App) ID: your-multi-tenant-app-id
 ```
 Target Tenant ID: bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb
 Function App Base URL: https://mde-automator-prod.azurewebsites.net (same function app!)
-Service Principal (App) ID: your-multi-tenant-app-id (same app registration!)
 ```
 
-**Note**: You use the same function app and app registration for all tenants. Just change the Target Tenant ID parameter when switching between tenants.
+**Note**: You use the same function app and app registration for all tenants. Just change the Target Tenant ID parameter when switching between tenants. The app credentials (APPID and SECRETID) are stored securely in the function app's environment variables.
 
 ## Example Incident Management
 
@@ -236,11 +235,14 @@ Comment: Initial triage complete. Identified 5 affected devices. Malware appears
 Your function app should have these configured (done automatically by ARM template):
 
 ```
-SPNID=your-app-id-here
+APPID=your-app-id-here
+SECRETID=your-client-secret-here
 FUNCTIONS_WORKER_RUNTIME=powershell
 FUNCTIONS_EXTENSION_VERSION=~4
 AzureWebJobsStorage=[connection string - auto-configured]
 ```
+
+**Security Note**: The `APPID` and `SECRETID` are stored securely in the function app settings and are never exposed to the workbook or end users. Each function request receives the `tenantId` parameter and uses these stored credentials to authenticate to that specific tenant.
 
 ## Tips and Best Practices
 
@@ -257,6 +259,7 @@ AzureWebJobsStorage=[connection string - auto-configured]
 1. **Restrict Workbook Access**: Use Azure RBAC to limit who can view/edit the workbook
 2. **Enable Function Authentication**: Add Azure AD authentication to the function app
 3. **Monitor Usage**: Set up alerts on unusual activity or high error rates
-4. **Rotate Credentials**: Even though using managed identity, periodically review and audit access
+4. **Rotate Credentials**: Periodically rotate the client secret in the app registration and update the SECRETID environment variable
 5. **Use Tags**: Tag devices and organize them for easier management
+6. **Secure Environment Variables**: Limit access to the function app configuration where APPID and SECRETID are stored
 6. **Test in Non-Production**: Always test new actions in a dev/test environment first
