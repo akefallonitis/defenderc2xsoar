@@ -156,7 +156,7 @@ You can deploy using the Azure Portal button or CLI/PowerShell.
 
 1. Click the button below:
 
-   [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fakefallonitis%2Fdefenderc2xsoar%2Fmain%2Fdeployment%2Fazuredeploy.json)
+   [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fakefallonitis%2Fdefenderc2xsoar%2Frefs%2Fheads%2Fmain%2Fdeployment%2Fazuredeploy.json)
 
    > **⚠️ If the button fails:** See [Option D: Manual Template Deployment](#option-d-manual-template-deployment) below for alternative deployment methods.
 
