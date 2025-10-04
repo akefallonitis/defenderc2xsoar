@@ -57,6 +57,15 @@ All MDEAutomator capabilities replicated through Azure Workbooks:
    - Backup and restore detections
    - Azure Storage integration
 
+7. **🖥️ Interactive Console** *(New!)*
+   - Shell-like interface for command execution
+   - Async command execution with auto-polling
+   - Automatic JSON parsing and result display
+   - Configurable refresh intervals (10s/30s/1m/5m/manual)
+   - Command history and audit trail
+   - Support for all MDE actions, hunting, TI, incidents, and detections
+   - Real-time status monitoring with visual indicators
+
 ## Architecture
 
 ```
@@ -123,6 +132,11 @@ Click the button below or use the ARM template in `/deployment`:
 - `managedIdentityPrincipalId` - You'll use this for federated credentials
 
 **For other deployment methods** (Azure CLI, PowerShell, or manual template deployment), see the [deployment folder documentation](deployment/README.md).
+
+> **⚠️ Troubleshooting Deploy Button:** If you encounter an error downloading the template, you can:
+> 1. **Manual Deployment**: Copy the template content from [deployment/azuredeploy.json](deployment/azuredeploy.json) and paste it into Azure Portal's "Build your own template in the editor" option
+> 2. **CLI Deployment**: Clone this repo and use `az deployment group create` command (see [deployment/README.md](deployment/README.md))
+> 3. **Direct Access**: Verify template accessibility at https://raw.githubusercontent.com/akefallonitis/defenderc2xsoar/main/deployment/azuredeploy.json
 
 ### Step 3: Configure Federated Identity
 
@@ -240,6 +254,45 @@ Configure these permissions for the multi-tenant app registration:
 4. Enable **Save Results to Storage** if desired
 5. Click **Execute Hunt**
 
+### Example: Using Interactive Console 🖥️
+
+The **Interactive Console** tab provides a shell-like interface for executing commands with automatic async polling:
+
+1. Go to **🖥️ Interactive Console** tab
+2. **Configure Settings:**
+   - **Auto Refresh Interval**: Select `30 seconds` (recommended for active monitoring)
+   - **Command Type**: Choose the operation category (e.g., `Device Actions`)
+   - **Action/Command**: Select specific action (e.g., `Isolate Device`)
+   - **Target Device IDs**: Enter comma-separated device IDs (optional for queries)
+   - **Additional Parameters**: Add JSON parameters if needed
+
+3. **Execute Command:**
+   - Click **Run Query** in the "Execute Command" section
+   - The Function App processes the request asynchronously
+   - Command execution status displays immediately
+
+4. **Monitor Progress:**
+   - The "Action Status" section auto-refreshes based on your interval
+   - Status indicators show: ✅ Succeeded, ⏳ InProgress, ⏸️ Pending, ❌ Failed
+   - No manual polling needed - results update automatically
+
+5. **View Results:**
+   - Once complete, the "Command Results" section displays parsed JSON data
+   - Results shown in table format for easy analysis
+   - Export to Excel available for further processing
+
+6. **Review History:**
+   - "Execution History" section tracks last 20 commands
+   - Includes timestamps, status, and action IDs
+   - Useful for audit and troubleshooting
+
+**Key Benefits:**
+- ✅ **No manual polling** - automatic status updates
+- ✅ **Real-time feedback** - visual status indicators
+- ✅ **Structured results** - JSON parsed into tables
+- ✅ **Command history** - complete audit trail
+- ✅ **Configurable refresh** - from 10 seconds to manual
+
 ## Workbook Examples
 
 This repository includes several example workbooks that demonstrate advanced functionality and patterns you can incorporate into your own workbooks. These examples showcase:
@@ -321,11 +374,31 @@ This project inherits the license from the original MDEAutomator project.
 - Microsoft Defender for Endpoint team
 - Azure Workbooks team
 
+## Documentation
+
+### Main Guides
+- [QUICKSTART.md](QUICKSTART.md) - Get started in 30 minutes
+- [DEPLOYMENT.md](DEPLOYMENT.md) - Complete deployment guide
+- [FEATURES.md](FEATURES.md) - Detailed feature documentation
+- [ARCHITECTURE.md](ARCHITECTURE.md) - System architecture overview
+
+### Feature-Specific Guides
+- [INTERACTIVE_CONSOLE_GUIDE.md](INTERACTIVE_CONSOLE_GUIDE.md) - 🖥️ Interactive Console usage and examples
+- [WORKBOOK_EXAMPLES.md](WORKBOOK_EXAMPLES.md) - Workbook examples and patterns
+- [DEPLOYMENT_TROUBLESHOOTING.md](DEPLOYMENT_TROUBLESHOOTING.md) - ARM template deployment fixes
+
+### Additional Resources
+- [CONTRIBUTING.md](CONTRIBUTING.md) - Contribution guidelines
+- [CHANGELOG.md](CHANGELOG.md) - Project changelog
+- [deployment/README.md](deployment/README.md) - ARM template documentation
+
 ## Support
 
 For issues and questions:
 - Open an issue on [GitHub](https://github.com/akefallonitis/defenderc2xsoar/issues)
-- Reference the [MDEAutomator documentation](https://github.com/msdirtbag/MDEAutomator)
+- Check [DEPLOYMENT_TROUBLESHOOTING.md](DEPLOYMENT_TROUBLESHOOTING.md) for common deployment issues
+- Reference the [INTERACTIVE_CONSOLE_GUIDE.md](INTERACTIVE_CONSOLE_GUIDE.md) for console features
+- See original [MDEAutomator documentation](https://github.com/msdirtbag/MDEAutomator)
 
 ## Disclaimer
 

@@ -231,6 +231,14 @@
             "linkLabel": "Custom Detection Manager",
             "subTarget": "detections",
             "style": "link"
+          },
+          {
+            "id": "0k4i9j3g-8h7m-1h5k-6l2j-8h9i0j1k2l3m",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "\ud83d\udda5\ufe0f Interactive Console",
+            "subTarget": "console",
+            "style": "link"
           }
         ]
       },
@@ -285,6 +293,291 @@
         "value": "automator"
       },
       "name": "group - automator"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "## \ud83d\udda5\ufe0f Interactive Console - MDE Command Execution\n\n### Async Command Execution with Auto-Polling\n\nThis interactive console allows you to execute native MDE commands asynchronously with automatic result polling. Features:\n\n- \u2705 **Async Execution** - Commands run in the background via Function App\n- \u2705 **Auto-Polling** - Automatic status checking with configurable intervals\n- \u2705 **JSON Parsing** - Response data automatically parsed and displayed\n- \u2705 **Multi-Action Support** - Execute device actions, queries, and API calls\n- \u2705 **Result History** - Track command execution history and results\n\n---"
+            },
+            "name": "text - console-header"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "refresh-interval-console",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "RefreshInterval",
+                  "label": "Auto Refresh Interval",
+                  "type": 2,
+                  "isRequired": true,
+                  "typeSettings": {
+                    "additionalResourceOptions": [],
+                    "showDefault": false
+                  },
+                  "jsonData": "[{\"value\":\"10000\",\"label\":\"\ud83d\udfe2 10 seconds\"},{\"value\":\"30000\",\"label\":\"\ud83d\udfe2 30 seconds\"},{\"value\":\"60000\",\"label\":\"\ud83d\udfe1 1 minute\"},{\"value\":\"300000\",\"label\":\"\ud83d\udd35 5 minutes\"},{\"value\":\"0\",\"label\":\"\ud83d\udd34 Manual Only\"}]",
+                  "defaultValue": "30000",
+                  "timeContext": {
+                    "durationMs": 86400000
+                  }
+                },
+                {
+                  "id": "command-type-console",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "CommandType",
+                  "label": "Command Type",
+                  "type": 2,
+                  "isRequired": true,
+                  "typeSettings": {
+                    "additionalResourceOptions": [],
+                    "showDefault": false
+                  },
+                  "jsonData": "[{\"value\":\"dispatcher\",\"label\":\"\ud83c\udfaf Device Actions (Isolate, Scan, etc.)\"},{\"value\":\"hunt\",\"label\":\"\ud83d\udd0d Advanced Hunting Query\"},{\"value\":\"ti\",\"label\":\"\ud83d\udccd Threat Intelligence\"},{\"value\":\"incident\",\"label\":\"\ud83d\udea8 Incident Management\"},{\"value\":\"detection\",\"label\":\"\ud83d\udee1\ufe0f Custom Detection\"}]",
+                  "defaultValue": "dispatcher",
+                  "timeContext": {
+                    "durationMs": 86400000
+                  }
+                },
+                {
+                  "id": "action-name-console",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "ActionName",
+                  "label": "Action/Command",
+                  "type": 2,
+                  "isRequired": true,
+                  "typeSettings": {
+                    "additionalResourceOptions": [],
+                    "showDefault": false
+                  },
+                  "jsonData": "[{\"value\":\"isolate\",\"label\":\"Isolate Device\"},{\"value\":\"unisolate\",\"label\":\"Unisolate Device\"},{\"value\":\"scan\",\"label\":\"Run Antivirus Scan\"},{\"value\":\"collect\",\"label\":\"Collect Investigation Package\"},{\"value\":\"restrict\",\"label\":\"Restrict App Execution\"},{\"value\":\"unrestrict\",\"label\":\"Unrestrict App Execution\"},{\"value\":\"stopandquarantine\",\"label\":\"Stop & Quarantine File\"},{\"value\":\"runscript\",\"label\":\"Run Live Response Script\"},{\"value\":\"getfile\",\"label\":\"Get File (Live Response)\"},{\"value\":\"putfile\",\"label\":\"Put File (Live Response)\"}]",
+                  "defaultValue": "isolate",
+                  "timeContext": {
+                    "durationMs": 86400000
+                  }
+                },
+                {
+                  "id": "device-ids-console",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "DeviceIds",
+                  "label": "Target Device IDs (comma-separated)",
+                  "type": 1,
+                  "isRequired": false,
+                  "description": "Enter one or more device IDs separated by commas",
+                  "timeContext": {
+                    "durationMs": 86400000
+                  }
+                },
+                {
+                  "id": "command-params-console",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "CommandParams",
+                  "label": "Additional Parameters (JSON)",
+                  "type": 1,
+                  "isRequired": false,
+                  "description": "Optional JSON parameters for the command",
+                  "timeContext": {
+                    "durationMs": 86400000
+                  }
+                },
+                {
+                  "id": "action-id-console",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "ActionId",
+                  "label": "Action ID (for polling)",
+                  "type": 1,
+                  "isRequired": false,
+                  "isHiddenWhenLocked": true,
+                  "timeContext": {
+                    "durationMs": 86400000
+                  }
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "name": "parameters - console-config"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---\n### \ud83d\ude80 Step 1: Execute Command\n\nClick the button below to execute the selected command. The Function App will process the request asynchronously."
+            },
+            "name": "text - step1-header"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/MDEDispatcher\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"action\",\"value\":\"{CommandType}\"},{\"key\":\"actionName\",\"value\":\"{ActionName}\"},{\"key\":\"deviceIds\",\"value\":\"{DeviceIds}\"},{\"key\":\"params\",\"value\":\"{CommandParams}\"}],\"batchDisabled\":false,\"transformers\":null}",
+              "size": 4,
+              "title": "\ud83c\udfaf Command Execution Status",
+              "noDataMessage": "Click 'Run Query' to execute command",
+              "queryType": 12,
+              "visualization": "table"
+            },
+            "name": "query - execute-command"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---\n### \u23f3 Step 2: Poll for Results\n\nAutomatically polls for command completion. Refresh interval: **{RefreshInterval}ms**"
+            },
+            "name": "text - step2-header"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"GET\",\"path\":\"{FunctionAppUrl}/api/MDEDispatcher\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"action\",\"value\":\"getstatus\"},{\"key\":\"actionId\",\"value\":\"{ActionId}\"}],\"batchDisabled\":false,\"transformers\":null}",
+              "size": 0,
+              "title": "\ud83d\udcca Action Status (Auto-refresh)",
+              "noDataMessage": "No active actions to poll. Execute a command first.",
+              "queryType": 12,
+              "visualization": "table",
+              "gridSettings": {
+                "formatters": [
+                  {
+                    "columnMatch": "status",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "colors",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Succeeded",
+                          "representation": "green",
+                          "text": "\u2705 {0}"
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "InProgress",
+                          "representation": "orange",
+                          "text": "\u23f3 {0}"
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Pending",
+                          "representation": "yellow",
+                          "text": "\u23f8\ufe0f {0}"
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Failed",
+                          "representation": "red",
+                          "text": "\u274c {0}"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            "conditionalVisibility": {
+              "parameterName": "ActionId",
+              "comparison": "isNotEqualTo",
+              "value": ""
+            },
+            "name": "query - poll-status"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---\n### \ud83d\udce5 Step 3: View Results\n\nParsed JSON results from the command execution."
+            },
+            "name": "text - step3-header"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"GET\",\"path\":\"{FunctionAppUrl}/api/MDEDispatcher\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"action\",\"value\":\"getresults\"},{\"key\":\"actionId\",\"value\":\"{ActionId}\"}],\"batchDisabled\":false,\"transformers\":null}",
+              "size": 0,
+              "title": "\ud83d\udccb Command Results",
+              "noDataMessage": "No results available yet. Command may still be executing.",
+              "exportToExcelOptions": "all",
+              "queryType": 12,
+              "visualization": "table"
+            },
+            "conditionalVisibility": {
+              "parameterName": "ActionId",
+              "comparison": "isNotEqualTo",
+              "value": ""
+            },
+            "name": "query - results"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---\n### \ud83d\udcda Command History\n\nRecent command executions and their status."
+            },
+            "name": "text - history-header"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"GET\",\"path\":\"{FunctionAppUrl}/api/MDEDispatcher\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"action\",\"value\":\"history\"},{\"key\":\"limit\",\"value\":\"20\"}],\"batchDisabled\":false,\"transformers\":null}",
+              "size": 4,
+              "title": "\ud83d\udcca Execution History (Last 20)",
+              "noDataMessage": "No command history available.",
+              "queryType": 12,
+              "visualization": "table",
+              "gridSettings": {
+                "formatters": [
+                  {
+                    "columnMatch": "status",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "colors",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Succeeded",
+                          "representation": "green",
+                          "text": "\u2705 {0}"
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Failed",
+                          "representation": "red",
+                          "text": "\u274c {0}"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "columnMatch": "timestamp",
+                    "formatter": 6
+                  }
+                ]
+              }
+            },
+            "name": "query - history"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---\n### \ud83d\udd04 How It Works\n\n**Architecture:**\n1. **Execute** \u2192 Sends command to Function App with parameters\n2. **Function App** \u2192 Authenticates with MDE API using managed identity\n3. **Poll** \u2192 Automatically checks action status at configured interval\n4. **Parse** \u2192 Extracts and displays JSON results in table format\n5. **History** \u2192 Tracks all executions for audit and review\n\n**Key Features:**\n- \u2705 Async execution - commands run in background\n- \u2705 Auto-polling - no manual status checking needed\n- \u2705 JSON parsing - structured data display\n- \u2705 Multi-tenant - works across different tenants\n- \u2705 Audit trail - complete execution history\n\n**Supported Commands:**\n- Device actions (isolate, scan, collect packages)\n- Live Response operations (run scripts, get/put files)\n- Advanced Hunting queries\n- Threat Intelligence management\n- Incident and detection operations\n\n---\n\n> \ud83d\udca1 **Tip:** Set auto-refresh to 30 seconds for active monitoring, or disable for manual control."
+            },
+            "name": "text - console-footer"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "console"
+      },
+      "name": "group - console"
     }
   ],
   "defaultResourceIds": [
