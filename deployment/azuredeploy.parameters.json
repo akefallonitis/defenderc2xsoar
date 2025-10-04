@@ -10,6 +10,15 @@
     },
     "enableManagedIdentity": {
       "value": true
+    },
+    "tagProject": {
+      "value": "DefenderC2XSOAR"
+    },
+    "tagCreatedBy": {
+      "value": "ARM-Template"
+    },
+    "tagDeleteAt": {
+      "value": ""
     }
   }
 }

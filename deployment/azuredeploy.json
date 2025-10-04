@@ -37,13 +37,39 @@
       "metadata": {
         "description": "Enable system-assigned managed identity for the function app"
       }
+    },
+    "tagProject": {
+      "type": "string",
+      "defaultValue": "DefenderC2XSOAR",
+      "metadata": {
+        "description": "Project tag for resource organization and cost tracking"
+      }
+    },
+    "tagCreatedBy": {
+      "type": "string",
+      "defaultValue": "[concat('ARM-', parameters('functionAppName'))]",
+      "metadata": {
+        "description": "CreatedBy tag to identify who created the resource"
+      }
+    },
+    "tagDeleteAt": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "DeleteAt tag for resource lifecycle management (ISO 8601 date format, e.g., 2024-12-31)"
+      }
     }
   },
   "variables": {
     "functionAppName": "[parameters('functionAppName')]",
     "hostingPlanName": "[concat(parameters('functionAppName'), '-plan')]",
     "storageAccountName": "[concat('storage', uniqueString(resourceGroup().id))]",
-    "functionWorkerRuntime": "[parameters('runtime')]"
+    "functionWorkerRuntime": "[parameters('runtime')]",
+    "resourceTags": {
+      "Project": "[parameters('tagProject')]",
+      "CreatedBy": "[parameters('tagCreatedBy')]",
+      "DeleteAt": "[parameters('tagDeleteAt')]"
+    }
   },
   "resources": [
     {
@@ -51,6 +77,7 @@
       "apiVersion": "2021-08-01",
       "name": "[variables('storageAccountName')]",
       "location": "[parameters('location')]",
+      "tags": "[variables('resourceTags')]",
       "sku": {
         "name": "Standard_LRS"
       },
@@ -65,6 +92,7 @@
       "apiVersion": "2021-03-01",
       "name": "[variables('hostingPlanName')]",
       "location": "[parameters('location')]",
+      "tags": "[variables('resourceTags')]",
       "sku": {
         "name": "Y1",
         "tier": "Dynamic"
@@ -77,6 +105,7 @@
       "name": "[variables('functionAppName')]",
       "location": "[parameters('location')]",
       "kind": "functionapp",
+      "tags": "[variables('resourceTags')]",
       "dependsOn": [
         "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
         "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"

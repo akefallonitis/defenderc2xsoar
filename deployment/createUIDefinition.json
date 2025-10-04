@@ -69,13 +69,70 @@
             }
           }
         ]
+      },
+      {
+        "name": "tags",
+        "label": "Resource Tags",
+        "elements": [
+          {
+            "name": "tagProject",
+            "type": "Microsoft.Common.TextBox",
+            "label": "Project Tag",
+            "defaultValue": "DefenderC2XSOAR",
+            "toolTip": "Project tag for resource organization and cost tracking. Required by Azure Policy.",
+            "constraints": {
+              "required": true,
+              "regex": "^[a-zA-Z0-9_-]+$",
+              "validationMessage": "Project tag must contain only alphanumeric characters, underscores, and hyphens."
+            },
+            "visible": true
+          },
+          {
+            "name": "tagCreatedBy",
+            "type": "Microsoft.Common.TextBox",
+            "label": "CreatedBy Tag",
+            "defaultValue": "",
+            "placeholder": "e.g., john.doe@contoso.com",
+            "toolTip": "CreatedBy tag to identify who created the resource. Required by Azure Policy. If left empty, will default to 'ARM-{functionAppName}'.",
+            "constraints": {
+              "required": false
+            },
+            "visible": true
+          },
+          {
+            "name": "tagDeleteAt",
+            "type": "Microsoft.Common.TextBox",
+            "label": "DeleteAt Tag",
+            "defaultValue": "",
+            "placeholder": "e.g., 2024-12-31",
+            "toolTip": "DeleteAt tag for resource lifecycle management (ISO 8601 date format). Required by Azure Policy. Leave empty if no deletion date is planned.",
+            "constraints": {
+              "required": false,
+              "regex": "^$|^\\d{4}-\\d{2}-\\d{2}$",
+              "validationMessage": "DeleteAt tag must be in ISO 8601 date format (YYYY-MM-DD) or empty."
+            },
+            "visible": true
+          },
+          {
+            "name": "tagsInfoBox",
+            "type": "Microsoft.Common.InfoBox",
+            "visible": true,
+            "options": {
+              "icon": "Info",
+              "text": "These tags are required by Azure Policy. The Project tag is mandatory. CreatedBy and DeleteAt tags can be provided or left with default values."
+            }
+          }
+        ]
       }
     ],
     "outputs": {
       "location": "[location()]",
       "functionAppName": "[basics('functionAppName')]",
       "spnId": "[basics('spnId')]",
-      "enableManagedIdentity": "[steps('settings').enableManagedIdentity]"
+      "enableManagedIdentity": "[steps('settings').enableManagedIdentity]",
+      "tagProject": "[steps('tags').tagProject]",
+      "tagCreatedBy": "[if(empty(steps('tags').tagCreatedBy), concat('ARM-', basics('functionAppName')), steps('tags').tagCreatedBy)]",
+      "tagDeleteAt": "[steps('tags').tagDeleteAt]"
     }
   }
 }
