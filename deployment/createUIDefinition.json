@@ -1,0 +1,81 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/0.1.2-preview/CreateUIDefinition.MultiVm.json#",
+  "handler": "Microsoft.Azure.CreateUIDef",
+  "version": "0.1.2-preview",
+  "parameters": {
+    "basics": [
+      {
+        "name": "functionAppName",
+        "type": "Microsoft.Common.TextBox",
+        "label": "Function App Name",
+        "defaultValue": "",
+        "toolTip": "Enter a globally unique name for your function app. This will be used to create the Azure Function App resource.",
+        "placeholder": "mde-automator-func-prod",
+        "constraints": {
+          "required": true,
+          "regex": "^[a-z0-9][a-z0-9-]{1,58}[a-z0-9]$",
+          "validationMessage": "Function app name must be 3-60 characters, contain only lowercase letters, numbers, and hyphens, and cannot start or end with a hyphen."
+        },
+        "visible": true
+      },
+      {
+        "name": "spnId",
+        "type": "Microsoft.Common.TextBox",
+        "label": "Multi-tenant App Registration (Client ID)",
+        "defaultValue": "",
+        "toolTip": "Enter the Application (client) ID from your multi-tenant app registration. This should be created before deploying this template.",
+        "placeholder": "00000000-0000-0000-0000-000000000000",
+        "constraints": {
+          "required": true,
+          "regex": "^[{]?[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}[}]?$",
+          "validationMessage": "Please enter a valid GUID for the Application (client) ID."
+        },
+        "visible": true
+      }
+    ],
+    "steps": [
+      {
+        "name": "settings",
+        "label": "Function App Settings",
+        "elements": [
+          {
+            "name": "enableManagedIdentity",
+            "type": "Microsoft.Common.OptionsGroup",
+            "label": "Enable Managed Identity",
+            "defaultValue": "Yes",
+            "toolTip": "Enable system-assigned managed identity for the function app. This is recommended for secure authentication without storing secrets.",
+            "constraints": {
+              "allowedValues": [
+                {
+                  "label": "Yes",
+                  "value": true
+                },
+                {
+                  "label": "No",
+                  "value": false
+                }
+              ],
+              "required": true
+            },
+            "visible": true
+          },
+          {
+            "name": "infoBox",
+            "type": "Microsoft.Common.InfoBox",
+            "visible": true,
+            "options": {
+              "icon": "Info",
+              "text": "After deployment completes, you will need to: 1) Configure federated identity credentials for the managed identity, 2) Deploy the function code, and 3) Deploy the workbook template. See the documentation for detailed instructions."
+            }
+          }
+        ]
+      }
+    ],
+    "outputs": {
+      "location": "[location()]",
+      "functionAppName": "[basics('functionAppName')]",
+      "spnId": "[basics('spnId')]",
+      "enableManagedIdentity": "[steps('settings').enableManagedIdentity]"
+    }
+  }
+}
