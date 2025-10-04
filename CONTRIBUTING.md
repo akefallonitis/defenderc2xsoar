@@ -367,7 +367,7 @@ Looking for contribution ideas? Consider:
 - [ ] Add batch operation progress tracking
 
 ### Medium Priority
-- [ ] Create PowerShell module for local use
+- [x] Create PowerShell module for local use (✨ See [standalone/](standalone/))
 - [ ] Add more custom detection examples
 - [ ] Improve workbook performance
 - [ ] Add export functionality

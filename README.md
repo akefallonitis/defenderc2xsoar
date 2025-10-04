@@ -2,14 +2,27 @@
 
 A port of [MDEAutomator](https://github.com/msdirtbag/MDEAutomator) using Azure Sentinel Workbooks instead of webapp for multi-tenant Microsoft Defender for Endpoint automation.
 
+## 🆕 Standalone PowerShell Version Available!
+
+> **New!** Looking for a local version that doesn't require Azure infrastructure? Check out the **[Standalone PowerShell Framework](standalone/README.md)** - a menu-driven UI that runs entirely on your local machine with zero cloud dependencies!
+
 ## Overview
 
-This project provides a workbook-based approach to MDE automation without requiring Azure Key Vault for secrets management. Instead, it uses:
+This project provides **two deployment options** for MDE automation:
+
+### Azure-based Version (This README)
 - **Azure Workbooks** - Interactive UI for MDE operations
 - **Azure Resource Graph** - Multi-tenant subscription/workspace selection
 - **Managed Identity** - Secure authentication without Key Vault
 - **ARM Actions/Custom Endpoints** - Function app integration
 - **Multi-tenant Support** - Single deployment for multiple tenants
+
+### Standalone PowerShell Version ([Documentation](standalone/README.md))
+- **Local PowerShell Framework** - Runs on your workstation
+- **Menu-driven UI** - Similar to original MDEAutomator
+- **No Azure Required** - Zero cloud infrastructure costs
+- **Secure Credential Storage** - Encrypted using Windows DPAPI
+- **Quick Setup** - Ready in 10 minutes
 
 ## Features
 
@@ -336,13 +349,16 @@ This repository includes several example workbooks that demonstrate advanced fun
 
 ## Differences from Original MDEAutomator
 
-| Feature | Original MDEAutomator | defenderc2xsoar |
-|---------|----------------------|-----------------|
-| UI | Python Flask webapp | Azure Workbook |
-| Authentication | Key Vault for secrets | Managed Identity + Federated Auth |
-| Deployment | Complex IaC with VNet | Simplified ARM template |
-| Multi-tenancy | Supported | Supported (simplified) |
-| Cost | ~$220/month | ~$50/month (no App Service, OpenAI optional) |
+| Feature | Original MDEAutomator | defenderc2xsoar (Azure) | defenderc2xsoar (Standalone) |
+|---------|----------------------|------------------------|------------------------------|
+| UI | Python Flask webapp | Azure Workbook | PowerShell Menu |
+| Authentication | Key Vault for secrets | Managed Identity + Federated Auth | App Registration + Secret |
+| Deployment | Complex IaC with VNet | Simplified ARM template | Copy files + Run |
+| Multi-tenancy | Supported | Supported (simplified) | Single tenant |
+| Infrastructure | Azure + OpenAI | Azure Functions | None (local) |
+| Cost | ~$220/month | ~$50/month | **Free** (no Azure costs) |
+| Setup Time | ~2 hours | ~1 hour | **~10 minutes** |
+| Best For | Large enterprises | Multi-tenant MSPs | SOC analysts, small teams |
 
 ## Troubleshooting
 
