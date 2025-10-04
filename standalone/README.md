@@ -17,6 +17,7 @@ This standalone framework provides a PowerShell-based interface for managing Mic
 - **🔍 Advanced Hunting** - Execute custom KQL queries
 - **📋 Incident Management** - View and manage security incidents
 - **🎨 Custom Detections** - Manage custom detection rules
+- **🎮 Live Response Shell** - Interactive shell with file upload/download and command execution
 - **💾 Export Capabilities** - Export results to CSV for analysis
 
 ## 🔧 Prerequisites
@@ -157,6 +158,100 @@ After launching, you'll see the main menu:
 3. Enter device ID
 4. View detailed device information
 
+### 🎮 Live Response Interactive Shell
+
+The Live Response feature provides an interactive shell for executing commands on remote devices with real-time output and command history.
+
+#### Starting an Interactive Session
+
+1. Select **8** (Live Response Operations)
+2. Select **1** (Interactive Shell)
+3. Enter the Device ID to connect to
+4. Wait for the session to become active
+5. You'll enter the interactive shell with black/green UI theme
+
+#### Available Commands in Interactive Shell
+
+```
+LR> help                         # Show all available commands
+LR> dir <path>                   # List directory contents
+LR> getfile <remote_path>        # Download file from device
+LR> putfile <local_path>         # Upload file to device
+LR> runscript <script_name>      # Execute script from library
+LR> run <command>                # Execute arbitrary command
+LR> history                      # Show command history
+LR> clear                        # Clear screen
+LR> exit                         # Close session and return
+```
+
+#### Features
+
+- **🖥️ Split-Screen Display** - Command history panel + live output
+- **⚡ Async Execution** - Commands run asynchronously with automatic polling
+- **🎨 Black/Green Theme** - Classic terminal aesthetic for Live Response
+- **📊 Command History** - Track all executed commands with status
+- **✅ Status Indicators** - Visual feedback (✓ Completed, ✗ Failed, ⏳ InProgress)
+- **🔁 Auto-Polling** - Respects API rate limits (3-5 second intervals)
+- **📤 File Operations** - Upload/download files seamlessly
+
+#### Example: Investigating a Device
+
+```
+LR> dir C:\Users\user\Downloads
+⏳ Listing directory: C:\Users\user\Downloads
+✓ Directory listing:
+[Files listed here]
+
+LR> getfile C:\Users\user\Downloads\suspicious.exe
+Enter local destination path: C:\investigation\suspicious.exe
+⏳ Downloading file: C:\Users\user\Downloads\suspicious.exe
+✓ File downloaded to: C:\investigation\suspicious.exe
+
+LR> run Get-FileHash -Path C:\Users\user\Downloads\suspicious.exe
+⏳ Executing: Get-FileHash -Path C:\Users\user\Downloads\suspicious.exe
+✓ Command output:
+[Hash information displayed]
+
+LR> history
+[Shows all commands executed in this session]
+
+LR> exit
+Closing session...
+✓ Session closed
+```
+
+#### Quick File Operations (Without Interactive Shell)
+
+If you only need to perform a single operation:
+
+**Download a File:**
+1. Select **8** (Live Response Operations)
+2. Select **3** (Get File from Device)
+3. Enter Device ID, remote path, and local destination
+
+**Upload a File:**
+1. Select **8** (Live Response Operations)
+2. Select **4** (Put File to Device)
+3. Enter Device ID, local file path, and remote destination
+
+**Run a Script:**
+1. Select **8** (Live Response Operations)
+2. Select **2** (Run Live Response Script)
+3. Enter Device ID and script name from library
+
+**View Library Scripts:**
+1. Select **8** (Live Response Operations)
+2. Select **5** (List Available Scripts in Library)
+
+#### Technical Details
+
+- **Session Management** - Automatic session creation and cleanup
+- **API Rate Limiting** - 3-5 second polling intervals to respect limits
+- **Multi-Tenancy** - Switch between tenants using configuration
+- **Command Parsing** - Smart parsing of command arguments
+- **Error Handling** - Clear error messages and recovery
+- **Transcript Support** - Full output capture from executed commands
+
 ## 🔒 Security Features
 
 ### Credential Storage
@@ -192,7 +287,8 @@ standalone/
 │   ├── MDEThreatIntel.psm1        # Threat intelligence
 │   ├── MDEHunting.psm1            # Advanced hunting
 │   ├── MDEIncident.psm1           # Incident management
-│   └── MDEDetection.psm1          # Custom detections
+│   ├── MDEDetection.psm1          # Custom detections
+│   └── MDELiveResponse.psm1       # Live Response operations
 ├── config/                        # Configuration files (created at runtime)
 ├── examples/                      # Example scripts and queries
 └── README.md                      # This file
