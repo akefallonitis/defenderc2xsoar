@@ -1,0 +1,297 @@
+{
+  "version": "Notebook/1.0",
+  "items": [
+    {
+      "type": 1,
+      "content": {
+        "json": "# MDEAutomator Workbook\n\n> A port of [MDEAutomator](https://github.com/msdirtbag/MDEAutomator) using Azure Sentinel Workbooks for multi-tenant Microsoft Defender for Endpoint automation.\n\n---\n\n## Configuration\n\nConfigure your tenant and function app settings below:"
+      },
+      "name": "text - header"
+    },
+    {
+      "type": 9,
+      "content": {
+        "version": "KqlParameterItem/1.0",
+        "crossComponentResources": [
+          "{Subscription}"
+        ],
+        "parameters": [
+          {
+            "id": "1f74ed9a-e3ed-498d-bd5b-f68f3836a117",
+            "version": "KqlParameterItem/1.0",
+            "name": "Subscription",
+            "type": 6,
+            "isRequired": true,
+            "multiSelect": true,
+            "quote": "'",
+            "delimiter": ",",
+            "typeSettings": {
+              "additionalResourceOptions": [
+                "value::all"
+              ],
+              "includeAll": false,
+              "showDefault": false
+            },
+            "timeContext": {
+              "durationMs": 86400000
+            },
+            "defaultValue": "value::all",
+            "value": [
+              "value::all"
+            ]
+          },
+          {
+            "id": "b616a3a3-4271-4208-b1a9-a92a78efed08",
+            "version": "KqlParameterItem/1.0",
+            "name": "Workspace",
+            "type": 5,
+            "isRequired": true,
+            "multiSelect": true,
+            "quote": "'",
+            "delimiter": ",",
+            "query": "Resources\n| where type =~ 'microsoft.operationalinsights/workspaces'\n| project id",
+            "crossComponentResources": [
+              "{Subscription}"
+            ],
+            "typeSettings": {
+              "additionalResourceOptions": [
+                "value::all"
+              ],
+              "showDefault": false
+            },
+            "timeContext": {
+              "durationMs": 86400000
+            },
+            "defaultValue": "value::all",
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources",
+            "value": [
+              "value::all"
+            ]
+          },
+          {
+            "id": "8c4e5f38-a6cd-4642-9f0d-2f2e5d7b3c1a",
+            "version": "KqlParameterItem/1.0",
+            "name": "TenantId",
+            "label": "Target Tenant ID",
+            "type": 1,
+            "isRequired": true,
+            "timeContext": {
+              "durationMs": 86400000
+            },
+            "value": ""
+          },
+          {
+            "id": "9d5e6f49-b7de-5753-a0e1-3f3f6e8c4d2b",
+            "version": "KqlParameterItem/1.0",
+            "name": "FunctionAppUrl",
+            "label": "Function App Base URL",
+            "type": 1,
+            "isRequired": true,
+            "description": "Base URL of your Azure Function App (e.g., https://your-function-app.azurewebsites.net)",
+            "timeContext": {
+              "durationMs": 86400000
+            },
+            "value": ""
+          },
+          {
+            "id": "a1e7f5a-c8ef-6864-b1f2-4g4g7f9d5e3c",
+            "version": "KqlParameterItem/1.0",
+            "name": "SpnId",
+            "label": "Service Principal (App) ID",
+            "type": 1,
+            "isRequired": true,
+            "description": "Multi-tenant App Registration Client ID",
+            "timeContext": {
+              "durationMs": 86400000
+            },
+            "value": ""
+          },
+          {
+            "id": "b2f8g6b-d9fg-7975-c2g3-5h5h8g0e6f4d",
+            "version": "KqlParameterItem/1.0",
+            "name": "TimeRange",
+            "label": "Time Range",
+            "type": 4,
+            "isRequired": true,
+            "typeSettings": {
+              "selectableValues": [
+                {
+                  "durationMs": 300000
+                },
+                {
+                  "durationMs": 900000
+                },
+                {
+                  "durationMs": 1800000
+                },
+                {
+                  "durationMs": 3600000
+                },
+                {
+                  "durationMs": 14400000
+                },
+                {
+                  "durationMs": 43200000
+                },
+                {
+                  "durationMs": 86400000
+                },
+                {
+                  "durationMs": 172800000
+                },
+                {
+                  "durationMs": 259200000
+                },
+                {
+                  "durationMs": 604800000
+                },
+                {
+                  "durationMs": 1209600000
+                },
+                {
+                  "durationMs": 2419200000
+                },
+                {
+                  "durationMs": 2592000000
+                },
+                {
+                  "durationMs": 5184000000
+                },
+                {
+                  "durationMs": 7776000000
+                }
+              ],
+              "allowCustom": true
+            },
+            "timeContext": {
+              "durationMs": 86400000
+            },
+            "value": {
+              "durationMs": 2592000000
+            }
+          }
+        ],
+        "style": "pills",
+        "queryType": 1,
+        "resourceType": "microsoft.resourcegraph/resources"
+      },
+      "name": "parameters - configuration"
+    },
+    {
+      "type": 11,
+      "content": {
+        "version": "LinkItem/1.0",
+        "style": "tabs",
+        "links": [
+          {
+            "id": "4e8c3d7a-2b1f-4a8d-9e5c-1a2b3c4d5e6f",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "MDEAutomator",
+            "subTarget": "automator",
+            "style": "link"
+          },
+          {
+            "id": "5f9d4e8b-3c2g-5b9e-0f6d-2b3c4d5e6f7g",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "Threat Intel Manager",
+            "subTarget": "threatintel",
+            "style": "link"
+          },
+          {
+            "id": "6g0e5f9c-4d3h-6c0f-1g7e-3c4d5e6f7g8h",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "Action Manager",
+            "subTarget": "actions",
+            "style": "link"
+          },
+          {
+            "id": "7h1f6g0d-5e4i-7d1g-2h8f-4d5e6f7g8h9i",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "Hunt Manager",
+            "subTarget": "hunting",
+            "style": "link"
+          },
+          {
+            "id": "8i2g7h1e-6f5j-8e2h-3i9g-5e6f7g8h9i0j",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "Incident Manager",
+            "subTarget": "incidents",
+            "style": "link"
+          },
+          {
+            "id": "9j3h8i2f-7g6k-9f3i-4j0h-6f7g8h9i0j1k",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "Custom Detection Manager",
+            "subTarget": "detections",
+            "style": "link"
+          }
+        ]
+      },
+      "name": "links - tabs"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "## MDEAutomator - Device Response Actions\n\n### Dispatcher Actions\nPerform bulk response actions across your MDE endpoints:\n\n- **Isolate Device** - Network isolate devices (selective isolation with exclusion rules)\n- **Collect Investigation Package** - Gather forensic artifacts from endpoints\n- **Run Antivirus Scan** - Execute full disk scan on devices\n- **Restrict App Execution** - Allow only Microsoft-signed binaries\n- **Stop & Quarantine File** - Stop and quarantine malicious files\n\n### Orchestrator Actions\nExecute Live Response operations:\n\n- **Run Live Response Script** - Execute PowerShell scripts from LR library\n- **Collect File** - Retrieve files from endpoints\n- **Put File** - Push files to endpoints from LR library\n- **Upload to Live Response Library** - Add scripts/files to library"
+            },
+            "name": "text - automator-intro"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "c3i9h4j3g-8h7l-0g4j-5k1i-7g8h9i0j1k2l",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "ActionType",
+                  "label": "Select Action",
+                  "type": 2,
+                  "isRequired": true,
+                  "typeSettings": {
+                    "additionalResourceOptions": [],
+                    "showDefault": false
+                  },
+                  "jsonData": "[\"Isolate Device\", \"Unisolate Device\", \"Restrict App Execution\", \"Unrestrict App Execution\", \"Collect Investigation Package\", \"Run Antivirus Scan\", \"Stop & Quarantine File\", \"Run Live Response Script\", \"Get File\", \"Put File\", \"Upload to LR Library\"]",
+                  "timeContext": {
+                    "durationMs": 86400000
+                  }
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "name": "parameters - automator-actions"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "automator"
+      },
+      "name": "group - automator"
+    }
+  ],
+  "defaultResourceIds": [
+    "/subscriptions/PLACEHOLDER"
+  ],
+  "fallbackResourceIds": [
+    "Azure Monitor"
+  ],
+  "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
+}

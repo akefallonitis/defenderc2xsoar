@@ -1,0 +1,45 @@
+# Azure Functions artifacts
+bin
+obj
+appsettings.json
+local.settings.json
+__pycache__
+*.pyc
+.python_packages
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Secrets (never commit)
+*.secret
+*.key
+*.pem
+.env
+
+# Node modules (if using any JS tooling)
+node_modules/
+
+# Azure specific
+.azure/
