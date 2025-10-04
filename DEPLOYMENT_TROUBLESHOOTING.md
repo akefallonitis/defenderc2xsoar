@@ -10,7 +10,7 @@ When clicking the "Deploy to Azure" button, you may encounter:
 
 ```
 There was an error downloading the template from URI 
-'https://raw.githubusercontent.com/akefallonitis/defenderc2xsoar/main/deployment/azuredeploy.json'. 
+'https://raw.githubusercontent.com/akefallonitis/defenderc2xsoar/refs/heads/main/deployment/azuredeploy.json'. 
 Ensure that the template is publicly accessible and that the publisher has enabled CORS policy on the endpoint.
 ```
 
@@ -155,7 +155,7 @@ If the template is on a different branch:
 1. Identify the branch name (e.g., `copilot/fix-31814759-fc89-4714-b324-60e7fff2377f`)
 2. Update the URL in the Deploy button:
    ```
-   https://raw.githubusercontent.com/akefallonitis/defenderc2xsoar/<BRANCH_NAME>/deployment/azuredeploy.json
+   https://raw.githubusercontent.com/akefallonitis/defenderc2xsoar/refs/heads/<BRANCH_NAME>/deployment/azuredeploy.json
    ```
 3. URL-encode the branch name if it contains special characters
 4. Use the custom URL with the Deploy button template
@@ -166,7 +166,7 @@ Download and use locally:
 
 ```bash
 # Download the template
-curl -o azuredeploy.json https://raw.githubusercontent.com/akefallonitis/defenderc2xsoar/main/deployment/azuredeploy.json
+curl -o azuredeploy.json https://raw.githubusercontent.com/akefallonitis/defenderc2xsoar/refs/heads/main/deployment/azuredeploy.json
 
 # Deploy using Azure CLI
 az deployment group create \
@@ -292,19 +292,19 @@ To verify the template is accessible:
 
 1. **Browser**: Navigate to:
    ```
-   https://raw.githubusercontent.com/akefallonitis/defenderc2xsoar/main/deployment/azuredeploy.json
+   https://raw.githubusercontent.com/akefallonitis/defenderc2xsoar/refs/heads/main/deployment/azuredeploy.json
    ```
 
 2. **curl**:
    ```bash
-   curl -I https://raw.githubusercontent.com/akefallonitis/defenderc2xsoar/main/deployment/azuredeploy.json
+   curl -I https://raw.githubusercontent.com/akefallonitis/defenderc2xsoar/refs/heads/main/deployment/azuredeploy.json
    ```
    
    Should return `HTTP/2 200`
 
 3. **PowerShell**:
    ```powershell
-   Invoke-WebRequest -Uri "https://raw.githubusercontent.com/akefallonitis/defenderc2xsoar/main/deployment/azuredeploy.json" -Method Head
+   Invoke-WebRequest -Uri "https://raw.githubusercontent.com/akefallonitis/defenderc2xsoar/refs/heads/main/deployment/azuredeploy.json" -Method Head
    ```
 
 If any of these fail, the issue is with repository access or branch availability.

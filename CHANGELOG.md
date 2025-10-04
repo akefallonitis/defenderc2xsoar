@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **Deploy to Azure Button**: Updated GitHub raw URL format from `/main/` to `/refs/heads/main/` to match GitHub's proper reference format (fixes template download errors)
+- All deployment documentation URLs updated to use correct GitHub raw content URL format
+
 ### Added
 
 #### Interactive Console Feature 🖥️
