@@ -1,0 +1,154 @@
+// Sample Advanced Hunting Queries for MDE Automator Local
+// Copy and paste these into the Advanced Hunting menu
+
+// ============================================================================
+// 1. Suspicious PowerShell Activity (Last 7 Days)
+// ============================================================================
+DeviceProcessEvents
+| where Timestamp > ago(7d)
+| where FileName =~ "powershell.exe" or FileName =~ "pwsh.exe"
+| where ProcessCommandLine has_any ("-enc", "-encodedcommand", "downloadstring", "iex", "invoke-expression", "bypass")
+| project Timestamp, DeviceName, AccountName, ProcessCommandLine, InitiatingProcessFileName
+| order by Timestamp desc
+
+// ============================================================================
+// 2. Failed Logon Attempts (Multiple Failures)
+// ============================================================================
+DeviceLogonEvents
+| where Timestamp > ago(24h)
+| where ActionType == "LogonFailed"
+| summarize FailedAttempts = count() by DeviceName, AccountName, LogonType
+| where FailedAttempts > 5
+| order by FailedAttempts desc
+
+// ============================================================================
+// 3. Files Written to Startup Folders
+// ============================================================================
+DeviceFileEvents
+| where Timestamp > ago(7d)
+| where FolderPath has_any ("\\Startup\\", "\\Start Menu\\Programs\\Startup\\")
+| where ActionType == "FileCreated"
+| project Timestamp, DeviceName, FileName, FolderPath, InitiatingProcessAccountName, SHA256
+| order by Timestamp desc
+
+// ============================================================================
+// 4. Suspicious Network Connections to High Ports
+// ============================================================================
+DeviceNetworkEvents
+| where Timestamp > ago(24h)
+| where RemotePort > 30000
+| where InitiatingProcessFileName !in~ ("chrome.exe", "msedge.exe", "firefox.exe")
+| project Timestamp, DeviceName, InitiatingProcessFileName, RemoteIP, RemotePort, RemoteUrl
+| order by Timestamp desc
+
+// ============================================================================
+// 5. Credential Dumping Tools (LSASS Access)
+// ============================================================================
+DeviceProcessEvents
+| where Timestamp > ago(7d)
+| where ProcessCommandLine has_any ("lsass", "sekurlsa", "mimikatz", "procdump")
+    or FileName in~ ("procdump.exe", "procdump64.exe", "mimikatz.exe")
+| project Timestamp, DeviceName, AccountName, FileName, ProcessCommandLine, SHA256
+| order by Timestamp desc
+
+// ============================================================================
+// 6. Scheduled Task Creation
+// ============================================================================
+DeviceProcessEvents
+| where Timestamp > ago(7d)
+| where FileName =~ "schtasks.exe"
+| where ProcessCommandLine has "/create"
+| project Timestamp, DeviceName, AccountName, ProcessCommandLine, InitiatingProcessFileName
+| order by Timestamp desc
+
+// ============================================================================
+// 7. Devices with High Risk Score
+// ============================================================================
+DeviceInfo
+| where Timestamp > ago(1d)
+| summarize arg_max(Timestamp, *) by DeviceId
+| where RiskScore == "High"
+| project DeviceName, OSPlatform, OSVersion, RiskScore, OnboardingStatus, LastSeen = Timestamp
+
+// ============================================================================
+// 8. Unsigned or Suspicious Driver Loading
+// ============================================================================
+DeviceImageLoadEvents
+| where Timestamp > ago(7d)
+| where SHA1 != ""
+| where InitiatingProcessFileName !in~ ("services.exe", "svchost.exe", "system")
+| summarize LoadCount = count() by SHA1, FileName, InitiatingProcessFileName
+| where LoadCount < 10
+| order by LoadCount asc
+
+// ============================================================================
+// 9. Suspicious Registry Modifications
+// ============================================================================
+DeviceRegistryEvents
+| where Timestamp > ago(7d)
+| where RegistryKey has_any ("\\Run", "\\RunOnce", "\\Image File Execution Options", "\\AppInit_DLLs")
+| where ActionType in ("RegistryValueSet", "RegistryKeyCreated")
+| project Timestamp, DeviceName, ActionType, RegistryKey, RegistryValueName, RegistryValueData, InitiatingProcessFileName
+| order by Timestamp desc
+
+// ============================================================================
+// 10. Lateral Movement via Remote Execution
+// ============================================================================
+DeviceProcessEvents
+| where Timestamp > ago(7d)
+| where FileName in~ ("psexec.exe", "psexec64.exe", "wmic.exe", "winrm.exe")
+    or ProcessCommandLine has_any ("invoke-command", "enter-pssession", "wmic /node")
+| project Timestamp, DeviceName, AccountName, FileName, ProcessCommandLine, RemoteDeviceName
+| order by Timestamp desc
+
+// ============================================================================
+// 11. Web Shell Activity (IIS Suspicious Processes)
+// ============================================================================
+DeviceProcessEvents
+| where Timestamp > ago(7d)
+| where InitiatingProcessFileName =~ "w3wp.exe"
+| where FileName !in~ ("conhost.exe")
+| project Timestamp, DeviceName, FileName, ProcessCommandLine, InitiatingProcessCommandLine
+| order by Timestamp desc
+
+// ============================================================================
+// 12. Ransomware Indicators (Mass File Encryption)
+// ============================================================================
+DeviceFileEvents
+| where Timestamp > ago(1h)
+| where ActionType == "FileRenamed"
+| where FileName has_any (".encrypted", ".locked", ".crypto", ".crypt", ".cerber")
+| summarize RenamedFiles = count(), DistinctFolders = dcount(FolderPath) by DeviceName, InitiatingProcessFileName, bin(Timestamp, 5m)
+| where RenamedFiles > 50
+| order by Timestamp desc
+
+// ============================================================================
+// 13. Living-off-the-Land Binaries (LOLBins)
+// ============================================================================
+DeviceProcessEvents
+| where Timestamp > ago(7d)
+| where FileName in~ ("rundll32.exe", "regsvr32.exe", "mshta.exe", "certutil.exe", "bitsadmin.exe")
+| where ProcessCommandLine has_any ("http://", "https://", "ftp://")
+    or ProcessCommandLine has_any ("-decode", "-encode")
+| project Timestamp, DeviceName, AccountName, FileName, ProcessCommandLine
+| order by Timestamp desc
+
+// ============================================================================
+// 14. USB Device Activity
+// ============================================================================
+DeviceEvents
+| where Timestamp > ago(7d)
+| where ActionType == "PnpDeviceConnected"
+| where DeviceDescription has "USB"
+| project Timestamp, DeviceName, ActionType, DeviceDescription, AdditionalFields
+| order by Timestamp desc
+
+// ============================================================================
+// 15. Privilege Escalation Attempts
+// ============================================================================
+DeviceProcessEvents
+| where Timestamp > ago(7d)
+| where ProcessCommandLine has_any ("elevate", "runas", "UAC", "admin", "system")
+    and ProcessCommandLine has_any ("bypass", "disable")
+| project Timestamp, DeviceName, AccountName, FileName, ProcessCommandLine
+| order by Timestamp desc

@@ -7,11 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+#### Standalone PowerShell Framework 🆕
+- **New Standalone Version** for local execution without Azure infrastructure
+  - Complete PowerShell framework in `standalone/` directory
+  - Menu-driven terminal UI similar to original MDEAutomator
+  - Zero Azure infrastructure costs - runs entirely on local workstation
+  - Secure credential storage using Windows DPAPI
+  - Full feature set including:
+    - Device Actions (isolate, scan, restrict, collect packages)
+    - Threat Intelligence management (file, IP, URL indicators)
+    - Advanced Hunting with KQL queries
+    - Incident management
+    - Custom detection management
+  - Comprehensive documentation:
+    - `standalone/README.md` - Complete user guide
+    - `standalone/QUICKSTART.md` - 10-minute setup guide
+    - `standalone/examples/` - Sample hunting queries
+  - PowerShell modules for each operation category
+  - Prerequisites installer script
+  - CSV export functionality
+  - See [standalone/README.md](standalone/README.md) for details
+
 ### Fixed
 - **Deploy to Azure Button**: Updated GitHub raw URL format from `/main/` to `/refs/heads/main/` to match GitHub's proper reference format (fixes template download errors)
 - All deployment documentation URLs updated to use correct GitHub raw content URL format
-
-### Added
 
 #### Interactive Console Feature 🖥️
 - **New Interactive Console Tab** in main workbook (`workbook/MDEAutomatorWorkbook.json`)
