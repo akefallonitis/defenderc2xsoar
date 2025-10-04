@@ -158,6 +158,8 @@ You can deploy using the Azure Portal button or CLI/PowerShell.
 
    [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fakefallonitis%2Fdefenderc2xsoar%2Fmain%2Fdeployment%2Fazuredeploy.json)
 
+   > **⚠️ If the button fails:** See [Option D: Manual Template Deployment](#option-d-manual-template-deployment) below for alternative deployment methods.
+
 2. Fill in the parameters:
    - **Subscription**: Select your Azure subscription
    - **Resource Group**: Create new or select existing
@@ -227,6 +229,33 @@ New-AzResourceGroupDeployment `
 # Get outputs
 (Get-AzResourceGroupDeployment -ResourceGroupName $rgName -Name azuredeploy).Outputs
 ```
+
+#### Option D: Manual Template Deployment
+
+If the "Deploy to Azure" button fails with an error like *"There was an error downloading the template from URI"*:
+
+1. Go to [Azure Portal](https://portal.azure.com)
+2. Search for **"Deploy a custom template"**
+3. Click **"Build your own template in the editor"**
+4. Open [deployment/azuredeploy.json](deployment/azuredeploy.json) in this repository
+5. Copy the entire JSON content
+6. Paste it into the Azure Portal editor
+7. Click **"Save"**
+8. Fill in the required parameters:
+   - **Subscription**: Your Azure subscription
+   - **Resource Group**: Create new or select existing
+   - **Region**: Your preferred Azure region
+   - **Function App Name**: Globally unique name (e.g., `mde-automator-func-prod`)
+   - **Spn Id**: Application (client) ID from Step 1
+   - **Enable Managed Identity**: `true` (default)
+9. Click **"Review + create"** > **"Create"**
+10. Note the deployment outputs after completion
+
+**Why this might be needed:**
+- Template not yet published to `main` branch
+- GitHub rate limiting or temporary issues
+- Browser CORS restrictions
+- Repository access issues
 
 ### Step 3: Configure Federated Identity Credential
 

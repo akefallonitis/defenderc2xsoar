@@ -106,10 +106,13 @@ From `Investigation Insights.json`:
 - Cross-reference queries
 
 ### Adding Console Features
-From `DefenderC2 Advanced Console.json`:
+From `DefenderC2 Advanced Console.json` (now integrated into main workbook):
 - Quick-action buttons
 - Status monitors
 - Simplified interfaces
+- **Interactive Console Tab** - Shell-like interface with async execution and auto-polling
+- Real-time command status monitoring
+- Automatic JSON result parsing
 
 ### Adding Audit Capabilities
 From `Sentinel360-XDR-Auditing.json`:
