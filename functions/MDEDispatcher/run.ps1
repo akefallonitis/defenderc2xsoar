@@ -9,7 +9,6 @@ Write-Host "PowerShell HTTP trigger function processed a request."
 # Get parameters from query string or body
 $action = $Request.Query.action
 $tenantId = $Request.Query.tenantId
-$spnId = $Request.Query.spnId
 $deviceFilter = $Request.Query.deviceFilter
 $deviceIds = $Request.Query.deviceIds
 $scriptName = $Request.Query.scriptName
@@ -19,7 +18,6 @@ $fileHash = $Request.Query.fileHash
 if ($Request.Body) {
     $action = $Request.Body.action ?? $action
     $tenantId = $Request.Body.tenantId ?? $tenantId
-    $spnId = $Request.Body.spnId ?? $spnId
     $deviceFilter = $Request.Body.deviceFilter ?? $deviceFilter
     $deviceIds = $Request.Body.deviceIds ?? $deviceIds
     $scriptName = $Request.Body.scriptName ?? $scriptName
@@ -27,12 +25,27 @@ if ($Request.Body) {
     $fileHash = $Request.Body.fileHash ?? $fileHash
 }
 
+# Get app credentials from environment variables
+$appId = $env:APPID
+$secretId = $env:SECRETID
+
 # Validate required parameters
-if (-not $action -or -not $tenantId -or -not $spnId) {
+if (-not $action -or -not $tenantId) {
     Push-OutputBinding -Name Response -Value ([HttpResponseContext]@{
         StatusCode = [HttpStatusCode]::BadRequest
         Body = @{
-            error = "Missing required parameters: action, tenantId, and spnId are required"
+            error = "Missing required parameters: action and tenantId are required"
+        } | ConvertTo-Json
+    })
+    return
+}
+
+# Validate environment variables are configured
+if (-not $appId -or -not $secretId) {
+    Push-OutputBinding -Name Response -Value ([HttpResponseContext]@{
+        StatusCode = [HttpStatusCode]::InternalServerError
+        Body = @{
+            error = "Function app not configured: APPID and SECRETID environment variables must be set"
         } | ConvertTo-Json
     })
     return
@@ -42,9 +55,9 @@ try {
     # Import MDEAutomator module (you'll need to include this in your function app)
     # Import-Module MDEAutomator -ErrorAction Stop
 
-    # Connect to MDE using Managed Identity and Federated Auth
-    # In production, use Connect-MDE with managed identity
-    # $token = Connect-MDE -SpnId $spnId -ManagedIdentityId $env:MSI_CLIENT_ID -TenantId $tenantId
+    # Connect to MDE using App Registration with Client Secret
+    # In production, use Connect-MDE with app credentials from environment variables
+    # $token = Connect-MDE -AppId $appId -ClientSecret $secretId -TenantId $tenantId
 
     # For demonstration, simulate the response
     $result = @{

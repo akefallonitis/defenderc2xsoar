@@ -31,11 +31,35 @@
         "description": "Multi-tenant App Registration (Service Principal) Client ID"
       }
     },
+    "spnSecret": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Multi-tenant App Registration (Service Principal) Client Secret"
+      }
+    },
     "enableManagedIdentity": {
       "type": "bool",
       "defaultValue": true,
       "metadata": {
         "description": "Enable system-assigned managed identity for the function app"
+      }
+    },
+    "projectTag": {
+      "type": "string",
+      "metadata": {
+        "description": "Value for the 'Project' tag required by Azure Policy"
+      }
+    },
+    "createdByTag": {
+      "type": "string",
+      "metadata": {
+        "description": "Value for the 'CreatedBy' tag required by Azure Policy"
+      }
+    },
+    "deleteAtTag": {
+      "type": "string",
+      "metadata": {
+        "description": "Value for the 'DeleteAt' tag required by Azure Policy (e.g., '2025-12-31' or 'Never')"
       }
     }
   },
@@ -51,6 +75,11 @@
       "apiVersion": "2021-08-01",
       "name": "[variables('storageAccountName')]",
       "location": "[parameters('location')]",
+      "tags": {
+        "Project": "[parameters('projectTag')]",
+        "CreatedBy": "[parameters('createdByTag')]",
+        "DeleteAt": "[parameters('deleteAtTag')]"
+      },
       "sku": {
         "name": "Standard_LRS"
       },
@@ -65,6 +94,11 @@
       "apiVersion": "2021-03-01",
       "name": "[variables('hostingPlanName')]",
       "location": "[parameters('location')]",
+      "tags": {
+        "Project": "[parameters('projectTag')]",
+        "CreatedBy": "[parameters('createdByTag')]",
+        "DeleteAt": "[parameters('deleteAtTag')]"
+      },
       "sku": {
         "name": "Y1",
         "tier": "Dynamic"
@@ -77,6 +111,11 @@
       "name": "[variables('functionAppName')]",
       "location": "[parameters('location')]",
       "kind": "functionapp",
+      "tags": {
+        "Project": "[parameters('projectTag')]",
+        "CreatedBy": "[parameters('createdByTag')]",
+        "DeleteAt": "[parameters('deleteAtTag')]"
+      },
       "dependsOn": [
         "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
         "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
@@ -109,8 +148,12 @@
               "value": "[variables('functionWorkerRuntime')]"
             },
             {
-              "name": "SPNID",
+              "name": "APPID",
               "value": "[parameters('spnId')]"
+            },
+            {
+              "name": "SECRETID",
+              "value": "[parameters('spnSecret')]"
             }
           ],
           "ftpsState": "FtpsOnly",

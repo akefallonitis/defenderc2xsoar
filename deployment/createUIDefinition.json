@@ -31,6 +31,22 @@
           "validationMessage": "Please enter a valid GUID for the Application (client) ID."
         },
         "visible": true
+      },
+      {
+        "name": "spnSecret",
+        "type": "Microsoft.Common.PasswordBox",
+        "label": {
+          "password": "Client Secret",
+          "confirmPassword": "Confirm Client Secret"
+        },
+        "toolTip": "Enter the client secret from your multi-tenant app registration. This will be stored securely in the function app settings.",
+        "constraints": {
+          "required": true
+        },
+        "options": {
+          "hideConfirmation": false
+        },
+        "visible": true
       }
     ],
     "steps": [
@@ -69,13 +85,68 @@
             }
           }
         ]
+      },
+      {
+        "name": "tags",
+        "label": "Resource Tags",
+        "elements": [
+          {
+            "name": "projectTag",
+            "type": "Microsoft.Common.TextBox",
+            "label": "Project Tag",
+            "defaultValue": "",
+            "toolTip": "Enter the project name. This tag is required by Azure Policy.",
+            "placeholder": "DefenderC2XSOAR",
+            "constraints": {
+              "required": true
+            },
+            "visible": true
+          },
+          {
+            "name": "createdByTag",
+            "type": "Microsoft.Common.TextBox",
+            "label": "CreatedBy Tag",
+            "defaultValue": "",
+            "toolTip": "Enter the name or email of the person/team creating this resource. This tag is required by Azure Policy.",
+            "placeholder": "john.doe@example.com",
+            "constraints": {
+              "required": true
+            },
+            "visible": true
+          },
+          {
+            "name": "deleteAtTag",
+            "type": "Microsoft.Common.TextBox",
+            "label": "DeleteAt Tag",
+            "defaultValue": "Never",
+            "toolTip": "Enter the date when this resource should be deleted (YYYY-MM-DD) or 'Never' if it should be kept indefinitely. This tag is required by Azure Policy.",
+            "placeholder": "Never",
+            "constraints": {
+              "required": true
+            },
+            "visible": true
+          },
+          {
+            "name": "tagInfoBox",
+            "type": "Microsoft.Common.InfoBox",
+            "visible": true,
+            "options": {
+              "icon": "Info",
+              "text": "These tags are required by your Azure subscription policies. All resources created by this template will be tagged with these values."
+            }
+          }
+        ]
       }
     ],
     "outputs": {
       "location": "[location()]",
       "functionAppName": "[basics('functionAppName')]",
       "spnId": "[basics('spnId')]",
-      "enableManagedIdentity": "[steps('settings').enableManagedIdentity]"
+      "spnSecret": "[basics('spnSecret')]",
+      "enableManagedIdentity": "[steps('settings').enableManagedIdentity]",
+      "projectTag": "[steps('tags').projectTag]",
+      "createdByTag": "[steps('tags').createdByTag]",
+      "deleteAtTag": "[steps('tags').deleteAtTag]"
     }
   }
 }
