@@ -374,11 +374,31 @@ This project inherits the license from the original MDEAutomator project.
 - Microsoft Defender for Endpoint team
 - Azure Workbooks team
 
+## Documentation
+
+### Main Guides
+- [QUICKSTART.md](QUICKSTART.md) - Get started in 30 minutes
+- [DEPLOYMENT.md](DEPLOYMENT.md) - Complete deployment guide
+- [FEATURES.md](FEATURES.md) - Detailed feature documentation
+- [ARCHITECTURE.md](ARCHITECTURE.md) - System architecture overview
+
+### Feature-Specific Guides
+- [INTERACTIVE_CONSOLE_GUIDE.md](INTERACTIVE_CONSOLE_GUIDE.md) - 🖥️ Interactive Console usage and examples
+- [WORKBOOK_EXAMPLES.md](WORKBOOK_EXAMPLES.md) - Workbook examples and patterns
+- [DEPLOYMENT_TROUBLESHOOTING.md](DEPLOYMENT_TROUBLESHOOTING.md) - ARM template deployment fixes
+
+### Additional Resources
+- [CONTRIBUTING.md](CONTRIBUTING.md) - Contribution guidelines
+- [CHANGELOG.md](CHANGELOG.md) - Project changelog
+- [deployment/README.md](deployment/README.md) - ARM template documentation
+
 ## Support
 
 For issues and questions:
 - Open an issue on [GitHub](https://github.com/akefallonitis/defenderc2xsoar/issues)
-- Reference the [MDEAutomator documentation](https://github.com/msdirtbag/MDEAutomator)
+- Check [DEPLOYMENT_TROUBLESHOOTING.md](DEPLOYMENT_TROUBLESHOOTING.md) for common deployment issues
+- Reference the [INTERACTIVE_CONSOLE_GUIDE.md](INTERACTIVE_CONSOLE_GUIDE.md) for console features
+- See original [MDEAutomator documentation](https://github.com/msdirtbag/MDEAutomator)
 
 ## Disclaimer
 
