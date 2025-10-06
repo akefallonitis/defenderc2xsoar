@@ -31,8 +31,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - See [standalone/README.md](standalone/README.md) for details
 
 ### Fixed
-- **Deploy to Azure Button**: Updated GitHub raw URL format from `/main/` to `/refs/heads/main/` to match GitHub's proper reference format (fixes template download errors)
-- All deployment documentation URLs updated to use correct GitHub raw content URL format
+- **Deploy to Azure Button**: Corrected GitHub raw URL format from `/refs/heads/main/` back to `/main/` to match GitHub's raw content URL format (fixes template download errors)
+- All deployment documentation URLs updated to use correct GitHub raw content URL format without `refs/heads/` prefix
 
 #### Interactive Console Feature 🖥️
 - **New Interactive Console Tab** in main workbook (`workbook/MDEAutomatorWorkbook.json`)

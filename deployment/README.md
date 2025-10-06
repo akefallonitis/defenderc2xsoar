@@ -151,7 +151,7 @@ az deployment group create \
 **Solution 3: Direct Template Link**
 Try accessing the template directly to verify accessibility:
 ```
-https://raw.githubusercontent.com/akefallonitis/defenderc2xsoar/refs/heads/main/deployment/azuredeploy.json
+https://raw.githubusercontent.com/akefallonitis/defenderc2xsoar/main/deployment/azuredeploy.json
 ```
 
 **Common Causes:**
