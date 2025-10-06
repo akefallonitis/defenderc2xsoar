@@ -63,7 +63,7 @@ Choose your preferred method:
 ```bash
 # Upload a file
 az storage blob upload \
-  --account-name mdeautomator \
+  --account-name defenderc2 \
   --container-name library \
   --name test-script.ps1 \
   --file C:\scripts\test-script.ps1
@@ -268,7 +268,7 @@ az storage account blob-service-properties update \
 ```bash
 # Enable storage analytics logging
 az storage logging update \
-  --account-name mdeautomator \
+  --account-name defenderc2 \
   --services b \
   --log rwd \
   --retention 90

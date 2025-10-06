@@ -104,7 +104,7 @@ The standalone framework is designed to be simple, portable, and require zero Az
 **Security**:
 - Uses Windows DPAPI for encryption
 - Per-user, per-machine encryption
-- Stored in `%USERPROFILE%\.mdeautomator\`
+- Stored in `%USERPROFILE%\.defenderc2\`
 
 **Functions**:
 - `Save-MDEConfiguration` - Encrypt and save credentials
@@ -245,7 +245,7 @@ Return to User
    - Per-machine encryption
    - OS-level protection
 
-2. **Storage Location**: `%USERPROFILE%\.mdeautomator\config.json`
+2. **Storage Location**: `%USERPROFILE%\.defenderc2\config.json`
 
 3. **Token Handling**:
    - Tokens stored in memory only
