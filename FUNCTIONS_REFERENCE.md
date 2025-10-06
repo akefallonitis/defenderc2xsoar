@@ -446,6 +446,232 @@ Exports all detection rules to JSON.
 
 ---
 
+## MDEOrchestrator - Live Response Operations
+
+**Endpoint:** `/api/MDEOrchestrator`
+
+The MDEOrchestrator function provides Live Response capabilities for Microsoft Defender for Endpoint, enabling file operations and script execution directly from Azure Workbooks without requiring an Azure Storage account.
+
+### Features
+- **Live Response session management** - Start, monitor, and manage sessions
+- **File upload** - Upload files to devices (accepts Base64 encoded content)
+- **File download** - Download files from devices (returns Base64 encoded content)
+- **Script execution** - Run scripts from Live Response library
+- **Command monitoring** - Get command execution results
+- **Automatic retry logic** - Handles rate limiting and transient failures
+
+### Get Live Response Sessions
+
+Lists all active Live Response sessions.
+
+**Request:**
+```json
+{
+  "Function": "GetLiveResponseSessions",
+  "tenantId": "tenant-id"
+}
+```
+
+**Response:**
+```json
+{
+  "function": "GetLiveResponseSessions",
+  "status": "Success",
+  "tenantId": "tenant-id",
+  "timestamp": "2024-01-01T00:00:00Z",
+  "message": "Retrieved Live Response sessions",
+  "sessions": [
+    {
+      "id": "session-id-1",
+      "machineId": "device-id-1",
+      "status": "Active",
+      "createdBy": "user@domain.com"
+    }
+  ],
+  "count": 1
+}
+```
+
+### Invoke Live Response Script
+
+Executes a script from the Live Response library on a device.
+
+**Request:**
+```json
+{
+  "Function": "InvokeLiveResponseScript",
+  "tenantId": "tenant-id",
+  "DeviceIds": "device-id",
+  "scriptName": "CollectLogs.ps1",
+  "arguments": "arg1 arg2"
+}
+```
+
+**Response:**
+```json
+{
+  "function": "InvokeLiveResponseScript",
+  "status": "Initiated",
+  "tenantId": "tenant-id",
+  "timestamp": "2024-01-01T00:00:00Z",
+  "message": "Script execution initiated",
+  "sessionId": "session-id",
+  "commandId": "command-id",
+  "deviceId": "device-id"
+}
+```
+
+### Get Live Response Output
+
+Retrieves the output of a previously executed command.
+
+**Request:**
+```json
+{
+  "Function": "GetLiveResponseOutput",
+  "tenantId": "tenant-id",
+  "commandId": "command-id"
+}
+```
+
+**Response:**
+```json
+{
+  "function": "GetLiveResponseOutput",
+  "status": "Success",
+  "tenantId": "tenant-id",
+  "timestamp": "2024-01-01T00:00:00Z",
+  "message": "Command result retrieved",
+  "commandId": "command-id",
+  "commandStatus": "Completed",
+  "output": "Command output here..."
+}
+```
+
+### Get Live Response File (Download)
+
+Downloads a file from a device and returns Base64-encoded content.
+
+**Request:**
+```json
+{
+  "Function": "GetLiveResponseFile",
+  "tenantId": "tenant-id",
+  "DeviceIds": "device-id",
+  "filePath": "C:\\Windows\\System32\\drivers\\etc\\hosts"
+}
+```
+
+**Response:**
+```json
+{
+  "function": "GetLiveResponseFile",
+  "status": "Success",
+  "tenantId": "tenant-id",
+  "timestamp": "2024-01-01T00:00:00Z",
+  "message": "File downloaded successfully",
+  "fileName": "hosts",
+  "fileContent": "IyBDb3B5cmlnaHQgKGMpIDE5OTMtMjAwOSBNaWNyb3NvZnQ...",
+  "downloadUrl": "data:application/octet-stream;base64,IyBDb3B5cmlnaHQg...",
+  "sessionId": "session-id",
+  "deviceId": "device-id"
+}
+```
+
+**Notes:**
+- `downloadUrl` can be used directly in a browser as a download link
+- File content is Base64 encoded for safe transmission
+- Large files may require increased timeout values
+
+### Put Live Response File (Upload)
+
+Uploads a Base64-encoded file to a device.
+
+**Request:**
+```json
+{
+  "Function": "PutLiveResponseFile",
+  "tenantId": "tenant-id",
+  "DeviceIds": "device-id",
+  "TargetFileName": "script.ps1",
+  "fileContent": "IyBQb3dlclNoZWxsIFNjcmlwdA0KV3JpdGUtSG9zdCAi..."
+}
+```
+
+**Response:**
+```json
+{
+  "function": "PutLiveResponseFile",
+  "status": "Success",
+  "tenantId": "tenant-id",
+  "timestamp": "2024-01-01T00:00:00Z",
+  "message": "File uploaded successfully",
+  "fileName": "script.ps1",
+  "sessionId": "session-id",
+  "commandId": "command-id",
+  "deviceId": "device-id"
+}
+```
+
+**Notes:**
+- `fileContent` must be Base64 encoded
+- Whitespace in Base64 string is automatically cleaned
+- File is first uploaded to Live Response library, then transferred to device
+
+### Rate Limiting & Retry Logic
+
+MDEOrchestrator automatically handles:
+
+**Rate Limits:**
+- **MDE API**: 45 calls per minute per tenant
+- **Live Response**: 100 concurrent sessions maximum
+
+**Automatic Retry:**
+- **HTTP 429 (Rate Limited)**: Waits for `Retry-After` header (default: 30s)
+- **HTTP 5xx (Server Error)**: Exponential backoff (5s, 10s, 20s)
+- **Max Retries**: 3 attempts before failure
+
+**Example Rate Limit Response:**
+```
+⚠️ Rate limited (429). Waiting 30 seconds before retry...
+```
+
+### Usage from PowerShell
+
+```powershell
+$baseUrl = "https://your-function-app.azurewebsites.net/api"
+$functionKey = "your-function-key"
+
+# Upload file to device
+$fileBytes = [IO.File]::ReadAllBytes("C:\local\script.ps1")
+$base64Content = [Convert]::ToBase64String($fileBytes)
+
+$body = @{
+    Function = "PutLiveResponseFile"
+    tenantId = "tenant-id"
+    DeviceIds = "device-id"
+    TargetFileName = "script.ps1"
+    fileContent = $base64Content
+} | ConvertTo-Json
+
+$response = Invoke-RestMethod -Method Post `
+    -Uri "$baseUrl/MDEOrchestrator?code=$functionKey" `
+    -Body $body `
+    -ContentType "application/json"
+
+Write-Output $response
+```
+
+### Usage from Workbook
+
+See [WORKBOOK_FILE_OPERATIONS.md](WORKBOOK_FILE_OPERATIONS.md) for complete workbook integration examples including:
+- File upload/download ARM actions
+- Base64 encoding examples
+- Auto-refresh configuration
+- Troubleshooting guide
+
+---
+
 ## Error Handling
 
 All functions return consistent error responses:
@@ -471,8 +697,20 @@ Be aware of Microsoft Defender API rate limits:
 - **Machine Actions**: 100 calls per minute
 - **Advanced Hunting**: 15 calls per minute, 10 queries per hour
 - **Indicators**: 100 calls per minute
+- **Live Response (MDEOrchestrator)**: 45 calls per minute per tenant, 100 concurrent sessions
 
-Implement retry logic with exponential backoff for production use.
+**MDEOrchestrator Automatic Retry:**
+The MDEOrchestrator function automatically implements retry logic with exponential backoff:
+- HTTP 429 (Rate Limited): Automatically waits for `Retry-After` header value
+- HTTP 5xx (Server Errors): Exponential backoff (5s, 10s, 20s)
+- Maximum 3 retry attempts before failure
+
+**Workbook Auto-Refresh Best Practices:**
+- Minimum refresh interval: 30 seconds (respects 45/min limit)
+- Set `maxRefreshCount` to stop after completion
+- Monitor `status` field in responses to determine when to stop refreshing
+
+For other functions, implement retry logic with exponential backoff for production use.
 
 ---
 
