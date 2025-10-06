@@ -22,9 +22,10 @@
             "name": "Subscription",
             "type": 6,
             "isRequired": true,
-            "multiSelect": true,
-            "quote": "'",
-            "delimiter": ",",
+            "query": "Resources | where type =~ 'microsoft.operationalinsights/workspaces' | summarize by subscriptionId",
+            "crossComponentResources": [
+              "value::all"
+            ],
             "typeSettings": {
               "additionalResourceOptions": [
                 "value::all"
@@ -35,6 +36,8 @@
             "timeContext": {
               "durationMs": 86400000
             },
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources",
             "defaultValue": "value::all",
             "value": [
               "value::all"
@@ -46,28 +49,20 @@
             "name": "Workspace",
             "type": 5,
             "isRequired": true,
-            "multiSelect": true,
-            "quote": "'",
-            "delimiter": ",",
-            "query": "Resources\n| where type =~ 'microsoft.operationalinsights/workspaces'\n| project id",
+            "query": "Resources | where type =~ 'microsoft.operationalinsights/workspaces' | project id, name, location",
             "crossComponentResources": [
               "{Subscription}"
             ],
             "typeSettings": {
-              "additionalResourceOptions": [
-                "value::all"
-              ],
+              "additionalResourceOptions": [],
               "showDefault": false
             },
             "timeContext": {
               "durationMs": 86400000
             },
-            "defaultValue": "value::all",
             "queryType": 1,
             "resourceType": "microsoft.resourcegraph/resources",
-            "value": [
-              "value::all"
-            ]
+            "value": null
           },
           {
             "id": "8c4e5f38-a6cd-4642-9f0d-2f2e5d7b3c1a",
@@ -76,10 +71,16 @@
             "label": "Target Tenant ID",
             "type": 1,
             "isRequired": true,
+            "query": "Resources | where type =~ 'microsoft.operationalinsights/workspaces' | where id == '{Workspace}' | project tenantId",
+            "crossComponentResources": [
+              "{Subscription}"
+            ],
+            "isHiddenWhenLocked": true,
             "timeContext": {
               "durationMs": 86400000
             },
-            "value": ""
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources"
           },
           {
             "id": "9d5e6f49-b7de-5753-a0e1-3f3f6e8c4d2b",
@@ -102,6 +103,19 @@
             "type": 1,
             "isRequired": true,
             "description": "Multi-tenant App Registration Client ID",
+            "timeContext": {
+              "durationMs": 86400000
+            },
+            "value": ""
+          },
+          {
+            "id": "c2f9h7c-e0gh-8086-d3h4-6i6i9h1f7g5e",
+            "version": "KqlParameterItem/1.0",
+            "name": "FunctionKey",
+            "label": "Function App Key",
+            "type": 1,
+            "isRequired": true,
+            "description": "Function App host key or function-specific key for authentication",
             "timeContext": {
               "durationMs": 86400000
             },
@@ -249,13 +263,21 @@
       "content": {
         "version": "NotebookGroup/1.0",
         "groupType": "editable",
+        "title": "🎯 Device Actions",
         "items": [
           {
             "type": 1,
             "content": {
-              "json": "## MDEAutomator - Device Response Actions\n\n### Dispatcher Actions\nPerform bulk response actions across your MDE endpoints:\n\n- **Isolate Device** - Network isolate devices (selective isolation with exclusion rules)\n- **Collect Investigation Package** - Gather forensic artifacts from endpoints\n- **Run Antivirus Scan** - Execute full disk scan on devices\n- **Restrict App Execution** - Allow only Microsoft-signed binaries\n- **Stop & Quarantine File** - Stop and quarantine malicious files\n\n### Orchestrator Actions\nExecute Live Response operations:\n\n- **Run Live Response Script** - Execute PowerShell scripts from LR library\n- **Collect File** - Retrieve files from endpoints\n- **Put File** - Push files to endpoints from LR library\n- **Upload to Live Response Library** - Add scripts/files to library"
+              "json": "## MDEAutomator - Device Response Actions\n\nPerform Microsoft Defender for Endpoint response actions with **ARM Actions** and **JSONPath parsing**.\n\n### Features:\n- ✅ Azure Resource Graph auto-discovery\n- ✅ ARM Actions for synchronous operations\n- ✅ JSONPath output parsing\n- ✅ Multi-tenancy support with automatic TenantId injection\n- ✅ Function Key authentication"
             },
             "name": "text - automator-intro"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---\n## 🚨 Isolate Device\n\nIsolate devices from the network using ARM Actions with JSONPath transformers."
+            },
+            "name": "text - isolate-header"
           },
           {
             "type": 9,
@@ -263,53 +285,30 @@
               "version": "KqlParameterItem/1.0",
               "parameters": [
                 {
-                  "id": "c3i9h4j3g-8h7l-0g4j-5k1i-7g8h9i0j1k2l",
+                  "id": "isolate-deviceids",
                   "version": "KqlParameterItem/1.0",
-                  "name": "ActionType",
-                  "label": "Select Action",
+                  "name": "IsolateDeviceIds",
+                  "label": "Device IDs (comma-separated)",
+                  "type": 1,
+                  "isRequired": false,
+                  "description": "Enter one or more device IDs separated by commas",
+                  "timeContext": {
+                    "durationMs": 86400000
+                  }
+                },
+                {
+                  "id": "isolate-type",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "IsolationType",
+                  "label": "Isolation Type",
                   "type": 2,
                   "isRequired": true,
                   "typeSettings": {
                     "additionalResourceOptions": [],
                     "showDefault": false
                   },
-                  "jsonData": "[\"Isolate Device\", \"Unisolate Device\", \"Restrict App Execution\", \"Unrestrict App Execution\", \"Collect Investigation Package\", \"Run Antivirus Scan\", \"Stop & Quarantine File\", \"Run Live Response Script\", \"Get File\", \"Put File\", \"Upload to LR Library\"]",
-                  "timeContext": {
-                    "durationMs": 86400000
-                  }
-                },
-                {
-                  "id": "d4j0i5k4h-9i8m-1h5k-6l2j-8h9i0j1k2l3m",
-                  "version": "KqlParameterItem/1.0",
-                  "name": "DeviceFilter",
-                  "label": "Device Filter (OData syntax)",
-                  "type": 1,
-                  "isRequired": false,
-                  "description": "Filter devices using OData query syntax (e.g., healthStatus eq 'Active')",
-                  "timeContext": {
-                    "durationMs": 86400000
-                  }
-                },
-                {
-                  "id": "e5k1j6l5i-0j9n-2i6l-7m3k-9i0j1k2l3m4n",
-                  "version": "KqlParameterItem/1.0",
-                  "name": "DeviceId",
-                  "label": "Device ID (for specific targeting)",
-                  "type": 1,
-                  "isRequired": false,
-                  "description": "Specific device ID to target",
-                  "timeContext": {
-                    "durationMs": 86400000
-                  }
-                },
-                {
-                  "id": "f6l2k7m6j-1k0o-3j7m-8n4l-0j1k2l3m4n5o",
-                  "version": "KqlParameterItem/1.0",
-                  "name": "Comment",
-                  "label": "Action Comment",
-                  "type": 1,
-                  "isRequired": false,
-                  "description": "Optional comment for the action",
+                  "jsonData": "[\"Full\", \"Selective\"]",
+                  "defaultValue": "Full",
                   "timeContext": {
                     "durationMs": 86400000
                   }
@@ -319,39 +318,266 @@
               "queryType": 0,
               "resourceType": "microsoft.operationalinsights/workspaces"
             },
-            "name": "parameters - automator-actions"
+            "name": "parameters - isolate"
+          },
+          {
+            "type": 11,
+            "content": {
+              "version": "LinkItem/1.0",
+              "style": "list",
+              "links": [
+                {
+                  "id": "isolate-action",
+                  "cellValue": "unused",
+                  "linkTarget": "ArmAction",
+                  "linkLabel": "🚨 Isolate Devices",
+                  "style": "primary",
+                  "linkIsContextBlade": true,
+                  "armActionContext": {
+                    "path": "{FunctionAppUrl}/api/MDEDispatcher?code={FunctionKey}",
+                    "headers": [],
+                    "params": [],
+                    "body": "{\"action\":\"Isolate Device\",\"tenantId\":\"{TenantId}\",\"spnId\":\"{SpnId}\",\"deviceIds\":\"{IsolateDeviceIds}\",\"isolationType\":\"{IsolationType}\",\"comment\":\"Isolated via Workbook\"}",
+                    "httpMethod": "POST",
+                    "title": "Isolate Devices",
+                    "description": "Initiating device isolation...",
+                    "actionName": "Isolate",
+                    "runLabel": "Isolate Devices"
+                  }
+                }
+              ]
+            },
+            "name": "links - isolate-action"
           },
           {
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/MDEDispatcher\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"action\",\"value\":\"{ActionType}\"},{\"key\":\"deviceFilter\",\"value\":\"{DeviceFilter}\"},{\"key\":\"deviceId\",\"value\":\"{DeviceId}\"},{\"key\":\"comment\",\"value\":\"{Comment}\"}],\"batchDisabled\":false,\"transformers\":null}",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/MDEDispatcher?code={FunctionKey}\",\"body\":\"{\\\"action\\\":\\\"Isolate Device\\\",\\\"tenantId\\\":\\\"{TenantId}\\\",\\\"spnId\\\":\\\"{SpnId}\\\",\\\"deviceIds\\\":\\\"{IsolateDeviceIds}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.actionId\",\"columnId\":\"actionId\"},{\"path\":\"$.status\",\"columnId\":\"status\"},{\"path\":\"$.message\",\"columnId\":\"message\"},{\"path\":\"$.tenantId\",\"columnId\":\"tenantId\"}]}}]}",
               "size": 0,
-              "title": "🎯 Execute Action: {ActionType}",
-              "noDataMessage": "Click 'Run Query' to execute the selected action",
-              "queryType": 12,
-              "visualization": "table"
+              "title": "Isolation Result",
+              "queryType": 12
             },
-            "name": "query - execute-action"
+            "conditionalVisibility": {
+              "parameterName": "IsolateDeviceIds",
+              "comparison": "isNotEqualTo",
+              "value": ""
+            },
+            "name": "query - isolate-result"
           },
           {
             "type": 1,
             "content": {
-              "json": "---\n### 📊 Device List Query\n\nView devices in your environment matching the filter criteria."
+              "json": "---\n## 🔓 Unisolate Device\n\nRemove network isolation from devices."
             },
-            "name": "text - device-list-header"
+            "name": "text - unisolate-header"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "unisolate-deviceids",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "UnisolateDeviceIds",
+                  "label": "Device IDs (comma-separated)",
+                  "type": 1,
+                  "isRequired": false,
+                  "timeContext": {
+                    "durationMs": 86400000
+                  }
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "name": "parameters - unisolate"
+          },
+          {
+            "type": 11,
+            "content": {
+              "version": "LinkItem/1.0",
+              "style": "list",
+              "links": [
+                {
+                  "id": "unisolate-action",
+                  "cellValue": "unused",
+                  "linkTarget": "ArmAction",
+                  "linkLabel": "🔓 Unisolate Devices",
+                  "style": "primary",
+                  "linkIsContextBlade": true,
+                  "armActionContext": {
+                    "path": "{FunctionAppUrl}/api/MDEDispatcher?code={FunctionKey}",
+                    "headers": [],
+                    "params": [],
+                    "body": "{\"action\":\"Unisolate Device\",\"tenantId\":\"{TenantId}\",\"spnId\":\"{SpnId}\",\"deviceIds\":\"{UnisolateDeviceIds}\",\"comment\":\"Unisolated via Workbook\"}",
+                    "httpMethod": "POST",
+                    "title": "Unisolate Devices",
+                    "description": "Removing device isolation...",
+                    "actionName": "Unisolate",
+                    "runLabel": "Unisolate Devices"
+                  }
+                }
+              ]
+            },
+            "name": "links - unisolate-action"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---\n## 🛡️ Restrict App Execution\n\nRestrict app execution to Microsoft-signed binaries only."
+            },
+            "name": "text - restrict-header"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "restrict-deviceids",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "RestrictDeviceIds",
+                  "label": "Device IDs (comma-separated)",
+                  "type": 1,
+                  "isRequired": false,
+                  "timeContext": {
+                    "durationMs": 86400000
+                  }
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "name": "parameters - restrict"
+          },
+          {
+            "type": 11,
+            "content": {
+              "version": "LinkItem/1.0",
+              "style": "list",
+              "links": [
+                {
+                  "id": "restrict-action",
+                  "cellValue": "unused",
+                  "linkTarget": "ArmAction",
+                  "linkLabel": "🛡️ Restrict App Execution",
+                  "style": "primary",
+                  "linkIsContextBlade": true,
+                  "armActionContext": {
+                    "path": "{FunctionAppUrl}/api/MDEDispatcher?code={FunctionKey}",
+                    "headers": [],
+                    "params": [],
+                    "body": "{\"action\":\"Restrict App Execution\",\"tenantId\":\"{TenantId}\",\"spnId\":\"{SpnId}\",\"deviceIds\":\"{RestrictDeviceIds}\",\"comment\":\"App execution restricted via Workbook\"}",
+                    "httpMethod": "POST",
+                    "title": "Restrict App Execution",
+                    "description": "Restricting application execution...",
+                    "actionName": "Restrict",
+                    "runLabel": "Restrict Apps"
+                  }
+                }
+              ]
+            },
+            "name": "links - restrict-action"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---\n## 🔍 Run Antivirus Scan\n\nExecute a full antivirus scan on devices."
+            },
+            "name": "text - scan-header"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "scan-deviceids",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "ScanDeviceIds",
+                  "label": "Device IDs (comma-separated)",
+                  "type": 1,
+                  "isRequired": false,
+                  "timeContext": {
+                    "durationMs": 86400000
+                  }
+                },
+                {
+                  "id": "scan-type",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "ScanType",
+                  "label": "Scan Type",
+                  "type": 2,
+                  "isRequired": true,
+                  "typeSettings": {
+                    "additionalResourceOptions": [],
+                    "showDefault": false
+                  },
+                  "jsonData": "[\"Quick\", \"Full\"]",
+                  "defaultValue": "Full",
+                  "timeContext": {
+                    "durationMs": 86400000
+                  }
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "name": "parameters - scan"
+          },
+          {
+            "type": 11,
+            "content": {
+              "version": "LinkItem/1.0",
+              "style": "list",
+              "links": [
+                {
+                  "id": "scan-action",
+                  "cellValue": "unused",
+                  "linkTarget": "ArmAction",
+                  "linkLabel": "🔍 Run Antivirus Scan",
+                  "style": "primary",
+                  "linkIsContextBlade": true,
+                  "armActionContext": {
+                    "path": "{FunctionAppUrl}/api/MDEDispatcher?code={FunctionKey}",
+                    "headers": [],
+                    "params": [],
+                    "body": "{\"action\":\"Run Antivirus Scan\",\"tenantId\":\"{TenantId}\",\"spnId\":\"{SpnId}\",\"deviceIds\":\"{ScanDeviceIds}\",\"scanType\":\"{ScanType}\",\"comment\":\"Scan initiated via Workbook\"}",
+                    "httpMethod": "POST",
+                    "title": "Run Antivirus Scan",
+                    "description": "Starting antivirus scan...",
+                    "actionName": "Scan",
+                    "runLabel": "Run Scan"
+                  }
+                }
+              ]
+            },
+            "name": "links - scan-action"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---\n## 💻 Get Devices\n\nRetrieve device list with JSONPath parsing."
+            },
+            "name": "text - getdevices-header"
           },
           {
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"GET\",\"path\":\"{FunctionAppUrl}/api/MDEDispatcher\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"action\",\"value\":\"listdevices\"},{\"key\":\"filter\",\"value\":\"{DeviceFilter}\"}],\"batchDisabled\":false,\"transformers\":null}",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/MDEDispatcher?code={FunctionKey}\",\"body\":\"{\\\"action\\\":\\\"Get Devices\\\",\\\"tenantId\\\":\\\"{TenantId}\\\",\\\"spnId\\\":\\\"{SpnId}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.devices[*]\",\"columns\":[{\"path\":\"$.deviceName\",\"columnId\":\"Device Name\"},{\"path\":\"$.riskScore\",\"columnId\":\"Risk Score\"},{\"path\":\"$.healthStatus\",\"columnId\":\"Health Status\"},{\"path\":\"$.lastIpAddress\",\"columnId\":\"Last IP\"},{\"path\":\"$.lastSeen\",\"columnId\":\"Last Seen\"},{\"path\":\"$.id\",\"columnId\":\"Device ID\"}]}}]}",
               "size": 0,
-              "title": "💻 Devices in Environment",
+              "title": "💻 Device List",
+              "showExportToExcel": true,
               "queryType": 12,
               "visualization": "table"
             },
-            "name": "query - device-list"
+            "name": "query - get-devices"
           }
         ]
       },
@@ -367,13 +593,21 @@
       "content": {
         "version": "NotebookGroup/1.0",
         "groupType": "editable",
+        "title": "📍 Threat Intelligence Manager",
         "items": [
           {
             "type": 1,
             "content": {
-              "json": "## 📍 Threat Intelligence Manager\n\nManage threat indicators (IOCs) in Microsoft Defender for Endpoint.\n\n### Supported Indicator Types:\n- **File Hash** - SHA1, SHA256, MD5\n- **IP Address** - IPv4 or IPv6 addresses\n- **URL/Domain** - Web addresses and domains\n- **Certificate** - Certificate thumbprints\n\n### Actions:\n- **Add Indicators** - Submit new threat indicators\n- **Remove Indicators** - Delete existing indicators\n- **View Recent** - Display recently added indicators"
+              "json": "## 📍 Threat Intelligence Manager\n\nManage threat indicators (IOCs) in Microsoft Defender for Endpoint with **ARM Actions** and **JSONPath parsing**.\n\n### Features:\n- ✅ Batch indicator submission (File/IP/URL/Domain)\n- ✅ ARM Actions for synchronous operations\n- ✅ JSONPath output parsing\n- ✅ Multi-tenancy support"
             },
             "name": "text - ti-intro"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---\n## 📄 Add File Indicators (Batch)\n\nSubmit multiple file hashes at once with ARM Actions."
+            },
+            "name": "text - file-indicators"
           },
           {
             "type": 9,
@@ -381,9 +615,21 @@
               "version": "KqlParameterItem/1.0",
               "parameters": [
                 {
-                  "id": "ti-action-id",
+                  "id": "file-indicators-id",
                   "version": "KqlParameterItem/1.0",
-                  "name": "TIAction",
+                  "name": "FileIndicators",
+                  "label": "File Hashes (comma-separated)",
+                  "type": 1,
+                  "isRequired": false,
+                  "description": "SHA1, SHA256, or MD5 hashes separated by commas",
+                  "timeContext": {
+                    "durationMs": 86400000
+                  }
+                },
+                {
+                  "id": "file-action-id",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "FileIndicatorAction",
                   "label": "Action",
                   "type": 2,
                   "isRequired": true,
@@ -391,60 +637,19 @@
                     "additionalResourceOptions": [],
                     "showDefault": false
                   },
-                  "jsonData": "[\"Add\", \"Remove\", \"List\"]",
-                  "defaultValue": "Add",
+                  "jsonData": "[\"Alert\", \"AlertAndBlock\", \"Allowed\"]",
+                  "defaultValue": "AlertAndBlock",
                   "timeContext": {
                     "durationMs": 86400000
                   }
                 },
                 {
-                  "id": "ti-type-id",
+                  "id": "file-severity-id",
                   "version": "KqlParameterItem/1.0",
-                  "name": "IndicatorType",
-                  "label": "Indicator Type",
-                  "type": 2,
-                  "isRequired": true,
-                  "typeSettings": {
-                    "additionalResourceOptions": [],
-                    "showDefault": false
-                  },
-                  "jsonData": "[\"FileSha1\", \"FileSha256\", \"FileMd5\", \"IpAddress\", \"DomainName\", \"Url\", \"CertificateThumbprint\"]",
-                  "defaultValue": "FileSha256",
-                  "timeContext": {
-                    "durationMs": 86400000
-                  }
-                },
-                {
-                  "id": "ti-indicators-id",
-                  "version": "KqlParameterItem/1.0",
-                  "name": "Indicators",
-                  "label": "Indicators (one per line or comma-separated)",
-                  "type": 1,
-                  "isRequired": false,
-                  "description": "Enter indicators to add or remove",
-                  "timeContext": {
-                    "durationMs": 86400000
-                  }
-                },
-                {
-                  "id": "ti-title-id",
-                  "version": "KqlParameterItem/1.0",
-                  "name": "IndicatorTitle",
-                  "label": "Title",
-                  "type": 1,
-                  "isRequired": false,
-                  "description": "Title for the indicator(s)",
-                  "timeContext": {
-                    "durationMs": 86400000
-                  }
-                },
-                {
-                  "id": "ti-severity-id",
-                  "version": "KqlParameterItem/1.0",
-                  "name": "Severity",
+                  "name": "FileSeverity",
                   "label": "Severity",
                   "type": 2,
-                  "isRequired": false,
+                  "isRequired": true,
                   "typeSettings": {
                     "additionalResourceOptions": [],
                     "showDefault": false
@@ -456,12 +661,192 @@
                   }
                 },
                 {
-                  "id": "ti-action-type-id",
+                  "id": "file-title-id",
                   "version": "KqlParameterItem/1.0",
-                  "name": "IndicatorAction",
-                  "label": "Indicator Action",
-                  "type": 2,
+                  "name": "FileTitle",
+                  "label": "Title",
+                  "type": 1,
                   "isRequired": false,
+                  "description": "Title for these indicators",
+                  "value": "Malicious files",
+                  "timeContext": {
+                    "durationMs": 86400000
+                  }
+                },
+                {
+                  "id": "file-desc-id",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "FileDescription",
+                  "label": "Description",
+                  "type": 1,
+                  "isRequired": false,
+                  "description": "Description for these indicators",
+                  "value": "Known malware hashes",
+                  "timeContext": {
+                    "durationMs": 86400000
+                  }
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "name": "parameters - file-indicators"
+          },
+          {
+            "type": 11,
+            "content": {
+              "version": "LinkItem/1.0",
+              "style": "list",
+              "links": [
+                {
+                  "id": "file-add-action",
+                  "cellValue": "unused",
+                  "linkTarget": "ArmAction",
+                  "linkLabel": "📄 Add File Indicators",
+                  "style": "primary",
+                  "linkIsContextBlade": true,
+                  "armActionContext": {
+                    "path": "{FunctionAppUrl}/api/MDETIManager?code={FunctionKey}",
+                    "headers": [],
+                    "params": [],
+                    "body": "{\"action\":\"Add File Indicators\",\"tenantId\":\"{TenantId}\",\"spnId\":\"{SpnId}\",\"indicators\":\"{FileIndicators}\",\"indicatorAction\":\"{FileIndicatorAction}\",\"severity\":\"{FileSeverity}\",\"title\":\"{FileTitle}\",\"description\":\"{FileDescription}\"}",
+                    "httpMethod": "POST",
+                    "title": "Add File Indicators",
+                    "description": "Adding file indicators to MDE...",
+                    "actionName": "AddFileIndicators",
+                    "runLabel": "Add Indicators"
+                  }
+                }
+              ]
+            },
+            "name": "links - file-add"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---\n## 🌐 Add IP Indicators (Batch)\n\nSubmit multiple IP addresses at once."
+            },
+            "name": "text - ip-indicators"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "ip-indicators-id",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "IpIndicators",
+                  "label": "IP Addresses (comma-separated)",
+                  "type": 1,
+                  "isRequired": false,
+                  "description": "IPv4 or IPv6 addresses separated by commas",
+                  "timeContext": {
+                    "durationMs": 86400000
+                  }
+                },
+                {
+                  "id": "ip-action-id",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "IpIndicatorAction",
+                  "label": "Action",
+                  "type": 2,
+                  "isRequired": true,
+                  "typeSettings": {
+                    "additionalResourceOptions": [],
+                    "showDefault": false
+                  },
+                  "jsonData": "[\"Alert\", \"AlertAndBlock\", \"Allowed\"]",
+                  "defaultValue": "AlertAndBlock",
+                  "timeContext": {
+                    "durationMs": 86400000
+                  }
+                },
+                {
+                  "id": "ip-severity-id",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "IpSeverity",
+                  "label": "Severity",
+                  "type": 2,
+                  "isRequired": true,
+                  "typeSettings": {
+                    "additionalResourceOptions": [],
+                    "showDefault": false
+                  },
+                  "jsonData": "[\"Informational\", \"Low\", \"Medium\", \"High\"]",
+                  "defaultValue": "High",
+                  "timeContext": {
+                    "durationMs": 86400000
+                  }
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "name": "parameters - ip-indicators"
+          },
+          {
+            "type": 11,
+            "content": {
+              "version": "LinkItem/1.0",
+              "style": "list",
+              "links": [
+                {
+                  "id": "ip-add-action",
+                  "cellValue": "unused",
+                  "linkTarget": "ArmAction",
+                  "linkLabel": "🌐 Add IP Indicators",
+                  "style": "primary",
+                  "linkIsContextBlade": true,
+                  "armActionContext": {
+                    "path": "{FunctionAppUrl}/api/MDETIManager?code={FunctionKey}",
+                    "headers": [],
+                    "params": [],
+                    "body": "{\"action\":\"Add IP Indicators\",\"tenantId\":\"{TenantId}\",\"spnId\":\"{SpnId}\",\"indicators\":\"{IpIndicators}\",\"indicatorAction\":\"{IpIndicatorAction}\",\"severity\":\"{IpSeverity}\",\"title\":\"Malicious IPs\",\"description\":\"Known malicious IP addresses\"}",
+                    "httpMethod": "POST",
+                    "title": "Add IP Indicators",
+                    "description": "Adding IP indicators to MDE...",
+                    "actionName": "AddIpIndicators",
+                    "runLabel": "Add Indicators"
+                  }
+                }
+              ]
+            },
+            "name": "links - ip-add"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---\n## 🔗 Add URL/Domain Indicators (Batch)\n\nSubmit multiple URLs or domains at once."
+            },
+            "name": "text - url-indicators"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "url-indicators-id",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "UrlIndicators",
+                  "label": "URLs/Domains (comma-separated)",
+                  "type": 1,
+                  "isRequired": false,
+                  "description": "URLs or domain names separated by commas",
+                  "timeContext": {
+                    "durationMs": 86400000
+                  }
+                },
+                {
+                  "id": "url-action-id",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "UrlIndicatorAction",
+                  "label": "Action",
+                  "type": 2,
+                  "isRequired": true,
                   "typeSettings": {
                     "additionalResourceOptions": [],
                     "showDefault": false
@@ -477,39 +862,56 @@
               "queryType": 0,
               "resourceType": "microsoft.operationalinsights/workspaces"
             },
-            "name": "parameters - ti"
+            "name": "parameters - url-indicators"
           },
           {
-            "type": 3,
+            "type": 11,
             "content": {
-              "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/MDETIManager\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"action\",\"value\":\"{TIAction}\"},{\"key\":\"indicatorType\",\"value\":\"{IndicatorType}\"},{\"key\":\"indicators\",\"value\":\"{Indicators}\"},{\"key\":\"title\",\"value\":\"{IndicatorTitle}\"},{\"key\":\"severity\",\"value\":\"{Severity}\"},{\"key\":\"indicatorAction\",\"value\":\"{IndicatorAction}\"}],\"batchDisabled\":false,\"transformers\":null}",
-              "size": 0,
-              "title": "🎯 Threat Intelligence Action: {TIAction}",
-              "noDataMessage": "Click 'Run Query' to execute TI management action",
-              "queryType": 12,
-              "visualization": "table"
+              "version": "LinkItem/1.0",
+              "style": "list",
+              "links": [
+                {
+                  "id": "url-add-action",
+                  "cellValue": "unused",
+                  "linkTarget": "ArmAction",
+                  "linkLabel": "🔗 Add URL/Domain Indicators",
+                  "style": "primary",
+                  "linkIsContextBlade": true,
+                  "armActionContext": {
+                    "path": "{FunctionAppUrl}/api/MDETIManager?code={FunctionKey}",
+                    "headers": [],
+                    "params": [],
+                    "body": "{\"action\":\"Add URL Indicators\",\"tenantId\":\"{TenantId}\",\"spnId\":\"{SpnId}\",\"indicators\":\"{UrlIndicators}\",\"indicatorAction\":\"{UrlIndicatorAction}\",\"severity\":\"High\",\"title\":\"Malicious URLs\",\"description\":\"Known malicious URLs and domains\"}",
+                    "httpMethod": "POST",
+                    "title": "Add URL/Domain Indicators",
+                    "description": "Adding URL/domain indicators to MDE...",
+                    "actionName": "AddUrlIndicators",
+                    "runLabel": "Add Indicators"
+                  }
+                }
+              ]
             },
-            "name": "query - ti-execute"
+            "name": "links - url-add"
           },
           {
             "type": 1,
             "content": {
-              "json": "---\n### 📊 Recent Indicators"
+              "json": "---\n## 📊 List All Indicators\n\nView all threat indicators with JSONPath parsing."
             },
-            "name": "text - ti-list-header"
+            "name": "text - list-indicators"
           },
           {
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"GET\",\"path\":\"{FunctionAppUrl}/api/MDETIManager\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"action\",\"value\":\"List\"}],\"batchDisabled\":false,\"transformers\":null}",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/MDETIManager?code={FunctionKey}\",\"body\":\"{\\\"action\\\":\\\"List Indicators\\\",\\\"tenantId\\\":\\\"{TenantId}\\\",\\\"spnId\\\":\\\"{SpnId}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.indicators[*]\",\"columns\":[{\"path\":\"$.indicatorValue\",\"columnId\":\"Indicator\"},{\"path\":\"$.indicatorType\",\"columnId\":\"Type\"},{\"path\":\"$.action\",\"columnId\":\"Action\"},{\"path\":\"$.severity\",\"columnId\":\"Severity\"},{\"path\":\"$.title\",\"columnId\":\"Title\"},{\"path\":\"$.createdBy\",\"columnId\":\"Created By\"},{\"path\":\"$.creationDateTime\",\"columnId\":\"Created\"}]}}]}",
               "size": 0,
-              "title": "📍 Threat Indicators",
+              "title": "📍 Active Threat Indicators",
+              "showExportToExcel": true,
               "queryType": 12,
               "visualization": "table"
             },
-            "name": "query - ti-list"
+            "name": "query - list-indicators"
           }
         ]
       },
@@ -525,11 +927,12 @@
       "content": {
         "version": "NotebookGroup/1.0",
         "groupType": "editable",
+        "title": "⚙️ Action Manager",
         "items": [
           {
             "type": 1,
             "content": {
-              "json": "## ⚙️ Action Manager\n\nView and manage machine actions executed via MDE.\n\n### Features:\n- View recent actions and their status\n- Monitor action progress\n- Cancel pending actions\n- View action statistics and timeline"
+              "json": "## ⚙️ Action Manager\n\nView and manage machine actions with **auto-refresh** and **JSONPath parsing**.\n\n### Features:\n- ✅ Auto-refresh with configurable intervals\n- ✅ JSONPath output parsing\n- ✅ Status filtering\n- ✅ Cancel actions via ARM Actions"
             },
             "name": "text - actions-intro"
           },
@@ -539,18 +942,35 @@
               "version": "KqlParameterItem/1.0",
               "parameters": [
                 {
+                  "id": "actions-status-filter",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "StatusFilter",
+                  "label": "Status Filter",
+                  "type": 2,
+                  "isRequired": false,
+                  "typeSettings": {
+                    "additionalResourceOptions": [],
+                    "showDefault": false
+                  },
+                  "jsonData": "[\"All\", \"Pending\", \"InProgress\", \"Succeeded\", \"Failed\"]",
+                  "defaultValue": "All",
+                  "timeContext": {
+                    "durationMs": 86400000
+                  }
+                },
+                {
                   "id": "actions-refresh-id",
                   "version": "KqlParameterItem/1.0",
-                  "name": "RefreshActions",
-                  "label": "Refresh Interval",
+                  "name": "RefreshInterval",
+                  "label": "Auto-Refresh",
                   "type": 2,
                   "isRequired": true,
                   "typeSettings": {
                     "additionalResourceOptions": [],
                     "showDefault": false
                   },
-                  "jsonData": "[{\"value\":\"30000\",\"label\":\"30 seconds\"},{\"value\":\"60000\",\"label\":\"1 minute\"},{\"value\":\"300000\",\"label\":\"5 minutes\"},{\"value\":\"0\",\"label\":\"Manual\"}]",
-                  "defaultValue": "60000",
+                  "jsonData": "[\"10\", \"30\", \"60\", \"300\"]",
+                  "defaultValue": "30",
                   "timeContext": {
                     "durationMs": 86400000
                   }
@@ -563,18 +983,26 @@
             "name": "parameters - actions"
           },
           {
+            "type": 1,
+            "content": {
+              "json": "---\n## 📊 Get All Actions\n\nView all machine actions with auto-refresh enabled."
+            },
+            "name": "text - get-actions"
+          },
+          {
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"GET\",\"path\":\"{FunctionAppUrl}/api/MDEDispatcher\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"action\",\"value\":\"GetActions\"}],\"batchDisabled\":false,\"transformers\":null}",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/MDEDispatcher?code={FunctionKey}\",\"body\":\"{\\\"action\\\":\\\"Get Actions\\\",\\\"tenantId\\\":\\\"{TenantId}\\\",\\\"spnId\\\":\\\"{SpnId}\\\"}\",\"autoRefresh\":true,\"refreshInterval\":{RefreshInterval},\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.actions[*]\",\"columns\":[{\"path\":\"$.id\",\"columnId\":\"Action ID\"},{\"path\":\"$.type\",\"columnId\":\"Type\"},{\"path\":\"$.status\",\"columnId\":\"Status\"},{\"path\":\"$.requestor\",\"columnId\":\"Requestor\"},{\"path\":\"$.creationDateTimeUtc\",\"columnId\":\"Created\"},{\"path\":\"$.machineId\",\"columnId\":\"Device ID\"}]}}]}",
               "size": 0,
-              "title": "📊 Recent Machine Actions",
+              "title": "📊 Machine Actions (Auto-refreshing every {RefreshInterval}s)",
+              "showExportToExcel": true,
               "queryType": 12,
               "visualization": "table",
               "gridSettings": {
                 "formatters": [
                   {
-                    "columnMatch": "status",
+                    "columnMatch": "Status",
                     "formatter": 18,
                     "formatOptions": {
                       "thresholdsOptions": "colors",
@@ -606,7 +1034,8 @@
                       ]
                     }
                   }
-                ]
+                ],
+                "filter": true
               }
             },
             "name": "query - actions-list"
@@ -614,22 +1043,113 @@
           {
             "type": 1,
             "content": {
-              "json": "---\n### ⚠️ Cancel All Pending Actions\n\n**WARNING**: This will cancel all pending machine actions. Use with caution."
+              "json": "---\n## 🔍 Get Action Status\n\nRetrieve status of a specific action."
             },
-            "name": "text - cancel-warning"
+            "name": "text - action-status"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "action-id-param",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "ActionId",
+                  "label": "Action ID",
+                  "type": 1,
+                  "isRequired": false,
+                  "description": "Enter specific action ID to query",
+                  "timeContext": {
+                    "durationMs": 86400000
+                  }
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "name": "parameters - action-id"
           },
           {
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/MDEDispatcher\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"action\",\"value\":\"CancelAllActions\"}],\"batchDisabled\":false,\"transformers\":null}",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/MDEDispatcher?code={FunctionKey}\",\"body\":\"{\\\"action\\\":\\\"Get Action Status\\\",\\\"tenantId\\\":\\\"{TenantId}\\\",\\\"spnId\\\":\\\"{SpnId}\\\",\\\"actionId\\\":\\\"{ActionId}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.id\",\"columnId\":\"Action ID\"},{\"path\":\"$.type\",\"columnId\":\"Type\"},{\"path\":\"$.status\",\"columnId\":\"Status\"},{\"path\":\"$.requestor\",\"columnId\":\"Requestor\"},{\"path\":\"$.creationDateTimeUtc\",\"columnId\":\"Created\"},{\"path\":\"$.lastUpdateDateTimeUtc\",\"columnId\":\"Last Updated\"},{\"path\":\"$.error\",\"columnId\":\"Error\"}]}}]}",
               "size": 0,
-              "title": "🛑 Cancel All Actions",
-              "noDataMessage": "Click 'Run Query' to cancel all pending actions",
-              "queryType": 12,
-              "visualization": "table"
+              "title": "Action Details",
+              "queryType": 12
             },
-            "name": "query - cancel-actions"
+            "conditionalVisibility": {
+              "parameterName": "ActionId",
+              "comparison": "isNotEqualTo",
+              "value": ""
+            },
+            "name": "query - action-status"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---\n## 🛑 Cancel Action\n\nCancel a specific pending action."
+            },
+            "name": "text - cancel-action"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "cancel-action-id",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "CancelActionId",
+                  "label": "Action ID to Cancel",
+                  "type": 1,
+                  "isRequired": false,
+                  "timeContext": {
+                    "durationMs": 86400000
+                  }
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "name": "parameters - cancel-action"
+          },
+          {
+            "type": 11,
+            "content": {
+              "version": "LinkItem/1.0",
+              "style": "list",
+              "links": [
+                {
+                  "id": "cancel-action-link",
+                  "cellValue": "unused",
+                  "linkTarget": "ArmAction",
+                  "linkLabel": "🛑 Cancel Action",
+                  "style": "primary",
+                  "linkIsContextBlade": true,
+                  "armActionContext": {
+                    "path": "{FunctionAppUrl}/api/MDEDispatcher?code={FunctionKey}",
+                    "headers": [],
+                    "params": [],
+                    "body": "{\"action\":\"Cancel Action\",\"tenantId\":\"{TenantId}\",\"spnId\":\"{SpnId}\",\"actionId\":\"{CancelActionId}\"}",
+                    "httpMethod": "POST",
+                    "title": "Cancel Action",
+                    "description": "Cancelling machine action...",
+                    "actionName": "CancelAction",
+                    "runLabel": "Cancel"
+                  }
+                }
+              ]
+            },
+            "conditionalVisibility": {
+              "parameterName": "CancelActionId",
+              "comparison": "isNotEqualTo",
+              "value": ""
+            },
+            "name": "links - cancel-action"
           }
         ]
       },
@@ -645,13 +1165,21 @@
       "content": {
         "version": "NotebookGroup/1.0",
         "groupType": "editable",
+        "title": "🔍 Hunt Manager",
         "items": [
           {
             "type": 1,
             "content": {
-              "json": "## 🔍 Hunt Manager\n\nExecute advanced hunting queries across your MDE environment.\n\n### Features:\n- Execute KQL queries via MDE Advanced Hunting API\n- Save hunt results to storage\n- Sample queries for common scenarios\n- Results preview and export\n\n### Query Tips:\n- Use standard KQL syntax\n- Query executes against MDE Advanced Hunting tables\n- Results are limited to API response limits\n- Can save results for later analysis"
+              "json": "## 🔍 Hunt Manager\n\nExecute advanced hunting queries with **async polling** and **JSONPath parsing**.\n\n### Features:\n- ✅ Async hunt execution with auto-refresh\n- ✅ JSONPath result parsing\n- ✅ Sample query templates\n- ✅ Export to Excel capability"
             },
             "name": "text - hunt-intro"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---\n## 📝 Sample Queries\n\nSelect a sample query or enter your own KQL."
+            },
+            "name": "text - sample-header"
           },
           {
             "type": 9,
@@ -659,42 +1187,17 @@
               "version": "KqlParameterItem/1.0",
               "parameters": [
                 {
-                  "id": "hunt-name-id",
+                  "id": "sample-query-id",
                   "version": "KqlParameterItem/1.0",
-                  "name": "HuntName",
-                  "label": "Hunt Name",
-                  "type": 1,
-                  "isRequired": false,
-                  "description": "Name for this hunt query",
-                  "timeContext": {
-                    "durationMs": 86400000
-                  }
-                },
-                {
-                  "id": "hunt-query-id",
-                  "version": "KqlParameterItem/1.0",
-                  "name": "HuntQuery",
-                  "label": "KQL Query",
-                  "type": 1,
-                  "isRequired": false,
-                  "description": "Enter your KQL query for advanced hunting",
-                  "timeContext": {
-                    "durationMs": 86400000
-                  }
-                },
-                {
-                  "id": "hunt-save-id",
-                  "version": "KqlParameterItem/1.0",
-                  "name": "SaveToStorage",
-                  "label": "Save Results to Storage",
+                  "name": "SampleQuery",
+                  "label": "Sample Queries",
                   "type": 2,
                   "isRequired": false,
                   "typeSettings": {
                     "additionalResourceOptions": [],
                     "showDefault": false
                   },
-                  "jsonData": "[{\"value\":\"true\",\"label\":\"Yes\"},{\"value\":\"false\",\"label\":\"No\"}]",
-                  "defaultValue": "false",
+                  "jsonData": "[{\"value\":\"DeviceEvents | where Timestamp > ago(24h) | where ActionType == 'ProcessCreated' | take 100\",\"label\":\"Recent Process Creations\"},{\"value\":\"AlertInfo | where Timestamp > ago(7d) | where Severity == 'High' | project Timestamp, Title, Severity, Category\",\"label\":\"High Severity Alerts\"},{\"value\":\"DeviceNetworkEvents | where Timestamp > ago(1d) | where RemoteIPType == 'Public' | summarize Count=count() by RemoteIP, DeviceName\",\"label\":\"Public Network Connections\"},{\"value\":\"DeviceFileEvents | where Timestamp > ago(1d) | where FileName endswith '.exe' | project Timestamp, DeviceName, FileName, FolderPath\",\"label\":\"Recent EXE Files\"},{\"value\":\"DeviceLogonEvents | where Timestamp > ago(1d) | where ActionType == 'LogonFailed' | summarize FailedAttempts=count() by DeviceName, AccountName\",\"label\":\"Failed Logon Attempts\"}]",
                   "timeContext": {
                     "durationMs": 86400000
                   }
@@ -704,27 +1207,102 @@
               "queryType": 0,
               "resourceType": "microsoft.operationalinsights/workspaces"
             },
-            "name": "parameters - hunt"
+            "name": "parameters - sample-queries"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "hunt-query-id",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "HuntQuery",
+                  "label": "KQL Query (or use sample above)",
+                  "type": 1,
+                  "isRequired": false,
+                  "description": "Enter your KQL query or select from samples",
+                  "typeSettings": {
+                    "multiLineText": true,
+                    "editorLanguage": "kql",
+                    "multiLineHeight": 10
+                  },
+                  "timeContext": {
+                    "durationMs": 86400000
+                  },
+                  "value": "{SampleQuery}"
+                },
+                {
+                  "id": "hunt-refresh-id",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "HuntRefreshInterval",
+                  "label": "Auto-Refresh Interval",
+                  "type": 2,
+                  "isRequired": true,
+                  "typeSettings": {
+                    "additionalResourceOptions": [],
+                    "showDefault": false
+                  },
+                  "jsonData": "[\"10\", \"30\", \"60\"]",
+                  "defaultValue": "30",
+                  "timeContext": {
+                    "durationMs": 86400000
+                  }
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "name": "parameters - hunt-query"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---\n## 🎯 Execute Hunt\n\nRun your hunt query with automatic result polling."
+            },
+            "name": "text - execute-hunt"
           },
           {
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/MDEHuntManager\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"huntName\",\"value\":\"{HuntName}\"},{\"key\":\"query\",\"value\":\"{HuntQuery}\"},{\"key\":\"saveToStorage\",\"value\":\"{SaveToStorage}\"}],\"batchDisabled\":false,\"transformers\":null}",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/MDEHuntManager?code={FunctionKey}\",\"body\":\"{\\\"action\\\":\\\"Execute Hunt\\\",\\\"tenantId\\\":\\\"{TenantId}\\\",\\\"spnId\\\":\\\"{SpnId}\\\",\\\"query\\\":\\\"{HuntQuery}\\\"}\",\"autoRefresh\":true,\"refreshInterval\":{HuntRefreshInterval},\"refreshCondition\":\"$.status != 'Completed'\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.results[*]\",\"columns\":[{\"path\":\"$.DeviceName\",\"columnId\":\"Device Name\"},{\"path\":\"$.Timestamp\",\"columnId\":\"Timestamp\"},{\"path\":\"$.ActionType\",\"columnId\":\"Action Type\"},{\"path\":\"$.FileName\",\"columnId\":\"File Name\"},{\"path\":\"$.ProcessCommandLine\",\"columnId\":\"Command Line\"},{\"path\":\"$.AccountName\",\"columnId\":\"Account\"}]}}]}",
               "size": 0,
-              "title": "🎯 Execute Hunt: {HuntName}",
-              "noDataMessage": "Enter a query and click 'Run Query' to execute",
+              "title": "🔍 Hunt Results (Auto-refreshing every {HuntRefreshInterval}s until complete)",
+              "showExportToExcel": true,
               "queryType": 12,
               "visualization": "table"
             },
-            "name": "query - hunt-execute"
+            "conditionalVisibility": {
+              "parameterName": "HuntQuery",
+              "comparison": "isNotEqualTo",
+              "value": ""
+            },
+            "name": "query - hunt-results"
           },
           {
             "type": 1,
             "content": {
-              "json": "---\n### 📝 Sample Queries\n\n**Recent High Severity Alerts:**\n```kql\nAlertInfo\n| where Timestamp > ago(7d)\n| where Severity == \"High\"\n| project Timestamp, Title, Severity, Category\n| sort by Timestamp desc\n```\n\n**Suspicious Process Executions:**\n```kql\nDeviceProcessEvents\n| where Timestamp > ago(1d)\n| where ProcessCommandLine contains \"powershell\" and ProcessCommandLine contains \"invoke\"\n| project Timestamp, DeviceName, FileName, ProcessCommandLine\n| sort by Timestamp desc\n```\n\n**Network Connections to Suspicious IPs:**\n```kql\nDeviceNetworkEvents\n| where Timestamp > ago(1d)\n| where RemoteIPType == \"Public\"\n| summarize ConnectionCount = count() by RemoteIP, DeviceName\n| where ConnectionCount > 10\n| sort by ConnectionCount desc\n```"
+              "json": "---\n## 📊 Hunt Status\n\nMonitor the status of your hunt query execution."
             },
-            "name": "text - sample-queries"
+            "name": "text - hunt-status"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/MDEHuntManager?code={FunctionKey}\",\"body\":\"{\\\"action\\\":\\\"Get Hunt Status\\\",\\\"tenantId\\\":\\\"{TenantId}\\\",\\\"spnId\\\":\\\"{SpnId}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.status\",\"columnId\":\"Status\"},{\"path\":\"$.rowCount\",\"columnId\":\"Rows\"},{\"path\":\"$.executionTime\",\"columnId\":\"Execution Time\"},{\"path\":\"$.message\",\"columnId\":\"Message\"}]}}]}",
+              "size": 0,
+              "title": "Hunt Execution Status",
+              "queryType": 12
+            },
+            "conditionalVisibility": {
+              "parameterName": "HuntQuery",
+              "comparison": "isNotEqualTo",
+              "value": ""
+            },
+            "name": "query - hunt-status"
           }
         ]
       },
@@ -740,11 +1318,12 @@
       "content": {
         "version": "NotebookGroup/1.0",
         "groupType": "editable",
+        "title": "🚨 Incident Manager",
         "items": [
           {
             "type": 1,
             "content": {
-              "json": "## 🚨 Incident Manager\n\nManage and view security incidents from Microsoft Defender for Endpoint.\n\n### Features:\n- View all incidents with filtering\n- Filter by severity and status\n- View incident details and statistics\n- Monitor incident trends"
+              "json": "## 🚨 Incident Manager\n\nManage security incidents with **filters** and **JSONPath parsing**.\n\n### Features:\n- ✅ Severity and status filtering\n- ✅ JSONPath output parsing\n- ✅ Update incidents via ARM Actions\n- ✅ Add comments to incidents"
             },
             "name": "text - incident-intro"
           },
@@ -764,7 +1343,7 @@
                     "additionalResourceOptions": [],
                     "showDefault": false
                   },
-                  "jsonData": "[{\"value\":\"All\",\"label\":\"All\"},{\"value\":\"Informational\",\"label\":\"Informational\"},{\"value\":\"Low\",\"label\":\"Low\"},{\"value\":\"Medium\",\"label\":\"Medium\"},{\"value\":\"High\",\"label\":\"High\"}]",
+                  "jsonData": "[\"All\", \"Informational\", \"Low\", \"Medium\", \"High\"]",
                   "defaultValue": "All",
                   "timeContext": {
                     "durationMs": 86400000
@@ -781,7 +1360,7 @@
                     "additionalResourceOptions": [],
                     "showDefault": false
                   },
-                  "jsonData": "[{\"value\":\"All\",\"label\":\"All\"},{\"value\":\"Active\",\"label\":\"Active\"},{\"value\":\"Resolved\",\"label\":\"Resolved\"},{\"value\":\"Redirected\",\"label\":\"Redirected\"}]",
+                  "jsonData": "[\"All\", \"Active\", \"Resolved\", \"InProgress\", \"Redirected\"]",
                   "defaultValue": "Active",
                   "timeContext": {
                     "durationMs": 86400000
@@ -792,36 +1371,38 @@
               "queryType": 0,
               "resourceType": "microsoft.operationalinsights/workspaces"
             },
-            "name": "parameters - incident"
+            "name": "parameters - incident-filters"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---\n## 📊 Get Incidents\n\nView incidents with filtering options."
+            },
+            "name": "text - get-incidents"
           },
           {
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"GET\",\"path\":\"{FunctionAppUrl}/api/MDEIncidentManager\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"severity\",\"value\":\"{IncidentSeverity}\"},{\"key\":\"status\",\"value\":\"{IncidentStatus}\"}],\"batchDisabled\":false,\"transformers\":null}",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/MDEIncidentManager?code={FunctionKey}\",\"body\":\"{\\\"action\\\":\\\"Get Incidents\\\",\\\"tenantId\\\":\\\"{TenantId}\\\",\\\"spnId\\\":\\\"{SpnId}\\\",\\\"severity\\\":\\\"{IncidentSeverity}\\\",\\\"status\\\":\\\"{IncidentStatus}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.incidents[*]\",\"columns\":[{\"path\":\"$.incidentId\",\"columnId\":\"Incident ID\"},{\"path\":\"$.incidentName\",\"columnId\":\"Name\"},{\"path\":\"$.severity\",\"columnId\":\"Severity\"},{\"path\":\"$.status\",\"columnId\":\"Status\"},{\"path\":\"$.assignedTo\",\"columnId\":\"Assigned To\"},{\"path\":\"$.createdTime\",\"columnId\":\"Created\"},{\"path\":\"$.lastUpdateTime\",\"columnId\":\"Updated\"}]}}]}",
               "size": 0,
-              "title": "📊 Security Incidents",
+              "title": "🚨 Security Incidents",
+              "showExportToExcel": true,
               "queryType": 12,
               "visualization": "table",
               "gridSettings": {
                 "formatters": [
                   {
-                    "columnMatch": "severity",
+                    "columnMatch": "Severity",
                     "formatter": 18,
                     "formatOptions": {
                       "thresholdsOptions": "colors",
                       "thresholdsGrid": [
                         {
                           "operator": "==",
-                          "thresholdValue": "Informational",
-                          "representation": "blue",
-                          "text": "ℹ️ {0}"
-                        },
-                        {
-                          "operator": "==",
-                          "thresholdValue": "Low",
-                          "representation": "green",
-                          "text": "⚠️ {0}"
+                          "thresholdValue": "High",
+                          "representation": "red",
+                          "text": "🔴 {0}"
                         },
                         {
                           "operator": "==",
@@ -831,15 +1412,15 @@
                         },
                         {
                           "operator": "==",
-                          "thresholdValue": "High",
-                          "representation": "red",
-                          "text": "🔴 {0}"
+                          "thresholdValue": "Low",
+                          "representation": "green",
+                          "text": "ℹ️ {0}"
                         }
                       ]
                     }
                   },
                   {
-                    "columnMatch": "status",
+                    "columnMatch": "Status",
                     "formatter": 18,
                     "formatOptions": {
                       "thresholdsOptions": "colors",
@@ -847,7 +1428,7 @@
                         {
                           "operator": "==",
                           "thresholdValue": "Active",
-                          "representation": "orange",
+                          "representation": "red",
                           "text": "🔴 {0}"
                         },
                         {
@@ -858,14 +1439,15 @@
                         },
                         {
                           "operator": "==",
-                          "thresholdValue": "Redirected",
-                          "representation": "blue",
-                          "text": "➡️ {0}"
+                          "thresholdValue": "InProgress",
+                          "representation": "orange",
+                          "text": "⏳ {0}"
                         }
                       ]
                     }
                   }
-                ]
+                ],
+                "filter": true
               }
             },
             "name": "query - incidents"
@@ -873,21 +1455,161 @@
           {
             "type": 1,
             "content": {
-              "json": "---\n### 📈 Incident Statistics\n\nStatistics and trends for security incidents."
+              "json": "---\n## ✏️ Update Incident\n\nUpdate incident status or assignment."
             },
-            "name": "text - stats-header"
+            "name": "text - update-incident"
           },
           {
-            "type": 3,
+            "type": 9,
             "content": {
-              "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"GET\",\"path\":\"{FunctionAppUrl}/api/MDEIncidentManager\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"action\",\"value\":\"statistics\"}],\"batchDisabled\":false,\"transformers\":null}",
-              "size": 0,
-              "title": "📊 Incident Statistics",
-              "queryType": 12,
-              "visualization": "table"
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "update-incident-id",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "UpdateIncidentId",
+                  "label": "Incident ID",
+                  "type": 1,
+                  "isRequired": false,
+                  "timeContext": {
+                    "durationMs": 86400000
+                  }
+                },
+                {
+                  "id": "update-status-id",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "UpdateStatus",
+                  "label": "New Status",
+                  "type": 2,
+                  "isRequired": false,
+                  "typeSettings": {
+                    "additionalResourceOptions": [],
+                    "showDefault": false
+                  },
+                  "jsonData": "[\"Active\", \"Resolved\", \"InProgress\", \"Redirected\"]",
+                  "timeContext": {
+                    "durationMs": 86400000
+                  }
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
             },
-            "name": "query - incident-stats"
+            "name": "parameters - update-incident"
+          },
+          {
+            "type": 11,
+            "content": {
+              "version": "LinkItem/1.0",
+              "style": "list",
+              "links": [
+                {
+                  "id": "update-incident-action",
+                  "cellValue": "unused",
+                  "linkTarget": "ArmAction",
+                  "linkLabel": "✏️ Update Incident",
+                  "style": "primary",
+                  "linkIsContextBlade": true,
+                  "armActionContext": {
+                    "path": "{FunctionAppUrl}/api/MDEIncidentManager?code={FunctionKey}",
+                    "headers": [],
+                    "params": [],
+                    "body": "{\"action\":\"Update Incident\",\"tenantId\":\"{TenantId}\",\"spnId\":\"{SpnId}\",\"incidentId\":\"{UpdateIncidentId}\",\"status\":\"{UpdateStatus}\"}",
+                    "httpMethod": "POST",
+                    "title": "Update Incident",
+                    "description": "Updating incident status...",
+                    "actionName": "UpdateIncident",
+                    "runLabel": "Update"
+                  }
+                }
+              ]
+            },
+            "conditionalVisibility": {
+              "parameterName": "UpdateIncidentId",
+              "comparison": "isNotEqualTo",
+              "value": ""
+            },
+            "name": "links - update-incident"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---\n## 💬 Add Comment to Incident\n\nAdd a comment to an existing incident."
+            },
+            "name": "text - add-comment"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "comment-incident-id",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "CommentIncidentId",
+                  "label": "Incident ID",
+                  "type": 1,
+                  "isRequired": false,
+                  "timeContext": {
+                    "durationMs": 86400000
+                  }
+                },
+                {
+                  "id": "incident-comment-id",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "IncidentComment",
+                  "label": "Comment",
+                  "type": 1,
+                  "isRequired": false,
+                  "typeSettings": {
+                    "multiLineText": true,
+                    "multiLineHeight": 5
+                  },
+                  "timeContext": {
+                    "durationMs": 86400000
+                  }
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "name": "parameters - add-comment"
+          },
+          {
+            "type": 11,
+            "content": {
+              "version": "LinkItem/1.0",
+              "style": "list",
+              "links": [
+                {
+                  "id": "add-comment-action",
+                  "cellValue": "unused",
+                  "linkTarget": "ArmAction",
+                  "linkLabel": "💬 Add Comment",
+                  "style": "primary",
+                  "linkIsContextBlade": true,
+                  "armActionContext": {
+                    "path": "{FunctionAppUrl}/api/MDEIncidentManager?code={FunctionKey}",
+                    "headers": [],
+                    "params": [],
+                    "body": "{\"action\":\"Add Comment\",\"tenantId\":\"{TenantId}\",\"spnId\":\"{SpnId}\",\"incidentId\":\"{CommentIncidentId}\",\"comment\":\"{IncidentComment}\"}",
+                    "httpMethod": "POST",
+                    "title": "Add Comment",
+                    "description": "Adding comment to incident...",
+                    "actionName": "AddComment",
+                    "runLabel": "Add"
+                  }
+                }
+              ]
+            },
+            "conditionalVisibility": {
+              "parameterName": "CommentIncidentId",
+              "comparison": "isNotEqualTo",
+              "value": ""
+            },
+            "name": "links - add-comment"
           }
         ]
       },
@@ -903,13 +1625,41 @@
       "content": {
         "version": "NotebookGroup/1.0",
         "groupType": "editable",
+        "title": "🛡️ Custom Detection Manager",
         "items": [
           {
             "type": 1,
             "content": {
-              "json": "## 🛡️ Custom Detection Manager\n\nManage custom detection rules in Microsoft Defender for Endpoint.\n\n### Actions:\n- **List** - View all custom detection rules\n- **Create** - Create new detection rules with KQL queries\n- **Update** - Modify existing detection rules\n- **Delete** - Remove custom detection rules\n- **Backup** - Export rules for backup/migration\n\n### Rule Components:\n- Detection rule name and description\n- KQL query for detection logic\n- Severity level (Informational, Low, Medium, High)\n- Alert title and recommended actions"
+              "json": "## 🛡️ Custom Detection Manager\n\nManage custom detection rules with **ARM Actions** and **JSONPath parsing**.\n\n### Features:\n- ✅ List all detections with JSONPath\n- ✅ Create/Update/Delete via ARM Actions\n- ✅ Backup detections for migration\n- ✅ Sample detection templates"
             },
             "name": "text - detection-intro"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---\n## 📋 List All Detections\n\nView all custom detection rules with JSONPath parsing."
+            },
+            "name": "text - list-detections"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/MDECDManager?code={FunctionKey}\",\"body\":\"{\\\"action\\\":\\\"List Detections\\\",\\\"tenantId\\\":\\\"{TenantId}\\\",\\\"spnId\\\":\\\"{SpnId}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.detections[*]\",\"columns\":[{\"path\":\"$.id\",\"columnId\":\"ID\"},{\"path\":\"$.displayName\",\"columnId\":\"Name\"},{\"path\":\"$.severity\",\"columnId\":\"Severity\"},{\"path\":\"$.enabled\",\"columnId\":\"Enabled\"},{\"path\":\"$.createdBy\",\"columnId\":\"Created By\"},{\"path\":\"$.lastModified\",\"columnId\":\"Modified\"}]}}]}",
+              "size": 0,
+              "title": "🛡️ Custom Detection Rules",
+              "showExportToExcel": true,
+              "queryType": 12,
+              "visualization": "table"
+            },
+            "name": "query - list-detections"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---\n## ➕ Create Detection Rule\n\nCreate a new custom detection rule."
+            },
+            "name": "text - create-detection"
           },
           {
             "type": 9,
@@ -917,50 +1667,36 @@
               "version": "KqlParameterItem/1.0",
               "parameters": [
                 {
-                  "id": "detection-action-id",
+                  "id": "create-rule-name",
                   "version": "KqlParameterItem/1.0",
-                  "name": "DetectionAction",
-                  "label": "Action",
-                  "type": 2,
-                  "isRequired": true,
-                  "typeSettings": {
-                    "additionalResourceOptions": [],
-                    "showDefault": false
-                  },
-                  "jsonData": "[\"List\", \"Create\", \"Update\", \"Delete\", \"Backup\"]",
-                  "defaultValue": "List",
-                  "timeContext": {
-                    "durationMs": 86400000
-                  }
-                },
-                {
-                  "id": "detection-name-id",
-                  "version": "KqlParameterItem/1.0",
-                  "name": "RuleName",
+                  "name": "CreateRuleName",
                   "label": "Rule Name",
                   "type": 1,
                   "isRequired": false,
-                  "description": "Name of the custom detection rule",
                   "timeContext": {
                     "durationMs": 86400000
                   }
                 },
                 {
-                  "id": "detection-query-id",
+                  "id": "create-rule-query",
                   "version": "KqlParameterItem/1.0",
-                  "name": "DetectionQuery",
+                  "name": "CreateRuleQuery",
                   "label": "KQL Query",
                   "type": 1,
                   "isRequired": false,
-                  "description": "KQL query for the detection rule",
+                  "typeSettings": {
+                    "multiLineText": true,
+                    "editorLanguage": "kql",
+                    "multiLineHeight": 10
+                  },
                   "timeContext": {
                     "durationMs": 86400000
                   }
                 },
                 {
-                  "id": "detection-severity-id",
+                  "id": "create-rule-severity",
                   "version": "KqlParameterItem/1.0",
-                  "name": "DetectionSeverity",
+                  "name": "CreateRuleSeverity",
                   "label": "Severity",
                   "type": 2,
                   "isRequired": false,
@@ -979,46 +1715,205 @@
               "queryType": 0,
               "resourceType": "microsoft.operationalinsights/workspaces"
             },
-            "name": "parameters - detection"
+            "name": "parameters - create-detection"
+          },
+          {
+            "type": 11,
+            "content": {
+              "version": "LinkItem/1.0",
+              "style": "list",
+              "links": [
+                {
+                  "id": "create-detection-action",
+                  "cellValue": "unused",
+                  "linkTarget": "ArmAction",
+                  "linkLabel": "➕ Create Detection Rule",
+                  "style": "primary",
+                  "linkIsContextBlade": true,
+                  "armActionContext": {
+                    "path": "{FunctionAppUrl}/api/MDECDManager?code={FunctionKey}",
+                    "headers": [],
+                    "params": [],
+                    "body": "{\"action\":\"Create Detection\",\"tenantId\":\"{TenantId}\",\"spnId\":\"{SpnId}\",\"ruleName\":\"{CreateRuleName}\",\"query\":\"{CreateRuleQuery}\",\"severity\":\"{CreateRuleSeverity}\"}",
+                    "httpMethod": "POST",
+                    "title": "Create Detection Rule",
+                    "description": "Creating custom detection rule...",
+                    "actionName": "CreateDetection",
+                    "runLabel": "Create"
+                  }
+                }
+              ]
+            },
+            "conditionalVisibility": {
+              "parameterName": "CreateRuleName",
+              "comparison": "isNotEqualTo",
+              "value": ""
+            },
+            "name": "links - create-detection"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---\n## ✏️ Update Detection Rule\n\nModify an existing detection rule."
+            },
+            "name": "text - update-detection"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "update-rule-id",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "UpdateRuleId",
+                  "label": "Rule ID",
+                  "type": 1,
+                  "isRequired": false,
+                  "timeContext": {
+                    "durationMs": 86400000
+                  }
+                },
+                {
+                  "id": "update-rule-query",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "UpdateRuleQuery",
+                  "label": "New KQL Query",
+                  "type": 1,
+                  "isRequired": false,
+                  "typeSettings": {
+                    "multiLineText": true,
+                    "editorLanguage": "kql",
+                    "multiLineHeight": 10
+                  },
+                  "timeContext": {
+                    "durationMs": 86400000
+                  }
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "name": "parameters - update-detection"
+          },
+          {
+            "type": 11,
+            "content": {
+              "version": "LinkItem/1.0",
+              "style": "list",
+              "links": [
+                {
+                  "id": "update-detection-action",
+                  "cellValue": "unused",
+                  "linkTarget": "ArmAction",
+                  "linkLabel": "✏️ Update Detection Rule",
+                  "style": "primary",
+                  "linkIsContextBlade": true,
+                  "armActionContext": {
+                    "path": "{FunctionAppUrl}/api/MDECDManager?code={FunctionKey}",
+                    "headers": [],
+                    "params": [],
+                    "body": "{\"action\":\"Update Detection\",\"tenantId\":\"{TenantId}\",\"spnId\":\"{SpnId}\",\"ruleId\":\"{UpdateRuleId}\",\"query\":\"{UpdateRuleQuery}\"}",
+                    "httpMethod": "POST",
+                    "title": "Update Detection Rule",
+                    "description": "Updating detection rule...",
+                    "actionName": "UpdateDetection",
+                    "runLabel": "Update"
+                  }
+                }
+              ]
+            },
+            "conditionalVisibility": {
+              "parameterName": "UpdateRuleId",
+              "comparison": "isNotEqualTo",
+              "value": ""
+            },
+            "name": "links - update-detection"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---\n## ❌ Delete Detection Rule\n\nRemove a custom detection rule."
+            },
+            "name": "text - delete-detection"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "delete-rule-id",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "DeleteRuleId",
+                  "label": "Rule ID to Delete",
+                  "type": 1,
+                  "isRequired": false,
+                  "timeContext": {
+                    "durationMs": 86400000
+                  }
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "name": "parameters - delete-detection"
+          },
+          {
+            "type": 11,
+            "content": {
+              "version": "LinkItem/1.0",
+              "style": "list",
+              "links": [
+                {
+                  "id": "delete-detection-action",
+                  "cellValue": "unused",
+                  "linkTarget": "ArmAction",
+                  "linkLabel": "❌ Delete Detection Rule",
+                  "style": "primary",
+                  "linkIsContextBlade": true,
+                  "armActionContext": {
+                    "path": "{FunctionAppUrl}/api/MDECDManager?code={FunctionKey}",
+                    "headers": [],
+                    "params": [],
+                    "body": "{\"action\":\"Delete Detection\",\"tenantId\":\"{TenantId}\",\"spnId\":\"{SpnId}\",\"ruleId\":\"{DeleteRuleId}\"}",
+                    "httpMethod": "POST",
+                    "title": "Delete Detection Rule",
+                    "description": "Deleting detection rule...",
+                    "actionName": "DeleteDetection",
+                    "runLabel": "Delete"
+                  }
+                }
+              ]
+            },
+            "conditionalVisibility": {
+              "parameterName": "DeleteRuleId",
+              "comparison": "isNotEqualTo",
+              "value": ""
+            },
+            "name": "links - delete-detection"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---\n## 💾 Backup Detections\n\nExport all detection rules for backup or migration."
+            },
+            "name": "text - backup-detections"
           },
           {
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/MDECDManager\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"action\",\"value\":\"{DetectionAction}\"},{\"key\":\"ruleName\",\"value\":\"{RuleName}\"},{\"key\":\"query\",\"value\":\"{DetectionQuery}\"},{\"key\":\"severity\",\"value\":\"{DetectionSeverity}\"}],\"batchDisabled\":false,\"transformers\":null}",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/MDECDManager?code={FunctionKey}\",\"body\":\"{\\\"action\\\":\\\"Backup Detections\\\",\\\"tenantId\\\":\\\"{TenantId}\\\",\\\"spnId\\\":\\\"{SpnId}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.backup[*]\",\"columns\":[{\"path\":\"$.displayName\",\"columnId\":\"Name\"},{\"path\":\"$.query\",\"columnId\":\"Query\"},{\"path\":\"$.severity\",\"columnId\":\"Severity\"}]}}]}",
               "size": 0,
-              "title": "🎯 Detection Action: {DetectionAction}",
-              "noDataMessage": "Select an action and click 'Run Query'",
+              "title": "💾 Detection Backup",
+              "showExportToExcel": true,
               "queryType": 12,
               "visualization": "table"
             },
-            "name": "query - detection-execute"
-          },
-          {
-            "type": 1,
-            "content": {
-              "json": "---\n### 📝 Sample Detection Rules\n\n**Suspicious PowerShell Activity:**\n```kql\nDeviceProcessEvents\n| where ProcessCommandLine contains \"powershell\" \n| where ProcessCommandLine has_any (\"invoke-expression\", \"downloadstring\", \"iex\")\n| project Timestamp, DeviceName, AccountName, ProcessCommandLine\n```\n\n**Credential Dumping Attempt:**\n```kql\nDeviceProcessEvents\n| where FileName in~ (\"mimikatz.exe\", \"procdump.exe\", \"pwdump.exe\")\n   or ProcessCommandLine has_any (\"lsass\", \"sekurlsa\")\n| project Timestamp, DeviceName, FileName, ProcessCommandLine\n```\n\n**Persistence via Registry Run Keys:**\n```kql\nDeviceRegistryEvents\n| where RegistryKey has_any (\"Run\", \"RunOnce\")\n| where ActionType == \"RegistryValueSet\"\n| project Timestamp, DeviceName, RegistryKey, RegistryValueName, RegistryValueData\n```"
-            },
-            "name": "text - sample-detections"
-          },
-          {
-            "type": 1,
-            "content": {
-              "json": "---\n### 📊 Detection Statistics"
-            },
-            "name": "text - detection-stats-header"
-          },
-          {
-            "type": 3,
-            "content": {
-              "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"GET\",\"path\":\"{FunctionAppUrl}/api/MDECDManager\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"action\",\"value\":\"List\"}],\"batchDisabled\":false,\"transformers\":null}",
-              "size": 0,
-              "title": "🛡️ Custom Detection Rules",
-              "queryType": 12,
-              "visualization": "table"
-            },
-            "name": "query - detection-list"
+            "name": "query - backup-detections"
           }
         ]
       },
