@@ -27,12 +27,12 @@ jobs:
           
           # Verify all expected functions exist
           $expectedFunctions = @(
-              'MDECDManager',
-              'MDEDispatcher',
-              'MDEHuntManager',
-              'MDEIncidentManager',
-              'MDETIManager',
-              'MDEOrchestrator',
+              'DefenderC2CDManager',
+              'DefenderC2Dispatcher',
+              'DefenderC2HuntManager',
+              'DefenderC2IncidentManager',
+              'DefenderC2TIManager',
+              'DefenderC2Orchestrator',
               'ListLibraryFiles',
               'GetLibraryFile',
               'PutLiveResponseFileFromLibrary',
