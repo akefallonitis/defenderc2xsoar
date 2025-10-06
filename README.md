@@ -289,7 +289,7 @@ The function code is **automatically deployed** from a pre-packaged zip file. Wa
 **Via Azure Portal:**
 1. Navigate to your Function App
 2. Click "Functions" in the left menu
-3. You should see all 11 functions:
+3. You should see all 9 functions:
    - ✅ **DefenderC2Dispatcher** - Handle device action requests
    - ✅ **DefenderC2Orchestrator** - Orchestrate complex operations
    - ✅ **DefenderC2TIManager** - Handle threat intelligence operations
@@ -298,8 +298,6 @@ The function code is **automatically deployed** from a pre-packaged zip file. Wa
    - ✅ **DefenderC2CDManager** - Handle custom detection operations
    - ✅ **ListLibraryFiles** - List files in Azure Storage library
    - ✅ **GetLibraryFile** - Retrieve file from library
-   - ✅ **PutLiveResponseFileFromLibrary** - Deploy file from library to device
-   - ✅ **GetLiveResponseFile** - Download file from device
    - ✅ **DeleteLibraryFile** - Remove file from library
 
 **Via Azure CLI:**

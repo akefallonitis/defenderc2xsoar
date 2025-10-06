@@ -383,12 +383,13 @@ Invoke-RestMethod `
 
 ### PutLiveResponseFileFromLibrary
 
-**Endpoint**: `GET/POST /api/PutLiveResponseFileFromLibrary`  
+**Endpoint**: `GET/POST /api/DefenderC2Orchestrator`  
 **Auth**: Function-level key  
 
 **Request**:
 ```json
 {
+  "Function": "PutLiveResponseFileFromLibrary",
   "fileName": "script.ps1",
   "DeviceIds": "device-id-here",
   "tenantId": "tenant-id",
@@ -399,7 +400,7 @@ Invoke-RestMethod `
 **Response**:
 ```json
 {
-  "success": true,
+  "function": "PutLiveResponseFileFromLibrary",
   "status": "Success",
   "message": "File deployed successfully from library to device",
   "fileName": "script.ps1",
@@ -408,7 +409,7 @@ Invoke-RestMethod `
   "sessionId": "session-id",
   "commandId": "command-id",
   "timestamp": "2025-01-06T14:30:00Z",
-  "error": null
+  "tenantId": "tenant-id"
 }
 ```
 
@@ -416,14 +417,15 @@ Invoke-RestMethod `
 
 ### GetLiveResponseFile
 
-**Endpoint**: `GET/POST /api/GetLiveResponseFile`  
+**Endpoint**: `GET/POST /api/DefenderC2Orchestrator`  
 **Auth**: Function-level key  
 
 **Request**:
 ```json
 {
-  "DeviceId": "device-id-here",
-  "FilePath": "C:\\Windows\\Temp\\file.txt",
+  "Function": "GetLiveResponseFile",
+  "DeviceIds": "device-id-here",
+  "filePath": "C:\\Windows\\Temp\\file.txt",
   "tenantId": "tenant-id"
 }
 ```
@@ -431,18 +433,16 @@ Invoke-RestMethod `
 **Response**:
 ```json
 {
-  "success": true,
+  "function": "GetLiveResponseFile",
   "status": "Success",
-  "message": "File downloaded successfully from device",
+  "message": "File downloaded successfully",
   "fileName": "file.txt",
-  "filePath": "C:\\Windows\\Temp\\file.txt",
   "fileContent": "base64-encoded-content-here",
-  "size": 1024,
-  "deviceId": "device-id",
+  "downloadUrl": "data:application/octet-stream;base64,...",
   "sessionId": "session-id",
-  "commandId": "command-id",
+  "deviceId": "device-id",
   "timestamp": "2025-01-06T14:30:00Z",
-  "error": null
+  "tenantId": "tenant-id"
 }
 ```
 
