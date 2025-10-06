@@ -71,10 +71,15 @@ az storage blob upload \
 
 **Test**: Call the function
 ```powershell
-$functionUrl = "https://<your-func-app>.azurewebsites.net/api/ListLibraryFiles"
+$functionUrl = "https://<your-func-app>.azurewebsites.net/api/DefenderC2Orchestrator"
 $functionKey = "<your-function-key>"
 
-$response = Invoke-RestMethod -Uri "$functionUrl`?code=$functionKey" -Method Get
+$body = @{
+    Function = "ListLibraryFiles"
+    tenantId = "<your-tenant-id>"
+} | ConvertTo-Json
+
+$response = Invoke-RestMethod -Uri "$functionUrl`?code=$functionKey" -Method Post -Body $body -ContentType "application/json"
 
 $response | ConvertTo-Json -Depth 5
 ```
@@ -110,11 +115,13 @@ $response | ConvertTo-Json -Depth 5
 
 **Test**: Retrieve the test file
 ```powershell
-$functionUrl = "https://<your-func-app>.azurewebsites.net/api/GetLibraryFile"
+$functionUrl = "https://<your-func-app>.azurewebsites.net/api/DefenderC2Orchestrator"
 $functionKey = "<your-function-key>"
 
 $body = @{
+    Function = "GetLibraryFile"
     fileName = "test-file.txt"
+    tenantId = "<your-tenant-id>"
 } | ConvertTo-Json
 
 $response = Invoke-RestMethod `
@@ -253,11 +260,13 @@ Write-Host "Size: $($response.size) bytes"
 
 **Test**: Delete test file from library
 ```powershell
-$functionUrl = "https://<your-func-app>.azurewebsites.net/api/DeleteLibraryFile"
+$functionUrl = "https://<your-func-app>.azurewebsites.net/api/DefenderC2Orchestrator"
 $functionKey = "<your-function-key>"
 
 $body = @{
+    Function = "DeleteLibraryFile"
     fileName = "test-file.txt"
+    tenantId = "<your-tenant-id>"
 } | ConvertTo-Json
 
 $response = Invoke-RestMethod `
@@ -290,7 +299,12 @@ $response | ConvertTo-Json -Depth 5
 **Verify Deletion**:
 ```powershell
 # List files again - test-file.txt should be gone
-Invoke-RestMethod -Uri "https://<your-func-app>.azurewebsites.net/api/ListLibraryFiles?code=<key>" -Method Get
+$body = @{
+    Function = "ListLibraryFiles"
+    tenantId = "<your-tenant-id>"
+} | ConvertTo-Json
+
+Invoke-RestMethod -Uri "https://<your-func-app>.azurewebsites.net/api/DefenderC2Orchestrator?code=<key>" -Method Post -Body $body -ContentType "application/json"
 ```
 
 ---

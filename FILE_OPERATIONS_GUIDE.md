@@ -90,11 +90,19 @@ az storage blob upload --account-name defenderc2 --container-name library --name
                         │ Read/Write
                         ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                  Azure Functions                             │
+│            DefenderC2Orchestrator (Azure Function)           │
+│                                                              │
+│  Live Response Capabilities:                                │
+│  - GetLiveResponseSessions                                  │
+│  - InvokeLiveResponseScript                                 │
+│  - GetLiveResponseOutput                                    │
+│  - GetLiveResponseFile   (Download from device)             │
+│  - PutLiveResponseFile   (Upload to device - Base64)        │
+│  - PutLiveResponseFileFromLibrary (Deploy from library)     │
+│                                                              │
+│  Library Management:                                         │
 │  - ListLibraryFiles      (GET library contents)             │
 │  - GetLibraryFile        (GET file as Base64)               │
-│  - PutLiveResponseFile   (Deploy to device)                 │
-│  - GetLiveResponseFile   (Download from device)             │
 │  - DeleteLibraryFile     (Remove from library)              │
 └───────────────────────┬─────────────────────────────────────┘
                         │
@@ -293,9 +301,16 @@ $response = Invoke-RestMethod `
 
 #### Using API
 ```powershell
+$body = @{
+    Function = "ListLibraryFiles"
+    tenantId = "your-tenant-id"
+} | ConvertTo-Json
+
 Invoke-RestMethod `
-  -Uri "https://yourfunc.azurewebsites.net/api/ListLibraryFiles?code=funckey" `
-  -Method Get
+  -Uri "https://yourfunc.azurewebsites.net/api/DefenderC2Orchestrator?code=funckey" `
+  -Method Post `
+  -Body $body `
+  -ContentType "application/json"
 ```
 
 ---
@@ -313,11 +328,13 @@ Invoke-RestMethod `
 #### Using API
 ```powershell
 $body = @{
+    Function = "DeleteLibraryFile"
     fileName = "old-script.ps1"
+    tenantId = "your-tenant-id"
 } | ConvertTo-Json
 
 Invoke-RestMethod `
-  -Uri "https://yourfunc.azurewebsites.net/api/DeleteLibraryFile?code=funckey" `
+  -Uri "https://yourfunc.azurewebsites.net/api/DefenderC2Orchestrator?code=funckey" `
   -Method Post `
   -Body $body `
   -ContentType "application/json"
@@ -329,15 +346,22 @@ Invoke-RestMethod `
 
 ### ListLibraryFiles
 
-**Endpoint**: `GET/POST /api/ListLibraryFiles`  
+**Endpoint**: `GET/POST /api/DefenderC2Orchestrator`  
 **Auth**: Function-level key  
 
-**Request**: No parameters required
+**Request**:
+```json
+{
+  "Function": "ListLibraryFiles",
+  "tenantId": "tenant-id"
+}
+```
 
 **Response**:
 ```json
 {
-  "success": true,
+  "function": "ListLibraryFiles",
+  "status": "Success",
   "data": [
     {
       "fileName": "script.ps1",
@@ -349,7 +373,7 @@ Invoke-RestMethod `
   ],
   "count": 1,
   "timestamp": "2025-01-06T14:30:00Z",
-  "error": null
+  "tenantId": "tenant-id"
 }
 ```
 
@@ -357,25 +381,28 @@ Invoke-RestMethod `
 
 ### GetLibraryFile
 
-**Endpoint**: `GET/POST /api/GetLibraryFile`  
+**Endpoint**: `GET/POST /api/DefenderC2Orchestrator`  
 **Auth**: Function-level key  
 
 **Request**:
 ```json
 {
-  "fileName": "script.ps1"
+  "Function": "GetLibraryFile",
+  "fileName": "script.ps1",
+  "tenantId": "tenant-id"
 }
 ```
 
 **Response**:
 ```json
 {
-  "success": true,
+  "function": "GetLibraryFile",
+  "status": "Success",
   "fileName": "script.ps1",
   "fileContent": "base64-encoded-content-here",
   "size": 2048,
   "timestamp": "2025-01-06T14:30:00Z",
-  "error": null
+  "tenantId": "tenant-id"
 }
 ```
 
@@ -450,25 +477,27 @@ Invoke-RestMethod `
 
 ### DeleteLibraryFile
 
-**Endpoint**: `GET/POST /api/DeleteLibraryFile`  
+**Endpoint**: `GET/POST /api/DefenderC2Orchestrator`  
 **Auth**: Function-level key  
 
 **Request**:
 ```json
 {
-  "fileName": "old-script.ps1"
+  "Function": "DeleteLibraryFile",
+  "fileName": "old-script.ps1",
+  "tenantId": "tenant-id"
 }
 ```
 
 **Response**:
 ```json
 {
-  "success": true,
+  "function": "DeleteLibraryFile",
   "status": "Success",
   "message": "File deleted successfully from library",
   "fileName": "old-script.ps1",
   "timestamp": "2025-01-06T14:30:00Z",
-  "error": null
+  "tenantId": "tenant-id"
 }
 ```
 
