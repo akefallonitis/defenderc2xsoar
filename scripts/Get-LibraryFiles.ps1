@@ -19,10 +19,13 @@
     If specified, uses the Azure Function API instead of direct storage access
 
 .PARAMETER FunctionUrl
-    URL of the ListLibraryFiles Azure Function (required with UseAPI)
+    URL of the DefenderC2Orchestrator Azure Function (required with UseAPI)
 
 .PARAMETER FunctionKey
     Function key for authentication (required with UseAPI)
+
+.PARAMETER TenantId
+    Azure AD Tenant ID (required with UseAPI)
 
 .PARAMETER Format
     Output format: Table (default), List, or JSON
@@ -32,7 +35,7 @@
 
 .EXAMPLE
     # Using API
-    .\Get-LibraryFiles.ps1 -UseAPI -FunctionUrl "https://myfunc.azurewebsites.net/api/ListLibraryFiles" -FunctionKey "abc123..."
+    .\Get-LibraryFiles.ps1 -UseAPI -FunctionUrl "https://myfunc.azurewebsites.net/api/DefenderC2Orchestrator" -FunctionKey "abc123..." -TenantId "your-tenant-id"
 
 .EXAMPLE
     # Export to JSON
@@ -59,6 +62,9 @@ param(
     [Parameter(Mandatory = $true, ParameterSetName = 'API')]
     [string]$FunctionKey,
     
+    [Parameter(Mandatory = $true, ParameterSetName = 'API')]
+    [string]$TenantId,
+    
     [Parameter(Mandatory = $false)]
     [ValidateSet('Table', 'List', 'JSON')]
     [string]$Format = 'Table'
@@ -71,16 +77,21 @@ $files = @()
 try {
     if ($UseAPI) {
         # Use Azure Function API
-        Write-Host "🌐 Querying Azure Function API..." -ForegroundColor Yellow
+        Write-Host "🌐 Querying DefenderC2Orchestrator API..." -ForegroundColor Yellow
         
         $uri = "$FunctionUrl`?code=$FunctionKey"
-        $response = Invoke-RestMethod -Uri $uri -Method Get -ErrorAction Stop
+        $body = @{
+            Function = "ListLibraryFiles"
+            tenantId = $TenantId
+        } | ConvertTo-Json
         
-        if ($response.success) {
+        $response = Invoke-RestMethod -Uri $uri -Method Post -Body $body -ContentType "application/json" -ErrorAction Stop
+        
+        if ($response.status -eq "Success") {
             $files = $response.data
             Write-Host "✅ Retrieved $($response.count) file(s) from API" -ForegroundColor Green
         } else {
-            Write-Error "API returned error: $($response.error)"
+            Write-Error "API returned error: $($response.message)"
             exit 1
         }
         

@@ -22,10 +22,13 @@
     If specified, uses the Azure Function API instead of direct storage access
 
 .PARAMETER FunctionUrl
-    URL of the DeleteLibraryFile Azure Function (required with UseAPI)
+    URL of the DefenderC2Orchestrator Azure Function (required with UseAPI)
 
 .PARAMETER FunctionKey
     Function key for authentication (required with UseAPI)
+
+.PARAMETER TenantId
+    Azure AD Tenant ID (required with UseAPI)
 
 .PARAMETER Force
     If specified, skips confirmation prompt
@@ -35,7 +38,7 @@
 
 .EXAMPLE
     # Using API
-    .\Remove-LibraryFile.ps1 -FileName "script.ps1" -UseAPI -FunctionUrl "https://myfunc.azurewebsites.net/api/DeleteLibraryFile" -FunctionKey "abc123..."
+    .\Remove-LibraryFile.ps1 -FileName "script.ps1" -UseAPI -FunctionUrl "https://myfunc.azurewebsites.net/api/DefenderC2Orchestrator" -FunctionKey "abc123..." -TenantId "your-tenant-id"
 
 .EXAMPLE
     # Force delete without confirmation
@@ -65,6 +68,9 @@ param(
     [Parameter(Mandatory = $true, ParameterSetName = 'API')]
     [string]$FunctionKey,
     
+    [Parameter(Mandatory = $true, ParameterSetName = 'API')]
+    [string]$TenantId,
+    
     [Parameter(Mandatory = $false)]
     [switch]$Force
 )
@@ -77,7 +83,7 @@ $FileName = [System.IO.Path]::GetFileName($FileName)
 try {
     if ($UseAPI) {
         # Use Azure Function API
-        Write-Host "🌐 Using Azure Function API..." -ForegroundColor Yellow
+        Write-Host "🌐 Using DefenderC2Orchestrator API..." -ForegroundColor Yellow
         
         # Confirmation
         if (-not $Force -and -not $PSCmdlet.ShouldProcess($FileName, "Delete file from library")) {
@@ -87,16 +93,18 @@ try {
         
         $uri = "$FunctionUrl`?code=$FunctionKey"
         $body = @{
+            Function = "DeleteLibraryFile"
             fileName = $FileName
+            tenantId = $TenantId
         } | ConvertTo-Json
         
         Write-Host "🗑️  Deleting file: $FileName" -ForegroundColor Yellow
         $response = Invoke-RestMethod -Uri $uri -Method Post -Body $body -ContentType "application/json" -ErrorAction Stop
         
-        if ($response.success) {
+        if ($response.status -eq "Success") {
             Write-Host "✅ File deleted successfully: $FileName" -ForegroundColor Green
         } else {
-            Write-Error "API returned error: $($response.error)"
+            Write-Error "API returned error: $($response.message)"
             exit 1
         }
         

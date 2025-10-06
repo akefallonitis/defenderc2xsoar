@@ -96,10 +96,16 @@ Test that the function can access the library:
 ### Test with PowerShell
 ```powershell
 # Replace with your function URL
-$url = "https://yourfunc.azurewebsites.net/api/ListLibraryFiles?code=funckey"
+$url = "https://yourfunc.azurewebsites.net/api/DefenderC2Orchestrator?code=funckey"
+
+# Prepare request body
+$body = @{
+    Function = "ListLibraryFiles"
+    tenantId = "your-tenant-id"
+} | ConvertTo-Json
 
 # Call API
-$response = Invoke-RestMethod -Uri $url -Method Get
+$response = Invoke-RestMethod -Uri $url -Method Post -Body $body -ContentType "application/json"
 
 # View results
 $response | ConvertTo-Json -Depth 5
