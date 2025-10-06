@@ -95,7 +95,27 @@ az functionapp config appsettings set \
   --settings "APPID=$APP_ID" "SECRETID=$SECRET_ID"
 ```
 
-### Step 3: Deploy Code (5 minutes)
+### Step 3: Verify Function Structure
+
+Before deploying, verify the function structure is correct:
+
+```bash
+cd defenderc2xsoar/functions
+ls -la
+```
+
+**Expected files:**
+- ✅ `host.json` - Function app configuration (PowerShell 7.4 compatible)
+- ✅ `profile.ps1` - Module loading script
+- ✅ `requirements.psd1` - PowerShell dependencies
+- ✅ `.funcignore` - Deployment exclusions
+- ✅ Function directories (MDEDispatcher, MDECDManager, MDEHuntManager, MDEIncidentManager, MDETIManager)
+
+**Each function directory should have:**
+- ✅ `function.json` - HTTP trigger bindings with authLevel 'function'
+- ✅ `run.ps1` - Function implementation
+
+### Step 4: Deploy Code (5 minutes)
 
 **Option A: VS Code**
 1. Install Azure Functions extension
@@ -120,7 +140,7 @@ az functionapp deployment source config-zip \
   --src functions.zip
 ```
 
-### Step 4: Test Functions
+### Step 5: Test Functions
 
 Get your function URL:
 ```bash

@@ -321,7 +321,31 @@ This approach enables:
 - ✅ No secrets in workbook or user-facing configuration
 - ✅ Single deployment for all tenants
 
-### Step 4: Deploy Function Code
+### Step 4: Verify Function Configuration
+
+Before deploying, verify the function app structure is correct:
+
+**Required Files:**
+- ✅ `host.json` - Function app configuration (PowerShell 7.4 compatible)
+- ✅ `profile.ps1` - Module loading and initialization
+- ✅ `requirements.psd1` - PowerShell module dependencies
+- ✅ `.funcignore` - Deployment exclusion rules
+
+**Function Structure (each function directory):**
+- ✅ `function.json` - HTTP trigger bindings with authLevel 'function'
+- ✅ `run.ps1` - Function implementation
+
+**All Functions:**
+- ✅ MDEDispatcher - Device actions dispatcher
+- ✅ MDECDManager - Custom detection manager
+- ✅ MDEHuntManager - Advanced hunting manager
+- ✅ MDEIncidentManager - Incident manager
+- ✅ MDETIManager - Threat intelligence manager
+
+**Module Directory:**
+- ✅ MDEAutomator - PowerShell module with MDE API functions
+
+### Step 5: Deploy Function Code
 
 The function code needs to be deployed to the function app.
 
@@ -342,9 +366,11 @@ The function code needs to be deployed to the function app.
 
 3. **Or deploy via VS Code**:
    - Install the Azure Functions extension
-   - Open the `functions` folder
+   - Open the `functions` folder in VS Code
+   - Sign in to Azure (View > Command Palette > Azure: Sign In)
    - Right-click on the function app in the Azure pane
    - Select **Deploy to Function App**
+   - Select your function app from the list
 
 4. **Or deploy via ZIP deployment**:
    ```bash
@@ -360,7 +386,13 @@ The function code needs to be deployed to the function app.
      --src functions.zip
    ```
 
-### Step 5: Deploy Workbook
+**Important Notes:**
+- The `.funcignore` file ensures only necessary files are deployed
+- PowerShell 7.4 runtime is configured in `host.json`
+- All functions use HTTP trigger with 'function' auth level
+- Managed dependencies are enabled for automatic module installation
+
+### Step 6: Deploy Workbook
 
 1. **Navigate to Azure Monitor**
    - Azure Portal > **Monitor** > **Workbooks**
@@ -384,7 +416,7 @@ The function code needs to be deployed to the function app.
 4. **Pin to Dashboard** (optional)
    - Click the pin icon to add to your Azure dashboard
 
-### Step 6: Configure Workbook Parameters
+### Step 7: Configure Workbook Parameters
 
 Open your saved workbook and configure the parameters at the top:
 
@@ -529,14 +561,55 @@ For each additional tenant where you want to use this solution:
 **Cause**: Long-running operations or network issues.
 
 **Solution**:
-1. Increase function timeout in `host.json`:
+1. Function timeout is configured in `host.json` (default: 10 minutes)
+2. Check function logs for specific error messages
+3. Consider using durable functions for very long-running operations
+4. Check network connectivity to MDE APIs
+
+#### Function Deployment Fails
+
+**Cause**: Missing files, incorrect structure, or runtime issues.
+
+**Solution**:
+1. Verify all required files exist:
+   - `host.json` in functions root
+   - `function.json` in each function directory
+   - `run.ps1` in each function directory
+   - `.funcignore` to exclude unnecessary files
+2. Check PowerShell runtime version:
+   - Ensure FUNCTIONS_WORKER_RUNTIME=powershell
+   - Ensure FUNCTIONS_EXTENSION_VERSION=~4
+3. Validate function.json structure:
    ```json
    {
-     "functionTimeout": "00:10:00"
+     "bindings": [
+       {
+         "authLevel": "function",
+         "type": "httpTrigger",
+         "direction": "in",
+         "name": "Request",
+         "methods": ["get", "post"]
+       },
+       {
+         "type": "http",
+         "direction": "out",
+         "name": "Response"
+       }
+     ]
    }
    ```
-2. Consider using durable functions for long-running operations
-3. Check network connectivity to MDE APIs
+4. Check deployment logs in Azure Portal > Function App > Deployment Center
+
+#### Module Not Found Errors
+
+**Cause**: MDEAutomator module not loaded or path incorrect.
+
+**Solution**:
+1. Verify `profile.ps1` loads the module correctly
+2. Check that MDEAutomator folder is in functions directory
+3. Ensure managedDependency is enabled in `host.json`
+4. Review function logs for module loading messages
+5. Restart the function app after deployment
 
 #### CORS Errors in Workbook
 

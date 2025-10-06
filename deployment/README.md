@@ -97,11 +97,74 @@ After successful deployment, you'll need to:
    - `FUNCTIONS_WORKER_RUNTIME` - PowerShell
    - `FUNCTIONS_EXTENSION_VERSION` - ~4
 
-3. **Deploy function code** to the Function App
+3. **Deploy function code** to the Function App:
+   - All function directories have required `function.json` and `run.ps1` files
+   - `host.json` configured for PowerShell 7.4 runtime compatibility
+   - `.funcignore` ensures only necessary files are deployed
+   - Functions use HTTP trigger with 'function' auth level
 
 4. **Deploy the workbook** template
 
 See the main [DEPLOYMENT.md](../DEPLOYMENT.md) for detailed step-by-step instructions.
+
+## Function Configuration
+
+The repository includes properly configured Azure Functions with:
+
+### Required Files Structure
+```
+functions/
+├── host.json                    # Function app config (PowerShell 7.4 compatible)
+├── profile.ps1                  # Module loading script
+├── requirements.psd1            # PowerShell dependencies
+├── .funcignore                  # Deployment exclusions
+├── MDEAutomator/               # PowerShell module directory
+│   └── *.psm1                  # Module files
+├── MDEDispatcher/
+│   ├── function.json           # HTTP trigger bindings
+│   └── run.ps1                 # Function implementation
+├── MDECDManager/
+│   ├── function.json
+│   └── run.ps1
+├── MDEHuntManager/
+│   ├── function.json
+│   └── run.ps1
+├── MDEIncidentManager/
+│   ├── function.json
+│   └── run.ps1
+└── MDETIManager/
+    ├── function.json
+    └── run.ps1
+```
+
+### host.json Features
+- PowerShell 7.4 runtime compatibility
+- Enhanced logging (file logging, Application Insights)
+- 10-minute function timeout for long operations
+- Health monitoring enabled
+- Automatic retry with fixed delay strategy
+- Managed dependency support for PowerShell modules
+
+### function.json Configuration
+All functions use identical HTTP trigger configuration:
+```json
+{
+  "bindings": [
+    {
+      "authLevel": "function",
+      "type": "httpTrigger",
+      "direction": "in",
+      "name": "Request",
+      "methods": ["get", "post"]
+    },
+    {
+      "type": "http",
+      "direction": "out",
+      "name": "Response"
+    }
+  ]
+}
+```
 
 ## Validation
 
