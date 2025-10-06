@@ -485,6 +485,137 @@ function Get-AllDevices {
     }
 }
 
+function Get-MachineActionStatus {
+    <#
+    .SYNOPSIS
+        Gets the status of a machine action
+        
+    .PARAMETER Token
+        Authentication token from Connect-MDE
+        
+    .PARAMETER ActionId
+        Action ID to check
+        
+    .EXAMPLE
+        Get-MachineActionStatus -Token $token -ActionId "action-id"
+    #>
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true)]
+        [hashtable]$Token,
+        
+        [Parameter(Mandatory = $true)]
+        [string]$ActionId
+    )
+    
+    $headers = Get-MDEAuthHeaders -Token $Token
+    
+    try {
+        $uri = "$script:MDEApiBase/machineactions/$ActionId"
+        
+        $response = Invoke-RestMethod -Method Get -Uri $uri -Headers $headers
+        
+        return $response
+        
+    } catch {
+        Write-Error "Failed to get action status for $ActionId : $($_.Exception.Message)"
+        throw
+    }
+}
+
+function Get-AllMachineActions {
+    <#
+    .SYNOPSIS
+        Gets all machine actions
+        
+    .PARAMETER Token
+        Authentication token from Connect-MDE
+        
+    .PARAMETER Filter
+        Optional OData filter
+        
+    .EXAMPLE
+        Get-AllMachineActions -Token $token -Filter "status eq 'Pending'"
+    #>
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true)]
+        [hashtable]$Token,
+        
+        [Parameter(Mandatory = $false)]
+        [string]$Filter
+    )
+    
+    $headers = Get-MDEAuthHeaders -Token $Token
+    
+    try {
+        $uri = "$script:MDEApiBase/machineactions"
+        
+        if ($Filter) {
+            $uri += "?`$filter=$Filter"
+        }
+        
+        $response = Invoke-RestMethod -Method Get -Uri $uri -Headers $headers
+        
+        return $response.value
+        
+    } catch {
+        Write-Error "Failed to get machine actions: $($_.Exception.Message)"
+        throw
+    }
+}
+
+function Stop-MachineAction {
+    <#
+    .SYNOPSIS
+        Cancels a pending machine action
+        
+    .PARAMETER Token
+        Authentication token from Connect-MDE
+        
+    .PARAMETER ActionId
+        Action ID to cancel
+        
+    .PARAMETER Comment
+        Reason for cancellation
+        
+    .EXAMPLE
+        Stop-MachineAction -Token $token -ActionId "action-id" -Comment "False positive"
+    #>
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true)]
+        [hashtable]$Token,
+        
+        [Parameter(Mandatory = $true)]
+        [string]$ActionId,
+        
+        [Parameter(Mandatory = $true)]
+        [string]$Comment
+    )
+    
+    $headers = Get-MDEAuthHeaders -Token $Token
+    
+    try {
+        $uri = "$script:MDEApiBase/machineactions/$ActionId/cancel"
+        
+        $body = @{
+            Comment = $Comment
+        } | ConvertTo-Json
+        
+        $response = Invoke-RestMethod -Method Post -Uri $uri -Headers $headers -Body $body
+        
+        Write-Verbose "Successfully cancelled action: $ActionId"
+        
+        return $response
+        
+    } catch {
+        Write-Error "Failed to cancel action $ActionId : $($_.Exception.Message)"
+        throw
+    }
+}
+
 Export-ModuleMember -Function Invoke-DeviceIsolation, Invoke-DeviceUnisolation, Invoke-RestrictAppExecution, 
     Invoke-UnrestrictAppExecution, Invoke-AntivirusScan, Invoke-CollectInvestigationPackage, 
-    Invoke-StopAndQuarantineFile, Get-DeviceInfo, Get-AllDevices
+    Invoke-StopAndQuarantineFile, Get-DeviceInfo, Get-AllDevices, Get-MachineActionStatus, 
+    Get-AllMachineActions, Stop-MachineAction

@@ -35,6 +35,9 @@
         'Invoke-StopAndQuarantineFile',
         'Get-DeviceInfo',
         'Get-AllDevices',
+        'Get-MachineActionStatus',
+        'Get-AllMachineActions',
+        'Stop-MachineAction',
         
         # Threat Intelligence
         'Add-FileIndicator',
@@ -48,14 +51,21 @@
         
         # Incident Management
         'Get-SecurityIncidents',
+        'Update-SecurityIncident',
+        'Add-IncidentComment',
         
         # Custom Detections
         'Get-CustomDetections',
+        'New-CustomDetection',
+        'Update-CustomDetection',
+        'Remove-CustomDetection',
         
         # Live Response
         'Start-MDELiveResponseSession',
         'Get-MDELiveResponseSession',
         'Invoke-MDELiveResponseCommand',
+        'Get-MDELiveResponseCommandResult',
+        'Wait-MDELiveResponseCommand',
         'Get-MDELiveResponseFile',
         'Send-MDELiveResponseFile'
     )

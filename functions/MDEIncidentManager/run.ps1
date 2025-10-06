@@ -88,11 +88,17 @@ try {
         }
         "UpdateIncident" {
             if ($incidentId) {
-                # Note: Updating incidents requires Graph API PATCH calls
-                # The current module doesn't have an update function implemented
-                # This would need to be added to MDEIncident.psm1
-                $result.details = "Update incident functionality requires additional implementation"
-                $result.note = "Please add Update-SecurityIncident function to MDEIncident.psm1"
+                # Update incident with provided parameters
+                $updateParams = @{
+                    Token = $token
+                    IncidentId = $incidentId
+                }
+                
+                if ($status) { $updateParams.Status = $status }
+                
+                $updatedIncident = Update-SecurityIncident @updateParams
+                $result.details = "Updated incident $incidentId"
+                $result.incident = $updatedIncident
             } else {
                 throw "Incident ID is required for UpdateIncident action"
             }

@@ -137,6 +137,30 @@ try {
             $result.details = "Retrieved device information"
             $result.device = $deviceInfo
         }
+        "Get Action Status" {
+            $actionId = $Request.Query.actionId ?? $Request.Body.actionId
+            if (-not $actionId) {
+                throw "Action ID required for status check"
+            }
+            $actionStatus = Get-MachineActionStatus -Token $token -ActionId $actionId
+            $result.details = "Retrieved action status"
+            $result.actionStatus = $actionStatus
+        }
+        "Get All Actions" {
+            $filter = $Request.Query.filter ?? $Request.Body.filter
+            $actions = Get-AllMachineActions -Token $token -Filter $filter
+            $result.details = "Retrieved $($actions.Count) machine actions"
+            $result.actions = $actions | Select-Object -First 100
+        }
+        "Cancel Action" {
+            $actionId = $Request.Query.actionId ?? $Request.Body.actionId
+            if (-not $actionId) {
+                throw "Action ID required for cancellation"
+            }
+            $cancelResult = Stop-MachineAction -Token $token -ActionId $actionId -Comment "Cancelled via Azure Function"
+            $result.details = "Cancelled action $actionId"
+            $result.cancelResult = $cancelResult
+        }
         default {
             $result.status = "Unknown"
             $result.message = "Unknown action type: $action"

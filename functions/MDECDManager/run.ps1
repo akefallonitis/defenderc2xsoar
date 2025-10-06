@@ -47,6 +47,10 @@ try {
         timestamp = (Get-Date).ToString("o")
     }
 
+    # Get additional parameters from request
+    $ruleId = $Request.Query.ruleId ?? $Request.Body.ruleId
+    $enabled = $Request.Query.enabled ?? $Request.Body.enabled
+    
     switch ($action) {
         "List All Detections" {
             $detections = Get-CustomDetections -Token $token
@@ -55,34 +59,38 @@ try {
         }
         "Create Detection" {
             if ($detectionName -and $detectionQuery) {
-                # Note: Creating custom detections requires Graph API POST calls
-                # The current module doesn't have a create function implemented
-                # This would need to be added to MDEDetection.psm1
-                $result.details = "Create detection functionality requires additional implementation"
-                $result.detectionName = $detectionName
-                $result.note = "Please add New-CustomDetection function to MDEDetection.psm1"
+                $newDetection = New-CustomDetection -Token $token -Name $detectionName -Query $detectionQuery -Severity $severity -Description "Created via Azure Function"
+                $result.details = "Created custom detection: $detectionName"
+                $result.detection = $newDetection
             } else {
                 throw "Detection name and query are required for creating a detection"
             }
         }
         "Update Detection" {
-            if ($detectionName -and $detectionQuery) {
-                # Note: Updating custom detections requires Graph API PATCH calls
-                # This would need to be added to MDEDetection.psm1
-                $result.details = "Update detection functionality requires additional implementation"
-                $result.note = "Please add Update-CustomDetection function to MDEDetection.psm1"
+            if ($ruleId) {
+                $updateParams = @{
+                    Token = $token
+                    RuleId = $ruleId
+                }
+                
+                if ($detectionName) { $updateParams.Name = $detectionName }
+                if ($detectionQuery) { $updateParams.Query = $detectionQuery }
+                if ($severity) { $updateParams.Severity = $severity }
+                if ($enabled -ne $null) { $updateParams.Enabled = [bool]$enabled }
+                
+                $updatedDetection = Update-CustomDetection @updateParams
+                $result.details = "Updated custom detection: $ruleId"
+                $result.detection = $updatedDetection
             } else {
-                throw "Detection name and query are required for updating a detection"
+                throw "Rule ID is required for updating a detection"
             }
         }
         "Delete Detection" {
-            if ($detectionName) {
-                # Note: Deleting custom detections requires Graph API DELETE calls
-                # This would need to be added to MDEDetection.psm1
-                $result.details = "Delete detection functionality requires additional implementation"
-                $result.note = "Please add Remove-CustomDetection function to MDEDetection.psm1"
+            if ($ruleId) {
+                Remove-CustomDetection -Token $token -RuleId $ruleId
+                $result.details = "Deleted custom detection: $ruleId"
             } else {
-                throw "Detection name is required for deleting a detection"
+                throw "Rule ID is required for deleting a detection"
             }
         }
         "Backup Detections" {
