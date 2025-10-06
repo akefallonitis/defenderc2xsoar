@@ -27,6 +27,12 @@ Contains metadata about the template for Azure Quickstart Templates gallery:
 ### azuredeploy.parameters.json
 Sample parameters file for command-line deployments using Azure CLI or PowerShell. Contains placeholder values that should be replaced with your actual values.
 
+### test_azuredeploy.py
+Automated validation script that verifies the ARM template is syntactically correct and has complete `listKeys` function calls. Run with `python3 test_azuredeploy.py`.
+
+### VALIDATION_REPORT.md
+Detailed validation report documenting that lines 132 and 136 contain complete `listKeys` function calls and the template is ready for deployment.
+
 ## Deployment Options
 
 > **⚠️ COMMON ISSUE:** The "Deploy to Azure" button may fail with a template download error. If this happens, use the **Manual Template Deployment** method described in the [Troubleshooting](#troubleshooting) section below - it's reliable and just as easy.
@@ -99,7 +105,26 @@ See the main [DEPLOYMENT.md](../DEPLOYMENT.md) for detailed step-by-step instruc
 
 ## Validation
 
-To validate the template before deployment:
+### Quick Validation (Recommended)
+
+Run the automated validation script:
+
+```bash
+cd deployment
+python3 test_azuredeploy.py
+```
+
+This script validates:
+- ✅ JSON syntax
+- ✅ Required ARM template sections
+- ✅ Complete listKeys function calls (lines 132 & 136)
+- ✅ Connection string format
+
+See `VALIDATION_REPORT.md` for detailed validation results.
+
+### Azure Validation
+
+To validate the template with Azure before deployment:
 
 ```bash
 # Azure CLI
