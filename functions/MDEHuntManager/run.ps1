@@ -37,11 +37,8 @@ if (-not $appId -or -not $secretId) {
 }
 
 try {
-    # Import MDEAutomator module
-    # Import-Module MDEAutomator -ErrorAction Stop
-    
     # Connect to MDE using App Registration with Client Secret
-    # $token = Connect-MDE -AppId $appId -ClientSecret $secretId -TenantId $tenantId
+    $token = Connect-MDE -TenantId $tenantId -AppId $appId -ClientSecret $secretId
 
     $result = @{
         action = $action ?? "ExecuteHunt"
@@ -53,17 +50,22 @@ try {
 
     # Execute the advanced hunting query
     if ($huntQuery) {
-        # $huntResults = Invoke-AdvancedHunting -Queries @($huntQuery)
+        $huntResults = Invoke-AdvancedHunting -Token $token -Query $huntQuery
         
         $result.details = "Hunt '$huntName' executed successfully"
-        $result.resultCount = 0 # Would be actual count
+        $result.resultCount = $huntResults.Count
         $result.query = $huntQuery
+        $result.results = $huntResults | Select-Object -First 1000  # Limit results for response size
         
         # Optionally save to storage
         if ($saveResults -eq "true") {
-            # Save results to Azure Storage
-            $result.savedTo = "Azure Blob Storage"
+            # In a production scenario, you would save to Azure Storage here
+            # For now, just indicate the intent
+            $result.savedTo = "Azure Blob Storage (not implemented)"
+            $result.note = "Saving to storage would require additional Azure Storage configuration"
         }
+    } else {
+        throw "Hunt query is required"
     }
 
     Push-OutputBinding -Name Response -Value ([HttpResponseContext]@{

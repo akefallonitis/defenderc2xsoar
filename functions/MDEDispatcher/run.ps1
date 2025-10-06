@@ -52,14 +52,9 @@ if (-not $appId -or -not $secretId) {
 }
 
 try {
-    # Import MDEAutomator module (you'll need to include this in your function app)
-    # Import-Module MDEAutomator -ErrorAction Stop
-
     # Connect to MDE using App Registration with Client Secret
-    # In production, use Connect-MDE with app credentials from environment variables
-    # $token = Connect-MDE -AppId $appId -ClientSecret $secretId -TenantId $tenantId
+    $token = Connect-MDE -TenantId $tenantId -AppId $appId -ClientSecret $secretId
 
-    # For demonstration, simulate the response
     $result = @{
         action = $action
         status = "Initiated"
@@ -68,56 +63,103 @@ try {
         message = "Action '$action' initiated successfully"
     }
 
+    # Parse device IDs if provided
+    $deviceIdList = if ($deviceIds) { $deviceIds.Split(',').Trim() } else { @() }
+
     # Execute action based on type
     switch ($action) {
         "Isolate Device" {
-            # Invoke-MachineIsolation -token $token -DeviceIds $deviceIds.Split(',')
-            $result.details = "Device isolation initiated for $deviceIds"
+            if ($deviceIdList.Count -eq 0) {
+                throw "Device IDs required for isolation"
+            }
+            $response = Invoke-DeviceIsolation -Token $token -DeviceIds $deviceIdList -Comment "Isolated via Azure Function" -IsolationType "Full"
+            $result.details = "Device isolation initiated for $($deviceIdList.Count) device(s)"
+            $result.actionIds = $response | ForEach-Object { $_.id }
         }
         "Unisolate Device" {
-            # Undo-MachineIsolation -token $token -DeviceIds $deviceIds.Split(',')
-            $result.details = "Device unisolation initiated for $deviceIds"
+            if ($deviceIdList.Count -eq 0) {
+                throw "Device IDs required for unisolation"
+            }
+            $response = Invoke-DeviceUnisolation -Token $token -DeviceIds $deviceIdList -Comment "Unisolated via Azure Function"
+            $result.details = "Device unisolation initiated for $($deviceIdList.Count) device(s)"
+            $result.actionIds = $response | ForEach-Object { $_.id }
         }
         "Restrict App Execution" {
-            # Invoke-RestrictAppExecution -token $token -DeviceIds $deviceIds.Split(',')
-            $result.details = "App execution restriction initiated for $deviceIds"
+            if ($deviceIdList.Count -eq 0) {
+                throw "Device IDs required for app restriction"
+            }
+            $response = Invoke-RestrictAppExecution -Token $token -DeviceIds $deviceIdList -Comment "Restricted via Azure Function"
+            $result.details = "App execution restriction initiated for $($deviceIdList.Count) device(s)"
+            $result.actionIds = $response | ForEach-Object { $_.id }
         }
         "Unrestrict App Execution" {
-            # Undo-RestrictAppExecution -token $token -DeviceIds $deviceIds.Split(',')
-            $result.details = "App execution unrestriction initiated for $deviceIds"
+            if ($deviceIdList.Count -eq 0) {
+                throw "Device IDs required for app unrestriction"
+            }
+            $response = Invoke-UnrestrictAppExecution -Token $token -DeviceIds $deviceIdList -Comment "Unrestricted via Azure Function"
+            $result.details = "App execution unrestriction initiated for $($deviceIdList.Count) device(s)"
+            $result.actionIds = $response | ForEach-Object { $_.id }
         }
         "Collect Investigation Package" {
-            # Invoke-CollectInvestigationPackage -token $token -DeviceIds $deviceIds.Split(',')
-            $result.details = "Investigation package collection initiated for $deviceIds"
+            if ($deviceIdList.Count -eq 0) {
+                throw "Device IDs required for investigation package collection"
+            }
+            $response = Invoke-CollectInvestigationPackage -Token $token -DeviceIds $deviceIdList -Comment "Collected via Azure Function"
+            $result.details = "Investigation package collection initiated for $($deviceIdList.Count) device(s)"
+            $result.actionIds = $response | ForEach-Object { $_.id }
         }
         "Run Antivirus Scan" {
-            # Invoke-FullDiskScan -token $token -DeviceIds $deviceIds.Split(',')
-            $result.details = "Antivirus scan initiated for $deviceIds"
+            if ($deviceIdList.Count -eq 0) {
+                throw "Device IDs required for antivirus scan"
+            }
+            $response = Invoke-AntivirusScan -Token $token -DeviceIds $deviceIdList -ScanType "Full" -Comment "Scan via Azure Function"
+            $result.details = "Antivirus scan initiated for $($deviceIdList.Count) device(s)"
+            $result.actionIds = $response | ForEach-Object { $_.id }
         }
         "Stop & Quarantine File" {
-            # Invoke-StopAndQuarantineFile -token $token -Sha1 $fileHash
+            if (-not $fileHash) {
+                throw "File hash required for stop and quarantine"
+            }
+            $response = Invoke-StopAndQuarantineFile -Token $token -Sha1 $fileHash -Comment "Quarantined via Azure Function"
             $result.details = "Stop and quarantine initiated for file hash $fileHash"
+            $result.actionId = $response.id
         }
-        "Run Live Response Script" {
-            # Invoke-LRScript -token $token -DeviceIds $deviceIds.Split(',') -scriptName $scriptName
-            $result.details = "Live response script '$scriptName' initiated for $deviceIds"
+        "Get Devices" {
+            $devices = Get-AllDevices -Token $token -Filter $deviceFilter
+            $result.details = "Retrieved $($devices.Count) device(s)"
+            $result.devices = $devices | Select-Object -First 100
         }
-        "Get File" {
-            # Invoke-GetFile -token $token -filePath $filePath -DeviceIds $deviceIds.Split(',')
-            $result.details = "File retrieval initiated from path '$filePath' on $deviceIds"
+        "Get Device Info" {
+            if ($deviceIdList.Count -eq 0) {
+                throw "Device ID required for device info"
+            }
+            $deviceInfo = Get-DeviceInfo -Token $token -DeviceId $deviceIdList[0]
+            $result.details = "Retrieved device information"
+            $result.device = $deviceInfo
         }
-        "Put File" {
-            # Invoke-PutFile -token $token -fileName $scriptName -DeviceIds $deviceIds.Split(',')
-            $result.details = "File push initiated for '$scriptName' to $deviceIds"
+        "Get Action Status" {
+            $actionId = $Request.Query.actionId ?? $Request.Body.actionId
+            if (-not $actionId) {
+                throw "Action ID required for status check"
+            }
+            $actionStatus = Get-MachineActionStatus -Token $token -ActionId $actionId
+            $result.details = "Retrieved action status"
+            $result.actionStatus = $actionStatus
         }
-        "GetActions" {
-            # $actions = Get-Actions -token $token
-            $result.details = "Retrieved machine actions"
-            $result.actions = @() # Would contain actual actions
+        "Get All Actions" {
+            $filter = $Request.Query.filter ?? $Request.Body.filter
+            $actions = Get-AllMachineActions -Token $token -Filter $filter
+            $result.details = "Retrieved $($actions.Count) machine actions"
+            $result.actions = $actions | Select-Object -First 100
         }
-        "CancelAllActions" {
-            # Undo-Actions -token $token
-            $result.details = "All pending actions cancelled"
+        "Cancel Action" {
+            $actionId = $Request.Query.actionId ?? $Request.Body.actionId
+            if (-not $actionId) {
+                throw "Action ID required for cancellation"
+            }
+            $cancelResult = Stop-MachineAction -Token $token -ActionId $actionId -Comment "Cancelled via Azure Function"
+            $result.details = "Cancelled action $actionId"
+            $result.cancelResult = $cancelResult
         }
         default {
             $result.status = "Unknown"
