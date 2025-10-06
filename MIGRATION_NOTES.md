@@ -217,6 +217,28 @@ az functionapp function show \
   --function-name DefenderC2Orchestrator
 ```
 
+## Helper Scripts
+
+The helper scripts in the `scripts/` directory reference the old API endpoints for backward compatibility. To use the new consolidated endpoint:
+
+**Old Script Usage:**
+```powershell
+.\Get-LibraryFiles.ps1 -UseAPI -FunctionUrl "https://func.azurewebsites.net/api/ListLibraryFiles" -FunctionKey "key"
+```
+
+**New API Usage:**
+```powershell
+$body = @{
+    Function = "ListLibraryFiles"
+    tenantId = "tenant-id"
+} | ConvertTo-Json
+
+Invoke-RestMethod -Method Post `
+    -Uri "https://func.azurewebsites.net/api/DefenderC2Orchestrator?code=key" `
+    -Body $body `
+    -ContentType "application/json"
+```
+
 ## Reference
 
 - Problem Statement: Consolidate live response operations and library file operations into DefenderC2Orchestrator
