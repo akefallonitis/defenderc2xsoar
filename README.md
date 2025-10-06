@@ -33,7 +33,7 @@ This project provides **two deployment options** for MDE automation:
 
 All MDEAutomator capabilities replicated through Azure Workbooks:
 
-1. **MDEAutomator (Device Actions)**
+1. **Defender C2 (Device Actions)**
    - Isolate/Unisolate devices
    - Collect investigation packages
    - Run antivirus scans
@@ -177,7 +177,7 @@ Click the button below to deploy **EVERYTHING** (Infrastructure + Code + Workboo
 **What gets deployed:**
 - ✅ Function App with all 11 functions (from GitHub package)
 - ✅ Storage Account (automatically configured)
-- ✅ Workbook (MDE Automator Workbook)
+- ✅ Workbook (Defender C2 Workbook)
 - ✅ All configuration and environment variables
 
 **Note:** Functions are deployed from a pre-packaged zip file hosted on GitHub. Wait 2-3 minutes after deployment for all functions to appear in the portal.
@@ -266,7 +266,7 @@ az deployment group create \
 The workbook is **automatically deployed** with the ARM template. To access it:
 
 1. Navigate to Azure Portal > Monitor > Workbooks
-2. Look for "MDE Automator Workbook" (it may be in "My workbooks" or the resource group)
+2. Look for "Defender C2 Workbook" (it may be in "My workbooks" or the resource group)
 3. Open the workbook and configure these parameters:
    - **Function App Base URL**: Your function app URL from deployment outputs
    - **Target Tenant ID**: The tenant ID where you want to manage MDE
@@ -359,14 +359,14 @@ Configure these permissions for the multi-tenant app registration:
 ### Basic Workflow
 
 1. **Configure** - Set parameters at the top of the workbook
-2. **Select Tab** - Choose the operation category (MDEAutomator, Threat Intel, etc.)
+2. **Select Tab** - Choose the operation category (Defender C2, Threat Intel, etc.)
 3. **Configure Action** - Fill in action-specific parameters
 4. **Execute** - Click the action button to trigger the function app
 5. **View Results** - See results in the query panels below
 
 ### Example: Isolate High-Risk Devices
 
-1. Go to **MDEAutomator** tab
+1. Go to **Defender C2** tab
 2. Select **Action Type**: `Isolate Device`
 3. Set **Device Filter**: `riskScore eq 'High'`
 4. Click **Execute Action**
