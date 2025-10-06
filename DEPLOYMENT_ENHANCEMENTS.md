@@ -194,7 +194,7 @@ All changes have been validated:
 After deployment, verify:
 
 - [ ] Function App deployed and running
-- [ ] All 5 functions visible in Azure Portal
+- [ ] All 11 functions visible in Azure Portal
 - [ ] Function App URL accessible
 - [ ] Workbook deployed to Azure Monitor
 - [ ] Environment variables configured correctly

@@ -175,7 +175,7 @@ Click the button below to deploy **EVERYTHING** (Infrastructure + Code + Workboo
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fakefallonitis%2Fdefenderc2xsoar%2Fmain%2Fdeployment%2Fazuredeploy.json)
 
 **What gets deployed:**
-- ✅ Function App with all 5 functions (from GitHub package)
+- ✅ Function App with all 11 functions (from GitHub package)
 - ✅ Storage Account (automatically configured)
 - ✅ Workbook (MDE Automator Workbook)
 - ✅ All configuration and environment variables
@@ -289,12 +289,18 @@ The function code is **automatically deployed** from a pre-packaged zip file. Wa
 **Via Azure Portal:**
 1. Navigate to your Function App
 2. Click "Functions" in the left menu
-3. You should see all 5 functions:
+3. You should see all 11 functions:
    - ✅ **MDEDispatcher** - Handle device action requests
+   - ✅ **MDEOrchestrator** - Orchestrate complex operations
    - ✅ **MDETIManager** - Handle threat intelligence operations
    - ✅ **MDEHuntManager** - Handle hunting queries
    - ✅ **MDEIncidentManager** - Handle incident operations
    - ✅ **MDECDManager** - Handle custom detection operations
+   - ✅ **ListLibraryFiles** - List files in Azure Storage library
+   - ✅ **GetLibraryFile** - Retrieve file from library
+   - ✅ **PutLiveResponseFileFromLibrary** - Deploy file from library to device
+   - ✅ **GetLiveResponseFile** - Download file from device
+   - ✅ **DeleteLibraryFile** - Remove file from library
 
 **Via Azure CLI:**
 ```bash

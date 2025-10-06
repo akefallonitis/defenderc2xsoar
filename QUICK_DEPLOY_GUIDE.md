@@ -42,7 +42,7 @@ Click **Review + Create** → **Create**
 Deployment takes 2-3 minutes. Azure will deploy:
 - ✅ Function App
 - ✅ Storage Account
-- ✅ 5 Functions (auto-deployed!)
+- ✅ 11 Functions (auto-deployed!)
 - ✅ Workbook
 
 ### Step 4: Access Workbook (1 minute)
@@ -65,7 +65,7 @@ In workbook, try:
 ## 🎉 Done!
 
 You now have:
-- ✅ Working function app with all 5 functions
+- ✅ Working function app with all 11 functions
 - ✅ Workbook for managing MDE
 - ✅ Auto-updating deployment (via GitHub Actions)
 

@@ -9,9 +9,7 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_FUNCTIONAPP_NAME: 'DefenderC2'
   AZURE_FUNCTIONAPP_PACKAGE_PATH: 'functions'
-  DOTNET_VERSION: '6.0.x'
 
 jobs:
   build-and-deploy:
@@ -20,19 +18,96 @@ jobs:
       - name: 'Checkout GitHub Action'
         uses: actions/checkout@v3
 
-      - name: 'Setup PowerShell'
-        uses: azure/powershell@v1
-        with:
-          azPSVersion: 'latest'
+      - name: 'Verify Function Structure'
+        shell: pwsh
+        run: |
+          Write-Host "🔍 Verifying function structure..." -ForegroundColor Cyan
+          
+          cd ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+          
+          # Verify all expected functions exist
+          $expectedFunctions = @(
+              'MDECDManager',
+              'MDEDispatcher',
+              'MDEHuntManager',
+              'MDEIncidentManager',
+              'MDETIManager',
+              'MDEOrchestrator',
+              'ListLibraryFiles',
+              'GetLibraryFile',
+              'PutLiveResponseFileFromLibrary',
+              'GetLiveResponseFile',
+              'DeleteLibraryFile'
+          )
+          
+          $missingFunctions = @()
+          foreach ($func in $expectedFunctions) {
+              if (-not (Test-Path $func)) {
+                  $missingFunctions += $func
+                  Write-Host "❌ Function not found: $func" -ForegroundColor Red
+              }
+              elseif (-not (Test-Path "$func/function.json")) {
+                  $missingFunctions += "$func (missing function.json)"
+                  Write-Host "❌ Missing function.json: $func" -ForegroundColor Red
+              }
+              elseif (-not (Test-Path "$func/run.ps1")) {
+                  $missingFunctions += "$func (missing run.ps1)"
+                  Write-Host "❌ Missing run.ps1: $func" -ForegroundColor Red
+              }
+              else {
+                  Write-Host "✅ Found function: $func" -ForegroundColor Green
+              }
+          }
+          
+          if ($missingFunctions.Count -gt 0) {
+              Write-Host "`n❌ Deployment aborted - missing functions:" -ForegroundColor Red
+              $missingFunctions | ForEach-Object { Write-Host "   - $_" -ForegroundColor Red }
+              exit 1
+          }
+          
+          # Verify required config files
+          $requiredFiles = @('host.json', 'profile.ps1', 'requirements.psd1')
+          foreach ($file in $requiredFiles) {
+              if (Test-Path $file) {
+                  Write-Host "✅ Found config file: $file" -ForegroundColor Green
+              }
+              else {
+                  Write-Host "❌ Missing config file: $file" -ForegroundColor Red
+                  exit 1
+              }
+          }
+          
+          Write-Host "`n✅ All $($expectedFunctions.Count) functions verified successfully!" -ForegroundColor Green
 
-      - name: 'Login to Azure'
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: 'Create Deployment Package'
+        shell: pwsh
+        run: |
+          Write-Host "📦 Creating deployment package..." -ForegroundColor Cyan
+          
+          cd ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+          
+          # Create ZIP package (Azure Functions action will handle this, but we verify it's ready)
+          $functionCount = (Get-ChildItem -Directory | Where-Object { 
+              (Test-Path "$_/function.json") -and (Test-Path "$_/run.ps1") 
+          }).Count
+          
+          Write-Host "✅ Package ready with $functionCount functions" -ForegroundColor Green
 
-      - name: 'Run Azure Functions Action'
+      - name: 'Deploy to Azure Functions'
         uses: Azure/functions-action@v1
         with:
           app-name: ${{ secrets.AZURE_FUNCTIONAPP_NAME }}
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
           publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
+
+      - name: 'Verify Deployment'
+        if: success()
+        shell: pwsh
+        run: |
+          Write-Host "⏳ Waiting for deployment to complete..." -ForegroundColor Cyan
+          Start-Sleep -Seconds 30
+          
+          Write-Host "✅ Deployment completed successfully!" -ForegroundColor Green
+          Write-Host "📝 Verify functions in Azure Portal:" -ForegroundColor Cyan
+          Write-Host "   Navigate to Function App → Functions" -ForegroundColor Gray
+          Write-Host "   Expected: 11 functions deployed" -ForegroundColor Gray

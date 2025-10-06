@@ -9,7 +9,7 @@ When you click "Deploy to Azure", the ARM template automatically deploys:
 1. ✅ **Azure Function App** (PowerShell 7.4 runtime)
 2. ✅ **App Service Plan** (Consumption tier)
 3. ✅ **Storage Account** (for function app storage)
-4. ✅ **Function Code** (all 5 functions from GitHub package)
+4. ✅ **Function Code** (all 11 functions from GitHub package)
 5. ✅ **Workbook** (MDE Automator Workbook in Azure Monitor)
 6. ✅ **Configuration** (all required app settings and environment variables)
 
@@ -74,12 +74,18 @@ The ARM template uses `WEBSITE_RUN_FROM_PACKAGE` to automatically deploy functio
 }
 ```
 
-This package contains all 5 Azure Functions:
+This package contains all 11 Azure Functions:
 - MDEDispatcher
+- MDEOrchestrator
 - MDECDManager  
 - MDEHuntManager
 - MDEIncidentManager
 - MDETIManager
+- ListLibraryFiles
+- GetLibraryFile
+- PutLiveResponseFileFromLibrary
+- GetLiveResponseFile
+- DeleteLibraryFile
 
 ### 2. Auto-Update via GitHub Actions
 
@@ -353,7 +359,7 @@ If you encounter issues:
 ## 🎉 Success Checklist
 
 - [ ] Function App deployed successfully
-- [ ] All 5 functions visible in Azure Portal
+- [ ] All 11 functions visible in Azure Portal
 - [ ] Function App URL accessible (https://your-app.azurewebsites.net)
 - [ ] Workbook deployed to Azure Monitor
 - [ ] Environment variables configured correctly
