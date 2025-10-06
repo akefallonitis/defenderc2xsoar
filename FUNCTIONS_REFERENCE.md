@@ -456,6 +456,7 @@ The DefenderC2Orchestrator function provides Live Response capabilities for Micr
 - **Live Response session management** - Start, monitor, and manage sessions
 - **File upload** - Upload files to devices (accepts Base64 encoded content)
 - **File download** - Download files from devices (returns Base64 encoded content)
+- **Library deployment** - Deploy files from Azure Storage library to devices
 - **Script execution** - Run scripts from Live Response library
 - **Command monitoring** - Get command execution results
 - **Automatic retry logic** - Handles rate limiting and transient failures
@@ -617,6 +618,43 @@ Uploads a Base64-encoded file to a device.
 - `fileContent` must be Base64 encoded
 - Whitespace in Base64 string is automatically cleaned
 - File is first uploaded to Live Response library, then transferred to device
+
+### Put Live Response File From Library
+
+Deploys a file from Azure Storage library to a device via Live Response.
+
+**Request:**
+```json
+{
+  "Function": "PutLiveResponseFileFromLibrary",
+  "tenantId": "tenant-id",
+  "DeviceIds": "device-id",
+  "fileName": "script.ps1",
+  "TargetFileName": "script.ps1"
+}
+```
+
+**Response:**
+```json
+{
+  "function": "PutLiveResponseFileFromLibrary",
+  "status": "Success",
+  "tenantId": "tenant-id",
+  "timestamp": "2024-01-01T00:00:00Z",
+  "message": "File deployed successfully from library to device",
+  "fileName": "script.ps1",
+  "targetFileName": "script.ps1",
+  "sessionId": "session-id",
+  "commandId": "command-id",
+  "deviceId": "device-id"
+}
+```
+
+**Notes:**
+- File must exist in Azure Storage library container
+- Automatically retrieves file from library and deploys to device
+- Combines library retrieval with live response deployment in one operation
+- Requires `AzureWebJobsStorage` environment variable configured
 
 ### Rate Limiting & Retry Logic
 
