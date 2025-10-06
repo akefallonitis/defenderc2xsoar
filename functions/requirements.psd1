@@ -5,4 +5,7 @@
     # For latest supported version, go to 'https://www.powershellgallery.com/packages/Az'.
     # To use the Az module in your function app, please uncomment the line below.
     # 'Az' = '11.*'
+    
+    # Azure Storage module for file library management
+    'Az.Storage' = '5.*'
 }

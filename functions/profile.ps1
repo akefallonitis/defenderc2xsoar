@@ -27,3 +27,23 @@ if (Test-Path $MDEAutomatorPath) {
     Import-Module (Join-Path $MDEAutomatorPath "MDEAutomator.psd1") -Force -ErrorAction SilentlyContinue
     Write-Host "MDEAutomator module loaded successfully"
 }
+
+# Initialize storage context for file library
+if ($env:AzureWebJobsStorage) {
+    Write-Host "📦 Initializing storage context for file library..."
+    try {
+        $global:StorageContext = New-AzStorageContext -ConnectionString $env:AzureWebJobsStorage
+        
+        # Ensure library container exists
+        $libraryContainer = Get-AzStorageContainer -Name "library" -Context $global:StorageContext -ErrorAction SilentlyContinue
+        if (-not $libraryContainer) {
+            Write-Host "📂 Creating library container..."
+            New-AzStorageContainer -Name "library" -Context $global:StorageContext -Permission Off | Out-Null
+            Write-Host "✅ Library container created"
+        } else {
+            Write-Host "✅ Library container ready"
+        }
+    } catch {
+        Write-Warning "Failed to initialize storage context: $($_.Exception.Message)"
+    }
+}
