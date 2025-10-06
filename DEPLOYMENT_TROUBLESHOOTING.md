@@ -4,6 +4,8 @@
 
 This guide addresses the common error: *"There was an error downloading the template from URI"* when using the "Deploy to Azure" button.
 
+> **NOTE:** This is a simplified deployment compared to the original MDEAutomator project. Instead of complex Infrastructure-as-Code with VNets, this project uses a single ARM template that deploys just the essential resources (Function App, Storage, and Managed Identity). The manual deployment method described below is reliable and takes only a few minutes.
+
 ## The Problem
 
 When clicking the "Deploy to Azure" button, you may encounter:

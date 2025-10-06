@@ -162,11 +162,13 @@ You can deploy using the Azure Portal button or CLI/PowerShell.
 
 #### Option A: Deploy via Azure Portal
 
+> **⚠️ IMPORTANT:** The "Deploy to Azure" button below may fail with a template download error if the template hasn't been merged to the main branch yet. If this happens, **use Option D (Manual Template Deployment)** instead - it's equally easy and more reliable.
+
 1. Click the button below:
 
    [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fakefallonitis%2Fdefenderc2xsoar%2Fmain%2Fdeployment%2Fazuredeploy.json)
 
-   > **⚠️ If the button fails:** See [Option D: Manual Template Deployment](#option-d-manual-template-deployment) below for alternative deployment methods.
+   **If you see an error about downloading the template**, skip to [Option D: Manual Template Deployment](#option-d-manual-template-deployment).
 
 2. Fill in the parameters:
    
@@ -262,18 +264,22 @@ New-AzResourceGroupDeployment `
 (Get-AzResourceGroupDeployment -ResourceGroupName $rgName -Name azuredeploy).Outputs
 ```
 
-#### Option D: Manual Template Deployment
+#### Option D: Manual Template Deployment (Recommended Alternative)
 
-If the "Deploy to Azure" button fails with an error like *"There was an error downloading the template from URI"*:
+**Use this option if you see:** *"There was an error downloading the template from URI"* or any CORS/accessibility errors when clicking the Deploy button.
 
-1. Go to [Azure Portal](https://portal.azure.com)
-2. Search for **"Deploy a custom template"**
-3. Click **"Build your own template in the editor"**
-4. Open [deployment/azuredeploy.json](deployment/azuredeploy.json) in this repository
-5. Copy the entire JSON content
-6. Paste it into the Azure Portal editor
-7. Click **"Save"**
-8. Fill in the required parameters:
+**Step-by-step instructions:**
+
+1. Open [deployment/azuredeploy.json](deployment/azuredeploy.json) in this repository
+2. Click the **Raw** button to view the raw JSON content
+3. Copy all the content (Ctrl+A, Ctrl+C or Cmd+A, Cmd+C)
+4. Go to [Azure Portal](https://portal.azure.com)
+5. Search for **"Deploy a custom template"** in the search bar at the top
+6. Click **"Build your own template in the editor"**
+7. Delete the sample template that appears
+8. Paste your copied template content (Ctrl+V or Cmd+V)
+9. Click **"Save"**
+10. Fill in the required parameters:
    - **Subscription**: Your Azure subscription
    - **Resource Group**: Create new or select existing
    - **Region**: Your preferred Azure region
