@@ -3,7 +3,7 @@ using namespace System.Net
 # Threat Intelligence Manager Function
 param($Request, $TriggerMetadata)
 
-Write-Host "MDETIManager function processed a request."
+Write-Host "DefenderC2TIManager function processed a request."
 
 # Get parameters
 $action = $Request.Query.action ?? $Request.Body.action

@@ -47,11 +47,11 @@ Before starting the deployment, ensure you have:
 │  └──────────────────────────────────────────────────┘  │
 │  ┌──────────────────────────────────────────────────┐  │
 │  │  Functions:                                       │  │
-│  │  - MDEDispatcher (device actions)                │  │
-│  │  - MDETIManager (threat intel)                   │  │
-│  │  - MDEHuntManager (hunting)                      │  │
-│  │  - MDEIncidentManager (incidents)                │  │
-│  │  - MDECDManager (custom detections)              │  │
+│  │  - DefenderC2Dispatcher (device actions)                │  │
+│  │  - DefenderC2TIManager (threat intel)                   │  │
+│  │  - DefenderC2HuntManager (hunting)                      │  │
+│  │  - DefenderC2IncidentManager (incidents)                │  │
+│  │  - DefenderC2CDManager (custom detections)              │  │
 │  └──────────────────────────────────────────────────┘  │
 └───────────────────────┬─────────────────────────────────┘
                         │ OAuth 2.0 Token Exchange
@@ -336,11 +336,11 @@ Before deploying, verify the function app structure is correct:
 - ✅ `run.ps1` - Function implementation
 
 **All Functions:**
-- ✅ MDEDispatcher - Device actions dispatcher
-- ✅ MDECDManager - Custom detection manager
-- ✅ MDEHuntManager - Advanced hunting manager
-- ✅ MDEIncidentManager - Incident manager
-- ✅ MDETIManager - Threat intelligence manager
+- ✅ DefenderC2Dispatcher - Device actions dispatcher
+- ✅ DefenderC2CDManager - Custom detection manager
+- ✅ DefenderC2HuntManager - Advanced hunting manager
+- ✅ DefenderC2IncidentManager - Incident manager
+- ✅ DefenderC2TIManager - Threat intelligence manager
 
 **Module Directory:**
 - ✅ MDEAutomator - PowerShell module with MDE API functions
@@ -479,7 +479,7 @@ For each additional tenant where you want to use this solution:
 ### Test Function App Connectivity
 
 1. **Test from Azure Portal**:
-   - Go to Function App > Functions > MDEDispatcher
+   - Go to Function App > Functions > DefenderC2Dispatcher
    - Click **Code + Test**
    - Click **Test/Run**
    - Set query parameters:
@@ -514,7 +514,7 @@ For each additional tenant where you want to use this solution:
    ```kql
    traces
    | where timestamp > ago(1h)
-   | where operation_Name == "MDEDispatcher"
+   | where operation_Name == "DefenderC2Dispatcher"
    | order by timestamp desc
    ```
 

@@ -109,7 +109,7 @@ ls -la
 - ✅ `profile.ps1` - Module loading script
 - ✅ `requirements.psd1` - PowerShell dependencies
 - ✅ `.funcignore` - Deployment exclusions
-- ✅ Function directories (MDEDispatcher, MDECDManager, MDEHuntManager, MDEIncidentManager, MDETIManager)
+- ✅ Function directories (DefenderC2Dispatcher, DefenderC2CDManager, DefenderC2HuntManager, DefenderC2IncidentManager, DefenderC2TIManager)
 
 **Each function directory should have:**
 - ✅ `function.json` - HTTP trigger bindings with authLevel 'function'
@@ -147,13 +147,13 @@ Get your function URL:
 az functionapp function show \
   --resource-group $RESOURCE_GROUP \
   --name $FUNCTION_APP_NAME \
-  --function-name MDEDispatcher \
+  --function-name DefenderC2Dispatcher \
   --query "invokeUrlTemplate" -o tsv
 ```
 
 Test with curl:
 ```bash
-curl -X POST "https://<your-function-app>.azurewebsites.net/api/MDEDispatcher" \
+curl -X POST "https://<your-function-app>.azurewebsites.net/api/DefenderC2Dispatcher" \
   -H "Content-Type: application/json" \
   -d '{
     "action": "Get Devices",
@@ -178,7 +178,7 @@ $getDevices = @{
     deviceFilter = "riskScore eq 'High'"
 } | ConvertTo-Json
 
-$devices = Invoke-RestMethod -Method Post -Uri "$baseUrl/MDEDispatcher" -Body $getDevices -ContentType "application/json"
+$devices = Invoke-RestMethod -Method Post -Uri "$baseUrl/DefenderC2Dispatcher" -Body $getDevices -ContentType "application/json"
 
 # Isolate each high-risk device
 foreach ($device in $devices.devices) {
@@ -188,7 +188,7 @@ foreach ($device in $devices.devices) {
         deviceIds = $device.id
     } | ConvertTo-Json
     
-    $result = Invoke-RestMethod -Method Post -Uri "$baseUrl/MDEDispatcher" -Body $isolate -ContentType "application/json"
+    $result = Invoke-RestMethod -Method Post -Uri "$baseUrl/DefenderC2Dispatcher" -Body $isolate -ContentType "application/json"
     Write-Host "Isolated device: $($device.computerDnsName)"
 }
 ```
@@ -209,7 +209,7 @@ $addIndicators = @{
     recommendedAction = "Block"
 } | ConvertTo-Json
 
-$result = Invoke-RestMethod -Method Post -Uri "$baseUrl/MDETIManager" -Body $addIndicators -ContentType "application/json"
+$result = Invoke-RestMethod -Method Post -Uri "$baseUrl/DefenderC2TIManager" -Body $addIndicators -ContentType "application/json"
 Write-Host "Added $($result.responses.Count) indicators"
 ```
 
@@ -233,7 +233,7 @@ $hunt = @{
     huntName = "Suspicious PowerShell Activity"
 } | ConvertTo-Json
 
-$results = Invoke-RestMethod -Method Post -Uri "$baseUrl/MDEHuntManager" -Body $hunt -ContentType "application/json"
+$results = Invoke-RestMethod -Method Post -Uri "$baseUrl/DefenderC2HuntManager" -Body $hunt -ContentType "application/json"
 Write-Host "Found $($results.resultCount) suspicious events"
 $results.results | Format-Table
 ```
@@ -249,7 +249,7 @@ $getIncidents = @{
     status = "Active"
 } | ConvertTo-Json
 
-$incidents = Invoke-RestMethod -Method Post -Uri "$baseUrl/MDEIncidentManager" -Body $getIncidents -ContentType "application/json"
+$incidents = Invoke-RestMethod -Method Post -Uri "$baseUrl/DefenderC2IncidentManager" -Body $getIncidents -ContentType "application/json"
 
 # Process each incident
 foreach ($incident in $incidents.incidents) {
@@ -263,7 +263,7 @@ foreach ($incident in $incidents.incidents) {
         status = "InProgress"
     } | ConvertTo-Json
     
-    Invoke-RestMethod -Method Post -Uri "$baseUrl/MDEIncidentManager" -Body $update -ContentType "application/json"
+    Invoke-RestMethod -Method Post -Uri "$baseUrl/DefenderC2IncidentManager" -Body $update -ContentType "application/json"
 }
 ```
 

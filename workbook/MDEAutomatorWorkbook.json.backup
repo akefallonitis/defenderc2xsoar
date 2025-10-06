@@ -325,7 +325,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/MDEDispatcher\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"action\",\"value\":\"{ActionType}\"},{\"key\":\"deviceFilter\",\"value\":\"{DeviceFilter}\"},{\"key\":\"deviceId\",\"value\":\"{DeviceId}\"},{\"key\":\"comment\",\"value\":\"{Comment}\"}],\"batchDisabled\":false,\"transformers\":null}",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/DefenderC2Dispatcher\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"action\",\"value\":\"{ActionType}\"},{\"key\":\"deviceFilter\",\"value\":\"{DeviceFilter}\"},{\"key\":\"deviceId\",\"value\":\"{DeviceId}\"},{\"key\":\"comment\",\"value\":\"{Comment}\"}],\"batchDisabled\":false,\"transformers\":null}",
               "size": 0,
               "title": "🎯 Execute Action: {ActionType}",
               "noDataMessage": "Click 'Run Query' to execute the selected action",
@@ -345,7 +345,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"GET\",\"path\":\"{FunctionAppUrl}/api/MDEDispatcher\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"action\",\"value\":\"listdevices\"},{\"key\":\"filter\",\"value\":\"{DeviceFilter}\"}],\"batchDisabled\":false,\"transformers\":null}",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"GET\",\"path\":\"{FunctionAppUrl}/api/DefenderC2Dispatcher\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"action\",\"value\":\"listdevices\"},{\"key\":\"filter\",\"value\":\"{DeviceFilter}\"}],\"batchDisabled\":false,\"transformers\":null}",
               "size": 0,
               "title": "💻 Devices in Environment",
               "queryType": 12,
@@ -483,7 +483,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/MDETIManager\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"action\",\"value\":\"{TIAction}\"},{\"key\":\"indicatorType\",\"value\":\"{IndicatorType}\"},{\"key\":\"indicators\",\"value\":\"{Indicators}\"},{\"key\":\"title\",\"value\":\"{IndicatorTitle}\"},{\"key\":\"severity\",\"value\":\"{Severity}\"},{\"key\":\"indicatorAction\",\"value\":\"{IndicatorAction}\"}],\"batchDisabled\":false,\"transformers\":null}",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/DefenderC2TIManager\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"action\",\"value\":\"{TIAction}\"},{\"key\":\"indicatorType\",\"value\":\"{IndicatorType}\"},{\"key\":\"indicators\",\"value\":\"{Indicators}\"},{\"key\":\"title\",\"value\":\"{IndicatorTitle}\"},{\"key\":\"severity\",\"value\":\"{Severity}\"},{\"key\":\"indicatorAction\",\"value\":\"{IndicatorAction}\"}],\"batchDisabled\":false,\"transformers\":null}",
               "size": 0,
               "title": "🎯 Threat Intelligence Action: {TIAction}",
               "noDataMessage": "Click 'Run Query' to execute TI management action",
@@ -503,7 +503,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"GET\",\"path\":\"{FunctionAppUrl}/api/MDETIManager\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"action\",\"value\":\"List\"}],\"batchDisabled\":false,\"transformers\":null}",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"GET\",\"path\":\"{FunctionAppUrl}/api/DefenderC2TIManager\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"action\",\"value\":\"List\"}],\"batchDisabled\":false,\"transformers\":null}",
               "size": 0,
               "title": "📍 Threat Indicators",
               "queryType": 12,
@@ -566,7 +566,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"GET\",\"path\":\"{FunctionAppUrl}/api/MDEDispatcher\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"action\",\"value\":\"GetActions\"}],\"batchDisabled\":false,\"transformers\":null}",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"GET\",\"path\":\"{FunctionAppUrl}/api/DefenderC2Dispatcher\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"action\",\"value\":\"GetActions\"}],\"batchDisabled\":false,\"transformers\":null}",
               "size": 0,
               "title": "📊 Recent Machine Actions",
               "queryType": 12,
@@ -622,7 +622,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/MDEDispatcher\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"action\",\"value\":\"CancelAllActions\"}],\"batchDisabled\":false,\"transformers\":null}",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/DefenderC2Dispatcher\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"action\",\"value\":\"CancelAllActions\"}],\"batchDisabled\":false,\"transformers\":null}",
               "size": 0,
               "title": "🛑 Cancel All Actions",
               "noDataMessage": "Click 'Run Query' to cancel all pending actions",
@@ -710,7 +710,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/MDEHuntManager\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"huntName\",\"value\":\"{HuntName}\"},{\"key\":\"query\",\"value\":\"{HuntQuery}\"},{\"key\":\"saveToStorage\",\"value\":\"{SaveToStorage}\"}],\"batchDisabled\":false,\"transformers\":null}",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/DefenderC2HuntManager\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"huntName\",\"value\":\"{HuntName}\"},{\"key\":\"query\",\"value\":\"{HuntQuery}\"},{\"key\":\"saveToStorage\",\"value\":\"{SaveToStorage}\"}],\"batchDisabled\":false,\"transformers\":null}",
               "size": 0,
               "title": "🎯 Execute Hunt: {HuntName}",
               "noDataMessage": "Enter a query and click 'Run Query' to execute",
@@ -798,7 +798,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"GET\",\"path\":\"{FunctionAppUrl}/api/MDEIncidentManager\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"severity\",\"value\":\"{IncidentSeverity}\"},{\"key\":\"status\",\"value\":\"{IncidentStatus}\"}],\"batchDisabled\":false,\"transformers\":null}",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"GET\",\"path\":\"{FunctionAppUrl}/api/DefenderC2IncidentManager\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"severity\",\"value\":\"{IncidentSeverity}\"},{\"key\":\"status\",\"value\":\"{IncidentStatus}\"}],\"batchDisabled\":false,\"transformers\":null}",
               "size": 0,
               "title": "📊 Security Incidents",
               "queryType": 12,
@@ -881,7 +881,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"GET\",\"path\":\"{FunctionAppUrl}/api/MDEIncidentManager\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"action\",\"value\":\"statistics\"}],\"batchDisabled\":false,\"transformers\":null}",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"GET\",\"path\":\"{FunctionAppUrl}/api/DefenderC2IncidentManager\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"action\",\"value\":\"statistics\"}],\"batchDisabled\":false,\"transformers\":null}",
               "size": 0,
               "title": "📊 Incident Statistics",
               "queryType": 12,
@@ -985,7 +985,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/MDECDManager\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"action\",\"value\":\"{DetectionAction}\"},{\"key\":\"ruleName\",\"value\":\"{RuleName}\"},{\"key\":\"query\",\"value\":\"{DetectionQuery}\"},{\"key\":\"severity\",\"value\":\"{DetectionSeverity}\"}],\"batchDisabled\":false,\"transformers\":null}",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/DefenderC2CDManager\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"action\",\"value\":\"{DetectionAction}\"},{\"key\":\"ruleName\",\"value\":\"{RuleName}\"},{\"key\":\"query\",\"value\":\"{DetectionQuery}\"},{\"key\":\"severity\",\"value\":\"{DetectionSeverity}\"}],\"batchDisabled\":false,\"transformers\":null}",
               "size": 0,
               "title": "🎯 Detection Action: {DetectionAction}",
               "noDataMessage": "Select an action and click 'Run Query'",
@@ -1012,7 +1012,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"GET\",\"path\":\"{FunctionAppUrl}/api/MDECDManager\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"action\",\"value\":\"List\"}],\"batchDisabled\":false,\"transformers\":null}",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"GET\",\"path\":\"{FunctionAppUrl}/api/DefenderC2CDManager\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"action\",\"value\":\"List\"}],\"batchDisabled\":false,\"transformers\":null}",
               "size": 0,
               "title": "🛡️ Custom Detection Rules",
               "queryType": 12,
@@ -1152,7 +1152,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/MDEDispatcher\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"action\",\"value\":\"{CommandType}\"},{\"key\":\"actionName\",\"value\":\"{ActionName}\"},{\"key\":\"deviceIds\",\"value\":\"{DeviceIds}\"},{\"key\":\"params\",\"value\":\"{CommandParams}\"}],\"batchDisabled\":false,\"transformers\":null}",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/DefenderC2Dispatcher\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"action\",\"value\":\"{CommandType}\"},{\"key\":\"actionName\",\"value\":\"{ActionName}\"},{\"key\":\"deviceIds\",\"value\":\"{DeviceIds}\"},{\"key\":\"params\",\"value\":\"{CommandParams}\"}],\"batchDisabled\":false,\"transformers\":null}",
               "size": 4,
               "title": "\ud83c\udfaf Command Execution Status",
               "noDataMessage": "Click 'Run Query' to execute command",
@@ -1172,7 +1172,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"GET\",\"path\":\"{FunctionAppUrl}/api/MDEDispatcher\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"action\",\"value\":\"getstatus\"},{\"key\":\"actionId\",\"value\":\"{ActionId}\"}],\"batchDisabled\":false,\"transformers\":null}",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"GET\",\"path\":\"{FunctionAppUrl}/api/DefenderC2Dispatcher\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"action\",\"value\":\"getstatus\"},{\"key\":\"actionId\",\"value\":\"{ActionId}\"}],\"batchDisabled\":false,\"transformers\":null}",
               "size": 0,
               "title": "\ud83d\udcca Action Status (Auto-refresh)",
               "noDataMessage": "No active actions to poll. Execute a command first.",
@@ -1234,7 +1234,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"GET\",\"path\":\"{FunctionAppUrl}/api/MDEDispatcher\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"action\",\"value\":\"getresults\"},{\"key\":\"actionId\",\"value\":\"{ActionId}\"}],\"batchDisabled\":false,\"transformers\":null}",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"GET\",\"path\":\"{FunctionAppUrl}/api/DefenderC2Dispatcher\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"action\",\"value\":\"getresults\"},{\"key\":\"actionId\",\"value\":\"{ActionId}\"}],\"batchDisabled\":false,\"transformers\":null}",
               "size": 0,
               "title": "\ud83d\udccb Command Results",
               "noDataMessage": "No results available yet. Command may still be executing.",
@@ -1260,7 +1260,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"GET\",\"path\":\"{FunctionAppUrl}/api/MDEDispatcher\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"action\",\"value\":\"history\"},{\"key\":\"limit\",\"value\":\"20\"}],\"batchDisabled\":false,\"transformers\":null}",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"GET\",\"path\":\"{FunctionAppUrl}/api/DefenderC2Dispatcher\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"action\",\"value\":\"history\"},{\"key\":\"limit\",\"value\":\"20\"}],\"batchDisabled\":false,\"transformers\":null}",
               "size": 4,
               "title": "\ud83d\udcca Execution History (Last 20)",
               "noDataMessage": "No command history available.",

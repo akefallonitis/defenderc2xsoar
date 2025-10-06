@@ -12,11 +12,11 @@ When you click "Deploy to Azure", you now get:
 2. **✅ App Service Plan** (Consumption tier)
 3. **✅ Storage Account** (with all required configuration)
 4. **✅ All 5 Functions** (automatically deployed from GitHub package):
-   - MDEDispatcher
-   - MDECDManager
-   - MDEHuntManager
-   - MDEIncidentManager
-   - MDETIManager
+   - DefenderC2Dispatcher
+   - DefenderC2CDManager
+   - DefenderC2HuntManager
+   - DefenderC2IncidentManager
+   - DefenderC2TIManager
 5. **✅ Workbook** (MDE Automator Workbook in Azure Monitor)
 6. **✅ All Configuration** (environment variables, app settings)
 

@@ -83,11 +83,11 @@ az functionapp function list \
 
 **Expected output:**
 ```
-MDECDManager
-MDEDispatcher
-MDEHuntManager
-MDEIncidentManager
-MDETIManager
+DefenderC2CDManager
+DefenderC2Dispatcher
+DefenderC2HuntManager
+DefenderC2IncidentManager
+DefenderC2TIManager
 ```
 
 ### Check Function App is Running

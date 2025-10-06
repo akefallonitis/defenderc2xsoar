@@ -4,7 +4,7 @@ using namespace System.Net
 param($Request, $TriggerMetadata)
 
 # Write to the Azure Functions log stream.
-Write-Host "MDEOrchestrator: Processing Live Response request"
+Write-Host "DefenderC2Orchestrator: Processing Live Response request"
 
 # Get parameters from query string or body
 $function = $Request.Query.Function

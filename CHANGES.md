@@ -52,11 +52,11 @@ All five functions now:
 - Validate environment variables are configured
 
 **Affected Functions:**
-- `MDEDispatcher/run.ps1`
-- `MDETIManager/run.ps1`
-- `MDECDManager/run.ps1`
-- `MDEHuntManager/run.ps1`
-- `MDEIncidentManager/run.ps1`
+- `DefenderC2Dispatcher/run.ps1`
+- `DefenderC2TIManager/run.ps1`
+- `DefenderC2CDManager/run.ps1`
+- `DefenderC2HuntManager/run.ps1`
+- `DefenderC2IncidentManager/run.ps1`
 
 #### 4. Documentation Updates
 

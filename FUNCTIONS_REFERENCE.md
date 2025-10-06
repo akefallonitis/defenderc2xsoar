@@ -26,16 +26,16 @@ All functions require:
 
 ---
 
-## MDEDispatcher - Device Operations
+## DefenderC2Dispatcher - Device Operations
 
-**Endpoint:** `/api/MDEDispatcher`
+**Endpoint:** `/api/DefenderC2Dispatcher`
 
 ### Isolate Device
 Isolates one or more devices from the network.
 
 **Request:**
 ```http
-POST /api/MDEDispatcher
+POST /api/DefenderC2Dispatcher
 Content-Type: application/json
 
 {
@@ -207,9 +207,9 @@ Cancels a pending machine action.
 
 ---
 
-## MDETIManager - Threat Intelligence
+## DefenderC2TIManager - Threat Intelligence
 
-**Endpoint:** `/api/MDETIManager`
+**Endpoint:** `/api/DefenderC2TIManager`
 
 ### Add File Indicators
 Adds file hash indicators (SHA256).
@@ -285,9 +285,9 @@ Retrieves all threat indicators.
 
 ---
 
-## MDEHuntManager - Advanced Hunting
+## DefenderC2HuntManager - Advanced Hunting
 
-**Endpoint:** `/api/MDEHuntManager`
+**Endpoint:** `/api/DefenderC2HuntManager`
 
 ### Execute Hunt
 Executes a KQL advanced hunting query.
@@ -325,9 +325,9 @@ Executes a KQL advanced hunting query.
 
 ---
 
-## MDEIncidentManager - Incident Management
+## DefenderC2IncidentManager - Incident Management
 
-**Endpoint:** `/api/MDEIncidentManager`
+**Endpoint:** `/api/DefenderC2IncidentManager`
 
 ### Get Incidents
 Lists security incidents with optional filtering.
@@ -378,9 +378,9 @@ Updates incident properties.
 
 ---
 
-## MDECDManager - Custom Detections
+## DefenderC2CDManager - Custom Detections
 
-**Endpoint:** `/api/MDECDManager`
+**Endpoint:** `/api/DefenderC2CDManager`
 
 ### List All Detections
 Retrieves all custom detection rules.
@@ -446,11 +446,11 @@ Exports all detection rules to JSON.
 
 ---
 
-## MDEOrchestrator - Live Response Operations
+## DefenderC2Orchestrator - Live Response Operations
 
-**Endpoint:** `/api/MDEOrchestrator`
+**Endpoint:** `/api/DefenderC2Orchestrator`
 
-The MDEOrchestrator function provides Live Response capabilities for Microsoft Defender for Endpoint, enabling file operations and script execution directly from Azure Workbooks without requiring an Azure Storage account.
+The DefenderC2Orchestrator function provides Live Response capabilities for Microsoft Defender for Endpoint, enabling file operations and script execution directly from Azure Workbooks without requiring an Azure Storage account.
 
 ### Features
 - **Live Response session management** - Start, monitor, and manage sessions
@@ -620,7 +620,7 @@ Uploads a Base64-encoded file to a device.
 
 ### Rate Limiting & Retry Logic
 
-MDEOrchestrator automatically handles:
+DefenderC2Orchestrator automatically handles:
 
 **Rate Limits:**
 - **MDE API**: 45 calls per minute per tenant
@@ -655,7 +655,7 @@ $body = @{
 } | ConvertTo-Json
 
 $response = Invoke-RestMethod -Method Post `
-    -Uri "$baseUrl/MDEOrchestrator?code=$functionKey" `
+    -Uri "$baseUrl/DefenderC2Orchestrator?code=$functionKey" `
     -Body $body `
     -ContentType "application/json"
 
@@ -697,10 +697,10 @@ Be aware of Microsoft Defender API rate limits:
 - **Machine Actions**: 100 calls per minute
 - **Advanced Hunting**: 15 calls per minute, 10 queries per hour
 - **Indicators**: 100 calls per minute
-- **Live Response (MDEOrchestrator)**: 45 calls per minute per tenant, 100 concurrent sessions
+- **Live Response (DefenderC2Orchestrator)**: 45 calls per minute per tenant, 100 concurrent sessions
 
-**MDEOrchestrator Automatic Retry:**
-The MDEOrchestrator function automatically implements retry logic with exponential backoff:
+**DefenderC2Orchestrator Automatic Retry:**
+The DefenderC2Orchestrator function automatically implements retry logic with exponential backoff:
 - HTTP 429 (Rate Limited): Automatically waits for `Retry-After` header value
 - HTTP 5xx (Server Errors): Exponential backoff (5s, 10s, 20s)
 - Maximum 3 retry attempts before failure
@@ -728,7 +728,7 @@ $body = @{
     deviceIds = "device-id"
 } | ConvertTo-Json
 
-$response = Invoke-RestMethod -Method Post -Uri "$baseUrl/MDEDispatcher" -Body $body -ContentType "application/json"
+$response = Invoke-RestMethod -Method Post -Uri "$baseUrl/DefenderC2Dispatcher" -Body $body -ContentType "application/json"
 Write-Output $response
 ```
 
@@ -748,7 +748,7 @@ payload = {
 }
 
 response = requests.post(
-    f"{base_url}/MDEHuntManager",
+    f"{base_url}/DefenderC2HuntManager",
     json=payload
 )
 
@@ -757,7 +757,7 @@ print(json.dumps(response.json(), indent=2))
 
 ### cURL Example
 ```bash
-curl -X POST https://your-function-app.azurewebsites.net/api/MDETIManager \
+curl -X POST https://your-function-app.azurewebsites.net/api/DefenderC2TIManager \
   -H "Content-Type: application/json" \
   -d '{
     "action": "Add File Indicators",
@@ -786,7 +786,7 @@ Azure Workbooks can call these functions using ARMActions or HTTP calls:
         "linkTarget": "ArmAction",
         "linkLabel": "Isolate Device",
         "armActionContext": {
-          "path": "{FunctionAppUrl}/api/MDEDispatcher",
+          "path": "{FunctionAppUrl}/api/DefenderC2Dispatcher",
           "headers": [],
           "params": [
             {

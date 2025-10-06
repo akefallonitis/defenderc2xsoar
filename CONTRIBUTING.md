@@ -251,7 +251,7 @@ When modifying the ARM template:
    func start
    
    # Test endpoint
-   curl http://localhost:7071/api/MDEDispatcher?action=test
+   curl http://localhost:7071/api/DefenderC2Dispatcher?action=test
    ```
 
 2. **Workbook Testing**

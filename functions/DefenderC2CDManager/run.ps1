@@ -3,7 +3,7 @@ using namespace System.Net
 # Custom Detection Manager Function
 param($Request, $TriggerMetadata)
 
-Write-Host "MDECDManager function processed a request."
+Write-Host "DefenderC2CDManager function processed a request."
 
 $action = $Request.Query.action ?? $Request.Body.action
 $tenantId = $Request.Query.tenantId ?? $Request.Body.tenantId

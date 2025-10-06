@@ -17,7 +17,7 @@ This document tracks the implementation status of the defenderc2xsoar Azure Func
 
 ### Azure Functions
 
-#### MDEDispatcher (Device Actions)
+#### DefenderC2Dispatcher (Device Actions)
 **Status:** ✅ Fully Implemented
 
 **Supported Actions:**
@@ -38,7 +38,7 @@ This document tracks the implementation status of the defenderc2xsoar Azure Func
 **Error Handling:** Complete with proper exception handling
 **Response Format:** Structured JSON with action IDs and status
 
-#### MDETIManager (Threat Intelligence)
+#### DefenderC2TIManager (Threat Intelligence)
 **Status:** ✅ Fully Implemented
 
 **Supported Actions:**
@@ -54,7 +54,7 @@ This document tracks the implementation status of the defenderc2xsoar Azure Func
 **Error Handling:** Per-indicator error handling with warnings
 **Response Format:** Structured JSON with success counts
 
-#### MDEHuntManager (Advanced Hunting)
+#### DefenderC2HuntManager (Advanced Hunting)
 **Status:** ✅ Fully Implemented
 
 **Supported Actions:**
@@ -71,7 +71,7 @@ This document tracks the implementation status of the defenderc2xsoar Azure Func
 - ⏳ Scheduled hunt execution
 - ⏳ Query library management
 
-#### MDEIncidentManager (Incident Management)
+#### DefenderC2IncidentManager (Incident Management)
 **Status:** ✅ Fully Implemented
 
 **Supported Actions:**
@@ -84,7 +84,7 @@ This document tracks the implementation status of the defenderc2xsoar Azure Func
 **Error Handling:** Complete for all operations
 **Response Format:** Structured JSON with incident data
 
-#### MDECDManager (Custom Detection)
+#### DefenderC2CDManager (Custom Detection)
 **Status:** ✅ Fully Implemented
 
 **Supported Actions:**
@@ -101,7 +101,7 @@ This document tracks the implementation status of the defenderc2xsoar Azure Func
 **Future Enhancements:**
 - ⏳ Azure Storage integration for persistent backups
 
-#### MDEOrchestrator (Live Response Orchestrator)
+#### DefenderC2Orchestrator (Live Response Orchestrator)
 **Status:** ✅ Fully Implemented
 
 **Supported Operations:**
@@ -229,7 +229,7 @@ The workbook needs ARM action configurations for:
 - ✅ **functions/MDEAutomator/README.md** - Module documentation
 - ✅ **IMPLEMENTATION.md** - This status document
 - ✅ **WORKBOOK_FILE_OPERATIONS.md** - Complete guide for Live Response file operations
-- ✅ **FUNCTIONS_REFERENCE.md** - Updated with MDEOrchestrator documentation
+- ✅ **FUNCTIONS_REFERENCE.md** - Updated with DefenderC2Orchestrator documentation
 - ✅ **deployment/README.md** - Enhanced with function structure documentation
 - ✅ **QUICKSTART_FUNCTIONS.md** - Updated with configuration verification steps
 
@@ -244,7 +244,7 @@ The workbook needs ARM action configurations for:
 ### Recommended
 - ⏳ Azure Key Vault integration for secrets
 - ⏳ Managed Identity for function app
-- ✅ Rate limiting implementation (MDEOrchestrator with automatic retry)
+- ✅ Rate limiting implementation (DefenderC2Orchestrator with automatic retry)
 - ⏳ Request throttling (other functions)
 - ⏳ Audit logging to Log Analytics
 
@@ -256,7 +256,7 @@ The workbook needs ARM action configurations for:
 - ✅ Machine Information
 - ✅ Indicators (File, IP, URL/Domain)
 - ✅ Advanced Hunting
-- ✅ Live Response (complete - MDEOrchestrator with file operations)
+- ✅ Live Response (complete - DefenderC2Orchestrator with file operations)
 - ⏳ Alert Management
 - ⏳ Software Inventory
 - ⏳ Vulnerability Management
@@ -314,8 +314,8 @@ From the original problem statement:
 3. Enhanced result pagination
 
 ### Priority 3 (Production Readiness)
-1. ✅ Implement rate limiting and retry logic (MDEOrchestrator complete)
-2. Extend rate limiting to other functions (MDEDispatcher, MDETIManager, etc.)
+1. ✅ Implement rate limiting and retry logic (DefenderC2Orchestrator complete)
+2. Extend rate limiting to other functions (DefenderC2Dispatcher, DefenderC2TIManager, etc.)
 3. Add comprehensive audit logging
 4. Create unit tests (Pester framework)
 5. Performance optimization
