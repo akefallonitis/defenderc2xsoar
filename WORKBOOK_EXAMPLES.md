@@ -144,7 +144,7 @@ From `Sentinel360-XDR-Auditing.json`:
 {
   "type": "button",
   "action": "ARM",
-  "uri": "https://{functionAppUrl}/api/MDEDispatcher"
+  "uri": "https://{functionAppUrl}/api/DefenderC2Dispatcher"
 }
 ```
 

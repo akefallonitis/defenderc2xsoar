@@ -81,7 +81,7 @@ User Interface (Workbook)
     ↓
     ↓ [Execute Command]
     ↓
-Azure Function App (MDEDispatcher)
+Azure Function App (DefenderC2Dispatcher)
     ↓
     ↓ [Managed Identity Auth]
     ↓
@@ -167,7 +167,7 @@ Results Displayed in Workbook
 The Interactive Console makes ARM Endpoint calls to the Function App:
 
 ```
-POST {FunctionAppUrl}/api/MDEDispatcher
+POST {FunctionAppUrl}/api/DefenderC2Dispatcher
 Parameters:
   - tenantId: {TenantId}
   - spnId: {SpnId}
@@ -189,7 +189,7 @@ Results are transformed using JSON path transformers to extract relevant fields 
 
 To use the Interactive Console, ensure:
 
-1. **Function App Deployed**: Azure Function App with MDEDispatcher endpoint
+1. **Function App Deployed**: Azure Function App with DefenderC2Dispatcher endpoint
 2. **Parameters Configured**: 
    - TenantId (target tenant)
    - FunctionAppUrl (Function App base URL)

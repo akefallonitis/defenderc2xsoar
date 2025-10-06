@@ -21,11 +21,11 @@
 
 # You can also define functions or aliases that can be referenced in any of your PowerShell functions.
 
-# Import MDEAutomator module
-$MDEAutomatorPath = Join-Path $PSScriptRoot "MDEAutomator"
-if (Test-Path $MDEAutomatorPath) {
-    Import-Module (Join-Path $MDEAutomatorPath "MDEAutomator.psd1") -Force -ErrorAction SilentlyContinue
-    Write-Host "MDEAutomator module loaded successfully"
+# Import DefenderC2Automator module
+$DefenderC2AutomatorPath = Join-Path $PSScriptRoot "DefenderC2Automator"
+if (Test-Path $DefenderC2AutomatorPath) {
+    Import-Module (Join-Path $DefenderC2AutomatorPath "DefenderC2Automator.psd1") -Force -ErrorAction SilentlyContinue
+    Write-Host "DefenderC2Automator module loaded successfully"
 }
 
 # Initialize storage context for file library

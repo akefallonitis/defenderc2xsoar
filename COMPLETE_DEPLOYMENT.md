@@ -9,7 +9,7 @@ When you click "Deploy to Azure", the ARM template automatically deploys:
 1. ✅ **Azure Function App** (PowerShell 7.4 runtime)
 2. ✅ **App Service Plan** (Consumption tier)
 3. ✅ **Storage Account** (for function app storage)
-4. ✅ **Function Code** (all 11 functions from GitHub package)
+4. ✅ **Function Code** (all 9 functions from GitHub package)
 5. ✅ **Workbook** (MDE Automator Workbook in Azure Monitor)
 6. ✅ **Configuration** (all required app settings and environment variables)
 
@@ -74,17 +74,15 @@ The ARM template uses `WEBSITE_RUN_FROM_PACKAGE` to automatically deploy functio
 }
 ```
 
-This package contains all 11 Azure Functions:
-- MDEDispatcher
-- MDEOrchestrator
-- MDECDManager  
-- MDEHuntManager
-- MDEIncidentManager
-- MDETIManager
+This package contains all 9 Azure Functions:
+- DefenderC2Dispatcher
+- DefenderC2Orchestrator
+- DefenderC2CDManager  
+- DefenderC2HuntManager
+- DefenderC2IncidentManager
+- DefenderC2TIManager
 - ListLibraryFiles
 - GetLibraryFile
-- PutLiveResponseFileFromLibrary
-- GetLiveResponseFile
 - DeleteLibraryFile
 
 ### 2. Auto-Update via GitHub Actions
@@ -123,11 +121,11 @@ Just push changes to the `functions/` directory - GitHub Actions handles the res
 
 ```bash
 # Make changes to functions
-vim functions/MDEDispatcher/run.ps1
+vim functions/DefenderC2Dispatcher/run.ps1
 
 # Commit and push
 git add functions/
-git commit -m "Update MDEDispatcher function"
+git commit -m "Update DefenderC2Dispatcher function"
 git push
 
 # GitHub Actions will automatically create and commit function-package.zip
@@ -148,11 +146,11 @@ az functionapp function list \
 
 **Expected output:**
 ```
-MDEDispatcher
-MDECDManager
-MDEHuntManager
-MDEIncidentManager
-MDETIManager
+DefenderC2Dispatcher
+DefenderC2CDManager
+DefenderC2HuntManager
+DefenderC2IncidentManager
+DefenderC2TIManager
 ```
 
 ### 2. Check Function App Settings
@@ -181,8 +179,8 @@ In Azure Portal:
 Use the workbook or direct API calls:
 
 ```powershell
-# Test MDEDispatcher
-$functionUrl = "https://mde-automator-prod.azurewebsites.net/api/MDEDispatcher"
+# Test DefenderC2Dispatcher
+$functionUrl = "https://mde-automator-prod.azurewebsites.net/api/DefenderC2Dispatcher"
 $functionKey = "your-function-key"
 
 Invoke-RestMethod -Uri "$functionUrl?code=$functionKey&action=test" -Method GET

@@ -3,7 +3,7 @@ using namespace System.Net
 # Incident Manager Function
 param($Request, $TriggerMetadata)
 
-Write-Host "MDEIncidentManager function processed a request."
+Write-Host "DefenderC2IncidentManager function processed a request."
 
 $action = $Request.Query.action ?? $Request.Body.action
 $tenantId = $Request.Query.tenantId ?? $Request.Body.tenantId

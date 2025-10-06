@@ -41,11 +41,11 @@ defenderc2xsoar is a workbook-based automation platform for Microsoft Defender f
 │  │                                                            │ │
 │  │  ┌────────────────────────────────────────────────────┐  │ │
 │  │  │  Functions (PowerShell Core 7.2):                  │  │ │
-│  │  │  - MDEDispatcher        (device actions)           │  │ │
-│  │  │  - MDETIManager         (threat intel)             │  │ │
-│  │  │  - MDEHuntManager       (hunting)                  │  │ │
-│  │  │  - MDEIncidentManager   (incidents)                │  │ │
-│  │  │  - MDECDManager         (custom detections)        │  │ │
+│  │  │  - DefenderC2Dispatcher        (device actions)           │  │ │
+│  │  │  - DefenderC2TIManager         (threat intel)             │  │ │
+│  │  │  - DefenderC2HuntManager       (hunting)                  │  │ │
+│  │  │  - DefenderC2IncidentManager   (incidents)                │  │ │
+│  │  │  - DefenderC2CDManager         (custom detections)        │  │ │
 │  │  └────────────────────────────────────────────────────┘  │ │
 │  └──────────────────────────────────────────────────────────┘ │
 └────────────────────────────────────────────────────────────────┘
@@ -134,11 +134,11 @@ Federated Identity Credentials (FIC) eliminate the need for client secrets:
    - Target Tenant: tenant-id-123
 
 2. Workbook Action
-   - Constructs URL: https://func-app.com/api/MDEDispatcher
+   - Constructs URL: https://func-app.com/api/DefenderC2Dispatcher
    - Parameters: action=Isolate&tenantId=tenant-id-123&deviceFilter=...
    - User clicks "Execute Action"
 
-3. Function App (MDEDispatcher)
+3. Function App (DefenderC2Dispatcher)
    - Receives HTTP request
    - Validates parameters
    - Calls Connect-MDE with tenantId
@@ -167,7 +167,7 @@ The workbook is organized into functional tabs:
   - Execute button
   - Action status display
   - Device list query
-- **Backend**: MDEDispatcher function
+- **Backend**: DefenderC2Dispatcher function
 
 ### Tab 2: Threat Intelligence Manager
 - **Purpose**: Manage threat indicators (IOCs)
@@ -178,7 +178,7 @@ The workbook is organized into functional tabs:
   - Title, severity, action settings
   - Execute button
   - Recent indicators query
-- **Backend**: MDETIManager function
+- **Backend**: DefenderC2TIManager function
 
 ### Tab 3: Action Manager
 - **Purpose**: View and manage machine actions
@@ -188,7 +188,7 @@ The workbook is organized into functional tabs:
   - Recent actions grid
   - Action statistics chart
   - Action timeline
-- **Backend**: MDEDispatcher function (GetActions/CancelAllActions)
+- **Backend**: DefenderC2Dispatcher function (GetActions/CancelAllActions)
 
 ### Tab 4: Hunt Manager
 - **Purpose**: Execute advanced hunting queries
@@ -199,7 +199,7 @@ The workbook is organized into functional tabs:
   - Execute button
   - Sample queries
   - Results preview
-- **Backend**: MDEHuntManager function
+- **Backend**: DefenderC2HuntManager function
 
 ### Tab 5: Incident Manager
 - **Purpose**: Manage security incidents
@@ -208,7 +208,7 @@ The workbook is organized into functional tabs:
   - Refresh button
   - Incidents grid
   - Incident statistics charts
-- **Backend**: MDEIncidentManager function
+- **Backend**: DefenderC2IncidentManager function
 
 ### Tab 6: Custom Detection Manager
 - **Purpose**: Manage custom detection rules
@@ -220,7 +220,7 @@ The workbook is organized into functional tabs:
   - Execute button
   - Sample detection rules
   - Detection statistics
-- **Backend**: MDECDManager function
+- **Backend**: DefenderC2CDManager function
 
 ## Function App Structure
 

@@ -73,7 +73,7 @@ All key parameters now use Azure Resource Graph queries for automatic discovery:
       "linkTarget": "ArmAction",
       "linkLabel": "🚨 Isolate Devices",
       "armActionContext": {
-        "path": "{FunctionAppUrl}/api/MDEDispatcher?code={FunctionKey}",
+        "path": "{FunctionAppUrl}/api/DefenderC2Dispatcher?code={FunctionKey}",
         "body": "{\"action\":\"Isolate Device\",\"tenantId\":\"{TenantId}\",\"spnId\":\"{SpnId}\",\"deviceIds\":\"{IsolateDeviceIds}\",\"isolationType\":\"{IsolationType}\"}",
         "httpMethod": "POST"
       }
@@ -85,7 +85,7 @@ All key parameters now use Azure Resource Graph queries for automatic discovery:
 #### Get Devices (Custom Endpoint with JSONPath)
 ```json
 {
-  "query": "{\"version\":\"ARMEndpoint/1.0\",\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/MDEDispatcher?code={FunctionKey}\",\"body\":\"{\\\"action\\\":\\\"Get Devices\\\",\\\"tenantId\\\":\\\"{TenantId}\\\",\\\"spnId\\\":\\\"{SpnId}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.devices[*]\",\"columns\":[{\"path\":\"$.deviceName\",\"columnId\":\"Device Name\"},{\"path\":\"$.riskScore\",\"columnId\":\"Risk Score\"}]}}]}"
+  "query": "{\"version\":\"ARMEndpoint/1.0\",\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/DefenderC2Dispatcher?code={FunctionKey}\",\"body\":\"{\\\"action\\\":\\\"Get Devices\\\",\\\"tenantId\\\":\\\"{TenantId}\\\",\\\"spnId\\\":\\\"{SpnId}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.devices[*]\",\"columns\":[{\"path\":\"$.deviceName\",\"columnId\":\"Device Name\"},{\"path\":\"$.riskScore\",\"columnId\":\"Risk Score\"}]}}]}"
 }
 ```
 
@@ -103,7 +103,7 @@ All key parameters now use Azure Resource Graph queries for automatic discovery:
 {
   "linkTarget": "ArmAction",
   "armActionContext": {
-    "path": "{FunctionAppUrl}/api/MDETIManager?code={FunctionKey}",
+    "path": "{FunctionAppUrl}/api/DefenderC2TIManager?code={FunctionKey}",
     "body": "{\"action\":\"Add File Indicators\",\"tenantId\":\"{TenantId}\",\"spnId\":\"{SpnId}\",\"indicators\":\"{FileIndicators}\",\"indicatorAction\":\"{FileIndicatorAction}\",\"severity\":\"{FileSeverity}\"}",
     "httpMethod": "POST"
   }

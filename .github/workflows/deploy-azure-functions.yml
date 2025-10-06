@@ -27,16 +27,14 @@ jobs:
           
           # Verify all expected functions exist
           $expectedFunctions = @(
-              'MDECDManager',
-              'MDEDispatcher',
-              'MDEHuntManager',
-              'MDEIncidentManager',
-              'MDETIManager',
-              'MDEOrchestrator',
+              'DefenderC2CDManager',
+              'DefenderC2Dispatcher',
+              'DefenderC2HuntManager',
+              'DefenderC2IncidentManager',
+              'DefenderC2TIManager',
+              'DefenderC2Orchestrator',
               'ListLibraryFiles',
               'GetLibraryFile',
-              'PutLiveResponseFileFromLibrary',
-              'GetLiveResponseFile',
               'DeleteLibraryFile'
           )
           
@@ -110,4 +108,4 @@ jobs:
           Write-Host "✅ Deployment completed successfully!" -ForegroundColor Green
           Write-Host "📝 Verify functions in Azure Portal:" -ForegroundColor Cyan
           Write-Host "   Navigate to Function App → Functions" -ForegroundColor Gray
-          Write-Host "   Expected: 11 functions deployed" -ForegroundColor Gray
+          Write-Host "   Expected: 9 functions deployed" -ForegroundColor Gray

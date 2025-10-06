@@ -4,7 +4,7 @@ using namespace System.Net
 param($Request, $TriggerMetadata)
 
 # Write to the Azure Functions log stream.
-Write-Host "MDEOrchestrator: Processing Live Response request"
+Write-Host "DefenderC2Orchestrator: Processing Live Response request"
 
 # Get parameters from query string or body
 $function = $Request.Query.Function
@@ -319,8 +319,105 @@ try {
             }
         }
         
+        "PutLiveResponseFileFromLibrary" {
+            if ($deviceIdList.Count -eq 0) {
+                throw "Device ID required for file deployment from library"
+            }
+            if (-not $fileName) {
+                throw "File name required"
+            }
+            
+            Write-Host "📥 Retrieving file from Azure Storage library: $fileName"
+            
+            # Check if storage context is initialized
+            if (-not $global:StorageContext) {
+                throw "Storage context not initialized. Ensure AzureWebJobsStorage is configured."
+            }
+            
+            # Sanitize file name
+            $sanitizedFileName = [System.IO.Path]::GetFileName($fileName)
+            
+            # Use fileName as target if not specified
+            if (-not $targetFileName) {
+                $targetFileName = $sanitizedFileName
+            }
+            
+            # Get file from Azure Storage library
+            $blob = Get-AzStorageBlob -Container "library" -Blob $sanitizedFileName -Context $global:StorageContext -ErrorAction Stop
+            
+            if (-not $blob) {
+                throw "File not found in library: $sanitizedFileName"
+            }
+            
+            # Download blob content to memory
+            $memoryStream = New-Object System.IO.MemoryStream
+            $blob.ICloudBlob.DownloadToStream($memoryStream)
+            $memoryStream.Position = 0
+            
+            # Convert to Base64
+            $fileBytes = $memoryStream.ToArray()
+            $fileBase64 = [Convert]::ToBase64String($fileBytes)
+            
+            Write-Host "✅ File retrieved from library: $sanitizedFileName ($($fileBytes.Length) bytes)"
+            
+            $deviceId = $deviceIdList[0]
+            
+            # Start Live Response session
+            Write-Host "📤 Starting Live Response session for device: $deviceId"
+            $session = Start-MDELiveResponseSession -Token $token -DeviceId $deviceId -Comment "File deployment from library via DefenderC2Orchestrator"
+            
+            Write-Host "⏳ Waiting for session to be ready..."
+            Start-Sleep -Seconds 5
+            
+            # Upload file to MDE library
+            $headers = Get-MDEAuthHeaders -Token $token
+            $libraryUri = "https://api.securitycenter.microsoft.com/api/liveresponse/library/files"
+            
+            # Ensure Base64 content is clean (no whitespace)
+            $cleanBase64 = $fileBase64 -replace '\s', ''
+            
+            $uploadBody = @{
+                FileName = $targetFileName
+                FileContent = $cleanBase64
+            } | ConvertTo-Json
+            
+            Write-Host "⏳ Uploading file to MDE library..."
+            $uploadParams = @{
+                Method = "Post"
+                Uri = $libraryUri
+                Headers = $headers
+                Body = $uploadBody
+                ContentType = "application/json"
+            }
+            
+            $uploadResult = Invoke-MDEApiWithRetry -Params $uploadParams
+            
+            # Execute putfile command
+            $fileParams = @{
+                FileName = $targetFileName
+            }
+            
+            Write-Host "⏳ Transferring file to device..."
+            $command = Invoke-MDELiveResponseCommand -Token $token -SessionId $session.id -Command "putfile" -Parameters $fileParams
+            
+            Write-Host "⏳ Waiting for file transfer to complete..."
+            $commandResult = Wait-MDELiveResponseCommand -Token $token -CommandId $command.id -TimeoutSeconds 300
+            
+            if ($commandResult -and $commandResult.status -eq "Completed") {
+                $result.status = "Success"
+                $result.message = "File deployed successfully from library to device"
+                $result.fileName = $sanitizedFileName
+                $result.targetFileName = $targetFileName
+                $result.sessionId = $session.id
+                $result.commandId = $command.id
+                $result.deviceId = $deviceId
+            } else {
+                throw "File deployment failed or timed out"
+            }
+        }
+        
         default {
-            throw "Unknown function: $function. Supported functions: GetLiveResponseSessions, InvokeLiveResponseScript, GetLiveResponseOutput, GetLiveResponseFile, PutLiveResponseFile"
+            throw "Unknown function: $function. Supported functions: GetLiveResponseSessions, InvokeLiveResponseScript, GetLiveResponseOutput, GetLiveResponseFile, PutLiveResponseFile, PutLiveResponseFileFromLibrary"
         }
     }
 

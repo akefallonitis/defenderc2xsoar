@@ -1,8 +1,8 @@
 @{
-    # Module manifest for MDEAutomator
+    # Module manifest for DefenderC2Automator
     ModuleVersion = '1.0.0'
     GUID = 'a1b2c3d4-e5f6-4789-a012-3456789abcde'
-    Author = 'MDEAutomator Contributors'
+    Author = 'DefenderC2 Contributors'
     Description = 'Microsoft Defender for Endpoint Automation Module for Azure Functions'
     PowerShellVersion = '7.0'
     

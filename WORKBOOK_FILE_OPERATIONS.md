@@ -1,6 +1,6 @@
 # Workbook File Operations Guide
 
-This guide explains how to use the MDEOrchestrator function for Live Response file operations directly from Azure Workbooks without requiring an Azure Storage account.
+This guide explains how to use the DefenderC2Orchestrator function for Live Response file operations directly from Azure Workbooks without requiring an Azure Storage account.
 
 ## Overview
 
@@ -21,7 +21,7 @@ Azure Workbooks have security restrictions that prevent custom JavaScript execut
 
 1. Encode your file to Base64 locally (on your machine)
 2. Paste the Base64 string into the workbook parameter
-3. Workbook sends Base64 content to MDEOrchestrator
+3. Workbook sends Base64 content to DefenderC2Orchestrator
 4. Function uploads to MDE Live Response library
 5. Function transfers file to target device
 
@@ -120,7 +120,7 @@ Add this to your workbook JSON:
         "style": "primary",
         "linkIsContextBlade": false,
         "armActionContext": {
-          "path": "{FunctionAppUrl}/api/MDEOrchestrator?code={FunctionKey}",
+          "path": "{FunctionAppUrl}/api/DefenderC2Orchestrator?code={FunctionKey}",
           "headers": [],
           "params": [],
           "body": "{\"Function\":\"PutLiveResponseFile\",\"tenantId\":\"{TenantId}\",\"DeviceIds\":\"{UploadDeviceId}\",\"TargetFileName\":\"{UploadFileName}\",\"fileContent\":\"{FileContent}\"}",
@@ -143,7 +143,7 @@ Add this to your workbook JSON:
 ### How It Works
 
 1. Click download button in workbook
-2. Workbook sends request to MDEOrchestrator with device ID and file path
+2. Workbook sends request to DefenderC2Orchestrator with device ID and file path
 3. Function starts Live Response session
 4. Function downloads file from device
 5. Function encodes file as Base64
@@ -195,7 +195,7 @@ Add this to your workbook JSON:
         "style": "primary",
         "linkIsContextBlade": false,
         "armActionContext": {
-          "path": "{FunctionAppUrl}/api/MDEOrchestrator?code={FunctionKey}",
+          "path": "{FunctionAppUrl}/api/DefenderC2Orchestrator?code={FunctionKey}",
           "headers": [],
           "params": [],
           "body": "{\"Function\":\"GetLiveResponseFile\",\"tenantId\":\"{TenantId}\",\"DeviceIds\":\"{DownloadDeviceId}\",\"filePath\":\"{DownloadFilePath}\"}",
@@ -244,7 +244,7 @@ Write-Host "✅ File decoded and saved to: $outputPath" -ForegroundColor Green
         "linkLabel": "🚀 Execute Script",
         "style": "primary",
         "armActionContext": {
-          "path": "{FunctionAppUrl}/api/MDEOrchestrator?code={FunctionKey}",
+          "path": "{FunctionAppUrl}/api/DefenderC2Orchestrator?code={FunctionKey}",
           "body": "{\"Function\":\"InvokeLiveResponseScript\",\"tenantId\":\"{TenantId}\",\"DeviceIds\":\"{DeviceId}\",\"scriptName\":\"{ScriptName}\",\"arguments\":\"{ScriptArgs}\"}",
           "httpMethod": "POST",
           "title": "Execute Script",
@@ -270,7 +270,7 @@ Write-Host "✅ File decoded and saved to: $outputPath" -ForegroundColor Green
         "linkLabel": "📊 Get Command Output",
         "style": "secondary",
         "armActionContext": {
-          "path": "{FunctionAppUrl}/api/MDEOrchestrator?code={FunctionKey}",
+          "path": "{FunctionAppUrl}/api/DefenderC2Orchestrator?code={FunctionKey}",
           "body": "{\"Function\":\"GetLiveResponseOutput\",\"tenantId\":\"{TenantId}\",\"commandId\":\"{CommandId}\"}",
           "httpMethod": "POST",
           "title": "Get Output",
@@ -298,7 +298,7 @@ Write-Host "✅ File decoded and saved to: $outputPath" -ForegroundColor Green
         "linkLabel": "📋 List Live Response Sessions",
         "style": "secondary",
         "armActionContext": {
-          "path": "{FunctionAppUrl}/api/MDEOrchestrator?code={FunctionKey}",
+          "path": "{FunctionAppUrl}/api/DefenderC2Orchestrator?code={FunctionKey}",
           "body": "{\"Function\":\"GetLiveResponseSessions\",\"tenantId\":\"{TenantId}\"}",
           "httpMethod": "POST",
           "title": "List Sessions"
@@ -313,7 +313,7 @@ Write-Host "✅ File decoded and saved to: $outputPath" -ForegroundColor Green
 
 ## ⚡ Rate Limiting & Retry Logic
 
-The MDEOrchestrator function automatically handles:
+The DefenderC2Orchestrator function automatically handles:
 
 ### Rate Limits
 - **MDE API**: 45 calls per minute per tenant

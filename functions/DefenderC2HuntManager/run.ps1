@@ -3,7 +3,7 @@ using namespace System.Net
 # Hunt Manager Function
 param($Request, $TriggerMetadata)
 
-Write-Host "MDEHuntManager function processed a request."
+Write-Host "DefenderC2HuntManager function processed a request."
 
 $action = $Request.Query.action ?? $Request.Body.action
 $tenantId = $Request.Query.tenantId ?? $Request.Body.tenantId
