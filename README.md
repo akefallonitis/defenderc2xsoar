@@ -113,6 +113,8 @@ All MDEAutomator capabilities replicated through Azure Workbooks:
 
 ## Deployment
 
+> **Simplified Deployment:** Unlike the original MDEAutomator's complex Infrastructure-as-Code setup, this project uses a single ARM template that deploys only the essential resources. Setup takes about 1 hour compared to 2+ hours for the original. See the [comparison table](#differences-from-original-mdeautomator) below for more details.
+
 ### Prerequisites
 
 1. **Azure Subscription** - For deploying function apps
