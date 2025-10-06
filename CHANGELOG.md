@@ -9,6 +9,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+#### File Library Management 📦
+- **Complete File Operations with Azure Storage Library**
+  - Centralized file library using Azure Storage "library" container
+  - Five new PowerShell functions:
+    - `ListLibraryFiles` - List all files in storage library
+    - `GetLibraryFile` - Retrieve file as Base64 from library
+    - `PutLiveResponseFileFromLibrary` - Deploy file from library to MDE device
+    - `GetLiveResponseFile` - Download file from MDE device
+    - `DeleteLibraryFile` - Remove file from library
+  - Helper scripts for file management:
+    - `Upload-ToLibrary.ps1` - Upload files with validation and progress
+    - `Sync-LibraryFolder.ps1` - Sync entire folder to library container
+    - `Get-LibraryFiles.ps1` - List library files (API or direct storage)
+    - `Remove-LibraryFile.ps1` - Delete files with confirmation
+  - Configuration updates:
+    - Added `Az.Storage` module to `requirements.psd1`
+    - Enhanced `profile.ps1` with storage context initialization
+    - Automatic library container creation on startup
+  - Comprehensive documentation:
+    - `FILE_OPERATIONS_GUIDE.md` - Complete user guide with workflows
+    - `LIBRARY_SETUP.md` - 5-minute quick setup guide
+    - API reference for all endpoints
+    - Troubleshooting guide
+  - Benefits:
+    - Upload once, deploy many times
+    - No manual Base64 encoding required
+    - Team collaboration with shared file library
+    - Native browser downloads for retrieved files
+    - Minimal cost (~$0.05/month for typical usage)
+  - See [FILE_OPERATIONS_GUIDE.md](FILE_OPERATIONS_GUIDE.md) for details
+
 #### Standalone PowerShell Framework 🆕
 - **New Standalone Version** for local execution without Azure infrastructure
   - Complete PowerShell framework in `standalone/` directory

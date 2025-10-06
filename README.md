@@ -82,6 +82,16 @@ All MDEAutomator capabilities replicated through Azure Workbooks:
    - Support for all MDE actions, hunting, TI, incidents, and detections
    - Real-time status monitoring with visual indicators
 
+8. **📦 File Library Management** *(New!)*
+   - Centralized file library using Azure Storage
+   - Upload files once, deploy to devices many times
+   - No manual Base64 encoding required
+   - Deploy files via Live Response with one click
+   - Download files from devices with automatic browser download
+   - Team collaboration with shared file library
+   - Helper scripts for bulk upload and sync operations
+   - See [FILE_OPERATIONS_GUIDE.md](FILE_OPERATIONS_GUIDE.md) for details
+
 ## Architecture
 
 ```
