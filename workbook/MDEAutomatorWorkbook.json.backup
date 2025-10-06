@@ -22,10 +22,9 @@
             "name": "Subscription",
             "type": 6,
             "isRequired": true,
-            "query": "Resources | where type =~ 'microsoft.operationalinsights/workspaces' | summarize by subscriptionId",
-            "crossComponentResources": [
-              "value::all"
-            ],
+            "multiSelect": true,
+            "quote": "'",
+            "delimiter": ",",
             "typeSettings": {
               "additionalResourceOptions": [
                 "value::all"
@@ -36,8 +35,6 @@
             "timeContext": {
               "durationMs": 86400000
             },
-            "queryType": 1,
-            "resourceType": "microsoft.resourcegraph/resources",
             "defaultValue": "value::all",
             "value": [
               "value::all"
@@ -49,20 +46,28 @@
             "name": "Workspace",
             "type": 5,
             "isRequired": true,
-            "query": "Resources | where type =~ 'microsoft.operationalinsights/workspaces' | project id, name, location",
+            "multiSelect": true,
+            "quote": "'",
+            "delimiter": ",",
+            "query": "Resources\n| where type =~ 'microsoft.operationalinsights/workspaces'\n| project id",
             "crossComponentResources": [
               "{Subscription}"
             ],
             "typeSettings": {
-              "additionalResourceOptions": [],
+              "additionalResourceOptions": [
+                "value::all"
+              ],
               "showDefault": false
             },
             "timeContext": {
               "durationMs": 86400000
             },
+            "defaultValue": "value::all",
             "queryType": 1,
             "resourceType": "microsoft.resourcegraph/resources",
-            "value": null
+            "value": [
+              "value::all"
+            ]
           },
           {
             "id": "8c4e5f38-a6cd-4642-9f0d-2f2e5d7b3c1a",
@@ -71,16 +76,10 @@
             "label": "Target Tenant ID",
             "type": 1,
             "isRequired": true,
-            "query": "Resources | where type =~ 'microsoft.operationalinsights/workspaces' | where id == '{Workspace}' | project tenantId",
-            "crossComponentResources": [
-              "{Subscription}"
-            ],
-            "isHiddenWhenLocked": true,
             "timeContext": {
               "durationMs": 86400000
             },
-            "queryType": 1,
-            "resourceType": "microsoft.resourcegraph/resources"
+            "value": ""
           },
           {
             "id": "9d5e6f49-b7de-5753-a0e1-3f3f6e8c4d2b",
@@ -103,19 +102,6 @@
             "type": 1,
             "isRequired": true,
             "description": "Multi-tenant App Registration Client ID",
-            "timeContext": {
-              "durationMs": 86400000
-            },
-            "value": ""
-          },
-          {
-            "id": "c2f9h7c-e0gh-8086-d3h4-6i6i9h1f7g5e",
-            "version": "KqlParameterItem/1.0",
-            "name": "FunctionKey",
-            "label": "Function App Key",
-            "type": 1,
-            "isRequired": true,
-            "description": "Function App host key or function-specific key for authentication",
             "timeContext": {
               "durationMs": 86400000
             },
@@ -263,262 +249,67 @@
       "content": {
         "version": "NotebookGroup/1.0",
         "groupType": "editable",
-        "title": "🎯 Device Actions",
         "items": [
           {
             "type": 1,
             "content": {
-              "json": "## MDEAutomator - Device Response Actions\n\nPerform Microsoft Defender for Endpoint response actions with **ARM Actions** and **JSONPath parsing**.\n\n### Features:\n- ✅ Azure Resource Graph auto-discovery\n- ✅ ARM Actions for synchronous operations\n- ✅ JSONPath output parsing\n- ✅ Multi-tenancy support with automatic TenantId injection\n- ✅ Function Key authentication"
+              "json": "## MDEAutomator - Device Response Actions\n\n### Dispatcher Actions\nPerform bulk response actions across your MDE endpoints:\n\n- **Isolate Device** - Network isolate devices (selective isolation with exclusion rules)\n- **Collect Investigation Package** - Gather forensic artifacts from endpoints\n- **Run Antivirus Scan** - Execute full disk scan on devices\n- **Restrict App Execution** - Allow only Microsoft-signed binaries\n- **Stop & Quarantine File** - Stop and quarantine malicious files\n\n### Orchestrator Actions\nExecute Live Response operations:\n\n- **Run Live Response Script** - Execute PowerShell scripts from LR library\n- **Collect File** - Retrieve files from endpoints\n- **Put File** - Push files to endpoints from LR library\n- **Upload to Live Response Library** - Add scripts/files to library"
             },
             "name": "text - automator-intro"
           },
           {
-            "type": 1,
-            "content": {
-              "json": "---\n## 🚨 Isolate Device\n\nIsolate devices from the network using ARM Actions with JSONPath transformers."
-            },
-            "name": "text - isolate-header"
-          },
-          {
             "type": 9,
             "content": {
               "version": "KqlParameterItem/1.0",
               "parameters": [
                 {
-                  "id": "isolate-deviceids",
+                  "id": "c3i9h4j3g-8h7l-0g4j-5k1i-7g8h9i0j1k2l",
                   "version": "KqlParameterItem/1.0",
-                  "name": "IsolateDeviceIds",
-                  "label": "Device IDs (comma-separated)",
-                  "type": 1,
-                  "isRequired": false,
-                  "description": "Enter one or more device IDs separated by commas",
-                  "timeContext": {
-                    "durationMs": 86400000
-                  }
-                },
-                {
-                  "id": "isolate-type",
-                  "version": "KqlParameterItem/1.0",
-                  "name": "IsolationType",
-                  "label": "Isolation Type",
+                  "name": "ActionType",
+                  "label": "Select Action",
                   "type": 2,
                   "isRequired": true,
                   "typeSettings": {
                     "additionalResourceOptions": [],
                     "showDefault": false
                   },
-                  "jsonData": "[\"Full\", \"Selective\"]",
-                  "defaultValue": "Full",
-                  "timeContext": {
-                    "durationMs": 86400000
-                  }
-                }
-              ],
-              "style": "pills",
-              "queryType": 0,
-              "resourceType": "microsoft.operationalinsights/workspaces"
-            },
-            "name": "parameters - isolate"
-          },
-          {
-            "type": 11,
-            "content": {
-              "version": "LinkItem/1.0",
-              "style": "list",
-              "links": [
-                {
-                  "id": "isolate-action",
-                  "cellValue": "unused",
-                  "linkTarget": "ArmAction",
-                  "linkLabel": "🚨 Isolate Devices",
-                  "style": "primary",
-                  "linkIsContextBlade": true,
-                  "armActionContext": {
-                    "path": "{FunctionAppUrl}/api/MDEDispatcher?code={FunctionKey}",
-                    "headers": [],
-                    "params": [],
-                    "body": "{\"action\":\"Isolate Device\",\"tenantId\":\"{TenantId}\",\"spnId\":\"{SpnId}\",\"deviceIds\":\"{IsolateDeviceIds}\",\"isolationType\":\"{IsolationType}\",\"comment\":\"Isolated via Workbook\"}",
-                    "httpMethod": "POST",
-                    "title": "Isolate Devices",
-                    "description": "Initiating device isolation...",
-                    "actionName": "Isolate",
-                    "runLabel": "Isolate Devices"
-                  }
-                }
-              ]
-            },
-            "name": "links - isolate-action"
-          },
-          {
-            "type": 3,
-            "content": {
-              "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/MDEDispatcher?code={FunctionKey}\",\"body\":\"{\\\"action\\\":\\\"Isolate Device\\\",\\\"tenantId\\\":\\\"{TenantId}\\\",\\\"spnId\\\":\\\"{SpnId}\\\",\\\"deviceIds\\\":\\\"{IsolateDeviceIds}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.actionId\",\"columnId\":\"actionId\"},{\"path\":\"$.status\",\"columnId\":\"status\"},{\"path\":\"$.message\",\"columnId\":\"message\"},{\"path\":\"$.tenantId\",\"columnId\":\"tenantId\"}]}}]}",
-              "size": 0,
-              "title": "Isolation Result",
-              "queryType": 12
-            },
-            "conditionalVisibility": {
-              "parameterName": "IsolateDeviceIds",
-              "comparison": "isNotEqualTo",
-              "value": ""
-            },
-            "name": "query - isolate-result"
-          },
-          {
-            "type": 1,
-            "content": {
-              "json": "---\n## 🔓 Unisolate Device\n\nRemove network isolation from devices."
-            },
-            "name": "text - unisolate-header"
-          },
-          {
-            "type": 9,
-            "content": {
-              "version": "KqlParameterItem/1.0",
-              "parameters": [
-                {
-                  "id": "unisolate-deviceids",
-                  "version": "KqlParameterItem/1.0",
-                  "name": "UnisolateDeviceIds",
-                  "label": "Device IDs (comma-separated)",
-                  "type": 1,
-                  "isRequired": false,
-                  "timeContext": {
-                    "durationMs": 86400000
-                  }
-                }
-              ],
-              "style": "pills",
-              "queryType": 0,
-              "resourceType": "microsoft.operationalinsights/workspaces"
-            },
-            "name": "parameters - unisolate"
-          },
-          {
-            "type": 11,
-            "content": {
-              "version": "LinkItem/1.0",
-              "style": "list",
-              "links": [
-                {
-                  "id": "unisolate-action",
-                  "cellValue": "unused",
-                  "linkTarget": "ArmAction",
-                  "linkLabel": "🔓 Unisolate Devices",
-                  "style": "primary",
-                  "linkIsContextBlade": true,
-                  "armActionContext": {
-                    "path": "{FunctionAppUrl}/api/MDEDispatcher?code={FunctionKey}",
-                    "headers": [],
-                    "params": [],
-                    "body": "{\"action\":\"Unisolate Device\",\"tenantId\":\"{TenantId}\",\"spnId\":\"{SpnId}\",\"deviceIds\":\"{UnisolateDeviceIds}\",\"comment\":\"Unisolated via Workbook\"}",
-                    "httpMethod": "POST",
-                    "title": "Unisolate Devices",
-                    "description": "Removing device isolation...",
-                    "actionName": "Unisolate",
-                    "runLabel": "Unisolate Devices"
-                  }
-                }
-              ]
-            },
-            "name": "links - unisolate-action"
-          },
-          {
-            "type": 1,
-            "content": {
-              "json": "---\n## 🛡️ Restrict App Execution\n\nRestrict app execution to Microsoft-signed binaries only."
-            },
-            "name": "text - restrict-header"
-          },
-          {
-            "type": 9,
-            "content": {
-              "version": "KqlParameterItem/1.0",
-              "parameters": [
-                {
-                  "id": "restrict-deviceids",
-                  "version": "KqlParameterItem/1.0",
-                  "name": "RestrictDeviceIds",
-                  "label": "Device IDs (comma-separated)",
-                  "type": 1,
-                  "isRequired": false,
-                  "timeContext": {
-                    "durationMs": 86400000
-                  }
-                }
-              ],
-              "style": "pills",
-              "queryType": 0,
-              "resourceType": "microsoft.operationalinsights/workspaces"
-            },
-            "name": "parameters - restrict"
-          },
-          {
-            "type": 11,
-            "content": {
-              "version": "LinkItem/1.0",
-              "style": "list",
-              "links": [
-                {
-                  "id": "restrict-action",
-                  "cellValue": "unused",
-                  "linkTarget": "ArmAction",
-                  "linkLabel": "🛡️ Restrict App Execution",
-                  "style": "primary",
-                  "linkIsContextBlade": true,
-                  "armActionContext": {
-                    "path": "{FunctionAppUrl}/api/MDEDispatcher?code={FunctionKey}",
-                    "headers": [],
-                    "params": [],
-                    "body": "{\"action\":\"Restrict App Execution\",\"tenantId\":\"{TenantId}\",\"spnId\":\"{SpnId}\",\"deviceIds\":\"{RestrictDeviceIds}\",\"comment\":\"App execution restricted via Workbook\"}",
-                    "httpMethod": "POST",
-                    "title": "Restrict App Execution",
-                    "description": "Restricting application execution...",
-                    "actionName": "Restrict",
-                    "runLabel": "Restrict Apps"
-                  }
-                }
-              ]
-            },
-            "name": "links - restrict-action"
-          },
-          {
-            "type": 1,
-            "content": {
-              "json": "---\n## 🔍 Run Antivirus Scan\n\nExecute a full antivirus scan on devices."
-            },
-            "name": "text - scan-header"
-          },
-          {
-            "type": 9,
-            "content": {
-              "version": "KqlParameterItem/1.0",
-              "parameters": [
-                {
-                  "id": "scan-deviceids",
-                  "version": "KqlParameterItem/1.0",
-                  "name": "ScanDeviceIds",
-                  "label": "Device IDs (comma-separated)",
-                  "type": 1,
-                  "isRequired": false,
+                  "jsonData": "[\"Isolate Device\", \"Unisolate Device\", \"Restrict App Execution\", \"Unrestrict App Execution\", \"Collect Investigation Package\", \"Run Antivirus Scan\", \"Stop & Quarantine File\", \"Run Live Response Script\", \"Get File\", \"Put File\", \"Upload to LR Library\"]",
                   "timeContext": {
                     "durationMs": 86400000
                   }
                 },
                 {
-                  "id": "scan-type",
+                  "id": "d4j0i5k4h-9i8m-1h5k-6l2j-8h9i0j1k2l3m",
                   "version": "KqlParameterItem/1.0",
-                  "name": "ScanType",
-                  "label": "Scan Type",
-                  "type": 2,
-                  "isRequired": true,
-                  "typeSettings": {
-                    "additionalResourceOptions": [],
-                    "showDefault": false
-                  },
-                  "jsonData": "[\"Quick\", \"Full\"]",
-                  "defaultValue": "Full",
+                  "name": "DeviceFilter",
+                  "label": "Device Filter (OData syntax)",
+                  "type": 1,
+                  "isRequired": false,
+                  "description": "Filter devices using OData query syntax (e.g., healthStatus eq 'Active')",
+                  "timeContext": {
+                    "durationMs": 86400000
+                  }
+                },
+                {
+                  "id": "e5k1j6l5i-0j9n-2i6l-7m3k-9i0j1k2l3m4n",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "DeviceId",
+                  "label": "Device ID (for specific targeting)",
+                  "type": 1,
+                  "isRequired": false,
+                  "description": "Specific device ID to target",
+                  "timeContext": {
+                    "durationMs": 86400000
+                  }
+                },
+                {
+                  "id": "f6l2k7m6j-1k0o-3j7m-8n4l-0j1k2l3m4n5o",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "Comment",
+                  "label": "Action Comment",
+                  "type": 1,
+                  "isRequired": false,
+                  "description": "Optional comment for the action",
                   "timeContext": {
                     "durationMs": 86400000
                   }
@@ -528,56 +319,39 @@
               "queryType": 0,
               "resourceType": "microsoft.operationalinsights/workspaces"
             },
-            "name": "parameters - scan"
-          },
-          {
-            "type": 11,
-            "content": {
-              "version": "LinkItem/1.0",
-              "style": "list",
-              "links": [
-                {
-                  "id": "scan-action",
-                  "cellValue": "unused",
-                  "linkTarget": "ArmAction",
-                  "linkLabel": "🔍 Run Antivirus Scan",
-                  "style": "primary",
-                  "linkIsContextBlade": true,
-                  "armActionContext": {
-                    "path": "{FunctionAppUrl}/api/MDEDispatcher?code={FunctionKey}",
-                    "headers": [],
-                    "params": [],
-                    "body": "{\"action\":\"Run Antivirus Scan\",\"tenantId\":\"{TenantId}\",\"spnId\":\"{SpnId}\",\"deviceIds\":\"{ScanDeviceIds}\",\"scanType\":\"{ScanType}\",\"comment\":\"Scan initiated via Workbook\"}",
-                    "httpMethod": "POST",
-                    "title": "Run Antivirus Scan",
-                    "description": "Starting antivirus scan...",
-                    "actionName": "Scan",
-                    "runLabel": "Run Scan"
-                  }
-                }
-              ]
-            },
-            "name": "links - scan-action"
-          },
-          {
-            "type": 1,
-            "content": {
-              "json": "---\n## 💻 Get Devices\n\nRetrieve device list with JSONPath parsing."
-            },
-            "name": "text - getdevices-header"
+            "name": "parameters - automator-actions"
           },
           {
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/MDEDispatcher?code={FunctionKey}\",\"body\":\"{\\\"action\\\":\\\"Get Devices\\\",\\\"tenantId\\\":\\\"{TenantId}\\\",\\\"spnId\\\":\\\"{SpnId}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.devices[*]\",\"columns\":[{\"path\":\"$.deviceName\",\"columnId\":\"Device Name\"},{\"path\":\"$.riskScore\",\"columnId\":\"Risk Score\"},{\"path\":\"$.healthStatus\",\"columnId\":\"Health Status\"},{\"path\":\"$.lastIpAddress\",\"columnId\":\"Last IP\"},{\"path\":\"$.lastSeen\",\"columnId\":\"Last Seen\"},{\"path\":\"$.id\",\"columnId\":\"Device ID\"}]}}]}",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/MDEDispatcher\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"action\",\"value\":\"{ActionType}\"},{\"key\":\"deviceFilter\",\"value\":\"{DeviceFilter}\"},{\"key\":\"deviceId\",\"value\":\"{DeviceId}\"},{\"key\":\"comment\",\"value\":\"{Comment}\"}],\"batchDisabled\":false,\"transformers\":null}",
               "size": 0,
-              "title": "💻 Device List",
-              "showExportToExcel": true,
+              "title": "🎯 Execute Action: {ActionType}",
+              "noDataMessage": "Click 'Run Query' to execute the selected action",
               "queryType": 12,
               "visualization": "table"
             },
-            "name": "query - get-devices"
+            "name": "query - execute-action"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---\n### 📊 Device List Query\n\nView devices in your environment matching the filter criteria."
+            },
+            "name": "text - device-list-header"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"GET\",\"path\":\"{FunctionAppUrl}/api/MDEDispatcher\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"action\",\"value\":\"listdevices\"},{\"key\":\"filter\",\"value\":\"{DeviceFilter}\"}],\"batchDisabled\":false,\"transformers\":null}",
+              "size": 0,
+              "title": "💻 Devices in Environment",
+              "queryType": 12,
+              "visualization": "table"
+            },
+            "name": "query - device-list"
           }
         ]
       },
