@@ -4,7 +4,7 @@
     {
       "type": 1,
       "content": {
-        "json": "# MDEAutomator Workbook\n\n> A port of [MDEAutomator](https://github.com/msdirtbag/MDEAutomator) using Azure Sentinel Workbooks for multi-tenant Microsoft Defender for Endpoint automation.\n\n---\n\n## Configuration\n\nConfigure your tenant and function app settings below:"
+        "json": "# Defender C2 Workbook\n\n> Built on [MDEAutomator](https://github.com/msdirtbag/MDEAutomator) using Azure Sentinel Workbooks for multi-tenant Microsoft Defender for Endpoint automation and orchestration.\n\n---\n\n## Configuration\n\nConfigure your tenant and function app settings below:"
       },
       "name": "text - header"
     },
@@ -202,7 +202,7 @@
             "id": "4e8c3d7a-2b1f-4a8d-9e5c-1a2b3c4d5e6f",
             "cellValue": "selectedTab",
             "linkTarget": "parameter",
-            "linkLabel": "MDEAutomator",
+            "linkLabel": "Defender C2",
             "subTarget": "automator",
             "style": "link"
           },
@@ -268,7 +268,7 @@
           {
             "type": 1,
             "content": {
-              "json": "## MDEAutomator - Device Response Actions\n\nPerform Microsoft Defender for Endpoint response actions with **ARM Actions** and **JSONPath parsing**.\n\n### Features:\n- ✅ Azure Resource Graph auto-discovery\n- ✅ ARM Actions for synchronous operations\n- ✅ JSONPath output parsing\n- ✅ Multi-tenancy support with automatic TenantId injection\n- ✅ Function Key authentication"
+              "json": "## Defender C2 - Device Response Actions\n\nPerform Microsoft Defender for Endpoint response actions with **ARM Actions** and **JSONPath parsing**.\n\n### Features:\n- ✅ Azure Resource Graph auto-discovery\n- ✅ ARM Actions for synchronous operations\n- ✅ JSONPath output parsing\n- ✅ Multi-tenancy support with automatic TenantId injection\n- ✅ Function Key authentication"
             },
             "name": "text - automator-intro"
           },
