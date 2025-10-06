@@ -1,0 +1,486 @@
+{
+  "version": "Notebook/1.0",
+  "items": [
+    {
+      "type": 1,
+      "content": {
+        "json": "# 📦 File Operations - Library Management\n\nManage files in Azure Storage and deploy to MDE devices via Live Response.\n\n## Features\n- ✅ Upload files once to Azure Storage library\n- ✅ Deploy files to devices with one click\n- ✅ Download files from devices automatically\n- ✅ No manual Base64 encoding required\n- ✅ Team collaboration with shared file library\n\n---"
+      },
+      "name": "header-text"
+    },
+    {
+      "type": 9,
+      "content": {
+        "version": "KqlParameterItem/1.0",
+        "parameters": [
+          {
+            "id": "function-app-url",
+            "version": "KqlParameterItem/1.0",
+            "name": "FunctionAppUrl",
+            "label": "Function App URL",
+            "type": 1,
+            "isRequired": true,
+            "value": "https://yourfuncapp.azurewebsites.net",
+            "typeSettings": {
+              "multiLineText": false
+            }
+          },
+          {
+            "id": "function-key",
+            "version": "KqlParameterItem/1.0",
+            "name": "FunctionKey",
+            "label": "Function Key",
+            "type": 1,
+            "isRequired": true,
+            "typeSettings": {
+              "multiLineText": false,
+              "isSecret": true
+            }
+          },
+          {
+            "id": "tenant-id",
+            "version": "KqlParameterItem/1.0",
+            "name": "TenantId",
+            "label": "Tenant ID",
+            "type": 1,
+            "isRequired": true,
+            "typeSettings": {
+              "multiLineText": false
+            }
+          }
+        ],
+        "style": "pills",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "name": "parameters-config"
+    },
+    {
+      "type": 11,
+      "content": {
+        "version": "LinkItem/1.0",
+        "style": "tabs",
+        "links": [
+          {
+            "id": "tab-library",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "📚 Library Management",
+            "subTarget": "library",
+            "preText": "",
+            "style": "link"
+          },
+          {
+            "id": "tab-upload",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "📤 Upload Operations",
+            "subTarget": "upload",
+            "style": "link"
+          },
+          {
+            "id": "tab-download",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "📥 Download Operations",
+            "subTarget": "download",
+            "style": "link"
+          }
+        ]
+      },
+      "name": "tabs"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "## 📚 Library Management\n\nView and manage files in your Azure Storage library.\n\n### Upload Files\n\nTo add files to the library, use one of these methods:\n\n**Option A: Azure Portal** (Easiest)\n1. Navigate to Storage Account → Containers → library\n2. Click Upload and select files\n\n**Option B: Azure CLI**\n```bash\naz storage blob upload --account-name <storage> --container-name library --name script.ps1 --file script.ps1\n```\n\n**Option C: PowerShell Script**\n```powershell\n.\\scripts\\Upload-ToLibrary.ps1 -FilePath \"C:\\tools\\script.ps1\" -StorageAccountName \"<storage>\" -ResourceGroup \"rg-mde\"\n```\n\n---"
+            },
+            "conditionalVisibility": {
+              "parameterName": "selectedTab",
+              "comparison": "isEqualTo",
+              "value": "library"
+            },
+            "name": "library-instructions"
+          },
+          {
+            "type": 11,
+            "content": {
+              "version": "LinkItem/1.0",
+              "style": "list",
+              "links": [
+                {
+                  "id": "refresh-library",
+                  "cellValue": "refreshLibrary",
+                  "linkTarget": "parameter",
+                  "linkLabel": "🔄 Refresh Library Files",
+                  "subTarget": "{\"value\":\"1\",\"criteria\":\"always\"}",
+                  "style": "primary"
+                }
+              ]
+            },
+            "conditionalVisibility": {
+              "parameterName": "selectedTab",
+              "comparison": "isEqualTo",
+              "value": "library"
+            },
+            "name": "library-refresh-button"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"GET\",\"path\":\"{FunctionAppUrl}/api/ListLibraryFiles?code={FunctionKey}\",\"urlParams\":[],\"batchDisabled\":false,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.data\",\"columns\":[{\"path\":\"$.fileName\",\"columnid\":\"fileName\"},{\"path\":\"$.size\",\"columnid\":\"size\"},{\"path\":\"$.lastModified\",\"columnid\":\"lastModified\"},{\"path\":\"$.contentType\",\"columnid\":\"contentType\"}]}}]}",
+              "size": 0,
+              "title": "Library Files",
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 12,
+              "visualization": "table",
+              "gridSettings": {
+                "formatters": [
+                  {
+                    "columnMatch": "size",
+                    "formatter": 0,
+                    "numberFormat": {
+                      "unit": 2,
+                      "options": {
+                        "style": "decimal",
+                        "maximumFractionDigits": 2
+                      }
+                    }
+                  },
+                  {
+                    "columnMatch": "lastModified",
+                    "formatter": 6
+                  }
+                ],
+                "rowLimit": 100,
+                "filter": true,
+                "sortBy": [
+                  {
+                    "itemKey": "lastModified",
+                    "sortOrder": 2
+                  }
+                ]
+              },
+              "sortBy": [
+                {
+                  "itemKey": "lastModified",
+                  "sortOrder": 2
+                }
+              ]
+            },
+            "conditionalVisibility": {
+              "parameterName": "selectedTab",
+              "comparison": "isEqualTo",
+              "value": "library"
+            },
+            "name": "library-files-grid"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "deploy-filename",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "DeployFileName",
+                  "label": "File Name to Deploy",
+                  "type": 1,
+                  "isRequired": true,
+                  "typeSettings": {
+                    "multiLineText": false
+                  }
+                },
+                {
+                  "id": "deploy-deviceid",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "DeployDeviceId",
+                  "label": "Device ID",
+                  "type": 1,
+                  "isRequired": true,
+                  "typeSettings": {
+                    "multiLineText": false
+                  }
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "conditionalVisibility": {
+              "parameterName": "selectedTab",
+              "comparison": "isEqualTo",
+              "value": "library"
+            },
+            "name": "deploy-parameters"
+          },
+          {
+            "type": 11,
+            "content": {
+              "version": "LinkItem/1.0",
+              "style": "list",
+              "links": [
+                {
+                  "id": "deploy-action",
+                  "cellValue": "deployResult",
+                  "linkTarget": "ArmAction",
+                  "linkLabel": "📤 Deploy to Device",
+                  "style": "primary",
+                  "linkIsContextBlade": false,
+                  "armActionContext": {
+                    "path": "{FunctionAppUrl}/api/PutLiveResponseFileFromLibrary?code={FunctionKey}",
+                    "headers": [],
+                    "params": [],
+                    "body": "{\"fileName\":\"{DeployFileName}\",\"DeviceIds\":\"{DeployDeviceId}\",\"tenantId\":\"{TenantId}\"}",
+                    "httpMethod": "POST",
+                    "title": "Deploy File",
+                    "description": "Deploying {DeployFileName} to device {DeployDeviceId}",
+                    "actionName": "Deploy",
+                    "runLabel": "Deploy"
+                  }
+                }
+              ]
+            },
+            "conditionalVisibility": {
+              "parameterName": "selectedTab",
+              "comparison": "isEqualTo",
+              "value": "library"
+            },
+            "name": "deploy-button"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "library"
+      },
+      "name": "library-group"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "## 📤 Upload Operations\n\nAlternative methods for uploading files to devices.\n\n### Option A: Deploy from Library (Recommended)\nUse the **Library Management** tab to deploy files from your Azure Storage library.\n\n### Option B: Direct Text Paste\nFor small text files, paste content here. The workbook will Base64 encode it automatically.\n\n### Option C: Manual Base64 Paste\nIf you have a Base64-encoded file, paste it directly.\n\n---"
+            },
+            "conditionalVisibility": {
+              "parameterName": "selectedTab",
+              "comparison": "isEqualTo",
+              "value": "upload"
+            },
+            "name": "upload-instructions"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "upload-deviceid",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "UploadDeviceId",
+                  "label": "Device ID",
+                  "type": 1,
+                  "isRequired": true
+                },
+                {
+                  "id": "upload-filename",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "UploadFileName",
+                  "label": "Target File Name",
+                  "type": 1,
+                  "isRequired": true
+                },
+                {
+                  "id": "upload-method",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "UploadMethod",
+                  "label": "Upload Method",
+                  "type": 2,
+                  "isRequired": true,
+                  "typeSettings": {
+                    "additionalResourceOptions": [],
+                    "showDefault": false
+                  },
+                  "jsonData": "[\"Text (Auto-encode)\", \"Base64 (Manual)\"]"
+                },
+                {
+                  "id": "upload-content",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "UploadContent",
+                  "label": "File Content",
+                  "type": 1,
+                  "isRequired": true,
+                  "typeSettings": {
+                    "multiLineText": true,
+                    "editorLanguage": "text"
+                  }
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "conditionalVisibility": {
+              "parameterName": "selectedTab",
+              "comparison": "isEqualTo",
+              "value": "upload"
+            },
+            "name": "upload-parameters"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "**Note**: Text auto-encode uses KQL to convert text to Base64. For Base64 method, paste already-encoded content."
+            },
+            "conditionalVisibility": {
+              "parameterName": "selectedTab",
+              "comparison": "isEqualTo",
+              "value": "upload"
+            },
+            "name": "upload-note"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "upload"
+      },
+      "name": "upload-group"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "## 📥 Download Operations\n\nDownload files from MDE devices.\n\n### Instructions\n1. Enter the Device ID of the target device\n2. Enter the full file path on the device (e.g., `C:\\Windows\\Temp\\suspicious.exe`)\n3. Click **Download File from Device**\n4. Wait for the operation to complete\n5. The file will be returned as Base64 - use KQL to decode and download\n\n---"
+            },
+            "conditionalVisibility": {
+              "parameterName": "selectedTab",
+              "comparison": "isEqualTo",
+              "value": "download"
+            },
+            "name": "download-instructions"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "download-deviceid",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "DownloadDeviceId",
+                  "label": "Device ID",
+                  "type": 1,
+                  "isRequired": true
+                },
+                {
+                  "id": "download-filepath",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "DownloadFilePath",
+                  "label": "File Path",
+                  "type": 1,
+                  "isRequired": true,
+                  "value": "C:\\Windows\\Temp\\",
+                  "typeSettings": {
+                    "multiLineText": false
+                  }
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "conditionalVisibility": {
+              "parameterName": "selectedTab",
+              "comparison": "isEqualTo",
+              "value": "download"
+            },
+            "name": "download-parameters"
+          },
+          {
+            "type": 11,
+            "content": {
+              "version": "LinkItem/1.0",
+              "style": "list",
+              "links": [
+                {
+                  "id": "download-action",
+                  "cellValue": "downloadResult",
+                  "linkTarget": "ArmAction",
+                  "linkLabel": "📥 Download File from Device",
+                  "style": "primary",
+                  "linkIsContextBlade": false,
+                  "armActionContext": {
+                    "path": "{FunctionAppUrl}/api/GetLiveResponseFile?code={FunctionKey}",
+                    "headers": [],
+                    "params": [],
+                    "body": "{\"DeviceId\":\"{DownloadDeviceId}\",\"FilePath\":\"{DownloadFilePath}\",\"tenantId\":\"{TenantId}\"}",
+                    "httpMethod": "POST",
+                    "title": "Download File",
+                    "description": "Downloading {DownloadFilePath} from device {DownloadDeviceId}",
+                    "actionName": "Download",
+                    "runLabel": "Download"
+                  }
+                }
+              ]
+            },
+            "conditionalVisibility": {
+              "parameterName": "selectedTab",
+              "comparison": "isEqualTo",
+              "value": "download"
+            },
+            "name": "download-button"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "### Download Results\n\nAfter the download completes, the file content will be returned as Base64. Use a KQL query to decode it:\n\n```kql\nprint fileContent = '{downloadResult}'\n| extend decodedContent = base64_decode_tostring(fileContent)\n```\n\nFor binary files, you'll need to save the Base64 content and decode it locally:\n\n```powershell\n$base64 = '{downloadResult}'\n[IO.File]::WriteAllBytes('downloaded-file.bin', [Convert]::FromBase64String($base64))\n```"
+            },
+            "conditionalVisibility": {
+              "parameterName": "selectedTab",
+              "comparison": "isEqualTo",
+              "value": "download"
+            },
+            "name": "download-results-instructions"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "download"
+      },
+      "name": "download-group"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "---\n\n## 📚 Documentation\n\n- **[FILE_OPERATIONS_GUIDE.md](https://github.com/akefallonitis/defenderc2xsoar/blob/main/FILE_OPERATIONS_GUIDE.md)** - Complete user guide\n- **[LIBRARY_SETUP.md](https://github.com/akefallonitis/defenderc2xsoar/blob/main/LIBRARY_SETUP.md)** - 5-minute setup guide\n- **[GitHub Repository](https://github.com/akefallonitis/defenderc2xsoar)** - Source code and issues\n\n## 🔧 Support\n\nFor issues or questions:\n1. Check the [Troubleshooting Guide](https://github.com/akefallonitis/defenderc2xsoar/blob/main/FILE_OPERATIONS_GUIDE.md#troubleshooting)\n2. Review Application Insights logs\n3. Open a GitHub issue with details\n\n---\n\n**Version**: 1.0.0  \n**Last Updated**: 2025-01-06"
+      },
+      "name": "footer-text"
+    }
+  ],
+  "styleSettings": {},
+  "fromTemplateId": "sentinel-FileOperations",
+  "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
+}

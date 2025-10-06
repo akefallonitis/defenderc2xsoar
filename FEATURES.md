@@ -389,6 +389,77 @@ A comprehensive guide to all features available in defenderc2xsoar.
 - Detection engineering
 - False positive reduction
 
+## 📦 File Library Management
+
+### Centralized File Library
+- **Azure Storage Integration**: Files stored in dedicated "library" container
+- **No Manual Base64**: Upload via Azure Portal, CLI, or PowerShell
+- **Team Collaboration**: Shared file library across security team
+- **Version Control**: Optional blob versioning for audit trail
+- **Cost-Effective**: Minimal storage costs (~$0.05/month for typical usage)
+
+### Upload Methods
+- **Azure Portal**: Simple browser-based upload
+- **Azure CLI**: Command-line bulk operations
+- **PowerShell Scripts**: Automated upload with validation
+- **Azure Storage Explorer**: GUI-based file management
+- **Sync Operations**: Sync entire folders to library
+
+### File Deployment
+- **One-Click Deploy**: Select file from workbook, enter device ID, deploy
+- **Live Response Integration**: Uses MDE Live Response API
+- **Multi-Device Support**: Deploy to multiple devices simultaneously
+- **Progress Tracking**: Monitor deployment status in real-time
+- **Error Handling**: Automatic retry with detailed error messages
+
+### File Download
+- **Retrieve from Devices**: Download files from MDE devices
+- **Automatic Base64 Decode**: No manual decoding required
+- **Browser Download**: One-click download link in workbook
+- **File Metadata**: Size, timestamp, and source information
+- **Large File Support**: Handles files up to 50MB
+
+### Library Management
+- **List Files**: View all files in library with metadata
+- **File Details**: Size, last modified, content type, ETag
+- **Search & Filter**: Find files quickly
+- **Delete Operations**: Remove files with confirmation
+- **Bulk Operations**: Manage multiple files at once
+
+### API Endpoints
+- **ListLibraryFiles**: GET/POST - List all library files
+- **GetLibraryFile**: GET/POST - Retrieve file as Base64
+- **PutLiveResponseFileFromLibrary**: POST - Deploy file to device
+- **GetLiveResponseFile**: POST - Download file from device
+- **DeleteLibraryFile**: POST - Remove file from library
+
+### Helper Scripts
+- **Upload-ToLibrary.ps1**: Upload files with validation and progress
+- **Sync-LibraryFolder.ps1**: Sync entire folder with mirror mode
+- **Get-LibraryFiles.ps1**: List library files (table/list/JSON formats)
+- **Remove-LibraryFile.ps1**: Delete files with confirmation prompts
+
+### Security Features
+- **Private Container**: No public access to library
+- **Function Auth**: All endpoints require function key
+- **Input Validation**: Sanitize file names and paths
+- **Size Limits**: Warnings for large files (>50MB)
+- **Audit Trail**: All operations logged in Application Insights
+- **RBAC Support**: Azure role-based access control
+
+### Use Cases
+- **Forensic Tools**: Deploy analysis tools to compromised devices
+- **Remediation Scripts**: Push cleanup and fix scripts
+- **Configuration Files**: Deploy standard configurations
+- **Data Collection**: Retrieve logs, memory dumps, artifacts
+- **Compliance Checks**: Push audit scripts to verify compliance
+
+### Documentation
+- **FILE_OPERATIONS_GUIDE.md**: Comprehensive user guide with workflows
+- **LIBRARY_SETUP.md**: 5-minute quick start guide
+- **API Reference**: Detailed endpoint documentation
+- **Troubleshooting**: Common issues and solutions
+
 ---
 
 **Note**: Features continue to evolve. Check the repository for the latest updates and capabilities.
