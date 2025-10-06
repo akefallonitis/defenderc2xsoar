@@ -158,7 +158,7 @@ Write-Host ""
 Write-Host "📋 Next steps:" -ForegroundColor Cyan
 Write-Host "  1. Wait 2-3 minutes for functions to be fully deployed" -ForegroundColor White
 Write-Host "  2. Open Azure Portal and navigate to your function app" -ForegroundColor White
-Write-Host "  3. Check that all 11 functions are visible (5 MDE + 5 File Ops + 1 Orchestrator)" -ForegroundColor White
+Write-Host "  3. Check that all 6 functions are visible (DefenderC2Dispatcher, DefenderC2Orchestrator, DefenderC2CDManager, DefenderC2HuntManager, DefenderC2IncidentManager, DefenderC2TIManager)" -ForegroundColor White
 Write-Host "  4. Configure the workbooks with your function app URL" -ForegroundColor White
 Write-Host "  5. Test the functions using the Defender C2 and File Operations workbooks" -ForegroundColor White
 Write-Host ""
