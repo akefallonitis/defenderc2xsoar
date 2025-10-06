@@ -1,0 +1,162 @@
+# Migration Notes: MDE to DefenderC2 Consolidation
+
+## Overview
+This document describes the consolidation and renaming changes made to align with DefenderC2 naming conventions and improve the architecture by consolidating live response operations.
+
+## Changes Made
+
+### 1. Function Renaming (MDE → DefenderC2)
+
+All MDE-prefixed functions have been renamed to DefenderC2-prefixed:
+
+| Old Name | New Name |
+|----------|----------|
+| MDEDispatcher | DefenderC2Dispatcher |
+| MDEOrchestrator | DefenderC2Orchestrator |
+| MDECDManager | DefenderC2CDManager |
+| MDEHuntManager | DefenderC2HuntManager |
+| MDEIncidentManager | DefenderC2IncidentManager |
+| MDETIManager | DefenderC2TIManager |
+| MDEAutomator (module) | DefenderC2Automator (module) |
+
+### 2. Live Response Function Consolidation
+
+**Functions Removed:**
+- `GetLiveResponseFile` (standalone function)
+- `PutLiveResponseFileFromLibrary` (standalone function)
+
+**Reason:** These functions were redundant as DefenderC2Orchestrator already provided equivalent or better functionality.
+
+**Functions Added to DefenderC2Orchestrator:**
+- `PutLiveResponseFileFromLibrary` - Now available as a function within DefenderC2Orchestrator
+
+**Result:**
+- Total function count reduced from 11 to 9
+- All live response operations now consolidated in DefenderC2Orchestrator
+- Cleaner, more maintainable architecture
+
+### 3. DefenderC2Orchestrator Capabilities
+
+DefenderC2Orchestrator now handles ALL live response operations:
+
+1. **GetLiveResponseSessions** - List active Live Response sessions
+2. **InvokeLiveResponseScript** - Execute scripts from Live Response library
+3. **GetLiveResponseOutput** - Get command execution results
+4. **GetLiveResponseFile** - Download files from devices
+5. **PutLiveResponseFile** - Upload files to devices (Base64 content)
+6. **PutLiveResponseFileFromLibrary** - Deploy files from Azure Storage library to devices
+
+### 4. Updated Components
+
+**Code:**
+- ✅ Function directories renamed
+- ✅ Function code log messages updated
+- ✅ Module manifest updated (DefenderC2Automator.psd1)
+- ✅ profile.ps1 updated to import DefenderC2Automator
+- ✅ DefenderC2Orchestrator enhanced with library deployment
+
+**Documentation:**
+- ✅ README.md
+- ✅ COMPLETE_DEPLOYMENT.md
+- ✅ FUNCTIONS_REFERENCE.md
+- ✅ FILE_OPERATIONS_GUIDE.md
+- ✅ ARCHITECTURE.md
+- ✅ All other markdown documentation files
+
+**Deployment:**
+- ✅ function-package.zip regenerated (35KB)
+- ✅ GitHub Actions workflow updated
+- ✅ Deployment documentation updated with correct function count
+
+**Workbook:**
+- ✅ MDEAutomatorWorkbook.json updated with new function names
+
+## Migration Guide for Existing Deployments
+
+### For API Consumers
+
+If you were calling the standalone functions, update your API calls:
+
+**Old:**
+```json
+POST /api/GetLiveResponseFile
+{
+  "DeviceId": "device-id",
+  "FilePath": "C:\\file.txt",
+  "tenantId": "tenant-id"
+}
+```
+
+**New:**
+```json
+POST /api/DefenderC2Orchestrator
+{
+  "Function": "GetLiveResponseFile",
+  "DeviceIds": "device-id",
+  "filePath": "C:\\file.txt",
+  "tenantId": "tenant-id"
+}
+```
+
+**Old:**
+```json
+POST /api/PutLiveResponseFileFromLibrary
+{
+  "fileName": "script.ps1",
+  "DeviceIds": "device-id",
+  "tenantId": "tenant-id"
+}
+```
+
+**New:**
+```json
+POST /api/DefenderC2Orchestrator
+{
+  "Function": "PutLiveResponseFileFromLibrary",
+  "fileName": "script.ps1",
+  "DeviceIds": "device-id",
+  "tenantId": "tenant-id"
+}
+```
+
+### For Azure Function Apps
+
+When deploying the updated code:
+
+1. The deployment package now contains DefenderC2* functions instead of MDE* functions
+2. Old MDE* function endpoints will no longer exist
+3. Update any hardcoded references to function names in your code or configuration
+4. The workbook has been updated to use the new function names
+
+## Benefits
+
+1. **Consistent Naming**: All functions now use DefenderC2 prefix aligned with project name
+2. **Consolidated Architecture**: All live response operations in one function (DefenderC2Orchestrator)
+3. **Reduced Complexity**: Fewer functions to maintain (9 instead of 11)
+4. **Better Organization**: Clear separation between library management and live response operations
+5. **Web Deployment Ready**: Package ready for GitHub-based web deployment
+
+## Verification
+
+After deployment, verify:
+
+```bash
+# Check function count (should be 9)
+az functionapp function list \
+  --resource-group your-rg \
+  --name your-function-app \
+  --query "length([*])"
+
+# Check DefenderC2Orchestrator exists
+az functionapp function show \
+  --resource-group your-rg \
+  --name your-function-app \
+  --function-name DefenderC2Orchestrator
+```
+
+## Reference
+
+- Problem Statement: Consolidate live response operations with library file operations
+- Aligned with: mdeautomator GitHub project structure
+- Deployment Method: Web deployment package via GitHub
+- Total Functions: 9 Azure Functions + 1 PowerShell module (DefenderC2Automator)
