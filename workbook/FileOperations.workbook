@@ -557,7 +557,7 @@
     {
       "type": 1,
       "content": {
-        "json": "---\n\n## 📚 Documentation\n\n- **[FILE_OPERATIONS_GUIDE.md](https://github.com/akefallonitis/defenderc2xsoar/blob/main/FILE_OPERATIONS_GUIDE.md)** - Complete user guide\n- **[LIBRARY_SETUP.md](https://github.com/akefallonitis/defenderc2xsoar/blob/main/LIBRARY_SETUP.md)** - 5-minute setup guide\n- **[GitHub Repository](https://github.com/akefallonitis/defenderc2xsoar)** - Source code and issues\n\n## 🔧 Support\n\nFor issues or questions:\n1. Check the [Troubleshooting Guide](https://github.com/akefallonitis/defenderc2xsoar/blob/main/FILE_OPERATIONS_GUIDE.md#troubleshooting)\n2. Review Application Insights logs\n3. Open a GitHub issue with details\n\n---\n\n**Version**: 1.0.0  \n**Last Updated**: 2025-01-06"
+        "json": "---\n\n## 📚 Documentation\n\n- **[FILE_OPERATIONS_GUIDE.md](https://github.com/akefallonitis/defenderc2xsoar/blob/main/archive/feature-guides/FILE_OPERATIONS_GUIDE.md)** - Complete user guide\n- **[LIBRARY_SETUP.md](https://github.com/akefallonitis/defenderc2xsoar/blob/main/archive/feature-guides/LIBRARY_SETUP.md)** - 5-minute setup guide\n- **[GitHub Repository](https://github.com/akefallonitis/defenderc2xsoar)** - Source code and issues\n\n## 🔧 Support\n\nFor issues or questions:\n1. Check the [Troubleshooting Guide](https://github.com/akefallonitis/defenderc2xsoar/blob/main/archive/feature-guides/FILE_OPERATIONS_GUIDE.md#troubleshooting)\n2. Review Application Insights logs\n3. Open a GitHub issue with details\n\n---\n\n**Version**: 1.0.0  \n**Last Updated**: 2025-01-06"
       },
       "name": "footer-text"
     }

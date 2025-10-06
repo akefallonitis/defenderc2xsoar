@@ -235,7 +235,7 @@ When modifying the ARM template:
 2. **Inline Documentation**: Add comments to complex code
 3. **Examples**: Provide usage examples
 4. **Screenshots**: Include screenshots for UI changes
-5. **Changelog**: Update CHANGELOG.md (if exists)
+5. **Changelog**: Update archive/technical-docs/CHANGELOG.md (if applicable)
 
 ## 🧪 Testing
 
