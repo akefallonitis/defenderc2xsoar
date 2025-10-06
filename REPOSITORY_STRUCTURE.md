@@ -64,7 +64,7 @@ Azure Functions implementation (PowerShell):
 
 Azure Monitor Workbooks:
 
-- **MDEAutomatorWorkbook.json** - Main operational workbook
+- **DefenderC2-Workbook.json** - Main DefenderC2 Command & Control Console with enhanced auto-discovery
 - **FileOperations.workbook** - File operations workbook
 
 ## 💻 Standalone Directory (`/standalone`)

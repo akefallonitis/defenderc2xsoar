@@ -400,14 +400,14 @@ The function code needs to be deployed to the function app.
 
 2. **Load Template**
    - Remove the default template
-   - Copy the contents of `workbook/MDEAutomatorWorkbook.json`
+   - Copy the contents of `workbook/DefenderC2-Workbook.json`
    - Paste into the editor
    - Click **Apply**
 
 3. **Save Workbook**
    - Click **Done Editing**
    - Click **Save** (💾 icon)
-   - **Title**: `MDE Automator`
+   - **Title**: `DefenderC2 Command & Control Console`
    - **Subscription**: Select your subscription
    - **Resource Group**: Select or create a resource group
    - **Location**: Select your region

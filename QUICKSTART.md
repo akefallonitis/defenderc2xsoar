@@ -106,7 +106,7 @@ Back in your App Registration:
 1. Go to Azure Portal > **Monitor** > **Workbooks**
 2. Click **New** > Click the **Advanced Editor** button (`</>`)
 3. Delete the default JSON
-4. Copy all content from [workbook/MDEAutomatorWorkbook.json](workbook/MDEAutomatorWorkbook.json)
+4. Copy all content from [workbook/DefenderC2-Workbook.json](workbook/DefenderC2-Workbook.json)
 5. Paste it into the editor
 6. Click **Apply**
 7. Click **Done Editing**

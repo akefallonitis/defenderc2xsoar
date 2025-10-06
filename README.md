@@ -297,7 +297,7 @@ These examples showcase advanced parameter handling, complex visualizations, mul
 
 ### Primary Workbook
 
-The main operational workbook is located at `/workbook/MDEAutomatorWorkbook.json` and includes:
+The main operational workbook is located at `/workbook/DefenderC2-Workbook.json` and includes:
 
 #### Core Tabs:
 1. **MDEAutomator (Device Actions)** - Isolate, scan, restrict devices

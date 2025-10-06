@@ -24,7 +24,7 @@ jobs:
         id: params
         run: |
           # Create a parameters file with the workbook content
-          WORKBOOK_CONTENT=$(cat ./workbook/MDEAutomatorWorkbook.json | jq -c .)
+          WORKBOOK_CONTENT=$(cat ./workbook/DefenderC2-Workbook.json | jq -c .)
           cat > /tmp/workbook-params.json <<EOF
           {
             "\$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
