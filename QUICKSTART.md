@@ -60,7 +60,7 @@ In your app registration:
 
 Click this button:
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fakefallonitis%2Fdefenderc2xsoar%2Frefs%2Fheads%2Fmain%2Fdeployment%2Fazuredeploy.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fakefallonitis%2Fdefenderc2xsoar%2Fmain%2Fdeployment%2Fazuredeploy.json)
 
 > **⚠️ Button not working?** Go to Azure Portal → Search "Deploy a custom template" → "Build your own template" → Copy/paste contents from [deployment/azuredeploy.json](deployment/azuredeploy.json)
 
