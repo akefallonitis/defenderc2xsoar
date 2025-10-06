@@ -100,7 +100,7 @@ Switch tenants:
 
 ## File Locations
 
-- Config: `%USERPROFILE%\.mdeautomator\config.json`
+- Config: `%USERPROFILE%\.defenderc2\config.json`
 - Module: `standalone/modules/MDELiveResponse.psm1`
 - Docs: `standalone/LIVE_RESPONSE_GUIDE.md`
 

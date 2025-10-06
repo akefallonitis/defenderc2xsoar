@@ -31,7 +31,7 @@
     If specified, skips confirmation prompt
 
 .EXAMPLE
-    .\Remove-LibraryFile.ps1 -FileName "script.ps1" -StorageAccountName "mdeautomator" -ResourceGroup "rg-mde"
+    .\Remove-LibraryFile.ps1 -FileName "script.ps1" -StorageAccountName "defenderc2" -ResourceGroup "rg-mde"
 
 .EXAMPLE
     # Using API
@@ -39,7 +39,7 @@
 
 .EXAMPLE
     # Force delete without confirmation
-    .\Remove-LibraryFile.ps1 -FileName "script.ps1" -StorageAccountName "mdeautomator" -ResourceGroup "rg-mde" -Force
+    .\Remove-LibraryFile.ps1 -FileName "script.ps1" -StorageAccountName "defenderc2" -ResourceGroup "rg-mde" -Force
 #>
 
 [CmdletBinding(DefaultParameterSetName = 'StorageAccount', SupportsShouldProcess = $true, ConfirmImpact = 'High')]

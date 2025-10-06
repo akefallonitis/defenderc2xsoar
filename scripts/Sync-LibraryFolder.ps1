@@ -28,15 +28,15 @@
     If specified, includes files from subdirectories
 
 .EXAMPLE
-    .\Sync-LibraryFolder.ps1 -FolderPath "C:\tools" -StorageAccountName "mdeautomator" -ResourceGroup "rg-mde"
+    .\Sync-LibraryFolder.ps1 -FolderPath "C:\tools" -StorageAccountName "defenderc2" -ResourceGroup "rg-mde"
 
 .EXAMPLE
     # Sync only PowerShell scripts
-    .\Sync-LibraryFolder.ps1 -FolderPath "C:\scripts" -Filter "*.ps1" -StorageAccountName "mdeautomator" -ResourceGroup "rg-mde"
+    .\Sync-LibraryFolder.ps1 -FolderPath "C:\scripts" -Filter "*.ps1" -StorageAccountName "defenderc2" -ResourceGroup "rg-mde"
 
 .EXAMPLE
     # Mirror mode (delete remote files not in local folder)
-    .\Sync-LibraryFolder.ps1 -FolderPath "C:\tools" -Mirror -StorageAccountName "mdeautomator" -ResourceGroup "rg-mde"
+    .\Sync-LibraryFolder.ps1 -FolderPath "C:\tools" -Mirror -StorageAccountName "defenderc2" -ResourceGroup "rg-mde"
 #>
 
 [CmdletBinding(DefaultParameterSetName = 'StorageAccount')]

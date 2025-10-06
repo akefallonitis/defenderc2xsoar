@@ -257,7 +257,7 @@ If you only need to perform a single operation:
 ### Credential Storage
 
 Credentials are encrypted using Windows Data Protection API (DPAPI):
-- Stored in `%USERPROFILE%\.mdeautomator\config.json`
+- Stored in `%USERPROFILE%\.defenderc2\config.json`
 - Encrypted per-user and per-machine
 - Cannot be decrypted by other users or on other machines
 
@@ -298,7 +298,7 @@ standalone/
 
 ### Configuration File Location
 
-`%USERPROFILE%\.mdeautomator\config.json`
+`%USERPROFILE%\.defenderc2\config.json`
 
 ### Manual Configuration
 

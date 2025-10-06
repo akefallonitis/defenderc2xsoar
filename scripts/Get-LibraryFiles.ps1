@@ -28,7 +28,7 @@
     Output format: Table (default), List, or JSON
 
 .EXAMPLE
-    .\Get-LibraryFiles.ps1 -StorageAccountName "mdeautomator" -ResourceGroup "rg-mde"
+    .\Get-LibraryFiles.ps1 -StorageAccountName "defenderc2" -ResourceGroup "rg-mde"
 
 .EXAMPLE
     # Using API
@@ -36,7 +36,7 @@
 
 .EXAMPLE
     # Export to JSON
-    .\Get-LibraryFiles.ps1 -StorageAccountName "mdeautomator" -ResourceGroup "rg-mde" -Format JSON | Out-File library-files.json
+    .\Get-LibraryFiles.ps1 -StorageAccountName "defenderc2" -ResourceGroup "rg-mde" -Format JSON | Out-File library-files.json
 #>
 
 [CmdletBinding(DefaultParameterSetName = 'StorageAccount')]

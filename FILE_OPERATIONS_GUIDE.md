@@ -56,7 +56,7 @@ $fileContent = [Convert]::ToBase64String([IO.File]::ReadAllBytes("file.exe"))
 ### File Library Approach (This Solution)
 ```powershell
 # Upload once (via Portal, CLI, or PowerShell)
-az storage blob upload --account-name mdeautomator --container-name library --name tool.exe --file tool.exe
+az storage blob upload --account-name defenderc2 --container-name library --name tool.exe --file tool.exe
 
 # Deploy many times from workbook (4 clicks)
 # No re-encoding needed
@@ -182,14 +182,14 @@ if ($env:AzureWebJobsStorage) {
 ```bash
 # Single file
 az storage blob upload \
-  --account-name mdeautomator \
+  --account-name defenderc2 \
   --container-name library \
   --name script.ps1 \
   --file C:\scripts\script.ps1
 
 # Multiple files
 az storage blob upload-batch \
-  --account-name mdeautomator \
+  --account-name defenderc2 \
   --destination library \
   --source C:\tools\
 ```
@@ -199,13 +199,13 @@ az storage blob upload-batch \
 # Single file
 .\scripts\Upload-ToLibrary.ps1 `
   -FilePath "C:\tools\script.ps1" `
-  -StorageAccountName "mdeautomator" `
+  -StorageAccountName "defenderc2" `
   -ResourceGroup "rg-mde"
 
 # Sync entire folder
 .\scripts\Sync-LibraryFolder.ps1 `
   -FolderPath "C:\tools" `
-  -StorageAccountName "mdeautomator" `
+  -StorageAccountName "defenderc2" `
   -ResourceGroup "rg-mde"
 ```
 
@@ -287,7 +287,7 @@ $response = Invoke-RestMethod `
 #### Using PowerShell Script
 ```powershell
 .\scripts\Get-LibraryFiles.ps1 `
-  -StorageAccountName "mdeautomator" `
+  -StorageAccountName "defenderc2" `
   -ResourceGroup "rg-mde"
 ```
 
@@ -306,7 +306,7 @@ Invoke-RestMethod `
 ```powershell
 .\scripts\Remove-LibraryFile.ps1 `
   -FileName "old-script.ps1" `
-  -StorageAccountName "mdeautomator" `
+  -StorageAccountName "defenderc2" `
   -ResourceGroup "rg-mde"
 ```
 

@@ -24,7 +24,7 @@
     If specified, overwrites existing files with the same name
 
 .EXAMPLE
-    .\Upload-ToLibrary.ps1 -FilePath "C:\tools\script.ps1" -StorageAccountName "mdeautomator" -ResourceGroup "rg-mde"
+    .\Upload-ToLibrary.ps1 -FilePath "C:\tools\script.ps1" -StorageAccountName "defenderc2" -ResourceGroup "rg-mde"
 
 .EXAMPLE
     .\Upload-ToLibrary.ps1 -FilePath "C:\tools\script.ps1" -ConnectionString "DefaultEndpointsProtocol=https;..."
@@ -32,7 +32,7 @@
 .EXAMPLE
     # Upload multiple files
     Get-ChildItem "C:\tools\*.ps1" | ForEach-Object {
-        .\Upload-ToLibrary.ps1 -FilePath $_.FullName -StorageAccountName "mdeautomator" -ResourceGroup "rg-mde"
+        .\Upload-ToLibrary.ps1 -FilePath $_.FullName -StorageAccountName "defenderc2" -ResourceGroup "rg-mde"
     }
 #>
 
