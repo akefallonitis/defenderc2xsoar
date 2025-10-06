@@ -135,11 +135,30 @@ All MDEAutomator capabilities replicated through Azure Workbooks:
 
 ### Step 2: Deploy Function App
 
-Click the button below or use the ARM template in `/deployment`:
+> **⚠️ IMPORTANT:** If the "Deploy to Azure" button below fails with a template download error, use **Option 2** (Manual Deployment) instead. This is common when the template hasn't been merged to the main branch yet.
+
+#### Option 1: Deploy to Azure Button (Quick Method)
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fakefallonitis%2Fdefenderc2xsoar%2Fmain%2Fdeployment%2Fazuredeploy.json)
 
-**Parameters:**
+#### Option 2: Manual Template Deployment (Recommended if button fails)
+
+If the button above doesn't work:
+
+1. Go to [Azure Portal](https://portal.azure.com)
+2. Search for **"Deploy a custom template"**
+3. Click **"Build your own template in the editor"**
+4. Copy the template from [deployment/azuredeploy.json](deployment/azuredeploy.json) in this repository
+5. Paste the content into the Azure Portal editor
+6. Click **"Save"** and fill in the parameters below
+
+#### Option 3: Command-Line Deployment
+
+See the [deployment folder documentation](deployment/README.md) for Azure CLI and PowerShell deployment instructions.
+
+---
+
+**Parameters (for all options):**
 - `functionAppName`: Globally unique name for your function app
 - `spnId`: Application (client) ID from Step 1
 - `spnSecret`: Client secret from Step 1
@@ -148,16 +167,9 @@ Click the button below or use the ARM template in `/deployment`:
 - `deleteAtTag`: Deletion date or 'Never' (required by Azure Policy)
 - `enableManagedIdentity`: `true` (recommended)
 
-**Note the outputs:**
+**Note the deployment outputs:**
 - `functionAppUrl` - You'll use this in the workbook
 - `storageAccountName` - Automatically created
-
-**For other deployment methods** (Azure CLI, PowerShell, or manual template deployment), see the [deployment folder documentation](deployment/README.md).
-
-> **⚠️ Troubleshooting Deploy Button:** If you encounter an error downloading the template, you can:
-> 1. **Manual Deployment**: Copy the template content from [deployment/azuredeploy.json](deployment/azuredeploy.json) and paste it into Azure Portal's "Build your own template in the editor" option
-> 2. **CLI Deployment**: Clone this repo and use `az deployment group create` command (see [deployment/README.md](deployment/README.md))
-> 3. **Direct Access**: Verify template accessibility at https://raw.githubusercontent.com/akefallonitis/defenderc2xsoar/main/deployment/azuredeploy.json
 
 ### Step 3: Configure Federated Identity
 

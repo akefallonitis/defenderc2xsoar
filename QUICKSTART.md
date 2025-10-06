@@ -58,11 +58,22 @@ In your app registration:
 
 ### 3. Deploy Function App (5 minutes)
 
-Click this button:
+> **⚠️ DEPLOY BUTTON OFTEN FAILS**: If you get a template download error, skip the button below and follow the **Manual Deployment Steps** instead.
+
+#### Quick Deploy Button (if available):
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fakefallonitis%2Fdefenderc2xsoar%2Fmain%2Fdeployment%2Fazuredeploy.json)
 
-> **⚠️ Button not working?** Go to Azure Portal → Search "Deploy a custom template" → "Build your own template" → Copy/paste contents from [deployment/azuredeploy.json](deployment/azuredeploy.json)
+#### Manual Deployment Steps (recommended):
+
+1. Go to [Azure Portal](https://portal.azure.com)
+2. Search for **"Deploy a custom template"**
+3. Click **"Build your own template in the editor"**
+4. Open [deployment/azuredeploy.json](deployment/azuredeploy.json) from this GitHub repository
+5. Copy the entire JSON content and paste it into the editor
+6. Click **"Save"**
+
+Then continue with the parameters below:
 
 Fill in:
 - **Function App Name**: `mde-automator-yourname` (must be globally unique)

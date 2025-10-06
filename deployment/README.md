@@ -29,8 +29,10 @@ Sample parameters file for command-line deployments using Azure CLI or PowerShel
 
 ## Deployment Options
 
-### Option 1: Azure Portal (Recommended)
-Click the "Deploy to Azure" button in the main README.md
+> **⚠️ COMMON ISSUE:** The "Deploy to Azure" button may fail with a template download error. If this happens, use the **Manual Template Deployment** method described in the [Troubleshooting](#troubleshooting) section below - it's reliable and just as easy.
+
+### Option 1: Azure Portal - Deploy Button
+Click the "Deploy to Azure" button in the main README.md (may fail if template not on main branch - see troubleshooting)
 
 ### Option 2: Azure CLI
 ```bash
@@ -116,19 +118,28 @@ Test-AzResourceGroupDeployment `
 
 ## Troubleshooting
 
-### "Deploy to Azure" button doesn't work
+### "Deploy to Azure" button doesn't work ⚠️ COMMON ISSUE
 
-If you encounter an error like *"There was an error downloading the template from URI"* or CORS-related issues:
+**Error Message:** *"There was an error downloading the template from URI 'https://raw.githubusercontent.com/akefallonitis/defenderc2xsoar/main/deployment/azuredeploy.json'. Ensure that the template is publicly accessible and that the publisher has enabled CORS policy on the endpoint."*
 
-**Solution 1: Manual Template Deployment**
-1. Go to [Azure Portal](https://portal.azure.com)
-2. Search for "Deploy a custom template"
-3. Click "Build your own template in the editor"
-4. Copy the contents of [azuredeploy.json](azuredeploy.json) from this repository
-5. Paste into the editor
-6. Click "Save"
-7. Fill in the required parameters
-8. Click "Review + create" > "Create"
+**Root Cause:** The template file hasn't been merged to the `main` branch yet, so it returns a 404 error when Azure tries to download it.
+
+**Solution 1: Manual Template Deployment (RECOMMENDED - Works Every Time)**
+
+This is the most reliable method:
+
+1. Open [azuredeploy.json](azuredeploy.json) in this repository on GitHub
+2. Click the **"Raw"** button to view the raw JSON
+3. Press Ctrl+A (or Cmd+A) to select all, then Ctrl+C (or Cmd+C) to copy
+4. Go to [Azure Portal](https://portal.azure.com)
+5. In the search bar at the top, search for **"Deploy a custom template"**
+6. Click the result: "Deploy a custom template"
+7. Click **"Build your own template in the editor"**
+8. Delete the sample JSON that appears
+9. Press Ctrl+V (or Cmd+V) to paste your copied template
+10. Click **"Save"**
+11. Fill in the required parameters (functionAppName, spnId, spnSecret, tags)
+12. Click **"Review + create"** then **"Create"**
 
 **Solution 2: Use Azure CLI or PowerShell**
 ```bash
