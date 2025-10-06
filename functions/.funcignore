@@ -64,8 +64,6 @@ examples/
 workbook/
 scripts/
 
-# JSON files - only include required function files
-*.json
-!function.json
-!host.json
-!requirements.psd1
+# Exclude specific JSON files in root, but keep function.json and host.json
+local.settings.json
+.vscode/*.json
