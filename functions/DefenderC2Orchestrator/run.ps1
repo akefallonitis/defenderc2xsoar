@@ -416,8 +416,109 @@ try {
             }
         }
         
+        "ListLibraryFiles" {
+            Write-Host "📋 Retrieving files from library container..."
+            
+            # Check if storage context is initialized
+            if (-not $global:StorageContext) {
+                throw "Storage context not initialized. Ensure AzureWebJobsStorage is configured."
+            }
+            
+            # Get all blobs from library container
+            $blobs = Get-AzStorageBlob -Container "library" -Context $global:StorageContext -ErrorAction Stop
+            
+            # Format file list
+            $files = @()
+            foreach ($blob in $blobs) {
+                $files += @{
+                    fileName     = $blob.Name
+                    size         = $blob.Length
+                    lastModified = $blob.LastModified.DateTime.ToString("o")
+                    contentType  = $blob.ICloudBlob.Properties.ContentType
+                    etag         = $blob.ICloudBlob.Properties.ETag
+                }
+            }
+            
+            Write-Host "✅ Found $($files.Count) file(s) in library"
+            
+            $result.status = "Success"
+            $result.data = $files
+            $result.count = $files.Count
+        }
+        
+        "GetLibraryFile" {
+            if (-not $fileName) {
+                throw "File name required for GetLibraryFile"
+            }
+            
+            Write-Host "📥 Retrieving file: $fileName from library container..."
+            
+            # Check if storage context is initialized
+            if (-not $global:StorageContext) {
+                throw "Storage context not initialized. Ensure AzureWebJobsStorage is configured."
+            }
+            
+            # Sanitize file name to prevent path traversal
+            $sanitizedFileName = [System.IO.Path]::GetFileName($fileName)
+            
+            # Check if blob exists
+            $blob = Get-AzStorageBlob -Container "library" -Blob $sanitizedFileName -Context $global:StorageContext -ErrorAction Stop
+            
+            if (-not $blob) {
+                throw "File not found: $sanitizedFileName"
+            }
+            
+            # Download blob content to memory
+            $memoryStream = New-Object System.IO.MemoryStream
+            $blob.ICloudBlob.DownloadToStream($memoryStream)
+            $memoryStream.Position = 0
+            
+            # Convert to Base64
+            $fileBytes = $memoryStream.ToArray()
+            $fileBase64 = [Convert]::ToBase64String($fileBytes)
+            
+            Write-Host "✅ File retrieved successfully: $sanitizedFileName ($($fileBytes.Length) bytes)"
+            
+            $result.status = "Success"
+            $result.fileName = $sanitizedFileName
+            $result.fileContent = $fileBase64
+            $result.size = $fileBytes.Length
+        }
+        
+        "DeleteLibraryFile" {
+            if (-not $fileName) {
+                throw "File name required for DeleteLibraryFile"
+            }
+            
+            Write-Host "🗑️ Deleting file: $fileName from library container..."
+            
+            # Check if storage context is initialized
+            if (-not $global:StorageContext) {
+                throw "Storage context not initialized. Ensure AzureWebJobsStorage is configured."
+            }
+            
+            # Sanitize file name to prevent path traversal
+            $sanitizedFileName = [System.IO.Path]::GetFileName($fileName)
+            
+            # Check if blob exists first
+            $blob = Get-AzStorageBlob -Container "library" -Blob $sanitizedFileName -Context $global:StorageContext -ErrorAction SilentlyContinue
+            
+            if (-not $blob) {
+                throw "File not found: $sanitizedFileName"
+            }
+            
+            # Delete the blob
+            Remove-AzStorageBlob -Container "library" -Blob $sanitizedFileName -Context $global:StorageContext -Force -ErrorAction Stop
+            
+            Write-Host "✅ File deleted successfully: $sanitizedFileName"
+            
+            $result.status = "Success"
+            $result.message = "File deleted successfully from library"
+            $result.fileName = $sanitizedFileName
+        }
+        
         default {
-            throw "Unknown function: $function. Supported functions: GetLiveResponseSessions, InvokeLiveResponseScript, GetLiveResponseOutput, GetLiveResponseFile, PutLiveResponseFile, PutLiveResponseFileFromLibrary"
+            throw "Unknown function: $function. Supported functions: GetLiveResponseSessions, InvokeLiveResponseScript, GetLiveResponseOutput, GetLiveResponseFile, PutLiveResponseFile, PutLiveResponseFileFromLibrary, ListLibraryFiles, GetLibraryFile, DeleteLibraryFile"
         }
     }
 
