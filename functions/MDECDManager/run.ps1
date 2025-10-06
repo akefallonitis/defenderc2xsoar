@@ -37,11 +37,8 @@ if (-not $appId -or -not $secretId) {
 }
 
 try {
-    # Import MDEAutomator module
-    # Import-Module MDEAutomator -ErrorAction Stop
-    
     # Connect to MDE using App Registration with Client Secret
-    # $token = Connect-MDE -AppId $appId -ClientSecret $secretId -TenantId $tenantId
+    $token = Connect-MDE -TenantId $tenantId -AppId $appId -ClientSecret $secretId
 
     $result = @{
         action = $action ?? "List All Detections"
@@ -52,38 +49,53 @@ try {
 
     switch ($action) {
         "List All Detections" {
-            # $detections = Get-DetectionRules
-            $result.details = "Retrieved all custom detection rules"
-            $result.detections = @() # Would contain actual detections
+            $detections = Get-CustomDetections -Token $token
+            $result.details = "Retrieved $($detections.Count) custom detection rules"
+            $result.detections = $detections
         }
         "Create Detection" {
             if ($detectionName -and $detectionQuery) {
-                # $newDetection = Install-DetectionRule -jsonContent $detectionObject
-                $result.details = "Created detection rule: $detectionName"
+                # Note: Creating custom detections requires Graph API POST calls
+                # The current module doesn't have a create function implemented
+                # This would need to be added to MDEDetection.psm1
+                $result.details = "Create detection functionality requires additional implementation"
                 $result.detectionName = $detectionName
+                $result.note = "Please add New-CustomDetection function to MDEDetection.psm1"
+            } else {
+                throw "Detection name and query are required for creating a detection"
             }
         }
         "Update Detection" {
             if ($detectionName -and $detectionQuery) {
-                # Update-DetectionRule -RuleId $ruleId -jsonContent $detectionObject
-                $result.details = "Updated detection rule: $detectionName"
+                # Note: Updating custom detections requires Graph API PATCH calls
+                # This would need to be added to MDEDetection.psm1
+                $result.details = "Update detection functionality requires additional implementation"
+                $result.note = "Please add Update-CustomDetection function to MDEDetection.psm1"
+            } else {
+                throw "Detection name and query are required for updating a detection"
             }
         }
         "Delete Detection" {
             if ($detectionName) {
-                # Undo-DetectionRule -RuleId $ruleId
-                $result.details = "Deleted detection rule: $detectionName"
+                # Note: Deleting custom detections requires Graph API DELETE calls
+                # This would need to be added to MDEDetection.psm1
+                $result.details = "Delete detection functionality requires additional implementation"
+                $result.note = "Please add Remove-CustomDetection function to MDEDetection.psm1"
+            } else {
+                throw "Detection name is required for deleting a detection"
             }
         }
         "Backup Detections" {
-            # $detections = Get-DetectionRules
-            # Save to Azure Storage
-            $result.details = "Backed up all custom detection rules"
-            $result.backupLocation = "Azure Blob Storage"
+            $detections = Get-CustomDetections -Token $token
+            $result.details = "Retrieved $($detections.Count) custom detection rules for backup"
+            $result.detections = $detections
+            $result.backupLocation = "Azure Blob Storage (not implemented)"
+            $result.note = "Saving to storage would require additional Azure Storage configuration"
         }
         default {
-            $result.details = "Retrieved all custom detection rules"
-            $result.detections = @()
+            $detections = Get-CustomDetections -Token $token
+            $result.details = "Retrieved $($detections.Count) custom detection rules"
+            $result.detections = $detections
         }
     }
 

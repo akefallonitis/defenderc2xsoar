@@ -37,11 +37,8 @@ if (-not $appId -or -not $secretId) {
 }
 
 try {
-    # Import MDEAutomator module
-    # Import-Module MDEAutomator -ErrorAction Stop
-    
     # Connect to MDE using App Registration with Client Secret
-    # $token = Connect-MDE -AppId $appId -ClientSecret $secretId -TenantId $tenantId
+    $token = Connect-MDE -TenantId $tenantId -AppId $appId -ClientSecret $secretId
 
     $result = @{
         action = $action ?? "GetIncidents"
@@ -52,10 +49,24 @@ try {
 
     switch ($action) {
         "GetIncidents" {
-            # $incidents = Get-Incidents
-            # Apply filters if provided
-            $result.details = "Retrieved incidents"
-            $result.incidents = @() # Would contain actual incidents
+            # Build filter if provided
+            $filter = $null
+            $filterParts = @()
+            
+            if ($severity) {
+                $filterParts += "severity eq '$severity'"
+            }
+            if ($status) {
+                $filterParts += "status eq '$status'"
+            }
+            
+            if ($filterParts.Count -gt 0) {
+                $filter = $filterParts -join " and "
+            }
+            
+            $incidents = Get-SecurityIncidents -Token $token -Filter $filter
+            $result.details = "Retrieved $($incidents.Count) incidents"
+            $result.incidents = $incidents | Select-Object -First 100  # Limit for response size
             $result.filters = @{
                 severity = $severity
                 status = $status
@@ -63,21 +74,34 @@ try {
         }
         "GetIncidentDetails" {
             if ($incidentId) {
-                # $incident = Get-Incident -IncidentId $incidentId
-                $result.details = "Retrieved incident $incidentId"
-                $result.incident = @{} # Would contain actual incident
+                # Get specific incident using filter
+                $incident = Get-SecurityIncidents -Token $token -Filter "id eq '$incidentId'"
+                if ($incident) {
+                    $result.details = "Retrieved incident $incidentId"
+                    $result.incident = $incident[0]
+                } else {
+                    throw "Incident $incidentId not found"
+                }
+            } else {
+                throw "Incident ID is required for GetIncidentDetails action"
             }
         }
         "UpdateIncident" {
             if ($incidentId) {
-                # Update-Incident -IncidentId $incidentId -Status $status
-                $result.details = "Updated incident $incidentId"
+                # Note: Updating incidents requires Graph API PATCH calls
+                # The current module doesn't have an update function implemented
+                # This would need to be added to MDEIncident.psm1
+                $result.details = "Update incident functionality requires additional implementation"
+                $result.note = "Please add Update-SecurityIncident function to MDEIncident.psm1"
+            } else {
+                throw "Incident ID is required for UpdateIncident action"
             }
         }
         default {
             # Default to listing incidents
-            $result.details = "Retrieved incidents"
-            $result.incidents = @()
+            $incidents = Get-SecurityIncidents -Token $token
+            $result.details = "Retrieved $($incidents.Count) incidents"
+            $result.incidents = $incidents | Select-Object -First 100
         }
     }
 

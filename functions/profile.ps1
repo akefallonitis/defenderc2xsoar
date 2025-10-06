@@ -20,3 +20,10 @@
 # Enable-AzureRmAlias
 
 # You can also define functions or aliases that can be referenced in any of your PowerShell functions.
+
+# Import MDEAutomator module
+$MDEAutomatorPath = Join-Path $PSScriptRoot "MDEAutomator"
+if (Test-Path $MDEAutomatorPath) {
+    Import-Module (Join-Path $MDEAutomatorPath "MDEAutomator.psd1") -Force -ErrorAction SilentlyContinue
+    Write-Host "MDEAutomator module loaded successfully"
+}

@@ -40,11 +40,8 @@ if (-not $appId -or -not $secretId) {
 }
 
 try {
-    # Import MDEAutomator module
-    # Import-Module MDEAutomator -ErrorAction Stop
-    
     # Connect to MDE using App Registration with Client Secret
-    # $token = Connect-MDE -AppId $appId -ClientSecret $secretId -TenantId $tenantId
+    $token = Connect-MDE -TenantId $tenantId -AppId $appId -ClientSecret $secretId
 
     $result = @{
         action = $action
@@ -55,50 +52,116 @@ try {
 
     # Split indicators by comma if provided as string
     $indicatorList = if ($indicators -is [string]) {
-        $indicators.Split(',').Trim()
+        $indicators.Split(',') | ForEach-Object { $_.Trim() } | Where-Object { $_ -ne "" }
     } else {
         $indicators
     }
 
+    # Set default values for required parameters
+    $indicatorTitle = if ($title) { $title } else { "Indicator added via Azure Function" }
+    $indicatorSeverity = if ($severity) { $severity } else { "Medium" }
+    $indicatorAction = if ($recommendedAction) { $recommendedAction } else { "Alert" }
+
     # Execute action
     switch ($action) {
         "Add File Indicators" {
-            # Invoke-TiFile -token $token -Sha256s $indicatorList
-            $result.details = "Added $($indicatorList.Count) file indicators"
+            if (-not $indicatorList -or $indicatorList.Count -eq 0) {
+                throw "Indicators required for adding file indicators"
+            }
+            $responses = @()
+            foreach ($hash in $indicatorList) {
+                try {
+                    $response = Add-FileIndicator -Token $token -Sha256 $hash -Title $indicatorTitle -Severity $indicatorSeverity -Action $indicatorAction -Description "Added via Azure Function"
+                    $responses += $response
+                } catch {
+                    Write-Warning "Failed to add indicator $hash : $($_.Exception.Message)"
+                }
+            }
+            $result.details = "Added $($responses.Count) of $($indicatorList.Count) file indicators"
             $result.indicators = $indicatorList
+            $result.responses = $responses
         }
         "Remove File Indicators" {
-            # Undo-TiFile -token $token -Sha256s $indicatorList
-            $result.details = "Removed $($indicatorList.Count) file indicators"
+            if (-not $indicatorList -or $indicatorList.Count -eq 0) {
+                throw "Indicator IDs required for removing file indicators"
+            }
+            $removed = 0
+            foreach ($indicatorId in $indicatorList) {
+                try {
+                    Remove-FileIndicator -Token $token -IndicatorId $indicatorId
+                    $removed++
+                } catch {
+                    Write-Warning "Failed to remove indicator $indicatorId : $($_.Exception.Message)"
+                }
+            }
+            $result.details = "Removed $removed of $($indicatorList.Count) file indicators"
         }
         "Add IP Indicators" {
-            # Invoke-TiIP -token $token -IPs $indicatorList
-            $result.details = "Added $($indicatorList.Count) IP indicators"
+            if (-not $indicatorList -or $indicatorList.Count -eq 0) {
+                throw "Indicators required for adding IP indicators"
+            }
+            $responses = @()
+            foreach ($ip in $indicatorList) {
+                try {
+                    $response = Add-IPIndicator -Token $token -IPAddress $ip -Title $indicatorTitle -Severity $indicatorSeverity -Action $indicatorAction -Description "Added via Azure Function"
+                    $responses += $response
+                } catch {
+                    Write-Warning "Failed to add IP indicator $ip : $($_.Exception.Message)"
+                }
+            }
+            $result.details = "Added $($responses.Count) of $($indicatorList.Count) IP indicators"
+            $result.responses = $responses
         }
         "Remove IP Indicators" {
-            # Undo-TiIP -token $token -IPs $indicatorList
-            $result.details = "Removed $($indicatorList.Count) IP indicators"
+            if (-not $indicatorList -or $indicatorList.Count -eq 0) {
+                throw "Indicator IDs required for removing IP indicators"
+            }
+            $removed = 0
+            foreach ($indicatorId in $indicatorList) {
+                try {
+                    Remove-FileIndicator -Token $token -IndicatorId $indicatorId
+                    $removed++
+                } catch {
+                    Write-Warning "Failed to remove indicator $indicatorId : $($_.Exception.Message)"
+                }
+            }
+            $result.details = "Removed $removed of $($indicatorList.Count) IP indicators"
         }
         "Add URL/Domain Indicators" {
-            # Invoke-TiURL -token $token -URLs $indicatorList
-            $result.details = "Added $($indicatorList.Count) URL/domain indicators"
+            if (-not $indicatorList -or $indicatorList.Count -eq 0) {
+                throw "Indicators required for adding URL/domain indicators"
+            }
+            $responses = @()
+            foreach ($url in $indicatorList) {
+                try {
+                    $response = Add-URLIndicator -Token $token -URL $url -Title $indicatorTitle -Severity $indicatorSeverity -Action $indicatorAction -Description "Added via Azure Function"
+                    $responses += $response
+                } catch {
+                    Write-Warning "Failed to add URL indicator $url : $($_.Exception.Message)"
+                }
+            }
+            $result.details = "Added $($responses.Count) of $($indicatorList.Count) URL/domain indicators"
+            $result.responses = $responses
         }
         "Remove URL/Domain Indicators" {
-            # Undo-TiURL -token $token -URLs $indicatorList
-            $result.details = "Removed $($indicatorList.Count) URL/domain indicators"
-        }
-        "Add Certificate Indicators" {
-            # Invoke-TiCert -token $token -Sha1s $indicatorList
-            $result.details = "Added $($indicatorList.Count) certificate indicators"
-        }
-        "Remove Certificate Indicators" {
-            # Undo-TiCert -token $token -Sha1s $indicatorList
-            $result.details = "Removed $($indicatorList.Count) certificate indicators"
+            if (-not $indicatorList -or $indicatorList.Count -eq 0) {
+                throw "Indicator IDs required for removing URL/domain indicators"
+            }
+            $removed = 0
+            foreach ($indicatorId in $indicatorList) {
+                try {
+                    Remove-FileIndicator -Token $token -IndicatorId $indicatorId
+                    $removed++
+                } catch {
+                    Write-Warning "Failed to remove indicator $indicatorId : $($_.Exception.Message)"
+                }
+            }
+            $result.details = "Removed $removed of $($indicatorList.Count) URL/domain indicators"
         }
         "List All Indicators" {
-            # $allIndicators = Get-Indicators -token $token
-            $result.details = "Retrieved all indicators"
-            $result.indicators = @() # Would contain actual indicators
+            $allIndicators = Get-AllIndicators -Token $token
+            $result.details = "Retrieved $($allIndicators.Count) indicators"
+            $result.indicators = $allIndicators
         }
         default {
             $result.status = "Unknown"
