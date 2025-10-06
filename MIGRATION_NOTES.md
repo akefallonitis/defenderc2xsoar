@@ -19,32 +19,45 @@ All MDE-prefixed functions have been renamed to DefenderC2-prefixed:
 | MDETIManager | DefenderC2TIManager |
 | MDEAutomator (module) | DefenderC2Automator (module) |
 
-### 2. Live Response Function Consolidation
+### 2. Live Response and Library Function Consolidation
 
 **Functions Removed:**
 - `GetLiveResponseFile` (standalone function)
 - `PutLiveResponseFileFromLibrary` (standalone function)
+- `ListLibraryFiles` (standalone function)
+- `GetLibraryFile` (standalone function)
+- `DeleteLibraryFile` (standalone function)
 
-**Reason:** These functions were redundant as DefenderC2Orchestrator already provided equivalent or better functionality.
+**Reason:** These functions were redundant as DefenderC2Orchestrator provides a better consolidated architecture.
 
 **Functions Added to DefenderC2Orchestrator:**
-- `PutLiveResponseFileFromLibrary` - Now available as a function within DefenderC2Orchestrator
+- `PutLiveResponseFileFromLibrary` - Deploy files from Azure Storage library to devices
+- `ListLibraryFiles` - List all files in Azure Storage library
+- `GetLibraryFile` - Retrieve file from Azure Storage library (Base64 encoded)
+- `DeleteLibraryFile` - Delete file from Azure Storage library
 
 **Result:**
-- Total function count reduced from 11 to 9
-- All live response operations now consolidated in DefenderC2Orchestrator
+- Total function count reduced from 11 to 6
+- All live response operations consolidated in DefenderC2Orchestrator
+- All library operations consolidated in DefenderC2Orchestrator
 - Cleaner, more maintainable architecture
 
 ### 3. DefenderC2Orchestrator Capabilities
 
-DefenderC2Orchestrator now handles ALL live response operations:
+DefenderC2Orchestrator now handles ALL live response and library operations:
 
+**Live Response Operations:**
 1. **GetLiveResponseSessions** - List active Live Response sessions
 2. **InvokeLiveResponseScript** - Execute scripts from Live Response library
 3. **GetLiveResponseOutput** - Get command execution results
 4. **GetLiveResponseFile** - Download files from devices
 5. **PutLiveResponseFile** - Upload files to devices (Base64 content)
 6. **PutLiveResponseFileFromLibrary** - Deploy files from Azure Storage library to devices
+
+**Library Operations:**
+7. **ListLibraryFiles** - List all files in Azure Storage library
+8. **GetLibraryFile** - Retrieve file from Azure Storage library (Base64 encoded)
+9. **DeleteLibraryFile** - Delete file from Azure Storage library
 
 ### 4. Updated Components
 
@@ -119,6 +132,56 @@ POST /api/DefenderC2Orchestrator
 }
 ```
 
+**Old:**
+```json
+GET /api/ListLibraryFiles?code={key}
+```
+
+**New:**
+```json
+POST /api/DefenderC2Orchestrator
+{
+  "Function": "ListLibraryFiles",
+  "tenantId": "tenant-id"
+}
+```
+
+**Old:**
+```json
+POST /api/GetLibraryFile
+{
+  "fileName": "script.ps1"
+}
+```
+
+**New:**
+```json
+POST /api/DefenderC2Orchestrator
+{
+  "Function": "GetLibraryFile",
+  "fileName": "script.ps1",
+  "tenantId": "tenant-id"
+}
+```
+
+**Old:**
+```json
+POST /api/DeleteLibraryFile
+{
+  "fileName": "script.ps1"
+}
+```
+
+**New:**
+```json
+POST /api/DefenderC2Orchestrator
+{
+  "Function": "DeleteLibraryFile",
+  "fileName": "script.ps1",
+  "tenantId": "tenant-id"
+}
+```
+
 ### For Azure Function Apps
 
 When deploying the updated code:
@@ -131,9 +194,9 @@ When deploying the updated code:
 ## Benefits
 
 1. **Consistent Naming**: All functions now use DefenderC2 prefix aligned with project name
-2. **Consolidated Architecture**: All live response operations in one function (DefenderC2Orchestrator)
-3. **Reduced Complexity**: Fewer functions to maintain (9 instead of 11)
-4. **Better Organization**: Clear separation between library management and live response operations
+2. **Consolidated Architecture**: All live response and library operations in one function (DefenderC2Orchestrator)
+3. **Reduced Complexity**: Fewer functions to maintain (6 instead of 11)
+4. **Better Organization**: All file operations (both live response and library) in one place
 5. **Web Deployment Ready**: Package ready for GitHub-based web deployment
 
 ## Verification
@@ -141,7 +204,7 @@ When deploying the updated code:
 After deployment, verify:
 
 ```bash
-# Check function count (should be 9)
+# Check function count (should be 6)
 az functionapp function list \
   --resource-group your-rg \
   --name your-function-app \
@@ -156,7 +219,7 @@ az functionapp function show \
 
 ## Reference
 
-- Problem Statement: Consolidate live response operations with library file operations
+- Problem Statement: Consolidate live response operations and library file operations into DefenderC2Orchestrator
 - Aligned with: mdeautomator GitHub project structure
 - Deployment Method: Web deployment package via GitHub
-- Total Functions: 9 Azure Functions + 1 PowerShell module (DefenderC2Automator)
+- Total Functions: 6 Azure Functions + 1 PowerShell module (DefenderC2Automator)

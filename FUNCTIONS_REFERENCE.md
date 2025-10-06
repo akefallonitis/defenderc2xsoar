@@ -450,15 +450,24 @@ Exports all detection rules to JSON.
 
 **Endpoint:** `/api/DefenderC2Orchestrator`
 
-The DefenderC2Orchestrator function provides Live Response capabilities for Microsoft Defender for Endpoint, enabling file operations and script execution directly from Azure Workbooks without requiring an Azure Storage account.
+The DefenderC2Orchestrator function provides Live Response and Library Management capabilities for Microsoft Defender for Endpoint, consolidating all file operations in one place.
 
 ### Features
+
+**Live Response Operations:**
 - **Live Response session management** - Start, monitor, and manage sessions
 - **File upload** - Upload files to devices (accepts Base64 encoded content)
 - **File download** - Download files from devices (returns Base64 encoded content)
 - **Library deployment** - Deploy files from Azure Storage library to devices
 - **Script execution** - Run scripts from Live Response library
 - **Command monitoring** - Get command execution results
+
+**Library Management Operations:**
+- **List library files** - View all files in Azure Storage library
+- **Get library file** - Retrieve files from library (Base64 encoded)
+- **Delete library file** - Remove files from library
+
+**Other Features:**
 - **Automatic retry logic** - Handles rate limiting and transient failures
 
 ### Get Live Response Sessions
@@ -654,6 +663,106 @@ Deploys a file from Azure Storage library to a device via Live Response.
 - File must exist in Azure Storage library container
 - Automatically retrieves file from library and deploys to device
 - Combines library retrieval with live response deployment in one operation
+- Requires `AzureWebJobsStorage` environment variable configured
+
+### List Library Files
+
+Lists all files in the Azure Storage library container.
+
+**Request:**
+```json
+{
+  "Function": "ListLibraryFiles",
+  "tenantId": "tenant-id"
+}
+```
+
+**Response:**
+```json
+{
+  "function": "ListLibraryFiles",
+  "status": "Success",
+  "tenantId": "tenant-id",
+  "timestamp": "2024-01-01T00:00:00Z",
+  "data": [
+    {
+      "fileName": "script.ps1",
+      "size": 1024,
+      "lastModified": "2024-01-01T00:00:00Z",
+      "contentType": "application/octet-stream",
+      "etag": "0x8D9..."
+    }
+  ],
+  "count": 1
+}
+```
+
+**Notes:**
+- Returns array of file metadata
+- No parameters required besides Function and tenantId
+- Requires `AzureWebJobsStorage` environment variable configured
+
+### Get Library File
+
+Retrieves a file from the Azure Storage library container as Base64-encoded content.
+
+**Request:**
+```json
+{
+  "Function": "GetLibraryFile",
+  "tenantId": "tenant-id",
+  "fileName": "script.ps1"
+}
+```
+
+**Response:**
+```json
+{
+  "function": "GetLibraryFile",
+  "status": "Success",
+  "tenantId": "tenant-id",
+  "timestamp": "2024-01-01T00:00:00Z",
+  "fileName": "script.ps1",
+  "fileContent": "IyBQb3dlclNoZWxsIFNjcmlwdA...",
+  "size": 1024
+}
+```
+
+**Notes:**
+- Returns file content as Base64-encoded string
+- File name is sanitized to prevent path traversal
+- Returns 404 if file not found
+- Requires `AzureWebJobsStorage` environment variable configured
+
+### Delete Library File
+
+Deletes a file from the Azure Storage library container.
+
+**Request:**
+```json
+{
+  "Function": "DeleteLibraryFile",
+  "tenantId": "tenant-id",
+  "fileName": "script.ps1"
+}
+```
+
+**Response:**
+```json
+{
+  "function": "DeleteLibraryFile",
+  "status": "Success",
+  "tenantId": "tenant-id",
+  "timestamp": "2024-01-01T00:00:00Z",
+  "message": "File deleted successfully from library",
+  "fileName": "script.ps1"
+}
+```
+
+**Notes:**
+- Permanently deletes file from Azure Storage
+- File name is sanitized to prevent path traversal
+- Returns 404 if file not found
 - Requires `AzureWebJobsStorage` environment variable configured
 
 ### Rate Limiting & Retry Logic
