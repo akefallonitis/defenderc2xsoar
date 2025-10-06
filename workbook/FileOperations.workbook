@@ -255,6 +255,88 @@
               "value": "library"
             },
             "name": "deploy-button"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "library-filename",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "LibraryFileName",
+                  "label": "File Name",
+                  "type": 1,
+                  "description": "Name of the file to download or delete from library",
+                  "isRequired": true,
+                  "typeSettings": {
+                    "multiLineText": false
+                  }
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "conditionalVisibility": {
+              "parameterName": "selectedTab",
+              "comparison": "isEqualTo",
+              "value": "library"
+            },
+            "name": "library-file-operations"
+          },
+          {
+            "type": 11,
+            "content": {
+              "version": "LinkItem/1.0",
+              "style": "list",
+              "links": [
+                {
+                  "id": "download-library-file",
+                  "cellValue": "downloadLibraryResult",
+                  "linkTarget": "ArmAction",
+                  "linkLabel": "📥 Download from Library",
+                  "style": "secondary",
+                  "linkIsContextBlade": false,
+                  "armActionContext": {
+                    "path": "{FunctionAppUrl}/api/GetLibraryFile?code={FunctionKey}",
+                    "headers": [],
+                    "params": [],
+                    "body": "{\"fileName\":\"{LibraryFileName}\"}",
+                    "httpMethod": "POST",
+                    "title": "Download Library File",
+                    "description": "Downloading {LibraryFileName} from library",
+                    "actionName": "Download",
+                    "runLabel": "Download"
+                  }
+                },
+                {
+                  "id": "delete-library-file",
+                  "cellValue": "deleteLibraryResult",
+                  "linkTarget": "ArmAction",
+                  "linkLabel": "🗑️ Delete from Library",
+                  "style": "secondary",
+                  "linkIsContextBlade": false,
+                  "armActionContext": {
+                    "path": "{FunctionAppUrl}/api/DeleteLibraryFile?code={FunctionKey}",
+                    "headers": [],
+                    "params": [],
+                    "body": "{\"fileName\":\"{LibraryFileName}\"}",
+                    "httpMethod": "POST",
+                    "title": "Delete Library File",
+                    "description": "Deleting {LibraryFileName} from library",
+                    "actionName": "Delete",
+                    "runLabel": "Delete"
+                  }
+                }
+              ]
+            },
+            "conditionalVisibility": {
+              "parameterName": "selectedTab",
+              "comparison": "isEqualTo",
+              "value": "library"
+            },
+            "name": "library-file-actions"
           }
         ]
       },
