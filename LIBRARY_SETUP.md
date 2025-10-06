@@ -15,7 +15,7 @@ The storage account is automatically created during deployment. Verify it exists
 ### Azure Portal
 1. Open Azure Portal
 2. Navigate to **Resource Groups** → your resource group
-3. Look for storage account (name pattern: `stmdeautomator*`)
+3. Look for storage account (name pattern: `stdefenderc2*`)
 4. Click on the storage account
 
 ### Azure CLI
@@ -40,7 +40,7 @@ The "library" container is automatically created when the Function App starts.
 ### Azure CLI
 ```bash
 # List containers
-az storage container list --account-name mdeautomator --query "[].name" -o table
+az storage container list --account-name defenderc2 --query "[].name" -o table
 ```
 
 ✅ **Expected Result**: You should see the "library" container
@@ -78,7 +78,7 @@ cd defenderc2xsoar
 # Upload a file
 .\scripts\Upload-ToLibrary.ps1 `
   -FilePath "C:\scripts\test-script.ps1" `
-  -StorageAccountName "mdeautomator" `
+  -StorageAccountName "defenderc2" `
   -ResourceGroup "rg-mde"
 ```
 
@@ -167,7 +167,7 @@ az functionapp restart --name yourfuncapp --resource-group rg-mde
 az role assignment create \
   --role "Storage Blob Data Contributor" \
   --assignee your-user@domain.com \
-  --scope /subscriptions/{sub-id}/resourceGroups/rg-mde/providers/Microsoft.Storage/storageAccounts/mdeautomator
+  --scope /subscriptions/{sub-id}/resourceGroups/rg-mde/providers/Microsoft.Storage/storageAccounts/defenderc2
 ```
 
 ### Issue: Function can't access storage
@@ -203,7 +203,7 @@ The library container should have **Private** access (no public access):
 # Verify private access
 az storage container show \
   --name library \
-  --account-name mdeautomator \
+  --account-name defenderc2 \
   --query "properties.publicAccess"
 ```
 
@@ -249,7 +249,7 @@ Here are some useful files to add to your library:
 ```bash
 # Enable versioning for audit trail
 az storage account blob-service-properties update \
-  --account-name mdeautomator \
+  --account-name defenderc2 \
   --resource-group rg-mde \
   --enable-versioning true
 ```
@@ -258,7 +258,7 @@ az storage account blob-service-properties update \
 ```bash
 # Enable soft delete (7-day retention)
 az storage account blob-service-properties update \
-  --account-name mdeautomator \
+  --account-name defenderc2 \
   --resource-group rg-mde \
   --enable-delete-retention true \
   --delete-retention-days 7
@@ -283,7 +283,7 @@ az storage logging update \
 # Upload all PowerShell scripts from a folder
 Get-ChildItem "C:\SecurityScripts\*.ps1" | ForEach-Object {
     az storage blob upload `
-      --account-name mdeautomator `
+      --account-name defenderc2 `
       --container-name library `
       --name $_.Name `
       --file $_.FullName
@@ -294,7 +294,7 @@ Get-ChildItem "C:\SecurityScripts\*.ps1" | ForEach-Object {
 ```powershell
 # Windows Task Scheduler - sync daily at 2 AM
 $action = New-ScheduledTaskAction -Execute "PowerShell.exe" `
-  -Argument "-File C:\scripts\Sync-LibraryFolder.ps1 -FolderPath C:\SecurityTools -StorageAccountName mdeautomator -ResourceGroup rg-mde"
+  -Argument "-File C:\scripts\Sync-LibraryFolder.ps1 -FolderPath C:\SecurityTools -StorageAccountName defenderc2 -ResourceGroup rg-mde"
 
 $trigger = New-ScheduledTaskTrigger -Daily -At 2am
 
