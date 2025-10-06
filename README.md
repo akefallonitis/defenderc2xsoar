@@ -289,16 +289,15 @@ The function code is **automatically deployed** from a pre-packaged zip file. Wa
 **Via Azure Portal:**
 1. Navigate to your Function App
 2. Click "Functions" in the left menu
-3. You should see all 9 functions:
+3. You should see all 6 functions:
    - ✅ **DefenderC2Dispatcher** - Handle device action requests
-   - ✅ **DefenderC2Orchestrator** - Orchestrate complex operations
+   - ✅ **DefenderC2Orchestrator** - Orchestrate complex operations, Live Response, and Library Management
    - ✅ **DefenderC2TIManager** - Handle threat intelligence operations
    - ✅ **DefenderC2HuntManager** - Handle hunting queries
    - ✅ **DefenderC2IncidentManager** - Handle incident operations
    - ✅ **DefenderC2CDManager** - Handle custom detection operations
-   - ✅ **ListLibraryFiles** - List files in Azure Storage library
-   - ✅ **GetLibraryFile** - Retrieve file from library
-   - ✅ **DeleteLibraryFile** - Remove file from library
+
+**Note:** Library operations (`ListLibraryFiles`, `GetLibraryFile`, `DeleteLibraryFile`) are now consolidated into DefenderC2Orchestrator
 
 **Via Azure CLI:**
 ```bash

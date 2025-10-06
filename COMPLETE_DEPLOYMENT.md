@@ -9,7 +9,7 @@ When you click "Deploy to Azure", the ARM template automatically deploys:
 1. ✅ **Azure Function App** (PowerShell 7.4 runtime)
 2. ✅ **App Service Plan** (Consumption tier)
 3. ✅ **Storage Account** (for function app storage)
-4. ✅ **Function Code** (all 9 functions from GitHub package)
+4. ✅ **Function Code** (all 6 functions from GitHub package)
 5. ✅ **Workbook** (MDE Automator Workbook in Azure Monitor)
 6. ✅ **Configuration** (all required app settings and environment variables)
 
@@ -74,16 +74,15 @@ The ARM template uses `WEBSITE_RUN_FROM_PACKAGE` to automatically deploy functio
 }
 ```
 
-This package contains all 9 Azure Functions:
+This package contains all 6 Azure Functions:
 - DefenderC2Dispatcher
-- DefenderC2Orchestrator
+- DefenderC2Orchestrator (includes Live Response and Library Management)
 - DefenderC2CDManager  
 - DefenderC2HuntManager
 - DefenderC2IncidentManager
 - DefenderC2TIManager
-- ListLibraryFiles
-- GetLibraryFile
-- DeleteLibraryFile
+
+**Note:** Library operations (`ListLibraryFiles`, `GetLibraryFile`, `DeleteLibraryFile`) are now consolidated into DefenderC2Orchestrator
 
 ### 2. Auto-Update via GitHub Actions
 

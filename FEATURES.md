@@ -427,11 +427,15 @@ A comprehensive guide to all features available in defenderc2xsoar.
 - **Bulk Operations**: Manage multiple files at once
 
 ### API Endpoints
-- **ListLibraryFiles**: GET/POST - List all library files
-- **GetLibraryFile**: GET/POST - Retrieve file as Base64
-- **PutLiveResponseFileFromLibrary**: POST - Deploy file to device
-- **GetLiveResponseFile**: POST - Download file from device
-- **DeleteLibraryFile**: POST - Remove file from library
+
+All library operations are available through **DefenderC2Orchestrator**:
+- **ListLibraryFiles**: List all library files
+- **GetLibraryFile**: Retrieve file as Base64
+- **PutLiveResponseFileFromLibrary**: Deploy file to device
+- **GetLiveResponseFile**: Download file from device
+- **DeleteLibraryFile**: Remove file from library
+
+Use with: `POST /api/DefenderC2Orchestrator` with `Function` parameter (e.g., `{"Function": "ListLibraryFiles", "tenantId": "..."}`)
 
 ### Helper Scripts
 - **Upload-ToLibrary.ps1**: Upload files with validation and progress
