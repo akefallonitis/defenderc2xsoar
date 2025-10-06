@@ -20,13 +20,28 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: 'Prepare Workbook Content'
-        id: workbook
+      - name: 'Prepare Workbook Parameters'
+        id: params
         run: |
+          # Create a parameters file with the workbook content
           WORKBOOK_CONTENT=$(cat ./workbook/MDEAutomatorWorkbook.json | jq -c .)
-          echo "content<<EOF" >> $GITHUB_OUTPUT
-          echo "$WORKBOOK_CONTENT" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          cat > /tmp/workbook-params.json <<EOF
+          {
+            "\$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+            "contentVersion": "1.0.0.0",
+            "parameters": {
+              "workbookSourceId": {
+                "value": "${{ secrets.AZURE_WORKSPACE_RESOURCE_ID }}"
+              },
+              "location": {
+                "value": "${{ secrets.AZURE_LOCATION }}"
+              },
+              "workbookContent": {
+                "value": $WORKBOOK_CONTENT
+              }
+            }
+          }
+          EOF
 
       - name: 'Deploy Workbook Template'
         uses: azure/arm-deploy@v1
@@ -35,7 +50,4 @@ jobs:
           subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           resourceGroupName: ${{ secrets.AZURE_RESOURCE_GROUP }}
           template: ./deployment/workbook-deploy.json
-          parameters: >
-            workbookSourceId=${{ secrets.AZURE_WORKSPACE_RESOURCE_ID }}
-            location=${{ secrets.AZURE_LOCATION }}
-            workbookContent=${{ steps.workbook.outputs.content }}
+          parameters: /tmp/workbook-params.json
