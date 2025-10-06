@@ -86,7 +86,7 @@ cd defenderc2xsoar/standalone
 
 ### Option B: Manual Download
 
-1. Download ZIP from [GitHub](https://github.com/akefallonitis/defenderc2xsoar/archive/refs/heads/main.zip)
+1. Download ZIP from [GitHub](https://github.com/akefallonitis/defenderc2xsoar/archive/main.zip)
 2. Extract to a folder (e.g., `C:\Tools\MDEAutomator`)
 3. Navigate to the `standalone` subfolder
 
