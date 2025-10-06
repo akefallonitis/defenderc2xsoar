@@ -1,0 +1,62 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "workbookDisplayName": {
+      "type": "string",
+      "defaultValue": "MDE Automator Workbook",
+      "metadata": {
+        "description": "The friendly name for the workbook"
+      }
+    },
+    "workbookSourceId": {
+      "type": "string",
+      "metadata": {
+        "description": "The resource ID of the Log Analytics workspace or resource group"
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Location for the workbook resource"
+      }
+    },
+    "workbookContent": {
+      "type": "object",
+      "defaultValue": {},
+      "metadata": {
+        "description": "The workbook template content as a JSON object"
+      }
+    }
+  },
+  "variables": {
+    "workbookId": "[guid(parameters('workbookDisplayName'), resourceGroup().id)]"
+  },
+  "resources": [
+    {
+      "type": "microsoft.insights/workbooks",
+      "name": "[variables('workbookId')]",
+      "location": "[parameters('location')]",
+      "apiVersion": "2021-03-08",
+      "kind": "shared",
+      "properties": {
+        "displayName": "[parameters('workbookDisplayName')]",
+        "serializedData": "[string(parameters('workbookContent'))]",
+        "version": "1.0",
+        "sourceId": "[parameters('workbookSourceId')]",
+        "category": "sentinel"
+      }
+    }
+  ],
+  "outputs": {
+    "workbookId": {
+      "type": "string",
+      "value": "[variables('workbookId')]"
+    },
+    "workbookResourceId": {
+      "type": "string",
+      "value": "[resourceId('microsoft.insights/workbooks', variables('workbookId'))]"
+    }
+  }
+}

@@ -1,0 +1,41 @@
+name: Deploy Azure Workbook
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'workbook/**'
+  workflow_dispatch:
+
+jobs:
+  deploy-workbook:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout repository'
+        uses: actions/checkout@v3
+
+      - name: 'Login to Azure'
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: 'Prepare Workbook Content'
+        id: workbook
+        run: |
+          WORKBOOK_CONTENT=$(cat ./workbook/MDEAutomatorWorkbook.json | jq -c .)
+          echo "content<<EOF" >> $GITHUB_OUTPUT
+          echo "$WORKBOOK_CONTENT" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: 'Deploy Workbook Template'
+        uses: azure/arm-deploy@v1
+        with:
+          scope: resourcegroup
+          subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          resourceGroupName: ${{ secrets.AZURE_RESOURCE_GROUP }}
+          template: ./deployment/workbook-deploy.json
+          parameters: >
+            workbookSourceId=${{ secrets.AZURE_WORKSPACE_RESOURCE_ID }}
+            location=${{ secrets.AZURE_LOCATION }}
+            workbookContent=${{ steps.workbook.outputs.content }}

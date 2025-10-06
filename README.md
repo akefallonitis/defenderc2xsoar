@@ -1,5 +1,8 @@
 # defenderc2xsoar
 
+[![Deploy Azure Functions](https://github.com/akefallonitis/defenderc2xsoar/actions/workflows/deploy-azure-functions.yml/badge.svg)](https://github.com/akefallonitis/defenderc2xsoar/actions/workflows/deploy-azure-functions.yml)
+[![Deploy Workbook](https://github.com/akefallonitis/defenderc2xsoar/actions/workflows/deploy-workbook.yml/badge.svg)](https://github.com/akefallonitis/defenderc2xsoar/actions/workflows/deploy-workbook.yml)
+
 A port of [MDEAutomator](https://github.com/msdirtbag/MDEAutomator) using Azure Sentinel Workbooks instead of webapp for multi-tenant Microsoft Defender for Endpoint automation.
 
 ## 🆕 Standalone PowerShell Version Available!
@@ -114,6 +117,22 @@ All MDEAutomator capabilities replicated through Azure Workbooks:
 ## Deployment
 
 > **Simplified Deployment:** Unlike the original MDEAutomator's complex Infrastructure-as-Code setup, this project uses a single ARM template that deploys only the essential resources. Setup takes about 1 hour compared to 2+ hours for the original. See the [comparison table](#differences-from-original-mdeautomator) below for more details.
+
+### 🚀 Automated Deployment with GitHub Actions
+
+This repository includes automated deployment workflows similar to Azure Sentinel connectors:
+
+- **Azure Functions**: Automatically deploy when code changes in `functions/` directory
+- **Workbook**: Automatically deploy when changes occur in `workbook/` directory
+- **Manual Deployment**: Trigger deployments via GitHub Actions UI
+- **Fallback Scripts**: PowerShell scripts for manual deployment when needed
+
+**Quick Setup**:
+1. Deploy infrastructure using ARM template (see below)
+2. Configure GitHub Secrets (see [AUTOMATED_DEPLOYMENT.md](AUTOMATED_DEPLOYMENT.md))
+3. Push changes to `main` branch - functions and workbook deploy automatically!
+
+For detailed instructions on setting up automated deployments, see **[AUTOMATED_DEPLOYMENT.md](AUTOMATED_DEPLOYMENT.md)**.
 
 ### Prerequisites
 

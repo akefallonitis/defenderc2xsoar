@@ -61,6 +61,27 @@
       "metadata": {
         "description": "Value for the 'DeleteAt' tag required by Azure Policy (e.g., '2025-12-31' or 'Never')"
       }
+    },
+    "repoUrl": {
+      "type": "string",
+      "defaultValue": "https://github.com/akefallonitis/defenderc2xsoar.git",
+      "metadata": {
+        "description": "The URL of the GitHub repository for source control configuration"
+      }
+    },
+    "repoBranch": {
+      "type": "string",
+      "defaultValue": "main",
+      "metadata": {
+        "description": "The branch of the GitHub repository to use"
+      }
+    },
+    "enableSourceControl": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Enable GitHub source control integration (requires GitHub token)"
+      }
     }
   },
   "variables": {
@@ -178,6 +199,10 @@
       "type": "string",
       "value": "[concat('https://', reference(resourceId('Microsoft.Web/sites', variables('functionAppName'))).defaultHostName)]"
     },
+    "functionAppResourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]"
+    },
     "storageAccountName": {
       "type": "string",
       "value": "[variables('storageAccountName')]"
@@ -185,6 +210,20 @@
     "managedIdentityPrincipalId": {
       "type": "string",
       "value": "[if(parameters('enableManagedIdentity'), reference(resourceId('Microsoft.Web/sites', variables('functionAppName')), '2021-03-01', 'full').identity.principalId, '')]"
+    },
+    "publishProfileInstructions": {
+      "type": "string",
+      "value": "[concat('To get the publish profile for GitHub Actions, run: az functionapp deployment list-publishing-profiles --resource-group ', resourceGroup().name, ' --name ', variables('functionAppName'), ' --xml')]"
+    },
+    "githubSecretsSetup": {
+      "type": "object",
+      "value": {
+        "AZURE_FUNCTIONAPP_NAME": "[variables('functionAppName')]",
+        "AZURE_SUBSCRIPTION_ID": "[subscription().subscriptionId]",
+        "AZURE_RESOURCE_GROUP": "[resourceGroup().name]",
+        "AZURE_LOCATION": "[parameters('location')]",
+        "instructions": "Configure these values as GitHub secrets. See AUTOMATED_DEPLOYMENT.md for detailed setup instructions."
+      }
     }
   }
 }
