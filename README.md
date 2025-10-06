@@ -154,39 +154,86 @@ For detailed instructions on setting up automated deployments, see **[AUTOMATED_
 5. Grant admin consent for all permissions
 6. Copy the **Application (client) ID** - you'll need this for deployment
 
-### Step 2: Deploy Function App
+### Step 2: Deploy Everything in One Click
 
-> **⚠️ IMPORTANT:** If the "Deploy to Azure" button below fails with a template download error, use **Option 2** (Manual Deployment) instead. This is common when the template hasn't been merged to the main branch yet.
+> **🎯 NEW:** Complete one-click deployment now includes infrastructure + function code + workbook automatically!
 
-#### Option 1: Deploy to Azure Button (Quick Method)
+#### Option 1: Deploy to Azure Button ⭐ RECOMMENDED
+
+Click the button below to deploy **EVERYTHING** (Infrastructure + Code + Workbook):
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fakefallonitis%2Fdefenderc2xsoar%2Fmain%2Fdeployment%2Fazuredeploy.json)
 
-#### Option 2: Manual Template Deployment (Recommended if button fails)
+**What gets deployed:**
+- ✅ Function App with all 5 functions (from GitHub package)
+- ✅ Storage Account (automatically configured)
+- ✅ Workbook (MDE Automator Workbook)
+- ✅ All configuration and environment variables
 
-If the button above doesn't work:
+**Note:** Functions are deployed from a pre-packaged zip file hosted on GitHub. Wait 2-3 minutes after deployment for all functions to appear in the portal.
+
+#### Option 2: PowerShell Complete Deployment Script
+
+For automated deployment with verification:
+
+```powershell
+cd deployment
+./deploy-complete.ps1 `
+    -ResourceGroupName "rg-defenderc2" `
+    -FunctionAppName "mde-automator-prod" `
+    -AppId "your-app-id" `
+    -ClientSecret "your-client-secret" `
+    -Location "westeurope"
+```
+
+This script:
+- Creates deployment package
+- Deploys ARM template
+- Verifies all resources
+- Lists deployed functions
+
+#### Option 3: Manual Template Deployment
+
+If the button doesn't work:
 
 1. Go to [Azure Portal](https://portal.azure.com)
 2. Search for **"Deploy a custom template"**
 3. Click **"Build your own template in the editor"**
-4. Copy the template from [deployment/azuredeploy.json](deployment/azuredeploy.json) in this repository
-5. Paste the content into the Azure Portal editor
-6. Click **"Save"** and fill in the parameters below
+4. Copy the template from [deployment/azuredeploy.json](deployment/azuredeploy.json)
+5. Paste the content into the editor and click **"Save"**
+6. Fill in the parameters below
 
-#### Option 3: Command-Line Deployment
+#### Option 4: Azure CLI Deployment
 
-See the [deployment folder documentation](deployment/README.md) for Azure CLI and PowerShell deployment instructions.
+```bash
+cd deployment
+az deployment group create \
+  --resource-group rg-defenderc2 \
+  --template-file azuredeploy.json \
+  --parameters \
+    functionAppName=mde-automator-prod \
+    spnId=your-app-id \
+    spnSecret=your-client-secret \
+    projectTag=DefenderC2 \
+    createdByTag=your-email \
+    deleteAtTag=Never
+```
 
 ---
 
-**Parameters (for all options):**
+**Required Parameters:**
 - `functionAppName`: Globally unique name for your function app
 - `spnId`: Application (client) ID from Step 1
 - `spnSecret`: Client secret from Step 1
 - `projectTag`: Project name (required by Azure Policy)
 - `createdByTag`: Your name/email (required by Azure Policy)
 - `deleteAtTag`: Deletion date or 'Never' (required by Azure Policy)
-- `enableManagedIdentity`: `true` (recommended)
+
+**Optional Parameters:**
+- `location`: Azure region (default: resource group location)
+- `enableManagedIdentity`: Enable system-assigned identity (default: `true`)
+
+📚 **For detailed deployment instructions and troubleshooting, see [COMPLETE_DEPLOYMENT.md](COMPLETE_DEPLOYMENT.md)**
 
 **Note the deployment outputs:**
 - `functionAppUrl` - You'll use this in the workbook
@@ -204,25 +251,50 @@ See the [deployment folder documentation](deployment/README.md) for Azure CLI an
    - **Audience**: `api://AzureADTokenExchange`
 5. Click "Add"
 
-### Step 4: Deploy Workbook
+### Step 4: Access and Configure Workbook
+
+The workbook is **automatically deployed** with the ARM template. To access it:
 
 1. Navigate to Azure Portal > Monitor > Workbooks
-2. Click "New" > "Advanced Editor"
-3. Paste the contents of `/workbook/MDEAutomatorWorkbook.json`
-4. Click "Apply"
-5. Save the workbook to your desired location
+2. Look for "MDE Automator Workbook" (it may be in "My workbooks" or the resource group)
+3. Open the workbook and configure these parameters:
+   - **Function App Base URL**: Your function app URL from deployment outputs
+   - **Target Tenant ID**: The tenant ID where you want to manage MDE
+   - **Service Principal ID**: Your app registration client ID
 
-### Step 5: Deploy Function Code
+**Alternative:** If you want to customize the workbook:
+1. Click "Edit" in the workbook
+2. Modify as needed
+3. Save to your preferred location
 
-You'll need to deploy the PowerShell function code to your function app. The functions should implement:
+**Manual Deployment** (if needed):
+1. Navigate to Azure Portal > Monitor > Workbooks > New > Advanced Editor
+2. Paste contents from `/workbook/MDEAutomatorWorkbook.json`
+3. Click "Apply" and save
 
-- **MDEDispatcher** - Handle device action requests
-- **MDETIManager** - Handle threat intelligence operations
-- **MDEHuntManager** - Handle hunting queries
-- **MDEIncidentManager** - Handle incident operations
-- **MDECDManager** - Handle custom detection operations
+### Step 5: Verify Functions Deployed
 
-See the [MDEAutomator PowerShell module documentation](https://github.com/msdirtbag/MDEAutomator#module-introduction) for function implementation details.
+The function code is **automatically deployed** from a pre-packaged zip file. Wait 2-3 minutes, then verify:
+
+**Via Azure Portal:**
+1. Navigate to your Function App
+2. Click "Functions" in the left menu
+3. You should see all 5 functions:
+   - ✅ **MDEDispatcher** - Handle device action requests
+   - ✅ **MDETIManager** - Handle threat intelligence operations
+   - ✅ **MDEHuntManager** - Handle hunting queries
+   - ✅ **MDEIncidentManager** - Handle incident operations
+   - ✅ **MDECDManager** - Handle custom detection operations
+
+**Via Azure CLI:**
+```bash
+az functionapp function list \
+  --resource-group your-rg \
+  --name your-function-app \
+  --query "[].name" -o table
+```
+
+**If functions don't appear:** Check Application Insights logs or see [COMPLETE_DEPLOYMENT.md](COMPLETE_DEPLOYMENT.md) troubleshooting section.
 
 ### Step 6: Configure Workbook Parameters
 
