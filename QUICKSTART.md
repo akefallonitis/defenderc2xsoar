@@ -111,7 +111,7 @@ Back in your App Registration:
 6. Click **Apply**
 7. Click **Done Editing**
 8. Click **Save** (💾 icon)
-9. Give it a name: `MDE Automator`
+9. Give it a name: `Defender C2`
 10. Click **Apply**
 
 ### 6. Configure Workbook (2 minutes)
