@@ -64,10 +64,58 @@ Detailed validation report documenting that lines 132 and 136 contain complete `
 
 > **⚠️ COMMON ISSUE:** The "Deploy to Azure" button may fail with a template download error. If this happens, use the **Manual Template Deployment** method described in the [Troubleshooting](#troubleshooting) section below - it's reliable and just as easy.
 
-### Option 1: Azure Portal - Deploy Button
+### Option 1: Complete Deployment Script (Recommended)
+
+Deploy everything (Function App + Workbooks) with one command:
+
+```powershell
+.\deploy-all.ps1 `
+    -ResourceGroupName "rg-defenderc2" `
+    -FunctionAppName "defc2" `
+    -AppId "12345678-1234-1234-1234-123456789012" `
+    -ClientSecret "your-secret" `
+    -WorkspaceResourceId "/subscriptions/{sub-id}/resourceGroups/{rg}/providers/Microsoft.OperationalInsights/workspaces/{workspace}" `
+    -ProjectTag "DefenderC2" `
+    -CreatedByTag "john.doe@example.com" `
+    -DeleteAtTag "Never"
+```
+
+This script:
+- ✅ Deploys Function App infrastructure
+- ✅ Configures all required environment variables
+- ✅ Deploys both workbooks to Azure Monitor
+- ✅ Sets Function App Name parameter in workbooks automatically
+
+### Option 2: Separate Deployments
+
+#### 2a. Deploy Function App Only
+
+```powershell
+.\deploy-complete.ps1 `
+    -ResourceGroupName "rg-defenderc2" `
+    -FunctionAppName "defc2" `
+    -AppId "your-app-id" `
+    -ClientSecret "your-secret" `
+    -ProjectTag "DefenderC2" `
+    -CreatedByTag "john.doe@example.com" `
+    -DeleteAtTag "Never"
+```
+
+#### 2b. Deploy Workbooks Only
+
+```powershell
+.\deploy-workbook.ps1 `
+    -ResourceGroupName "rg-defenderc2" `
+    -WorkspaceResourceId "/subscriptions/{sub-id}/resourceGroups/{rg}/providers/Microsoft.OperationalInsights/workspaces/{workspace}" `
+    -FunctionAppName "defc2" `
+    -DeployMainWorkbook `
+    -DeployFileOpsWorkbook
+```
+
+### Option 3: Azure Portal - Deploy Button
 Click the "Deploy to Azure" button in the main README.md (may fail if template not on main branch - see troubleshooting)
 
-### Option 2: Azure CLI
+### Option 4: Azure CLI
 ```bash
 az deployment group create \
   --resource-group <your-resource-group> \
@@ -80,7 +128,7 @@ az deployment group create \
                deleteAtTag=<date-or-Never>
 ```
 
-### Option 3: PowerShell
+### Option 5: PowerShell with ARM Module
 ```powershell
 $spnSecret = ConvertTo-SecureString "<your-client-secret>" -AsPlainText -Force
 
