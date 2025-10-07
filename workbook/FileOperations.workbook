@@ -170,7 +170,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/DefenderC2Orchestrator\",\"urlParams\":[],\"batchDisabled\":false,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.data\",\"columns\":[{\"path\":\"$.fileName\",\"columnid\":\"fileName\"},{\"path\":\"$.size\",\"columnid\":\"size\"},{\"path\":\"$.lastModified\",\"columnid\":\"lastModified\"},{\"path\":\"$.contentType\",\"columnid\":\"contentType\"}]}},{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[]}}],\"httpBodySchema\":\"{\\\"Function\\\":\\\"ListLibraryFiles\\\",\\\"tenantId\\\":\\\"{TenantId}\\\"}\"}",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/DefenderC2Orchestrator\",\"urlParams\":[{\"name\":\"api-version\",\"value\":\"2022-08-01\"}],\"batchDisabled\":false,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.data\",\"columns\":[{\"path\":\"$.fileName\",\"columnid\":\"fileName\"},{\"path\":\"$.size\",\"columnid\":\"size\"},{\"path\":\"$.lastModified\",\"columnid\":\"lastModified\"},{\"path\":\"$.contentType\",\"columnid\":\"contentType\"}]}},{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[]}}],\"httpBodySchema\":\"{\\\"Function\\\":\\\"ListLibraryFiles\\\",\\\"tenantId\\\":\\\"{TenantId}\\\"}\"}",
               "size": 0,
               "title": "Library Files",
               "showRefreshButton": true,
