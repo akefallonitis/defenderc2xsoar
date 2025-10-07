@@ -86,14 +86,14 @@
             "id": "9d5e6f49-b7de-5753-a0e1-3f3f6e8c4d2b",
             "version": "KqlParameterItem/1.0",
             "name": "FunctionAppUrl",
-            "label": "Function App URL",
+            "label": "Function App (Auto-Discovered)",
             "type": 1,
             "isRequired": true,
             "query": "Resources | where type =~ 'microsoft.web/sites' | where kind =~ 'functionapp' | where name contains 'defenderc2' or tags['Project'] =~ 'defenderc2' | extend FunctionUrl = strcat('https://', name, '.azurewebsites.net') | project FunctionUrl | limit 1",
             "crossComponentResources": [
               "{Subscription}"
             ],
-            "description": "DefenderC2 Function App URL (auto-discovered). If not found, manually enter: https://your-function-app.azurewebsites.net",
+            "description": "Auto-discovered DefenderC2 Function App. Searches subscription for function apps with 'defenderc2' in name or Project tag.",
             "timeContext": {
               "durationMs": 86400000
             },
