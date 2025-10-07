@@ -52,6 +52,24 @@ Comprehensive guide for deploying workbooks:
 - Azure CLI deployment
 - Troubleshooting and best practices
 
+#### WORKBOOK_PARAMETERS_GUIDE.md
+Quick reference for workbook parameters:
+- Function App Name parameter (critical!)
+- How parameters are populated
+- ARMEndpoint query configuration
+- Common errors and fixes
+- **Read this if workbooks aren't working**
+
+#### deploy-all.ps1
+One-command complete deployment script:
+- Deploys Function App infrastructure
+- Deploys both workbooks
+- Ensures all parameters are configured correctly
+- **Easiest deployment method**
+
+#### workbook-deploy.parameters.example.json
+Example parameters file showing the structure needed for workbook deployment (reference only - use deploy-workbook.ps1 for actual deployment)
+
 ### Validation Scripts
 
 #### test_azuredeploy.py
