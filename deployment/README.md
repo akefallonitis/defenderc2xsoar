@@ -1,46 +1,139 @@
 # ARM Template Deployment Files
 
-This folder contains Azure Resource Manager (ARM) template files for deploying the MDE Automator Function App.
+This folder contains Azure Resource Manager (ARM) template files for deploying the DefenderC2 Function App and Workbooks.
 
 ## Files
 
-### azuredeploy.json
+### Function App Deployment
+
+#### azuredeploy.json
 The main ARM template that defines the Azure resources to be deployed:
 - Azure Function App (PowerShell runtime)
 - App Service Plan (Consumption tier)
 - Storage Account
 - Managed Identity configuration
 - CORS settings for Azure Portal
+- Environment variables (APPID, SECRETID)
 
-### createUIDefinition.json
+#### createUIDefinition.json
 Provides a custom user interface in the Azure Portal when deploying via the "Deploy to Azure" button. This file:
 - Validates input parameters
 - Provides helpful tooltips and descriptions
 - Ensures proper format for function app names and GUIDs
 
-### metadata.json
+#### metadata.json
 Contains metadata about the template for Azure Quickstart Templates gallery:
 - Template description and summary
 - Tags and keywords for discoverability
 - Cost and complexity level indicators
 
-### azuredeploy.parameters.json
+#### azuredeploy.parameters.json
 Sample parameters file for command-line deployments using Azure CLI or PowerShell. Contains placeholder values that should be replaced with your actual values.
 
-### test_azuredeploy.py
+### Workbook Deployment
+
+#### workbook-deploy.json
+ARM template for deploying DefenderC2 workbooks to Azure Monitor:
+- Deploys workbook resources
+- Configures workbook parameters
+- Links to Log Analytics workspace
+
+#### deploy-workbook.ps1
+PowerShell script for automated workbook deployment:
+- Loads workbook JSON content automatically
+- Sets Function App Name parameter
+- Deploys to Azure Monitor with proper configuration
+- **Recommended method** for workbook deployment
+
+#### WORKBOOK_DEPLOYMENT.md
+Comprehensive guide for deploying workbooks:
+- Automated deployment with PowerShell script
+- Manual Azure Portal import
+- Azure CLI deployment
+- Troubleshooting and best practices
+
+#### WORKBOOK_PARAMETERS_GUIDE.md
+Quick reference for workbook parameters:
+- Function App Name parameter (critical!)
+- How parameters are populated
+- ARMEndpoint query configuration
+- Common errors and fixes
+- **Read this if workbooks aren't working**
+
+#### deploy-all.ps1
+One-command complete deployment script:
+- Deploys Function App infrastructure
+- Deploys both workbooks
+- Ensures all parameters are configured correctly
+- **Easiest deployment method**
+
+#### workbook-deploy.parameters.example.json
+Example parameters file showing the structure needed for workbook deployment (reference only - use deploy-workbook.ps1 for actual deployment)
+
+### Validation Scripts
+
+#### test_azuredeploy.py
 Automated validation script that verifies the ARM template is syntactically correct and has complete `listKeys` function calls. Run with `python3 test_azuredeploy.py`.
 
-### VALIDATION_REPORT.md
+#### VALIDATION_REPORT.md
 Detailed validation report documenting that lines 132 and 136 contain complete `listKeys` function calls and the template is ready for deployment.
 
 ## Deployment Options
 
 > **⚠️ COMMON ISSUE:** The "Deploy to Azure" button may fail with a template download error. If this happens, use the **Manual Template Deployment** method described in the [Troubleshooting](#troubleshooting) section below - it's reliable and just as easy.
 
-### Option 1: Azure Portal - Deploy Button
+### Option 1: Complete Deployment Script (Recommended)
+
+Deploy everything (Function App + Workbooks) with one command:
+
+```powershell
+.\deploy-all.ps1 `
+    -ResourceGroupName "rg-defenderc2" `
+    -FunctionAppName "defc2" `
+    -AppId "12345678-1234-1234-1234-123456789012" `
+    -ClientSecret "your-secret" `
+    -WorkspaceResourceId "/subscriptions/{sub-id}/resourceGroups/{rg}/providers/Microsoft.OperationalInsights/workspaces/{workspace}" `
+    -ProjectTag "DefenderC2" `
+    -CreatedByTag "john.doe@example.com" `
+    -DeleteAtTag "Never"
+```
+
+This script:
+- ✅ Deploys Function App infrastructure
+- ✅ Configures all required environment variables
+- ✅ Deploys both workbooks to Azure Monitor
+- ✅ Sets Function App Name parameter in workbooks automatically
+
+### Option 2: Separate Deployments
+
+#### 2a. Deploy Function App Only
+
+```powershell
+.\deploy-complete.ps1 `
+    -ResourceGroupName "rg-defenderc2" `
+    -FunctionAppName "defc2" `
+    -AppId "your-app-id" `
+    -ClientSecret "your-secret" `
+    -ProjectTag "DefenderC2" `
+    -CreatedByTag "john.doe@example.com" `
+    -DeleteAtTag "Never"
+```
+
+#### 2b. Deploy Workbooks Only
+
+```powershell
+.\deploy-workbook.ps1 `
+    -ResourceGroupName "rg-defenderc2" `
+    -WorkspaceResourceId "/subscriptions/{sub-id}/resourceGroups/{rg}/providers/Microsoft.OperationalInsights/workspaces/{workspace}" `
+    -FunctionAppName "defc2" `
+    -DeployMainWorkbook `
+    -DeployFileOpsWorkbook
+```
+
+### Option 3: Azure Portal - Deploy Button
 Click the "Deploy to Azure" button in the main README.md (may fail if template not on main branch - see troubleshooting)
 
-### Option 2: Azure CLI
+### Option 4: Azure CLI
 ```bash
 az deployment group create \
   --resource-group <your-resource-group> \
@@ -53,7 +146,7 @@ az deployment group create \
                deleteAtTag=<date-or-Never>
 ```
 
-### Option 3: PowerShell
+### Option 5: PowerShell with ARM Module
 ```powershell
 $spnSecret = ConvertTo-SecureString "<your-client-secret>" -AsPlainText -Force
 
@@ -103,9 +196,77 @@ After successful deployment, you'll need to:
    - `.funcignore` ensures only necessary files are deployed
    - Functions use HTTP trigger with 'function' auth level
 
-4. **Deploy the workbook** template
+4. **Deploy the workbooks** (see [Workbook Deployment](#workbook-deployment) below)
 
 See the main [DEPLOYMENT.md](../DEPLOYMENT.md) for detailed step-by-step instructions.
+
+## Workbook Deployment
+
+After deploying the Function App, deploy the DefenderC2 workbooks to Azure Monitor:
+
+### Quick Start (Recommended)
+
+```powershell
+# Deploy both workbooks with one command
+.\deploy-workbook.ps1 `
+    -ResourceGroupName "rg-defenderc2" `
+    -WorkspaceResourceId "/subscriptions/{sub-id}/resourceGroups/{rg}/providers/Microsoft.OperationalInsights/workspaces/{workspace}" `
+    -FunctionAppName "defc2" `
+    -DeployMainWorkbook `
+    -DeployFileOpsWorkbook
+```
+
+### What This Does
+
+The deployment script:
+- ✅ Loads workbook JSON content from `../workbook/` directory
+- ✅ Automatically sets the **Function App Name** parameter in both workbooks
+- ✅ Deploys workbooks to Azure Monitor with proper configuration
+- ✅ Links workbooks to your Log Analytics workspace
+
+### Important: Function App Name Parameter
+
+The workbooks require a **Function App Name** parameter to work correctly:
+- **What it is**: The name of your Azure Function App (e.g., `defc2`, `mydefender`)
+- **How it's used**: Constructs the full URL as `https://{FunctionAppName}.azurewebsites.net`
+- **Why it matters**: All API calls to your functions depend on this being correct
+
+**The deployment script automatically sets this parameter**, ensuring the workbooks work immediately after deployment.
+
+### Manual Deployment Alternative
+
+If you prefer manual deployment, see [WORKBOOK_DEPLOYMENT.md](WORKBOOK_DEPLOYMENT.md) for:
+- Azure Portal import instructions
+- Azure CLI deployment commands
+- Troubleshooting guide
+- Advanced configuration options
+
+### Verifying Workbook Deployment
+
+After deployment:
+1. Go to **Azure Portal** → **Monitor** → **Workbooks**
+2. Find `DefenderC2 Command & Control Console`
+3. Click to open
+4. Verify parameters:
+   - ✅ **Function App Name** = your function app name
+   - ✅ **Subscription** = select your subscription
+   - ✅ **Workspace** = select your Log Analytics workspace
+   - ✅ **Tenant ID** = auto-populated from workspace
+
+### Troubleshooting Workbook Issues
+
+**Issue**: "Please provide a valid resource path" errors
+
+**Solution**: Verify the Function App Name parameter is correct (must match your function app exactly)
+
+**Issue**: Queries return no data
+
+**Solution**: 
+1. Check function app is running
+2. Verify `APPID` and `SECRETID` environment variables are set
+3. Ensure app registration has Defender API permissions
+
+For more help, see [WORKBOOK_DEPLOYMENT.md](WORKBOOK_DEPLOYMENT.md).
 
 ## Function Configuration
 

@@ -4,15 +4,21 @@
   "parameters": {
     "workbookDisplayName": {
       "type": "string",
-      "defaultValue": "MDE Automator Workbook",
+      "defaultValue": "DefenderC2 Command & Control Console",
       "metadata": {
-        "description": "The friendly name for the workbook"
+        "description": "The friendly name for the workbook that will appear in Azure Monitor"
       }
     },
     "workbookSourceId": {
       "type": "string",
       "metadata": {
-        "description": "The resource ID of the Log Analytics workspace or resource group"
+        "description": "The resource ID of the Log Analytics workspace. Find this in Azure Portal > Log Analytics workspace > Properties > Resource ID"
+      }
+    },
+    "workbookContent": {
+      "type": "object",
+      "metadata": {
+        "description": "The workbook template content as a JSON object. Load this from DefenderC2-Workbook.json or FileOperations.workbook file."
       }
     },
     "location": {
@@ -20,13 +26,6 @@
       "defaultValue": "[resourceGroup().location]",
       "metadata": {
         "description": "Location for the workbook resource"
-      }
-    },
-    "workbookContent": {
-      "type": "object",
-      "defaultValue": {},
-      "metadata": {
-        "description": "The workbook template content as a JSON object"
       }
     }
   },
@@ -46,6 +45,10 @@
         "version": "1.0",
         "sourceId": "[parameters('workbookSourceId')]",
         "category": "sentinel"
+      },
+      "tags": {
+        "DefenderC2": "true",
+        "hidden-title": "[parameters('workbookDisplayName')]"
       }
     }
   ],

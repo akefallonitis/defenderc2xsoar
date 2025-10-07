@@ -1,0 +1,21 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "workbookDisplayName": {
+      "value": "DefenderC2 Command & Control Console"
+    },
+    "workbookSourceId": {
+      "value": "/subscriptions/{your-subscription-id}/resourceGroups/{your-resource-group}/providers/Microsoft.OperationalInsights/workspaces/{your-workspace-name}"
+    },
+    "workbookContent": {
+      "value": {
+        "$comment": "IMPORTANT: This is a placeholder. The actual workbook JSON content should be loaded from the workbook files (DefenderC2-Workbook.json or FileOperations.workbook) before deployment.",
+        "$instructions": "Use the deploy-workbook.ps1 script for automated deployment, or manually load the workbook JSON using jq or PowerShell: $content = Get-Content ../workbook/DefenderC2-Workbook.json -Raw | ConvertFrom-Json"
+      }
+    },
+    "location": {
+      "value": "eastus"
+    }
+  }
+}
