@@ -90,7 +90,7 @@
             "label": "Function App (Auto-Discovered)",
             "type": 1,
             "isRequired": false,
-            "query": "Resources | where type =~ 'microsoft.web/sites' | where kind =~ 'functionapp' | where name contains 'defender' or name contains 'defenderc2' or tags['Project'] =~ 'defenderc2' | extend FunctionUrl = strcat('https://', name, '.azurewebsites.net') | project value = FunctionUrl, label = strcat(name, ' (', FunctionUrl, ')')",
+            "query": "Resources | where type =~ 'microsoft.web/sites' | where kind =~ 'functionapp' | where name contains 'defc2' or name contains 'defender' or name contains 'defenderc2' or tags['Project'] =~ 'defenderc2' | extend FunctionUrl = strcat('https://', name, '.azurewebsites.net') | project value = FunctionUrl, label = strcat(name, ' (', FunctionUrl, ')')",
             "crossComponentResources": [
               "{Subscription}"
             ],
