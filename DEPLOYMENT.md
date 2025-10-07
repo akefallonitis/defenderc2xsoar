@@ -1,6 +1,32 @@
 # Deployment Guide
 
-This guide provides step-by-step instructions for deploying the defenderc2xsoar workbook-based MDE automation solution.
+This guide provides step-by-step instructions for deploying the DefenderC2 workbook-based MDE automation solution.
+
+## 🚀 Quick Start: One-Click Deployment
+
+Deploy DefenderC2 with a single click using the Azure Portal:
+
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fakefallonitis%2Fdefenderc2xsoar%2Fmain%2Fdeployment%2Fazuredeploy.json)
+
+**What gets deployed automatically:**
+- ✅ Azure Function App (PowerShell 7.4 runtime)
+- ✅ 6 DefenderC2 Functions with anonymous authentication
+- ✅ DefenderC2 Command & Control Workbook with auto-discovery
+- ✅ Storage Account and App Service Plan (Consumption tier)
+- ✅ Managed Identity configuration
+
+**You'll need:**
+- Multi-tenant App Registration with MDE API permissions (see [Prerequisites](#prerequisites))
+- Application (Client) ID
+- Client Secret
+
+**After deployment:**
+- Navigate to Azure Monitor → Workbooks
+- Open "DefenderC2 Command & Control Console"
+- Select your subscription and workspace
+- Everything else auto-discovers! 🎉
+
+---
 
 ## Table of Contents
 
@@ -332,7 +358,7 @@ Before deploying, verify the function app structure is correct:
 - ✅ `.funcignore` - Deployment exclusion rules
 
 **Function Structure (each function directory):**
-- ✅ `function.json` - HTTP trigger bindings with authLevel 'function'
+- ✅ `function.json` - HTTP trigger bindings with authLevel 'anonymous'
 - ✅ `run.ps1` - Function implementation
 
 **All Functions:**
@@ -387,47 +413,46 @@ The function code needs to be deployed to the function app.
    ```
 
 **Important Notes:**
+- ✅ **Functions are automatically deployed** via the ARM template using `WEBSITE_RUN_FROM_PACKAGE`
 - The `.funcignore` file ensures only necessary files are deployed
 - PowerShell 7.4 runtime is configured in `host.json`
-- All functions use HTTP trigger with 'function' auth level
+- All functions use HTTP trigger with **anonymous** auth level (no keys required!)
 - Managed dependencies are enabled for automatic module installation
 
-### Step 6: Deploy Workbook
+> **💡 Tip**: If you used the one-click deployment button, the functions are already deployed and ready to use. You can skip to Step 6!
+
+### Step 6: Access Your Workbook
+
+**🎉 The workbook has been automatically deployed!**
+
+The ARM template automatically creates and deploys the "DefenderC2 Command & Control Console" workbook to Azure Monitor.
 
 1. **Navigate to Azure Monitor**
    - Azure Portal > **Monitor** > **Workbooks**
-   - Click **New** > **Advanced Editor** (</> icon)
+   - Look for **"DefenderC2 Command & Control Console"** in your workbooks list
 
-2. **Load Template**
-   - Remove the default template
-   - Copy the contents of `workbook/DefenderC2-Workbook.json`
-   - Paste into the editor
-   - Click **Apply**
+2. **Open the Workbook**
+   - Click on the workbook to open it
+   - Pin it to your Azure dashboard for quick access
 
-3. **Save Workbook**
-   - Click **Done Editing**
-   - Click **Save** (💾 icon)
-   - **Title**: `DefenderC2 Command & Control Console`
-   - **Subscription**: Select your subscription
-   - **Resource Group**: Select or create a resource group
-   - **Location**: Select your region
-   - Click **Apply**
+**That's it!** The workbook is ready to use with auto-discovery enabled.
 
-4. **Pin to Dashboard** (optional)
-   - Click the pin icon to add to your Azure dashboard
+### Step 7: Verify Auto-Discovery (Zero Configuration Required!)
 
-### Step 7: Configure Workbook Parameters
+The workbook automatically discovers all required parameters:
 
-Open your saved workbook and configure the parameters at the top:
+**Auto-Discovered Parameters:**
+- ✅ **Target Tenant ID**: Automatically extracted from your workspace
+- ✅ **Function App URL**: Auto-discovered from resources with 'defenderc2' in name or Project tag
+- ✅ **Subscription & Workspace**: Simple dropdown selection (the only manual configuration needed)
 
-1. **Subscription**: Select your Azure subscription(s)
-2. **Workspace**: Select your Log Analytics workspace(s) where MDE data is collected
-3. **Target Tenant ID**: Enter the tenant ID where MDE is deployed (this is sent to the function with each request)
-4. **Function App Base URL**: Enter the URL from Step 2 (e.g., `https://mde-automator-func-prod.azurewebsites.net`)
+**You only need to select:**
+1. **Subscription**: Choose your Azure subscription from the dropdown
+2. **Workspace**: Choose your Log Analytics workspace from the dropdown
 
-**Save the workbook** after configuring parameters.
+**Everything else works automatically!** The workbook uses Azure Resource Graph (ARG) queries to discover your Function App and retrieve the Tenant ID from your workspace.
 
-**Note:** The Application ID and Client Secret are no longer configured in the workbook. They are stored securely as environment variables in the Function App (configured during deployment in Step 2).
+**Note:** The Application ID and Client Secret are stored securely as environment variables in the Function App (configured during deployment). The workbook retrieves them automatically - no manual entry required!
 
 ## Post-Deployment Configuration
 
