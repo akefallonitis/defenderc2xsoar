@@ -288,9 +288,9 @@ The deployment process varies based on your chosen version:
 
 ---
 
-## Example Workbooks
+## Archived Example Workbooks
 
-This repository includes several example workbooks demonstrating advanced patterns and features:
+This repository includes several archived example workbooks (located in `archive/old-workbooks/`) that demonstrate advanced patterns and features from previous versions:
 
 - **Advanced Workbook Concepts.json** - Comprehensive feature showcase
 - **DefenderC2 Advanced Console.json** - Streamlined C2 interface
@@ -299,7 +299,11 @@ This repository includes several example workbooks demonstrating advanced patter
 - **Sentinel360-MDR-Console.json** - MDR analyst interface
 - **Sentinel360-XDR-Auditing.json** - Audit and compliance reporting
 
-These examples showcase advanced parameter handling, complex visualizations, multi-step workflows, and investigation consoles that you can adapt for your environment.
+These examples showcase advanced parameter handling, complex visualizations, multi-step workflows, and investigation consoles. They have been superseded by the current **DefenderC2-Workbook.json** which consolidates and enhances all functionality.
+
+**Current Working Workbooks:**
+- **[workbook/DefenderC2-Workbook.json](workbook/DefenderC2-Workbook.json)** - Main operational workbook with auto-discovery
+- **[workbook/FileOperations.workbook](workbook/FileOperations.workbook)** - File operations and library management
 
 **[→ Learn More About Example Workbooks](archive/feature-guides/WORKBOOK_EXAMPLES.md)**
 
