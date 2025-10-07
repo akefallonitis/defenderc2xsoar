@@ -4,7 +4,7 @@
     {
       "type": 1,
       "content": {
-        "json": "# Defender C2 Workbook\n\n> Built on [MDEAutomator](https://github.com/msdirtbag/MDEAutomator) using Azure Sentinel Workbooks for multi-tenant Microsoft Defender for Endpoint automation and orchestration.\n\n---\n\n## Configuration\n\nConfigure your tenant and function app settings below:"
+        "json": "# DefenderC2 Command & Control Console\n\n> Enterprise-grade automation and orchestration for Microsoft Defender for Endpoint with zero-configuration deployment.\n\n---\n\n## Configuration\n\nSelect your subscription and workspace below. All other settings will be auto-discovered:"
       },
       "name": "text - header"
     },
@@ -86,40 +86,19 @@
             "id": "9d5e6f49-b7de-5753-a0e1-3f3f6e8c4d2b",
             "version": "KqlParameterItem/1.0",
             "name": "FunctionAppUrl",
-            "label": "Function App Base URL",
+            "label": "Function App (Auto-Discovered)",
             "type": 1,
-            "isRequired": true,
-            "description": "Base URL of your Azure Function App (e.g., https://your-function-app.azurewebsites.net)",
+            "isRequired": false,
+            "query": "Resources | where type =~ 'microsoft.web/sites' | where kind =~ 'functionapp' | where name contains 'defenderc2' or tags['Project'] =~ 'defenderc2' | extend FunctionUrl = strcat('https://', name, '.azurewebsites.net') | project FunctionUrl | limit 1",
+            "crossComponentResources": [
+              "{Subscription}"
+            ],
+            "description": "Auto-discovered DefenderC2 Function App. Searches subscription for function apps with 'defenderc2' in name or Project tag.",
             "timeContext": {
               "durationMs": 86400000
             },
-            "value": ""
-          },
-          {
-            "id": "a1e7f5a-c8ef-6864-b1f2-4g4g7f9d5e3c",
-            "version": "KqlParameterItem/1.0",
-            "name": "SpnId",
-            "label": "Service Principal (App) ID",
-            "type": 1,
-            "isRequired": true,
-            "description": "Multi-tenant App Registration Client ID",
-            "timeContext": {
-              "durationMs": 86400000
-            },
-            "value": ""
-          },
-          {
-            "id": "c2f9h7c-e0gh-8086-d3h4-6i6i9h1f7g5e",
-            "version": "KqlParameterItem/1.0",
-            "name": "FunctionKey",
-            "label": "Function App Key",
-            "type": 1,
-            "isRequired": true,
-            "description": "Function App host key or function-specific key for authentication",
-            "timeContext": {
-              "durationMs": 86400000
-            },
-            "value": ""
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources"
           },
           {
             "id": "b2f8g6b-d9fg-7975-c2g3-5h5h8g0e6f4d",
@@ -334,10 +313,10 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "{FunctionAppUrl}/api/DefenderC2Dispatcher?code={FunctionKey}",
+                    "path": "{FunctionAppUrl}/api/DefenderC2Dispatcher",
                     "headers": [],
                     "params": [],
-                    "body": "{\"action\":\"Isolate Device\",\"tenantId\":\"{TenantId}\",\"spnId\":\"{SpnId}\",\"deviceIds\":\"{IsolateDeviceIds}\",\"isolationType\":\"{IsolationType}\",\"comment\":\"Isolated via Workbook\"}",
+                    "body": "{\"action\":\"Isolate Device\",\"tenantId\":\"{TenantId}\",\"deviceIds\":\"{IsolateDeviceIds}\",\"isolationType\":\"{IsolationType}\",\"comment\":\"Isolated via Workbook\"}",
                     "httpMethod": "POST",
                     "title": "Isolate Devices",
                     "description": "Initiating device isolation...",
@@ -353,7 +332,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/DefenderC2Dispatcher?code={FunctionKey}\",\"body\":\"{\\\"action\\\":\\\"Isolate Device\\\",\\\"tenantId\\\":\\\"{TenantId}\\\",\\\"spnId\\\":\\\"{SpnId}\\\",\\\"deviceIds\\\":\\\"{IsolateDeviceIds}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.actionId\",\"columnId\":\"actionId\"},{\"path\":\"$.status\",\"columnId\":\"status\"},{\"path\":\"$.message\",\"columnId\":\"message\"},{\"path\":\"$.tenantId\",\"columnId\":\"tenantId\"}]}}]}",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/DefenderC2Dispatcher\",\"body\":\"{\\\"action\\\":\\\"Isolate Device\\\",\\\"tenantId\\\":\\\"{TenantId}\\\",\\\"deviceIds\\\":\\\"{IsolateDeviceIds}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.actionId\",\"columnId\":\"actionId\"},{\"path\":\"$.status\",\"columnId\":\"status\"},{\"path\":\"$.message\",\"columnId\":\"message\"},{\"path\":\"$.tenantId\",\"columnId\":\"tenantId\"}]}}]}",
               "size": 0,
               "title": "Isolation Result",
               "queryType": 12
@@ -409,10 +388,10 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "{FunctionAppUrl}/api/DefenderC2Dispatcher?code={FunctionKey}",
+                    "path": "{FunctionAppUrl}/api/DefenderC2Dispatcher",
                     "headers": [],
                     "params": [],
-                    "body": "{\"action\":\"Unisolate Device\",\"tenantId\":\"{TenantId}\",\"spnId\":\"{SpnId}\",\"deviceIds\":\"{UnisolateDeviceIds}\",\"comment\":\"Unisolated via Workbook\"}",
+                    "body": "{\"action\":\"Unisolate Device\",\"tenantId\":\"{TenantId}\",\"deviceIds\":\"{UnisolateDeviceIds}\",\"comment\":\"Unisolated via Workbook\"}",
                     "httpMethod": "POST",
                     "title": "Unisolate Devices",
                     "description": "Removing device isolation...",
@@ -468,10 +447,10 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "{FunctionAppUrl}/api/DefenderC2Dispatcher?code={FunctionKey}",
+                    "path": "{FunctionAppUrl}/api/DefenderC2Dispatcher",
                     "headers": [],
                     "params": [],
-                    "body": "{\"action\":\"Restrict App Execution\",\"tenantId\":\"{TenantId}\",\"spnId\":\"{SpnId}\",\"deviceIds\":\"{RestrictDeviceIds}\",\"comment\":\"App execution restricted via Workbook\"}",
+                    "body": "{\"action\":\"Restrict App Execution\",\"tenantId\":\"{TenantId}\",\"deviceIds\":\"{RestrictDeviceIds}\",\"comment\":\"App execution restricted via Workbook\"}",
                     "httpMethod": "POST",
                     "title": "Restrict App Execution",
                     "description": "Restricting application execution...",
@@ -544,10 +523,10 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "{FunctionAppUrl}/api/DefenderC2Dispatcher?code={FunctionKey}",
+                    "path": "{FunctionAppUrl}/api/DefenderC2Dispatcher",
                     "headers": [],
                     "params": [],
-                    "body": "{\"action\":\"Run Antivirus Scan\",\"tenantId\":\"{TenantId}\",\"spnId\":\"{SpnId}\",\"deviceIds\":\"{ScanDeviceIds}\",\"scanType\":\"{ScanType}\",\"comment\":\"Scan initiated via Workbook\"}",
+                    "body": "{\"action\":\"Run Antivirus Scan\",\"tenantId\":\"{TenantId}\",\"deviceIds\":\"{ScanDeviceIds}\",\"scanType\":\"{ScanType}\",\"comment\":\"Scan initiated via Workbook\"}",
                     "httpMethod": "POST",
                     "title": "Run Antivirus Scan",
                     "description": "Starting antivirus scan...",
@@ -570,7 +549,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/DefenderC2Dispatcher?code={FunctionKey}\",\"body\":\"{\\\"action\\\":\\\"Get Devices\\\",\\\"tenantId\\\":\\\"{TenantId}\\\",\\\"spnId\\\":\\\"{SpnId}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.devices[*]\",\"columns\":[{\"path\":\"$.deviceName\",\"columnId\":\"Device Name\"},{\"path\":\"$.riskScore\",\"columnId\":\"Risk Score\"},{\"path\":\"$.healthStatus\",\"columnId\":\"Health Status\"},{\"path\":\"$.lastIpAddress\",\"columnId\":\"Last IP\"},{\"path\":\"$.lastSeen\",\"columnId\":\"Last Seen\"},{\"path\":\"$.id\",\"columnId\":\"Device ID\"}]}}]}",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/DefenderC2Dispatcher\",\"body\":\"{\\\"action\\\":\\\"Get Devices\\\",\\\"tenantId\\\":\\\"{TenantId}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.devices[*]\",\"columns\":[{\"path\":\"$.deviceName\",\"columnId\":\"Device Name\"},{\"path\":\"$.riskScore\",\"columnId\":\"Risk Score\"},{\"path\":\"$.healthStatus\",\"columnId\":\"Health Status\"},{\"path\":\"$.lastIpAddress\",\"columnId\":\"Last IP\"},{\"path\":\"$.lastSeen\",\"columnId\":\"Last Seen\"},{\"path\":\"$.id\",\"columnId\":\"Device ID\"}]}}]}",
               "size": 0,
               "title": "💻 Device List",
               "showExportToExcel": true,
@@ -707,10 +686,10 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "{FunctionAppUrl}/api/DefenderC2TIManager?code={FunctionKey}",
+                    "path": "{FunctionAppUrl}/api/DefenderC2TIManager",
                     "headers": [],
                     "params": [],
-                    "body": "{\"action\":\"Add File Indicators\",\"tenantId\":\"{TenantId}\",\"spnId\":\"{SpnId}\",\"indicators\":\"{FileIndicators}\",\"indicatorAction\":\"{FileIndicatorAction}\",\"severity\":\"{FileSeverity}\",\"title\":\"{FileTitle}\",\"description\":\"{FileDescription}\"}",
+                    "body": "{\"action\":\"Add File Indicators\",\"tenantId\":\"{TenantId}\",\"indicators\":\"{FileIndicators}\",\"indicatorAction\":\"{FileIndicatorAction}\",\"severity\":\"{FileSeverity}\",\"title\":\"{FileTitle}\",\"description\":\"{FileDescription}\"}",
                     "httpMethod": "POST",
                     "title": "Add File Indicators",
                     "description": "Adding file indicators to MDE...",
@@ -801,10 +780,10 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "{FunctionAppUrl}/api/DefenderC2TIManager?code={FunctionKey}",
+                    "path": "{FunctionAppUrl}/api/DefenderC2TIManager",
                     "headers": [],
                     "params": [],
-                    "body": "{\"action\":\"Add IP Indicators\",\"tenantId\":\"{TenantId}\",\"spnId\":\"{SpnId}\",\"indicators\":\"{IpIndicators}\",\"indicatorAction\":\"{IpIndicatorAction}\",\"severity\":\"{IpSeverity}\",\"title\":\"Malicious IPs\",\"description\":\"Known malicious IP addresses\"}",
+                    "body": "{\"action\":\"Add IP Indicators\",\"tenantId\":\"{TenantId}\",\"indicators\":\"{IpIndicators}\",\"indicatorAction\":\"{IpIndicatorAction}\",\"severity\":\"{IpSeverity}\",\"title\":\"Malicious IPs\",\"description\":\"Known malicious IP addresses\"}",
                     "httpMethod": "POST",
                     "title": "Add IP Indicators",
                     "description": "Adding IP indicators to MDE...",
@@ -878,10 +857,10 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "{FunctionAppUrl}/api/DefenderC2TIManager?code={FunctionKey}",
+                    "path": "{FunctionAppUrl}/api/DefenderC2TIManager",
                     "headers": [],
                     "params": [],
-                    "body": "{\"action\":\"Add URL Indicators\",\"tenantId\":\"{TenantId}\",\"spnId\":\"{SpnId}\",\"indicators\":\"{UrlIndicators}\",\"indicatorAction\":\"{UrlIndicatorAction}\",\"severity\":\"High\",\"title\":\"Malicious URLs\",\"description\":\"Known malicious URLs and domains\"}",
+                    "body": "{\"action\":\"Add URL Indicators\",\"tenantId\":\"{TenantId}\",\"indicators\":\"{UrlIndicators}\",\"indicatorAction\":\"{UrlIndicatorAction}\",\"severity\":\"High\",\"title\":\"Malicious URLs\",\"description\":\"Known malicious URLs and domains\"}",
                     "httpMethod": "POST",
                     "title": "Add URL/Domain Indicators",
                     "description": "Adding URL/domain indicators to MDE...",
@@ -904,7 +883,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/DefenderC2TIManager?code={FunctionKey}\",\"body\":\"{\\\"action\\\":\\\"List Indicators\\\",\\\"tenantId\\\":\\\"{TenantId}\\\",\\\"spnId\\\":\\\"{SpnId}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.indicators[*]\",\"columns\":[{\"path\":\"$.indicatorValue\",\"columnId\":\"Indicator\"},{\"path\":\"$.indicatorType\",\"columnId\":\"Type\"},{\"path\":\"$.action\",\"columnId\":\"Action\"},{\"path\":\"$.severity\",\"columnId\":\"Severity\"},{\"path\":\"$.title\",\"columnId\":\"Title\"},{\"path\":\"$.createdBy\",\"columnId\":\"Created By\"},{\"path\":\"$.creationDateTime\",\"columnId\":\"Created\"}]}}]}",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/DefenderC2TIManager\",\"body\":\"{\\\"action\\\":\\\"List Indicators\\\",\\\"tenantId\\\":\\\"{TenantId}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.indicators[*]\",\"columns\":[{\"path\":\"$.indicatorValue\",\"columnId\":\"Indicator\"},{\"path\":\"$.indicatorType\",\"columnId\":\"Type\"},{\"path\":\"$.action\",\"columnId\":\"Action\"},{\"path\":\"$.severity\",\"columnId\":\"Severity\"},{\"path\":\"$.title\",\"columnId\":\"Title\"},{\"path\":\"$.createdBy\",\"columnId\":\"Created By\"},{\"path\":\"$.creationDateTime\",\"columnId\":\"Created\"}]}}]}",
               "size": 0,
               "title": "📍 Active Threat Indicators",
               "showExportToExcel": true,
@@ -993,7 +972,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/DefenderC2Dispatcher?code={FunctionKey}\",\"body\":\"{\\\"action\\\":\\\"Get Actions\\\",\\\"tenantId\\\":\\\"{TenantId}\\\",\\\"spnId\\\":\\\"{SpnId}\\\"}\",\"autoRefresh\":true,\"refreshInterval\":{RefreshInterval},\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.actions[*]\",\"columns\":[{\"path\":\"$.id\",\"columnId\":\"Action ID\"},{\"path\":\"$.type\",\"columnId\":\"Type\"},{\"path\":\"$.status\",\"columnId\":\"Status\"},{\"path\":\"$.requestor\",\"columnId\":\"Requestor\"},{\"path\":\"$.creationDateTimeUtc\",\"columnId\":\"Created\"},{\"path\":\"$.machineId\",\"columnId\":\"Device ID\"}]}}]}",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/DefenderC2Dispatcher\",\"body\":\"{\\\"action\\\":\\\"Get Actions\\\",\\\"tenantId\\\":\\\"{TenantId}\\\"}\",\"autoRefresh\":true,\"refreshInterval\":{RefreshInterval},\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.actions[*]\",\"columns\":[{\"path\":\"$.id\",\"columnId\":\"Action ID\"},{\"path\":\"$.type\",\"columnId\":\"Type\"},{\"path\":\"$.status\",\"columnId\":\"Status\"},{\"path\":\"$.requestor\",\"columnId\":\"Requestor\"},{\"path\":\"$.creationDateTimeUtc\",\"columnId\":\"Created\"},{\"path\":\"$.machineId\",\"columnId\":\"Device ID\"}]}}]}",
               "size": 0,
               "title": "📊 Machine Actions (Auto-refreshing every {RefreshInterval}s)",
               "showExportToExcel": true,
@@ -1075,7 +1054,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/DefenderC2Dispatcher?code={FunctionKey}\",\"body\":\"{\\\"action\\\":\\\"Get Action Status\\\",\\\"tenantId\\\":\\\"{TenantId}\\\",\\\"spnId\\\":\\\"{SpnId}\\\",\\\"actionId\\\":\\\"{ActionId}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.id\",\"columnId\":\"Action ID\"},{\"path\":\"$.type\",\"columnId\":\"Type\"},{\"path\":\"$.status\",\"columnId\":\"Status\"},{\"path\":\"$.requestor\",\"columnId\":\"Requestor\"},{\"path\":\"$.creationDateTimeUtc\",\"columnId\":\"Created\"},{\"path\":\"$.lastUpdateDateTimeUtc\",\"columnId\":\"Last Updated\"},{\"path\":\"$.error\",\"columnId\":\"Error\"}]}}]}",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/DefenderC2Dispatcher\",\"body\":\"{\\\"action\\\":\\\"Get Action Status\\\",\\\"tenantId\\\":\\\"{TenantId}\\\",\\\"actionId\\\":\\\"{ActionId}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.id\",\"columnId\":\"Action ID\"},{\"path\":\"$.type\",\"columnId\":\"Type\"},{\"path\":\"$.status\",\"columnId\":\"Status\"},{\"path\":\"$.requestor\",\"columnId\":\"Requestor\"},{\"path\":\"$.creationDateTimeUtc\",\"columnId\":\"Created\"},{\"path\":\"$.lastUpdateDateTimeUtc\",\"columnId\":\"Last Updated\"},{\"path\":\"$.error\",\"columnId\":\"Error\"}]}}]}",
               "size": 0,
               "title": "Action Details",
               "queryType": 12
@@ -1131,10 +1110,10 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "{FunctionAppUrl}/api/DefenderC2Dispatcher?code={FunctionKey}",
+                    "path": "{FunctionAppUrl}/api/DefenderC2Dispatcher",
                     "headers": [],
                     "params": [],
-                    "body": "{\"action\":\"Cancel Action\",\"tenantId\":\"{TenantId}\",\"spnId\":\"{SpnId}\",\"actionId\":\"{CancelActionId}\"}",
+                    "body": "{\"action\":\"Cancel Action\",\"tenantId\":\"{TenantId}\",\"actionId\":\"{CancelActionId}\"}",
                     "httpMethod": "POST",
                     "title": "Cancel Action",
                     "description": "Cancelling machine action...",
@@ -1267,7 +1246,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/DefenderC2HuntManager?code={FunctionKey}\",\"body\":\"{\\\"action\\\":\\\"Execute Hunt\\\",\\\"tenantId\\\":\\\"{TenantId}\\\",\\\"spnId\\\":\\\"{SpnId}\\\",\\\"query\\\":\\\"{HuntQuery}\\\"}\",\"autoRefresh\":true,\"refreshInterval\":{HuntRefreshInterval},\"refreshCondition\":\"$.status != 'Completed'\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.results[*]\",\"columns\":[{\"path\":\"$.DeviceName\",\"columnId\":\"Device Name\"},{\"path\":\"$.Timestamp\",\"columnId\":\"Timestamp\"},{\"path\":\"$.ActionType\",\"columnId\":\"Action Type\"},{\"path\":\"$.FileName\",\"columnId\":\"File Name\"},{\"path\":\"$.ProcessCommandLine\",\"columnId\":\"Command Line\"},{\"path\":\"$.AccountName\",\"columnId\":\"Account\"}]}}]}",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/DefenderC2HuntManager\",\"body\":\"{\\\"action\\\":\\\"Execute Hunt\\\",\\\"tenantId\\\":\\\"{TenantId}\\\",\\\"query\\\":\\\"{HuntQuery}\\\"}\",\"autoRefresh\":true,\"refreshInterval\":{HuntRefreshInterval},\"refreshCondition\":\"$.status != 'Completed'\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.results[*]\",\"columns\":[{\"path\":\"$.DeviceName\",\"columnId\":\"Device Name\"},{\"path\":\"$.Timestamp\",\"columnId\":\"Timestamp\"},{\"path\":\"$.ActionType\",\"columnId\":\"Action Type\"},{\"path\":\"$.FileName\",\"columnId\":\"File Name\"},{\"path\":\"$.ProcessCommandLine\",\"columnId\":\"Command Line\"},{\"path\":\"$.AccountName\",\"columnId\":\"Account\"}]}}]}",
               "size": 0,
               "title": "🔍 Hunt Results (Auto-refreshing every {HuntRefreshInterval}s until complete)",
               "showExportToExcel": true,
@@ -1292,7 +1271,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/DefenderC2HuntManager?code={FunctionKey}\",\"body\":\"{\\\"action\\\":\\\"Get Hunt Status\\\",\\\"tenantId\\\":\\\"{TenantId}\\\",\\\"spnId\\\":\\\"{SpnId}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.status\",\"columnId\":\"Status\"},{\"path\":\"$.rowCount\",\"columnId\":\"Rows\"},{\"path\":\"$.executionTime\",\"columnId\":\"Execution Time\"},{\"path\":\"$.message\",\"columnId\":\"Message\"}]}}]}",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/DefenderC2HuntManager\",\"body\":\"{\\\"action\\\":\\\"Get Hunt Status\\\",\\\"tenantId\\\":\\\"{TenantId}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.status\",\"columnId\":\"Status\"},{\"path\":\"$.rowCount\",\"columnId\":\"Rows\"},{\"path\":\"$.executionTime\",\"columnId\":\"Execution Time\"},{\"path\":\"$.message\",\"columnId\":\"Message\"}]}}]}",
               "size": 0,
               "title": "Hunt Execution Status",
               "queryType": 12
@@ -1384,7 +1363,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/DefenderC2IncidentManager?code={FunctionKey}\",\"body\":\"{\\\"action\\\":\\\"Get Incidents\\\",\\\"tenantId\\\":\\\"{TenantId}\\\",\\\"spnId\\\":\\\"{SpnId}\\\",\\\"severity\\\":\\\"{IncidentSeverity}\\\",\\\"status\\\":\\\"{IncidentStatus}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.incidents[*]\",\"columns\":[{\"path\":\"$.incidentId\",\"columnId\":\"Incident ID\"},{\"path\":\"$.incidentName\",\"columnId\":\"Name\"},{\"path\":\"$.severity\",\"columnId\":\"Severity\"},{\"path\":\"$.status\",\"columnId\":\"Status\"},{\"path\":\"$.assignedTo\",\"columnId\":\"Assigned To\"},{\"path\":\"$.createdTime\",\"columnId\":\"Created\"},{\"path\":\"$.lastUpdateTime\",\"columnId\":\"Updated\"}]}}]}",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/DefenderC2IncidentManager\",\"body\":\"{\\\"action\\\":\\\"Get Incidents\\\",\\\"tenantId\\\":\\\"{TenantId}\\\",\\\"severity\\\":\\\"{IncidentSeverity}\\\",\\\"status\\\":\\\"{IncidentStatus}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.incidents[*]\",\"columns\":[{\"path\":\"$.incidentId\",\"columnId\":\"Incident ID\"},{\"path\":\"$.incidentName\",\"columnId\":\"Name\"},{\"path\":\"$.severity\",\"columnId\":\"Severity\"},{\"path\":\"$.status\",\"columnId\":\"Status\"},{\"path\":\"$.assignedTo\",\"columnId\":\"Assigned To\"},{\"path\":\"$.createdTime\",\"columnId\":\"Created\"},{\"path\":\"$.lastUpdateTime\",\"columnId\":\"Updated\"}]}}]}",
               "size": 0,
               "title": "🚨 Security Incidents",
               "showExportToExcel": true,
@@ -1512,10 +1491,10 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "{FunctionAppUrl}/api/DefenderC2IncidentManager?code={FunctionKey}",
+                    "path": "{FunctionAppUrl}/api/DefenderC2IncidentManager",
                     "headers": [],
                     "params": [],
-                    "body": "{\"action\":\"Update Incident\",\"tenantId\":\"{TenantId}\",\"spnId\":\"{SpnId}\",\"incidentId\":\"{UpdateIncidentId}\",\"status\":\"{UpdateStatus}\"}",
+                    "body": "{\"action\":\"Update Incident\",\"tenantId\":\"{TenantId}\",\"incidentId\":\"{UpdateIncidentId}\",\"status\":\"{UpdateStatus}\"}",
                     "httpMethod": "POST",
                     "title": "Update Incident",
                     "description": "Updating incident status...",
@@ -1591,10 +1570,10 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "{FunctionAppUrl}/api/DefenderC2IncidentManager?code={FunctionKey}",
+                    "path": "{FunctionAppUrl}/api/DefenderC2IncidentManager",
                     "headers": [],
                     "params": [],
-                    "body": "{\"action\":\"Add Comment\",\"tenantId\":\"{TenantId}\",\"spnId\":\"{SpnId}\",\"incidentId\":\"{CommentIncidentId}\",\"comment\":\"{IncidentComment}\"}",
+                    "body": "{\"action\":\"Add Comment\",\"tenantId\":\"{TenantId}\",\"incidentId\":\"{CommentIncidentId}\",\"comment\":\"{IncidentComment}\"}",
                     "httpMethod": "POST",
                     "title": "Add Comment",
                     "description": "Adding comment to incident...",
@@ -1645,7 +1624,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/DefenderC2CDManager?code={FunctionKey}\",\"body\":\"{\\\"action\\\":\\\"List Detections\\\",\\\"tenantId\\\":\\\"{TenantId}\\\",\\\"spnId\\\":\\\"{SpnId}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.detections[*]\",\"columns\":[{\"path\":\"$.id\",\"columnId\":\"ID\"},{\"path\":\"$.displayName\",\"columnId\":\"Name\"},{\"path\":\"$.severity\",\"columnId\":\"Severity\"},{\"path\":\"$.enabled\",\"columnId\":\"Enabled\"},{\"path\":\"$.createdBy\",\"columnId\":\"Created By\"},{\"path\":\"$.lastModified\",\"columnId\":\"Modified\"}]}}]}",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/DefenderC2CDManager\",\"body\":\"{\\\"action\\\":\\\"List Detections\\\",\\\"tenantId\\\":\\\"{TenantId}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.detections[*]\",\"columns\":[{\"path\":\"$.id\",\"columnId\":\"ID\"},{\"path\":\"$.displayName\",\"columnId\":\"Name\"},{\"path\":\"$.severity\",\"columnId\":\"Severity\"},{\"path\":\"$.enabled\",\"columnId\":\"Enabled\"},{\"path\":\"$.createdBy\",\"columnId\":\"Created By\"},{\"path\":\"$.lastModified\",\"columnId\":\"Modified\"}]}}]}",
               "size": 0,
               "title": "🛡️ Custom Detection Rules",
               "showExportToExcel": true,
@@ -1731,10 +1710,10 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "{FunctionAppUrl}/api/DefenderC2CDManager?code={FunctionKey}",
+                    "path": "{FunctionAppUrl}/api/DefenderC2CDManager",
                     "headers": [],
                     "params": [],
-                    "body": "{\"action\":\"Create Detection\",\"tenantId\":\"{TenantId}\",\"spnId\":\"{SpnId}\",\"ruleName\":\"{CreateRuleName}\",\"query\":\"{CreateRuleQuery}\",\"severity\":\"{CreateRuleSeverity}\"}",
+                    "body": "{\"action\":\"Create Detection\",\"tenantId\":\"{TenantId}\",\"ruleName\":\"{CreateRuleName}\",\"query\":\"{CreateRuleQuery}\",\"severity\":\"{CreateRuleSeverity}\"}",
                     "httpMethod": "POST",
                     "title": "Create Detection Rule",
                     "description": "Creating custom detection rule...",
@@ -1811,10 +1790,10 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "{FunctionAppUrl}/api/DefenderC2CDManager?code={FunctionKey}",
+                    "path": "{FunctionAppUrl}/api/DefenderC2CDManager",
                     "headers": [],
                     "params": [],
-                    "body": "{\"action\":\"Update Detection\",\"tenantId\":\"{TenantId}\",\"spnId\":\"{SpnId}\",\"ruleId\":\"{UpdateRuleId}\",\"query\":\"{UpdateRuleQuery}\"}",
+                    "body": "{\"action\":\"Update Detection\",\"tenantId\":\"{TenantId}\",\"ruleId\":\"{UpdateRuleId}\",\"query\":\"{UpdateRuleQuery}\"}",
                     "httpMethod": "POST",
                     "title": "Update Detection Rule",
                     "description": "Updating detection rule...",
@@ -1875,10 +1854,10 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "{FunctionAppUrl}/api/DefenderC2CDManager?code={FunctionKey}",
+                    "path": "{FunctionAppUrl}/api/DefenderC2CDManager",
                     "headers": [],
                     "params": [],
-                    "body": "{\"action\":\"Delete Detection\",\"tenantId\":\"{TenantId}\",\"spnId\":\"{SpnId}\",\"ruleId\":\"{DeleteRuleId}\"}",
+                    "body": "{\"action\":\"Delete Detection\",\"tenantId\":\"{TenantId}\",\"ruleId\":\"{DeleteRuleId}\"}",
                     "httpMethod": "POST",
                     "title": "Delete Detection Rule",
                     "description": "Deleting detection rule...",
@@ -1906,7 +1885,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/DefenderC2CDManager?code={FunctionKey}\",\"body\":\"{\\\"action\\\":\\\"Backup Detections\\\",\\\"tenantId\\\":\\\"{TenantId}\\\",\\\"spnId\\\":\\\"{SpnId}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.backup[*]\",\"columns\":[{\"path\":\"$.displayName\",\"columnId\":\"Name\"},{\"path\":\"$.query\",\"columnId\":\"Query\"},{\"path\":\"$.severity\",\"columnId\":\"Severity\"}]}}]}",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/DefenderC2CDManager\",\"body\":\"{\\\"action\\\":\\\"Backup Detections\\\",\\\"tenantId\\\":\\\"{TenantId}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.backup[*]\",\"columns\":[{\"path\":\"$.displayName\",\"columnId\":\"Name\"},{\"path\":\"$.query\",\"columnId\":\"Query\"},{\"path\":\"$.severity\",\"columnId\":\"Severity\"}]}}]}",
               "size": 0,
               "title": "💾 Detection Backup",
               "showExportToExcel": true,
@@ -2047,7 +2026,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/DefenderC2Dispatcher\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"action\",\"value\":\"{CommandType}\"},{\"key\":\"actionName\",\"value\":\"{ActionName}\"},{\"key\":\"deviceIds\",\"value\":\"{DeviceIds}\"},{\"key\":\"params\",\"value\":\"{CommandParams}\"}],\"batchDisabled\":false,\"transformers\":null}",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/DefenderC2Dispatcher\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"action\",\"value\":\"{CommandType}\"},{\"key\":\"actionName\",\"value\":\"{ActionName}\"},{\"key\":\"deviceIds\",\"value\":\"{DeviceIds}\"},{\"key\":\"params\",\"value\":\"{CommandParams}\"}],\"batchDisabled\":false,\"transformers\":null}",
               "size": 4,
               "title": "\ud83c\udfaf Command Execution Status",
               "noDataMessage": "Click 'Run Query' to execute command",
@@ -2067,7 +2046,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"GET\",\"path\":\"{FunctionAppUrl}/api/DefenderC2Dispatcher\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"action\",\"value\":\"getstatus\"},{\"key\":\"actionId\",\"value\":\"{ActionId}\"}],\"batchDisabled\":false,\"transformers\":null}",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"GET\",\"path\":\"{FunctionAppUrl}/api/DefenderC2Dispatcher\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"action\",\"value\":\"getstatus\"},{\"key\":\"actionId\",\"value\":\"{ActionId}\"}],\"batchDisabled\":false,\"transformers\":null}",
               "size": 0,
               "title": "\ud83d\udcca Action Status (Auto-refresh)",
               "noDataMessage": "No active actions to poll. Execute a command first.",
@@ -2129,7 +2108,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"GET\",\"path\":\"{FunctionAppUrl}/api/DefenderC2Dispatcher\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"action\",\"value\":\"getresults\"},{\"key\":\"actionId\",\"value\":\"{ActionId}\"}],\"batchDisabled\":false,\"transformers\":null}",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"GET\",\"path\":\"{FunctionAppUrl}/api/DefenderC2Dispatcher\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"action\",\"value\":\"getresults\"},{\"key\":\"actionId\",\"value\":\"{ActionId}\"}],\"batchDisabled\":false,\"transformers\":null}",
               "size": 0,
               "title": "\ud83d\udccb Command Results",
               "noDataMessage": "No results available yet. Command may still be executing.",
@@ -2155,7 +2134,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"GET\",\"path\":\"{FunctionAppUrl}/api/DefenderC2Dispatcher\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"spnId\",\"value\":\"{SpnId}\"},{\"key\":\"action\",\"value\":\"history\"},{\"key\":\"limit\",\"value\":\"20\"}],\"batchDisabled\":false,\"transformers\":null}",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"GET\",\"path\":\"{FunctionAppUrl}/api/DefenderC2Dispatcher\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"action\",\"value\":\"history\"},{\"key\":\"limit\",\"value\":\"20\"}],\"batchDisabled\":false,\"transformers\":null}",
               "size": 4,
               "title": "\ud83d\udcca Execution History (Last 20)",
               "noDataMessage": "No command history available.",
