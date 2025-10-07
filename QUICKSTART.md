@@ -1,12 +1,27 @@
 # Quick Start Guide
 
-Get up and running with defenderc2xsoar in under 30 minutes!
+Get up and running with DefenderC2 in under 15 minutes using one-click deployment!
 
-## Prerequisites
+## 🚀 Fastest Way: One-Click Deployment
 
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fakefallonitis%2Fdefenderc2xsoar%2Fmain%2Fdeployment%2Fazuredeploy.json)
+
+**Prerequisites:**
 - Azure subscription with Contributor access
 - Global Administrator or Application Administrator in Entra ID
 - Microsoft Defender for Endpoint deployed
+- Multi-tenant App Registration (see setup below)
+
+**What you'll get:**
+- ✅ Complete DefenderC2 deployment in Azure
+- ✅ Auto-discovery workbook (zero manual configuration!)
+- ✅ Ready to use in 15 minutes
+
+---
+
+## Prerequisites
+
+Before clicking "Deploy to Azure", you need:
 
 ## Step-by-Step Setup
 
@@ -56,52 +71,43 @@ In your app registration:
 
 2. Click **Grant admin consent for [Your Tenant]**
 
-### 3. Deploy Function App (5 minutes)
+### 3. Create Client Secret (2 minutes)
 
-> **⚠️ DEPLOY BUTTON OFTEN FAILS**: If you get a template download error, skip the button below and follow the **Manual Deployment Steps** instead.
+In your app registration:
 
-#### Quick Deploy Button (if available):
+1. Go to **Certificates & secrets** > **Client secrets**
+2. Click **New client secret**
+3. Description: `DefenderC2-Secret`
+4. Expires: Choose duration (recommended: 24 months)
+5. Click **Add**
+6. **Copy the secret Value immediately** - you won't be able to see it again!
+
+### 4. Deploy DefenderC2 to Azure (5 minutes)
+
+Now click the Deploy to Azure button:
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fakefallonitis%2Fdefenderc2xsoar%2Fmain%2Fdeployment%2Fazuredeploy.json)
 
-#### Manual Deployment Steps (recommended):
-
-1. Go to [Azure Portal](https://portal.azure.com)
-2. Search for **"Deploy a custom template"**
-3. Click **"Build your own template in the editor"**
-4. Open [deployment/azuredeploy.json](deployment/azuredeploy.json) from this GitHub repository
-5. Copy the entire JSON content and paste it into the editor
-6. Click **"Save"**
-
-Then continue with the parameters below:
-
-Fill in:
-- **Function App Name**: `mde-automator-yourname` (must be globally unique)
-- **Spn Id**: Paste your Application ID from step 1
-- **Enable Managed Identity**: Leave as `true`
+Fill in the deployment form:
+- **Subscription**: Select your subscription
+- **Resource Group**: Create new or select existing
+- **Region**: Choose your preferred Azure region
+- **Function App Name**: `defenderc2-yourname` (must be globally unique)
+- **Spn Id**: Paste your Application (Client) ID from step 1
+- **Spn Secret**: Paste your Client Secret from step 3
+- **Project Tag**: `DefenderC2`
+- **Created By Tag**: Your email
+- **Delete At Tag**: `Never` (or a date like `2025-12-31`)
 
 Click **Review + create** > **Create**
 
-Wait for deployment to complete (~3 minutes), then:
-- Copy the **functionAppUrl** from the Outputs tab
-- Copy the **managedIdentityPrincipalId** from the Outputs tab
+**Wait for deployment** (~5 minutes). This deploys:
+- Azure Function App with 6 functions
+- DefenderC2 Command & Control Workbook
+- Storage Account and App Service Plan
+- All configuration and settings
 
-### 4. Link Managed Identity (5 minutes)
-
-Back in your App Registration:
-
-1. Go to **Certificates & secrets** > **Federated credentials**
-2. Click **Add credential**
-3. Scenario: **Other issuer**
-4. Fill in:
-   - **Issuer**: `https://login.microsoftonline.com/YOUR-TENANT-ID/v2.0`
-     - Replace `YOUR-TENANT-ID` with your actual tenant ID
-   - **Subject identifier**: Paste the `managedIdentityPrincipalId` from step 3
-   - **Name**: `FunctionAppManagedIdentity`
-   - **Audience**: `api://AzureADTokenExchange`
-5. Click **Add**
-
-### 5. Deploy Workbook (5 minutes)
+### 5. Open Your Workbook (2 minutes)
 
 1. Go to Azure Portal > **Monitor** > **Workbooks**
 2. Click **New** > Click the **Advanced Editor** button (`</>`)
@@ -111,24 +117,41 @@ Back in your App Registration:
 6. Click **Apply**
 7. Click **Done Editing**
 8. Click **Save** (💾 icon)
-9. Give it a name: `Defender C2`
-10. Click **Apply**
+Once deployment completes:
 
-### 6. Configure Workbook (2 minutes)
+1. Go to **Azure Portal** > **Monitor** > **Workbooks**
+2. Look for **"DefenderC2 Command & Control Console"**
+3. Click to open it
+4. Pin it to your dashboard for quick access
 
-In your workbook, fill in the parameters at the top:
+### 6. Start Using DefenderC2! (Zero Configuration)
 
-1. **Subscription**: Select your subscription
-2. **Workspace**: Select your Log Analytics workspace (where MDE sends data)
-3. **Target Tenant ID**: Your tenant ID (where MDE is deployed)
-4. **Function App Base URL**: The `functionAppUrl` from step 3 (e.g., `https://mde-automator-yourname.azurewebsites.net`)
-5. **Service Principal (App) ID**: Your Application ID from step 1
+**That's it!** The workbook uses auto-discovery for everything:
 
-**Save the workbook**
+**You only need to select:**
+1. **Subscription**: Choose your Azure subscription from dropdown
+2. **Workspace**: Choose your Log Analytics workspace from dropdown
 
-### 7. Deploy Function Code (5 minutes)
+**Everything else is automatic:**
+- ✅ Tenant ID: Auto-extracted from workspace
+- ✅ Function App URL: Auto-discovered via resource tags
+- ✅ Service Principal ID: Read from Function App environment
+- ✅ Authentication: Anonymous (no keys needed!)
 
-You need to deploy the PowerShell function code. Choose one method:
+**Now you can:**
+- Isolate/unisolate devices
+- Run antivirus scans
+- Execute advanced hunting queries
+- Manage threat indicators
+- Handle incidents
+- Create custom detections
+- And much more!
+
+---
+
+## Alternative: Manual Function Deployment
+
+If you need to update function code manually, you can use:
 
 #### Option A: Azure CLI
 
@@ -144,7 +167,7 @@ cd ..
 # Deploy
 az functionapp deployment source config-zip \
   --resource-group YOUR-RESOURCE-GROUP \
-  --name mde-automator-yourname \
+  --name defenderc2-yourname \
   --src functions.zip
 ```
 
