@@ -32,18 +32,24 @@ Specialized workbook for file operations:
 
 ## 🎯 Quick Start
 
-### 1. Prerequisites
-- Azure subscription with Sentinel/Log Analytics workspace
-- DefenderC2 Function App deployed (with 'defenderc2' in name or Project tag)
-- Multi-tenant app registration with MDE API permissions
+### 1. Automatic Deployment
 
-### 2. Deploy Workbook
+**🎉 The workbook is automatically deployed when you use the "Deploy to Azure" button!**
+
+The ARM template (`deployment/azuredeploy.json`) includes the workbook embedded as base64-encoded content. When you deploy the solution, you get:
+- ✅ Azure Function App
+- ✅ DefenderC2 Command & Control Workbook (automatically deployed)
+- ✅ Storage Account and App Service Plan
+- ✅ All configuration and settings
+
+### 2. Access Your Workbook
+
+After deployment completes:
 
 1. Open Azure Portal → **Monitor** → **Workbooks**
-2. Click **New** → **Advanced Editor** (`</>` icon)
-3. Copy contents of `DefenderC2-Workbook.json`
-4. Paste into editor and click **Apply**
-5. Save with title: **DefenderC2 Command & Control Console**
+2. Look for **"DefenderC2 Command & Control Console"**
+3. Click to open it
+4. Pin it to your dashboard for quick access
 
 ### 3. Configure (Zero Configuration Required!)
 
@@ -54,6 +60,16 @@ Specialized workbook for file operations:
    - ✅ Function App URL (auto-discovered via ARG query)
    - ✅ Service Principal ID (read from function app env vars)
    - ✅ Authentication (anonymous - no keys needed)
+
+### Alternative: Manual Deployment (Advanced Users Only)
+
+If you need to manually deploy or update the workbook:
+
+1. Open Azure Portal → **Monitor** → **Workbooks**
+2. Click **New** → **Advanced Editor** (`</>` icon)
+3. Copy contents of `DefenderC2-Workbook.json`
+4. Paste into editor and click **Apply**
+5. Save with title: **DefenderC2 Command & Control Console**
 
 ## 🔧 How Auto-Discovery Works
 
