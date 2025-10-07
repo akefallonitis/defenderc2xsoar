@@ -2027,7 +2027,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/DefenderC2Dispatcher\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"action\",\"value\":\"{CommandType}\"},{\"key\":\"actionName\",\"value\":\"{ActionName}\"},{\"key\":\"deviceIds\",\"value\":\"{DeviceIds}\"},{\"key\":\"params\",\"value\":\"{CommandParams}\"}],\"batchDisabled\":false,\"transformers\":null}",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/DefenderC2Dispatcher\",\"batchDisabled\":false,\"transformers\":null,\"httpBodySchema\":\"{\\\\\\\"tenantId\\\\\\\":\\\\\\\"{TenantId}\\\\\\\",\\\\\\\"action\\\\\\\":\\\\\\\"{CommandType}\\\\\\\",\\\\\\\"actionName\\\\\\\":\\\\\\\"{ActionName}\\\\\\\",\\\\\\\"deviceIds\\\\\\\":\\\\\\\"{DeviceIds}\\\\\\\",\\\\\\\"params\\\\\\\":\\\\\\\"{CommandParams}\\\\\\\"}\"}",
               "size": 4,
               "title": "\ud83c\udfaf Command Execution Status",
               "noDataMessage": "Click 'Run Query' to execute command",
@@ -2047,7 +2047,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"GET\",\"path\":\"{FunctionAppUrl}/api/DefenderC2Dispatcher\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"action\",\"value\":\"getstatus\"},{\"key\":\"actionId\",\"value\":\"{ActionId}\"}],\"batchDisabled\":false,\"transformers\":null}",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/DefenderC2Dispatcher\",\"batchDisabled\":false,\"transformers\":null,\"httpBodySchema\":\"{\\\\\\\"tenantId\\\\\\\":\\\\\\\"{TenantId}\\\\\\\",\\\\\\\"action\\\\\\\":\\\\\\\"getstatus\\\\\\\",\\\\\\\"actionId\\\\\\\":\\\\\\\"{ActionId}\\\\\\\"}\"}",
               "size": 0,
               "title": "\ud83d\udcca Action Status (Auto-refresh)",
               "noDataMessage": "No active actions to poll. Execute a command first.",
@@ -2109,7 +2109,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"GET\",\"path\":\"{FunctionAppUrl}/api/DefenderC2Dispatcher\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"action\",\"value\":\"getresults\"},{\"key\":\"actionId\",\"value\":\"{ActionId}\"}],\"batchDisabled\":false,\"transformers\":null}",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/DefenderC2Dispatcher\",\"batchDisabled\":false,\"transformers\":null,\"httpBodySchema\":\"{\\\\\\\"tenantId\\\\\\\":\\\\\\\"{TenantId}\\\\\\\",\\\\\\\"action\\\\\\\":\\\\\\\"getresults\\\\\\\",\\\\\\\"actionId\\\\\\\":\\\\\\\"{ActionId}\\\\\\\"}\"}",
               "size": 0,
               "title": "\ud83d\udccb Command Results",
               "noDataMessage": "No results available yet. Command may still be executing.",
@@ -2135,7 +2135,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"GET\",\"path\":\"{FunctionAppUrl}/api/DefenderC2Dispatcher\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"action\",\"value\":\"history\"},{\"key\":\"limit\",\"value\":\"20\"}],\"batchDisabled\":false,\"transformers\":null}",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/DefenderC2Dispatcher\",\"batchDisabled\":false,\"transformers\":null,\"httpBodySchema\":\"{\\\\\\\"tenantId\\\\\\\":\\\\\\\"{TenantId}\\\\\\\",\\\\\\\"action\\\\\\\":\\\\\\\"history\\\\\\\",\\\\\\\"limit\\\\\\\":\\\\\\\"20\\\\\\\"}\"}",
               "size": 4,
               "title": "\ud83d\udcca Execution History (Last 20)",
               "noDataMessage": "No command history available.",
