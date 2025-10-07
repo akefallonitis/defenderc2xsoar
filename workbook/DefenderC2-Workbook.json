@@ -70,8 +70,8 @@
             "name": "TenantId",
             "label": "Target Tenant ID",
             "type": 1,
-            "isRequired": true,
-            "query": "Resources | where type =~ 'microsoft.operationalinsights/workspaces' | where id == '{Workspace}' | project tenantId",
+            "isRequired": false,
+            "query": "Resources | where type =~ 'microsoft.operationalinsights/workspaces' | where id == '{Workspace}' | extend TenantId = tostring(properties.customerId) | project value = TenantId, label = TenantId",
             "crossComponentResources": [
               "{Subscription}"
             ],
@@ -80,7 +80,8 @@
               "durationMs": 86400000
             },
             "queryType": 1,
-            "resourceType": "microsoft.resourcegraph/resources"
+            "resourceType": "microsoft.resourcegraph/resources",
+            "description": "Auto-discovered from Log Analytics Workspace. This is the Workspace ID (Customer ID) used as the target tenant for Defender API calls."
           },
           {
             "id": "9d5e6f49-b7de-5753-a0e1-3f3f6e8c4d2b",
@@ -88,12 +89,12 @@
             "name": "FunctionAppUrl",
             "label": "Function App (Auto-Discovered)",
             "type": 1,
-            "isRequired": true,
-            "query": "Resources | where type =~ 'microsoft.web/sites' | where kind =~ 'functionapp' | where name contains 'defenderc2' or tags['Project'] =~ 'defenderc2' | extend FunctionUrl = strcat('https://', name, '.azurewebsites.net') | project FunctionUrl | limit 1",
+            "isRequired": false,
+            "query": "Resources | where type =~ 'microsoft.web/sites' | where kind =~ 'functionapp' | where name contains 'defenderc2' or tags['Project'] =~ 'defenderc2' | extend FunctionUrl = strcat('https://', name, '.azurewebsites.net') | project value = FunctionUrl, label = name",
             "crossComponentResources": [
               "{Subscription}"
             ],
-            "description": "Auto-discovered DefenderC2 Function App. Searches subscription for function apps with 'defenderc2' in name or Project tag.",
+            "description": "Auto-discovered DefenderC2 Function App URL. Searches subscription for function apps with 'defenderc2' in name or Project tag. If not found, manually enter: https://your-function-app.azurewebsites.net",
             "timeContext": {
               "durationMs": 86400000
             },
