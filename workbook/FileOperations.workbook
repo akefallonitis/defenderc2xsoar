@@ -12,7 +12,62 @@
       "type": 9,
       "content": {
         "version": "KqlParameterItem/1.0",
+        "crossComponentResources": [
+          "{Subscription}"
+        ],
         "parameters": [
+          {
+            "id": "subscription-param",
+            "version": "KqlParameterItem/1.0",
+            "name": "Subscription",
+            "type": 6,
+            "isRequired": true,
+            "query": "Resources | where type =~ 'microsoft.operationalinsights/workspaces' | summarize by subscriptionId",
+            "crossComponentResources": [
+              "value::all"
+            ],
+            "typeSettings": {
+              "additionalResourceOptions": [
+                "value::all"
+              ],
+              "includeAll": false,
+              "showDefault": false
+            },
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources"
+          },
+          {
+            "id": "workspace-param",
+            "version": "KqlParameterItem/1.0",
+            "name": "Workspace",
+            "type": 5,
+            "isRequired": true,
+            "query": "Resources | where type =~ 'microsoft.operationalinsights/workspaces' | project id, name, location",
+            "crossComponentResources": [
+              "{Subscription}"
+            ],
+            "typeSettings": {
+              "additionalResourceOptions": [],
+              "showDefault": false
+            },
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources"
+          },
+          {
+            "id": "tenant-id",
+            "version": "KqlParameterItem/1.0",
+            "name": "TenantId",
+            "label": "Target Tenant ID",
+            "type": 1,
+            "isRequired": true,
+            "query": "Resources | where type =~ 'microsoft.operationalinsights/workspaces' | where id == '{Workspace}' | project tenantId",
+            "crossComponentResources": [
+              "{Subscription}"
+            ],
+            "isHiddenWhenLocked": true,
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources"
+          },
           {
             "id": "function-app-url",
             "version": "KqlParameterItem/1.0",
@@ -20,33 +75,13 @@
             "label": "Function App URL",
             "type": 1,
             "isRequired": true,
-            "value": "https://yourfuncapp.azurewebsites.net",
-            "typeSettings": {
-              "multiLineText": false
-            }
-          },
-          {
-            "id": "function-key",
-            "version": "KqlParameterItem/1.0",
-            "name": "FunctionKey",
-            "label": "Function Key",
-            "type": 1,
-            "isRequired": true,
-            "typeSettings": {
-              "multiLineText": false,
-              "isSecret": true
-            }
-          },
-          {
-            "id": "tenant-id",
-            "version": "KqlParameterItem/1.0",
-            "name": "TenantId",
-            "label": "Tenant ID",
-            "type": 1,
-            "isRequired": true,
-            "typeSettings": {
-              "multiLineText": false
-            }
+            "query": "Resources | where type =~ 'microsoft.web/sites' | where kind =~ 'functionapp' | where name contains 'defenderc2' or tags['Project'] =~ 'defenderc2' | extend FunctionUrl = strcat('https://', name, '.azurewebsites.net') | project FunctionUrl | limit 1",
+            "crossComponentResources": [
+              "{Subscription}"
+            ],
+            "description": "DefenderC2 Function App URL (auto-discovered). If not found, manually enter: https://your-function-app.azurewebsites.net",
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources"
           }
         ],
         "style": "pills",
@@ -135,7 +170,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/DefenderC2Orchestrator?code={FunctionKey}\",\"urlParams\":[],\"batchDisabled\":false,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.data\",\"columns\":[{\"path\":\"$.fileName\",\"columnid\":\"fileName\"},{\"path\":\"$.size\",\"columnid\":\"size\"},{\"path\":\"$.lastModified\",\"columnid\":\"lastModified\"},{\"path\":\"$.contentType\",\"columnid\":\"contentType\"}]}},{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[]}}],\"httpBodySchema\":\"{\\\"Function\\\":\\\"ListLibraryFiles\\\",\\\"tenantId\\\":\\\"{TenantId}\\\"}\"}",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"path\":\"{FunctionAppUrl}/api/DefenderC2Orchestrator\",\"urlParams\":[],\"batchDisabled\":false,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.data\",\"columns\":[{\"path\":\"$.fileName\",\"columnid\":\"fileName\"},{\"path\":\"$.size\",\"columnid\":\"size\"},{\"path\":\"$.lastModified\",\"columnid\":\"lastModified\"},{\"path\":\"$.contentType\",\"columnid\":\"contentType\"}]}},{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[]}}],\"httpBodySchema\":\"{\\\"Function\\\":\\\"ListLibraryFiles\\\",\\\"tenantId\\\":\\\"{TenantId}\\\"}\"}",
               "size": 0,
               "title": "Library Files",
               "showRefreshButton": true,
@@ -236,7 +271,7 @@
                   "style": "primary",
                   "linkIsContextBlade": false,
                   "armActionContext": {
-                    "path": "{FunctionAppUrl}/api/PutLiveResponseFileFromLibrary?code={FunctionKey}",
+                    "path": "{FunctionAppUrl}/api/PutLiveResponseFileFromLibrary",
                     "headers": [],
                     "params": [],
                     "body": "{\"fileName\":\"{DeployFileName}\",\"DeviceIds\":\"{DeployDeviceId}\",\"tenantId\":\"{TenantId}\"}",
@@ -299,7 +334,7 @@
                   "style": "secondary",
                   "linkIsContextBlade": false,
                   "armActionContext": {
-                    "path": "{FunctionAppUrl}/api/DefenderC2Orchestrator?code={FunctionKey}",
+                    "path": "{FunctionAppUrl}/api/DefenderC2Orchestrator",
                     "headers": [],
                     "params": [],
                     "body": "{\"Function\":\"GetLibraryFile\",\"fileName\":\"{LibraryFileName}\",\"tenantId\":\"{TenantId}\"}",
@@ -318,7 +353,7 @@
                   "style": "secondary",
                   "linkIsContextBlade": false,
                   "armActionContext": {
-                    "path": "{FunctionAppUrl}/api/DefenderC2Orchestrator?code={FunctionKey}",
+                    "path": "{FunctionAppUrl}/api/DefenderC2Orchestrator",
                     "headers": [],
                     "params": [],
                     "body": "{\"Function\":\"DeleteLibraryFile\",\"fileName\":\"{LibraryFileName}\",\"tenantId\":\"{TenantId}\"}",
@@ -513,7 +548,7 @@
                   "style": "primary",
                   "linkIsContextBlade": false,
                   "armActionContext": {
-                    "path": "{FunctionAppUrl}/api/GetLiveResponseFile?code={FunctionKey}",
+                    "path": "{FunctionAppUrl}/api/GetLiveResponseFile",
                     "headers": [],
                     "params": [],
                     "body": "{\"DeviceId\":\"{DownloadDeviceId}\",\"FilePath\":\"{DownloadFilePath}\",\"tenantId\":\"{TenantId}\"}",
