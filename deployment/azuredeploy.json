@@ -211,7 +211,7 @@
         "DeleteAt": "[parameters('deleteAtTag')]"
       },
       "properties": {
-        "displayName": "MDE Automator Workbook",
+        "displayName": "DefenderC2 Command & Control Console",
         "serializedData": "[base64ToString(variables('workbookContent'))]",
         "version": "1.0",
         "sourceId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name)]",

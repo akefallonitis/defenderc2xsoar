@@ -5,6 +5,21 @@
 
 **Command & Control for Microsoft Defender for Endpoint** - A modern automation platform inspired by [MDEAutomator](https://github.com/msdirtbag/MDEAutomator), offering flexible deployment options for security operations teams.
 
+## 🚀 Quick Deploy to Azure
+
+Deploy the complete DefenderC2 solution (Azure Functions + Workbook) with one click:
+
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fakefallonitis%2Fdefenderc2xsoar%2Fmain%2Fdeployment%2Fazuredeploy.json)
+
+This will deploy:
+- ✅ Azure Function App (PowerShell 7.4 runtime)
+- ✅ 6 DefenderC2 Functions with anonymous authentication
+- ✅ DefenderC2 Command & Control Workbook with auto-discovery
+- ✅ Storage Account and App Service Plan
+- ✅ Managed Identity configuration
+
+> **Note**: You'll need to provide your multi-tenant App Registration credentials during deployment. See [Prerequisites](DEPLOYMENT.md#prerequisites) for setup instructions.
+
 ---
 
 ## 📋 Table of Contents
