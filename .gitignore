@@ -44,3 +44,4 @@ node_modules/
 # Azure specific
 .azure/
 deploy-package.zip
+*.backup
