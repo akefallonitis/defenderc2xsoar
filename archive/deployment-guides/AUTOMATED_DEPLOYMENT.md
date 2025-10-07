@@ -1,14 +1,31 @@
-# Automated Deployment Guide
+# Automated Deployment Guide (OPTIONAL - ADVANCED)
 
-This guide explains how to set up automated deployments for the Azure Functions and Workbook using GitHub Actions, similar to Azure Sentinel connectors.
+> ⚠️ **NOTE**: This guide is for **repository maintainers and advanced users only**. 
+> 
+> **Most users should use the one-click "Deploy to Azure" button** instead, which is much simpler and doesn't require any GitHub configuration or secrets.
+>
+> See [DEPLOYMENT.md](../../DEPLOYMENT.md) or [QUICKSTART.md](../../QUICKSTART.md) for the recommended deployment method.
+
+---
 
 ## 🎯 Overview
 
-This repository includes automated deployment workflows that:
+This guide explains how to set up **optional** automated deployments for the Azure Functions and Workbook using GitHub Actions. This is useful for:
+
+- **Repository maintainers** who want automatic deployments on code changes
+- **Contributors** testing changes before creating pull requests  
+- **Organizations** managing their own fork with custom modifications
+
+**GitHub Actions workflows provide:**
 - ✅ Automatically deploy Azure Functions when code changes in `functions/`
 - ✅ Automatically deploy Azure Workbook when changes occur in `workbook/`
 - ✅ Support manual deployment via GitHub Actions UI
-- ✅ Include fallback scripts for manual deployment
+- ✅ CI/CD pipeline for continuous deployment
+
+**However, for initial deployment and most users:**
+- ❌ Requires complex GitHub secrets setup
+- ❌ Requires existing Azure Function App (chicken-and-egg problem)
+- ❌ More complex than one-click ARM template deployment
 
 ## 📋 Prerequisites
 
@@ -17,7 +34,7 @@ Before setting up automated deployments, you need:
 1. **Azure Subscription** - An active Azure subscription
 2. **Azure Function App** - Already deployed (use `deployment/azuredeploy.json`)
 3. **Azure Log Analytics Workspace** - For workbook deployment
-4. **GitHub Repository** - Fork or clone of this repository
+4. **GitHub Repository** - Fork or clone of this repository with workflow files enabled
 5. **Azure Service Principal** - For GitHub Actions authentication
 
 ## 🔐 Setup GitHub Secrets
@@ -449,3 +466,17 @@ For issues with automated deployment:
    - Workflow name and run ID
    - Error messages (redact sensitive info)
    - Steps to reproduce
+
+---
+
+## 📁 Workflow Files Location
+
+The GitHub Actions workflow files have been archived and are located at:
+`/archive/github-workflows/`
+
+To enable these workflows:
+1. Copy the workflow files from `archive/github-workflows/` to `.github/workflows/`
+2. Configure the required GitHub secrets as described in this guide
+3. Push the workflow files to your repository
+
+**Remember**: For most users, the one-click ARM template deployment is the recommended approach.

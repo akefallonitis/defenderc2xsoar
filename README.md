@@ -1,8 +1,5 @@
 # DefenderC2 XSOAR
 
-[![Deploy Azure Functions](https://github.com/akefallonitis/defenderc2xsoar/actions/workflows/deploy-azure-functions.yml/badge.svg)](https://github.com/akefallonitis/defenderc2xsoar/actions/workflows/deploy-azure-functions.yml)
-[![Deploy Workbook](https://github.com/akefallonitis/defenderc2xsoar/actions/workflows/deploy-workbook.yml/badge.svg)](https://github.com/akefallonitis/defenderc2xsoar/actions/workflows/deploy-workbook.yml)
-
 **Command & Control for Microsoft Defender for Endpoint** - A modern automation platform inspired by [MDEAutomator](https://github.com/msdirtbag/MDEAutomator), offering flexible deployment options for security operations teams.
 
 ## 🚀 Quick Deploy to Azure
