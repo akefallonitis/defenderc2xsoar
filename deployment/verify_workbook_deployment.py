@@ -241,7 +241,8 @@ def verify_arm_action_endpoints(workbook: Dict, workbook_name: str) -> Tuple[boo
     for i, q in enumerate(queries, 1):
         query_obj = q['query_obj']
         path = query_obj.get('path', '')
-        body_schema = query_obj.get('httpBodySchema', '')
+        # Check both 'body' (new format) and 'httpBodySchema' (old format) for backward compatibility
+        body_schema = query_obj.get('body', query_obj.get('httpBodySchema', ''))
         
         # Extract endpoint name
         endpoint_name = path.split('/api/')[-1] if '/api/' in path else 'Unknown'
