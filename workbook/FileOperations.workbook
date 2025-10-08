@@ -4,7 +4,7 @@
     {
       "type": 1,
       "content": {
-        "json": "# \ud83d\udce6 File Operations - Library Management\n\nManage files in Azure Storage and deploy to MDE devices via Live Response.\n\n## Features\n- \u2705 Upload files once to Azure Storage library\n- \u2705 Deploy files to devices with one click\n- \u2705 Download files from devices automatically\n- \u2705 No manual Base64 encoding required\n- \u2705 Team collaboration with shared file library\n\n---"
+        "json": "# 📦 File Operations - Library Management\n\nManage files in Azure Storage and deploy to MDE devices via Live Response.\n\n## Features\n- ✅ Upload files once to Azure Storage library\n- ✅ Deploy files to devices with one click\n- ✅ Download files from devices automatically\n- ✅ No manual Base64 encoding required\n- ✅ Team collaboration with shared file library\n\n---"
       },
       "name": "header-text"
     },
@@ -99,7 +99,7 @@
             "id": "tab-library",
             "cellValue": "selectedTab",
             "linkTarget": "parameter",
-            "linkLabel": "\ud83d\udcda Library Management",
+            "linkLabel": "📚 Library Management",
             "subTarget": "library",
             "preText": "",
             "style": "link"
@@ -108,7 +108,7 @@
             "id": "tab-upload",
             "cellValue": "selectedTab",
             "linkTarget": "parameter",
-            "linkLabel": "\ud83d\udce4 Upload Operations",
+            "linkLabel": "📤 Upload Operations",
             "subTarget": "upload",
             "style": "link"
           },
@@ -116,7 +116,7 @@
             "id": "tab-download",
             "cellValue": "selectedTab",
             "linkTarget": "parameter",
-            "linkLabel": "\ud83d\udce5 Download Operations",
+            "linkLabel": "📥 Download Operations",
             "subTarget": "download",
             "style": "link"
           }
@@ -133,7 +133,7 @@
           {
             "type": 1,
             "content": {
-              "json": "## \ud83d\udcda Library Management\n\nView and manage files in your Azure Storage library.\n\n### Upload Files\n\nTo add files to the library, use one of these methods:\n\n**Option A: Azure Portal** (Easiest)\n1. Navigate to Storage Account \u2192 Containers \u2192 library\n2. Click Upload and select files\n\n**Option B: Azure CLI**\n```bash\naz storage blob upload --account-name <storage> --container-name library --name script.ps1 --file script.ps1\n```\n\n**Option C: PowerShell Script**\n```powershell\n.\\scripts\\Upload-ToLibrary.ps1 -FilePath \"C:\\tools\\script.ps1\" -StorageAccountName \"<storage>\" -ResourceGroup \"rg-mde\"\n```\n\n---"
+              "json": "## 📚 Library Management\n\nView and manage files in your Azure Storage library.\n\n### Upload Files\n\nTo add files to the library, use one of these methods:\n\n**Option A: Azure Portal** (Easiest)\n1. Navigate to Storage Account → Containers → library\n2. Click Upload and select files\n\n**Option B: Azure CLI**\n```bash\naz storage blob upload --account-name <storage> --container-name library --name script.ps1 --file script.ps1\n```\n\n**Option C: PowerShell Script**\n```powershell\n.\\scripts\\Upload-ToLibrary.ps1 -FilePath \"C:\\tools\\script.ps1\" -StorageAccountName \"<storage>\" -ResourceGroup \"rg-mde\"\n```\n\n---"
             },
             "conditionalVisibility": {
               "parameterName": "selectedTab",
@@ -152,7 +152,7 @@
                   "id": "refresh-library",
                   "cellValue": "refreshLibrary",
                   "linkTarget": "parameter",
-                  "linkLabel": "\ud83d\udd04 Refresh Library Files",
+                  "linkLabel": "🔄 Refresh Library Files",
                   "subTarget": "{\"value\":\"1\",\"criteria\":\"always\"}",
                   "style": "primary"
                 }
@@ -169,7 +169,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"path\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Orchestrator\",\"batchDisabled\":false,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.data\",\"columns\":[{\"path\":\"$.fileName\",\"columnid\":\"fileName\"},{\"path\":\"$.size\",\"columnid\":\"size\"},{\"path\":\"$.lastModified\",\"columnid\":\"lastModified\"},{\"path\":\"$.contentType\",\"columnid\":\"contentType\"}]}},{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[]}}],\"httpBodySchema\":\"{\\\"Function\\\":\\\"ListLibraryFiles\\\",\\\"tenantId\\\":\\\"{TenantId}\\\"}\"}",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"path\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Orchestrator\",\"batchDisabled\":false,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.data\",\"columns\":[{\"path\":\"$.fileName\",\"columnid\":\"fileName\"},{\"path\":\"$.size\",\"columnid\":\"size\"},{\"path\":\"$.lastModified\",\"columnid\":\"lastModified\"},{\"path\":\"$.contentType\",\"columnid\":\"contentType\"}]}},{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[]}}],\"body\":\"{\\\"Function\\\":\\\"ListLibraryFiles\\\",\\\"tenantId\\\":\\\"{TenantId}\\\"}\"}",
               "size": 0,
               "title": "Library Files",
               "showRefreshButton": true,
@@ -266,7 +266,7 @@
                   "id": "deploy-action",
                   "cellValue": "deployResult",
                   "linkTarget": "ArmAction",
-                  "linkLabel": "\ud83d\udce4 Deploy to Device",
+                  "linkLabel": "📤 Deploy to Device",
                   "style": "primary",
                   "linkIsContextBlade": false,
                   "armActionContext": {
@@ -334,7 +334,7 @@
                   "id": "download-library-file",
                   "cellValue": "downloadLibraryResult",
                   "linkTarget": "ArmAction",
-                  "linkLabel": "\ud83d\udce5 Download from Library",
+                  "linkLabel": "📥 Download from Library",
                   "style": "secondary",
                   "linkIsContextBlade": false,
                   "armActionContext": {
@@ -358,7 +358,7 @@
                   "id": "delete-library-file",
                   "cellValue": "deleteLibraryResult",
                   "linkTarget": "ArmAction",
-                  "linkLabel": "\ud83d\uddd1\ufe0f Delete from Library",
+                  "linkLabel": "🗑️ Delete from Library",
                   "style": "secondary",
                   "linkIsContextBlade": false,
                   "armActionContext": {
@@ -405,7 +405,7 @@
           {
             "type": 1,
             "content": {
-              "json": "## \ud83d\udce4 Upload Operations\n\nAlternative methods for uploading files to devices.\n\n### Option A: Deploy from Library (Recommended)\nUse the **Library Management** tab to deploy files from your Azure Storage library.\n\n### Option B: Direct Text Paste\nFor small text files, paste content here. The workbook will Base64 encode it automatically.\n\n### Option C: Manual Base64 Paste\nIf you have a Base64-encoded file, paste it directly.\n\n---"
+              "json": "## 📤 Upload Operations\n\nAlternative methods for uploading files to devices.\n\n### Option A: Deploy from Library (Recommended)\nUse the **Library Management** tab to deploy files from your Azure Storage library.\n\n### Option B: Direct Text Paste\nFor small text files, paste content here. The workbook will Base64 encode it automatically.\n\n### Option C: Manual Base64 Paste\nIf you have a Base64-encoded file, paste it directly.\n\n---"
             },
             "conditionalVisibility": {
               "parameterName": "selectedTab",
@@ -502,7 +502,7 @@
           {
             "type": 1,
             "content": {
-              "json": "## \ud83d\udce5 Download Operations\n\nDownload files from MDE devices.\n\n### Instructions\n1. Enter the Device ID of the target device\n2. Enter the full file path on the device (e.g., `C:\\Windows\\Temp\\suspicious.exe`)\n3. Click **Download File from Device**\n4. Wait for the operation to complete\n5. The file will be returned as Base64 - use KQL to decode and download\n\n---"
+              "json": "## 📥 Download Operations\n\nDownload files from MDE devices.\n\n### Instructions\n1. Enter the Device ID of the target device\n2. Enter the full file path on the device (e.g., `C:\\Windows\\Temp\\suspicious.exe`)\n3. Click **Download File from Device**\n4. Wait for the operation to complete\n5. The file will be returned as Base64 - use KQL to decode and download\n\n---"
             },
             "conditionalVisibility": {
               "parameterName": "selectedTab",
@@ -558,7 +558,7 @@
                   "id": "download-action",
                   "cellValue": "downloadResult",
                   "linkTarget": "ArmAction",
-                  "linkLabel": "\ud83d\udce5 Download File from Device",
+                  "linkLabel": "📥 Download File from Device",
                   "style": "primary",
                   "linkIsContextBlade": false,
                   "armActionContext": {
@@ -611,7 +611,7 @@
     {
       "type": 1,
       "content": {
-        "json": "---\n\n## \ud83d\udcda Documentation\n\n- **[FILE_OPERATIONS_GUIDE.md](https://github.com/akefallonitis/defenderc2xsoar/blob/main/archive/feature-guides/FILE_OPERATIONS_GUIDE.md)** - Complete user guide\n- **[LIBRARY_SETUP.md](https://github.com/akefallonitis/defenderc2xsoar/blob/main/archive/feature-guides/LIBRARY_SETUP.md)** - 5-minute setup guide\n- **[GitHub Repository](https://github.com/akefallonitis/defenderc2xsoar)** - Source code and issues\n\n## \ud83d\udd27 Support\n\nFor issues or questions:\n1. Check the [Troubleshooting Guide](https://github.com/akefallonitis/defenderc2xsoar/blob/main/archive/feature-guides/FILE_OPERATIONS_GUIDE.md#troubleshooting)\n2. Review Application Insights logs\n3. Open a GitHub issue with details\n\n---\n\n**Version**: 1.0.0  \n**Last Updated**: 2025-01-06"
+        "json": "---\n\n## 📚 Documentation\n\n- **[FILE_OPERATIONS_GUIDE.md](https://github.com/akefallonitis/defenderc2xsoar/blob/main/archive/feature-guides/FILE_OPERATIONS_GUIDE.md)** - Complete user guide\n- **[LIBRARY_SETUP.md](https://github.com/akefallonitis/defenderc2xsoar/blob/main/archive/feature-guides/LIBRARY_SETUP.md)** - 5-minute setup guide\n- **[GitHub Repository](https://github.com/akefallonitis/defenderc2xsoar)** - Source code and issues\n\n## 🔧 Support\n\nFor issues or questions:\n1. Check the [Troubleshooting Guide](https://github.com/akefallonitis/defenderc2xsoar/blob/main/archive/feature-guides/FILE_OPERATIONS_GUIDE.md#troubleshooting)\n2. Review Application Insights logs\n3. Open a GitHub issue with details\n\n---\n\n**Version**: 1.0.0  \n**Last Updated**: 2025-01-06"
       },
       "name": "footer-text"
     }
