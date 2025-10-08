@@ -278,6 +278,71 @@ def verify_arm_action_endpoints(workbook: Dict, workbook_name: str) -> Tuple[boo
     }
 
 
+def verify_arm_action_contexts(workbook: Dict, workbook_name: str) -> Tuple[bool, Dict]:
+    """Verify ARM action contexts have Content-Type headers"""
+    print(f"\n{Colors.BOLD}Checking ARM action contexts in {workbook_name}...{Colors.RESET}")
+    
+    def find_arm_actions(obj):
+        """Recursively find all ARM action contexts"""
+        results = []
+        if isinstance(obj, dict):
+            if 'armActionContext' in obj:
+                results.append(obj['armActionContext'])
+            for v in obj.values():
+                results.extend(find_arm_actions(v))
+        elif isinstance(obj, list):
+            for item in obj:
+                results.extend(find_arm_actions(item))
+        return results
+    
+    actions = find_arm_actions(workbook)
+    
+    if not actions:
+        print_info("No ARM action contexts found")
+        return True, {'total_actions': 0, 'issues': []}
+    
+    print_success(f"Found {len(actions)} ARM action contexts")
+    
+    issues = []
+    correct_actions = 0
+    
+    for i, action in enumerate(actions, 1):
+        action_name = action.get('actionName', 'Unknown')
+        path = action.get('path', '')
+        headers = action.get('headers', [])
+        
+        # Check for Content-Type header
+        has_content_type = any(
+            h.get('name') == 'Content-Type' and h.get('value') == 'application/json'
+            for h in headers
+        )
+        
+        # Check URL pattern
+        correct_pattern = path.startswith('https://{FunctionAppName}.azurewebsites.net/api/')
+        
+        if has_content_type and correct_pattern:
+            correct_actions += 1
+            print_success(f"  Action {i} ({action_name}): Correct configuration")
+        else:
+            if not has_content_type:
+                print_error(f"  Action {i} ({action_name}): Missing Content-Type header")
+                issues.append(f"Action {i} ({action_name}) missing Content-Type header")
+            if not correct_pattern:
+                print_error(f"  Action {i} ({action_name}): Incorrect URL pattern")
+                issues.append(f"Action {i} ({action_name}) incorrect URL pattern")
+    
+    if correct_actions == len(actions):
+        print_success(f"All {len(actions)} ARM actions correctly configured")
+    else:
+        print_error(f"Only {correct_actions}/{len(actions)} actions correctly configured")
+    
+    return len(issues) == 0, {
+        'total_actions': len(actions),
+        'correct_actions': correct_actions,
+        'issues': issues
+    }
+
+
 def verify_arm_template_deployment(template_path: str) -> Tuple[bool, Dict]:
     """Verify ARM template has correctly embedded workbook"""
     print_header("Verifying ARM Template Deployment")
@@ -383,15 +448,17 @@ def main():
         endpoint_passed, endpoint_results = verify_custom_endpoints(main_workbook, "DefenderC2-Workbook")
         refresh_passed, refresh_results = verify_auto_refresh(main_workbook, "DefenderC2-Workbook")
         action_passed, action_results = verify_arm_action_endpoints(main_workbook, "DefenderC2-Workbook")
+        arm_ctx_passed, arm_ctx_results = verify_arm_action_contexts(main_workbook, "DefenderC2-Workbook")
         
         results['main_workbook'] = {
             'parameter': param_results,
             'endpoints': endpoint_results,
             'auto_refresh': refresh_results,
-            'actions': action_results
+            'actions': action_results,
+            'arm_contexts': arm_ctx_results
         }
         
-        if not all([param_passed, endpoint_passed, refresh_passed, action_passed]):
+        if not all([param_passed, endpoint_passed, refresh_passed, action_passed, arm_ctx_passed]):
             all_passed = False
             
     except Exception as e:
@@ -408,13 +475,15 @@ def main():
         # Run checks (skip auto-refresh check for FileOperations)
         param_passed, param_results = verify_functionappname_parameter(file_ops_workbook, "FileOperations")
         endpoint_passed, endpoint_results = verify_custom_endpoints(file_ops_workbook, "FileOperations")
+        arm_ctx_passed, arm_ctx_results = verify_arm_action_contexts(file_ops_workbook, "FileOperations")
         
         results['file_operations'] = {
             'parameter': param_results,
-            'endpoints': endpoint_results
+            'endpoints': endpoint_results,
+            'arm_contexts': arm_ctx_results
         }
         
-        if not all([param_passed, endpoint_passed]):
+        if not all([param_passed, endpoint_passed, arm_ctx_passed]):
             all_passed = False
             
     except Exception as e:
@@ -437,11 +506,13 @@ def main():
     print(f"  Custom Endpoints: {'✅ PASS' if not main_wb.get('endpoints', {}).get('issues') else '❌ FAIL'}")
     print(f"  Auto-Refresh: {'✅ PASS' if not main_wb.get('auto_refresh', {}).get('issues') else '❌ FAIL'}")
     print(f"  ARM Actions: {'✅ PASS' if not main_wb.get('actions', {}).get('issues') else '❌ FAIL'}")
+    print(f"  ARM Action Contexts: {'✅ PASS' if not main_wb.get('arm_contexts', {}).get('issues') else '❌ FAIL'}")
     
     print(f"\n{Colors.BOLD}FileOperations.workbook:{Colors.RESET}")
     file_ops = results.get('file_operations', {})
     print(f"  Parameter Configuration: {'✅ PASS' if file_ops.get('parameter', {}).get('found') else '❌ FAIL'}")
     print(f"  Custom Endpoints: {'✅ PASS' if not file_ops.get('endpoints', {}).get('issues') else '❌ FAIL'}")
+    print(f"  ARM Action Contexts: {'✅ PASS' if not file_ops.get('arm_contexts', {}).get('issues') else '❌ FAIL'}")
     
     print(f"\n{Colors.BOLD}ARM Template Deployment:{Colors.RESET}")
     print(f"  Workbook Embedding: {'✅ PASS' if not template_results.get('issues') else '❌ FAIL'}")
@@ -455,6 +526,7 @@ def main():
         print(f"{Colors.GREEN}  ✅ Correct custom endpoint configuration{Colors.RESET}")
         print(f"{Colors.GREEN}  ✅ Auto-refresh settings where appropriate{Colors.RESET}")
         print(f"{Colors.GREEN}  ✅ ARM action endpoints with correct parameters{Colors.RESET}")
+        print(f"{Colors.GREEN}  ✅ ARM action contexts with Content-Type headers{Colors.RESET}")
         print(f"{Colors.GREEN}  ✅ Properly deployed in ARM template{Colors.RESET}")
         return 0
     else:
