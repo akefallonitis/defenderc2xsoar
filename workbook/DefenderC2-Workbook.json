@@ -90,7 +90,7 @@
             "label": "Function App Name",
             "type": 1,
             "isRequired": true,
-            "value": "defc2",
+            "value": "__FUNCTION_APP_NAME_PLACEHOLDER__",
             "typeSettings": {
               "isSearchable": false
             },
@@ -2036,7 +2036,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"path\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"batchDisabled\":false,\"transformers\":null,\"httpBodySchema\":\"{\\\\\\\"tenantId\\\\\\\":\\\\\\\"{TenantId}\\\\\\\",\\\\\\\"action\\\\\\\":\\\\\\\"{CommandType}\\\\\\\",\\\\\\\"actionName\\\\\\\":\\\\\\\"{ActionName}\\\\\\\",\\\\\\\"deviceIds\\\\\\\":\\\\\\\"{DeviceIds}\\\\\\\",\\\\\\\"params\\\\\\\":\\\\\\\"{CommandParams}\\\\\\\"}\"}",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"path\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"batchDisabled\":false,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.action\",\"columnId\":\"Action\"},{\"path\":\"$.status\",\"columnId\":\"Status\"},{\"path\":\"$.message\",\"columnId\":\"Message\"},{\"path\":\"$.timestamp\",\"columnId\":\"Timestamp\"},{\"path\":\"$.details\",\"columnId\":\"Details\"},{\"path\":\"$.actionIds\",\"columnId\":\"Action IDs\"}]}}],\"httpBodySchema\":\"{\\\\\\\"tenantId\\\\\\\":\\\\\\\"{TenantId}\\\\\\\",\\\\\\\"action\\\\\\\":\\\\\\\"{CommandType}\\\\\\\",\\\\\\\"actionName\\\\\\\":\\\\\\\"{ActionName}\\\\\\\",\\\\\\\"deviceIds\\\\\\\":\\\\\\\"{DeviceIds}\\\\\\\",\\\\\\\"params\\\\\\\":\\\\\\\"{CommandParams}\\\\\\\"}\"}",
               "size": 4,
               "title": "\ud83c\udfaf Command Execution Status",
               "noDataMessage": "Click 'Run Query' to execute command",
@@ -2056,7 +2056,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"path\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"batchDisabled\":false,\"transformers\":null,\"httpBodySchema\":\"{\\\\\\\"tenantId\\\\\\\":\\\\\\\"{TenantId}\\\\\\\",\\\\\\\"action\\\\\\\":\\\\\\\"getstatus\\\\\\\",\\\\\\\"actionId\\\\\\\":\\\\\\\"{ActionId}\\\\\\\"}\"}",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"path\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"batchDisabled\":false,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.action\",\"columnId\":\"Action\"},{\"path\":\"$.status\",\"columnId\":\"Status\"},{\"path\":\"$.message\",\"columnId\":\"Message\"},{\"path\":\"$.details\",\"columnId\":\"Details\"},{\"path\":\"$.actionStatus.status\",\"columnId\":\"Action Status\"},{\"path\":\"$.actionStatus.type\",\"columnId\":\"Type\"}]}}],\"httpBodySchema\":\"{\\\\\\\"tenantId\\\\\\\":\\\\\\\"{TenantId}\\\\\\\",\\\\\\\"action\\\\\\\":\\\\\\\"getstatus\\\\\\\",\\\\\\\"actionId\\\\\\\":\\\\\\\"{ActionId}\\\\\\\"}\"}",
               "size": 0,
               "title": "\ud83d\udcca Action Status (Auto-refresh)",
               "noDataMessage": "No active actions to poll. Execute a command first.",
@@ -2118,7 +2118,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"path\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"batchDisabled\":false,\"transformers\":null,\"httpBodySchema\":\"{\\\\\\\"tenantId\\\\\\\":\\\\\\\"{TenantId}\\\\\\\",\\\\\\\"action\\\\\\\":\\\\\\\"getresults\\\\\\\",\\\\\\\"actionId\\\\\\\":\\\\\\\"{ActionId}\\\\\\\"}\"}",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"path\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"batchDisabled\":false,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.action\",\"columnId\":\"Action\"},{\"path\":\"$.status\",\"columnId\":\"Status\"},{\"path\":\"$.message\",\"columnId\":\"Message\"},{\"path\":\"$.details\",\"columnId\":\"Details\"},{\"path\":\"$.results\",\"columnId\":\"Results\"}]}}],\"httpBodySchema\":\"{\\\\\\\"tenantId\\\\\\\":\\\\\\\"{TenantId}\\\\\\\",\\\\\\\"action\\\\\\\":\\\\\\\"getresults\\\\\\\",\\\\\\\"actionId\\\\\\\":\\\\\\\"{ActionId}\\\\\\\"}\"}",
               "size": 0,
               "title": "\ud83d\udccb Command Results",
               "noDataMessage": "No results available yet. Command may still be executing.",
@@ -2144,7 +2144,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"path\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"batchDisabled\":false,\"transformers\":null,\"httpBodySchema\":\"{\\\\\\\"tenantId\\\\\\\":\\\\\\\"{TenantId}\\\\\\\",\\\\\\\"action\\\\\\\":\\\\\\\"history\\\\\\\",\\\\\\\"limit\\\\\\\":\\\\\\\"20\\\\\\\"}\"}",
+              "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"path\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"batchDisabled\":false,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.history[*]\",\"columns\":[{\"path\":\"$.action\",\"columnId\":\"Action\"},{\"path\":\"$.status\",\"columnId\":\"Status\"},{\"path\":\"$.timestamp\",\"columnId\":\"Timestamp\"},{\"path\":\"$.message\",\"columnId\":\"Message\"},{\"path\":\"$.details\",\"columnId\":\"Details\"}]}}],\"httpBodySchema\":\"{\\\\\\\"tenantId\\\\\\\":\\\\\\\"{TenantId}\\\\\\\",\\\\\\\"action\\\\\\\":\\\\\\\"history\\\\\\\",\\\\\\\"limit\\\\\\\":\\\\\\\"20\\\\\\\"}\"}",
               "size": 4,
               "title": "\ud83d\udcca Execution History (Last 20)",
               "noDataMessage": "No command history available.",
