@@ -56,6 +56,16 @@ This guide explains the parameters used in DefenderC2 workbooks and how to ensur
 **User action**: Select workspace in workbook parameters  
 **Status**: ✅ Auto-populated, no manual configuration needed
 
+### 2.5. Function Key (Optional)
+
+**What it is**: Azure Function App authentication key  
+**When needed**: Only if Function App is configured for Function-level authentication (not anonymous)  
+**How to get it**: Azure Portal → Function App → App Keys → Function Keys  
+**User action**: Enter key value or leave empty for anonymous access  
+**Status**: ⚠️ Optional - leave empty if using anonymous authentication
+
+**Note**: See [CUSTOMENDPOINT_GUIDE.md](CUSTOMENDPOINT_GUIDE.md) for detailed Function Key implementation patterns.
+
 ### 3. Subscription
 
 **What it is**: Azure subscription context  
@@ -68,11 +78,36 @@ This guide explains the parameters used in DefenderC2 workbooks and how to ensur
 **User action**: Select from dropdown in workbook  
 **Status**: ✅ User selection required (one-time setup)
 
-## ARMEndpoint Query Configuration
+## Query Configuration Options
 
-All workbook queries use the ARMEndpoint/1.0 format to call Azure Functions:
+Workbook queries can use either ARMEndpoint or CustomEndpoint formats to call Azure Functions. For the most current and flexible approach, see the **CustomEndpoint Guide** below.
 
-### Correct Configuration (After Fix)
+### CustomEndpoint Configuration (Recommended)
+
+**For full details, see**: [CUSTOMENDPOINT_GUIDE.md](CUSTOMENDPOINT_GUIDE.md)
+
+```json
+{
+  "version": "CustomEndpoint/1.0",
+  "method": "POST",
+  "url": "https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher",
+  "headers": [
+    {"name": "Content-Type", "value": "application/json"}
+  ],
+  "body": "{\"action\":\"Get Devices\",\"tenantId\":\"{TenantId}\"}",
+  "transformers": [...]
+}
+```
+
+**Key points**:
+- ✅ queryType: 10 (Custom Endpoint)
+- ✅ Supports auto-refresh
+- ✅ Optional Function Key support: `?code={FunctionKey}`
+- ✅ Full URL with parameter substitution
+- ✅ POST method with JSON body
+- ✅ Content-Type header required
+
+### ARMEndpoint Configuration (Legacy)
 
 ```json
 {
@@ -88,13 +123,13 @@ All workbook queries use the ARMEndpoint/1.0 format to call Azure Functions:
 ```
 
 **Key points**:
+- ✅ queryType: 12 (ARM Endpoint)
 - ✅ Path uses `{FunctionAppName}` parameter
-- ✅ Full URL constructed: `https://{FunctionAppName}.azurewebsites.net/api/...`
 - ✅ POST method with JSON body
 - ✅ Content-Type header set
 - ✅ All required parameters in httpBodySchema
 
-### What Changed from Previous Versions
+### Version History
 
 #### Version 1.0 (Broken)
 ```json
@@ -105,7 +140,7 @@ All workbook queries use the ARMEndpoint/1.0 format to call Azure Functions:
 - ❌ Had urlParams with api-version (Azure ARM API pattern)
 - ❌ Could fail if auto-discovery didn't work
 
-#### Version 2.0 (Current - Working)
+#### Version 2.0 (ARMEndpoint - Working)
 ```json
 "path": "https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher",
 "httpBodySchema": "{...}"
@@ -114,6 +149,17 @@ All workbook queries use the ARMEndpoint/1.0 format to call Azure Functions:
 - ✅ No urlParams needed
 - ✅ Clean POST with JSON body
 - ✅ Works 100% of the time
+
+#### Version 3.0 (CustomEndpoint - Current Recommendation)
+```json
+"url": "https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher?code={FunctionKey}",
+"body": "{...}"
+```
+- ✅ CustomEndpoint/1.0 with queryType: 10
+- ✅ Optional Function Key support
+- ✅ Auto-refresh capable
+- ✅ More flexible parameter handling
+- ✅ See [CUSTOMENDPOINT_GUIDE.md](CUSTOMENDPOINT_GUIDE.md) for details
 
 ## Function Endpoints Used
 

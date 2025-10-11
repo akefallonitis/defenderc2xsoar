@@ -2,6 +2,12 @@
 
 This folder contains Azure Resource Manager (ARM) template files for deploying the DefenderC2 Function App and Workbooks.
 
+## Quick Links
+
+- **[CUSTOMENDPOINT_GUIDE.md](CUSTOMENDPOINT_GUIDE.md)** - Complete guide for CustomEndpoint and ARM Actions with optional Function Key support
+- **[WORKBOOK_PARAMETERS_GUIDE.md](WORKBOOK_PARAMETERS_GUIDE.md)** - Parameter configuration reference
+- **[DYNAMIC_FUNCTION_APP_NAME.md](DYNAMIC_FUNCTION_APP_NAME.md)** - How dynamic function app naming works
+
 ## Files
 
 ### Function App Deployment
