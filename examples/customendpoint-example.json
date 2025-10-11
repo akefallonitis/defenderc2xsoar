@@ -1,0 +1,248 @@
+{
+  "version": "Notebook/1.0",
+  "items": [
+    {
+      "type": 1,
+      "content": {
+        "json": "# CustomEndpoint Implementation Example\n\nThis workbook demonstrates the CustomEndpoint pattern with queryType: 10.\n\nFor full documentation, see: [CUSTOMENDPOINT_GUIDE.md](../deployment/CUSTOMENDPOINT_GUIDE.md)"
+      },
+      "name": "text - header"
+    },
+    {
+      "type": 9,
+      "content": {
+        "version": "KqlParameterItem/1.0",
+        "parameters": [
+          {
+            "id": "b8f9a7e3-2c1d-4e5f-9a3b-7c8d9e0f1a2b",
+            "version": "KqlParameterItem/1.0",
+            "name": "Subscription",
+            "type": 6,
+            "isRequired": true,
+            "query": "Resources | where type =~ 'microsoft.operationalinsights/workspaces' | summarize by subscriptionId",
+            "crossComponentResources": [
+              "value::all"
+            ],
+            "typeSettings": {
+              "additionalResourceOptions": [],
+              "showDefault": false
+            },
+            "timeContext": {
+              "durationMs": 86400000
+            },
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources"
+          },
+          {
+            "id": "c9a0b8d4-3e2f-5a6b-0c4d-8e9f0a1b2c3d",
+            "version": "KqlParameterItem/1.0",
+            "name": "Workspace",
+            "type": 5,
+            "isRequired": true,
+            "query": "Resources | where type =~ 'microsoft.operationalinsights/workspaces' | project id, name, location",
+            "crossComponentResources": [
+              "{Subscription}"
+            ],
+            "typeSettings": {
+              "additionalResourceOptions": []
+            },
+            "timeContext": {
+              "durationMs": 86400000
+            },
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources"
+          },
+          {
+            "id": "d0b1c9e5-4f3a-6b7c-1d5e-9f0a1b2c3d4e",
+            "version": "KqlParameterItem/1.0",
+            "name": "TenantId",
+            "label": "Target Tenant ID",
+            "type": 1,
+            "isRequired": true,
+            "query": "Resources | where type =~ 'microsoft.operationalinsights/workspaces' | where id == '{Workspace}' | extend TenantId = tostring(properties.customerId) | project value = TenantId, label = TenantId",
+            "crossComponentResources": [
+              "{Subscription}"
+            ],
+            "isHiddenWhenLocked": true,
+            "timeContext": {
+              "durationMs": 86400000
+            },
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources",
+            "description": "Auto-discovered from Log Analytics Workspace. This is the Workspace ID (Customer ID) used as the target tenant for Defender API calls."
+          },
+          {
+            "id": "e1c2d0f6-5a4b-7c8d-2e6f-0a1b2c3d4e5f",
+            "version": "KqlParameterItem/1.0",
+            "name": "FunctionAppName",
+            "label": "Function App Name",
+            "type": 1,
+            "isRequired": true,
+            "value": "__FUNCTION_APP_NAME_PLACEHOLDER__",
+            "description": "Enter your DefenderC2 function app name (e.g., 'defc2', 'mydefender', 'sec-functions')"
+          },
+          {
+            "id": "f2d3e1a7-6b5c-8d9e-3f7a-1b2c3d4e5f6a",
+            "version": "KqlParameterItem/1.0",
+            "name": "FunctionKey",
+            "label": "Function Key (Optional)",
+            "type": 1,
+            "isRequired": false,
+            "description": "Optional. Only needed if Function App is not configured for anonymous access. Leave empty for anonymous functions.",
+            "timeContext": {
+              "durationMs": 86400000
+            }
+          }
+        ],
+        "style": "pills",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "name": "parameters"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "## Example 1: CustomEndpoint without Function Key\n\nThis example shows a CustomEndpoint query with anonymous access (no function key required)."
+      },
+      "name": "text - example1-header"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":\"{\\\"action\\\":\\\"Get Devices\\\",\\\"tenantId\\\":\\\"{TenantId}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.devices[*]\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"id\"},{\"path\":\"$.computerDnsName\",\"columnid\":\"computerDnsName\"},{\"path\":\"$.isolationState\",\"columnid\":\"isolationState\"},{\"path\":\"$.healthStatus\",\"columnid\":\"healthStatus\"},{\"path\":\"$.riskScore\",\"columnid\":\"riskScore\"}]}}]}",
+        "size": 0,
+        "title": "💻 Device List (CustomEndpoint - No Key)",
+        "queryType": 10,
+        "visualization": "table"
+      },
+      "name": "devices-table-nokey"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "## Example 2: CustomEndpoint with Optional Function Key\n\nThis example shows a CustomEndpoint query that includes the optional function key parameter. If FunctionKey is empty, the query string will be `?code=` which the function can handle."
+      },
+      "name": "text - example2-header"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher?code={FunctionKey}\",\"body\":\"{\\\"action\\\":\\\"Get Devices\\\",\\\"tenantId\\\":\\\"{TenantId}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.devices[*]\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"id\"},{\"path\":\"$.computerDnsName\",\"columnid\":\"computerDnsName\"},{\"path\":\"$.isolationState\",\"columnid\":\"isolationState\"},{\"path\":\"$.healthStatus\",\"columnid\":\"healthStatus\"},{\"path\":\"$.riskScore\",\"columnid\":\"riskScore\"}]}}]}",
+        "size": 0,
+        "title": "💻 Device List (CustomEndpoint - With Optional Key)",
+        "queryType": 10,
+        "visualization": "table"
+      },
+      "name": "devices-table-withkey"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "## Example 3: CustomEndpoint with Auto-Refresh\n\nThis example includes auto-refresh configuration to automatically update the data every 30 seconds."
+      },
+      "name": "text - example3-header"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":\"{\\\"action\\\":\\\"Get Devices\\\",\\\"tenantId\\\":\\\"{TenantId}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.devices[*]\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"id\"},{\"path\":\"$.computerDnsName\",\"columnid\":\"computerDnsName\"},{\"path\":\"$.isolationState\",\"columnid\":\"isolationState\"},{\"path\":\"$.healthStatus\",\"columnid\":\"healthStatus\"},{\"path\":\"$.riskScore\",\"columnid\":\"riskScore\"}]}}]}",
+        "size": 0,
+        "title": "💻 Device List (CustomEndpoint - Auto-Refresh)",
+        "queryType": 10,
+        "visualization": "table"
+      },
+      "isAutoRefreshEnabled": true,
+      "autoRefreshSettings": {
+        "intervalInSeconds": 30,
+        "refreshCondition": "always"
+      },
+      "name": "devices-table-autorefresh"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "## Example 4: ARM Action without Function Key\n\nThis example shows an ARM Action button for device isolation without function key."
+      },
+      "name": "text - example4-header"
+    },
+    {
+      "type": 11,
+      "content": {
+        "version": "LinkItem/1.0",
+        "style": "list",
+        "links": [
+          {
+            "id": "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
+            "linkTarget": "ArmAction",
+            "linkLabel": "🚨 Isolate Device (No Key)",
+            "style": "primary",
+            "linkIsContextBlade": false,
+            "armActionContext": {
+              "path": "https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher",
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\"action\":\"Isolate Device\",\"tenantId\":\"{TenantId}\",\"deviceIds\":\"test-device-id\"}",
+              "httpMethod": "POST",
+              "description": "Isolate selected device from the network (anonymous access)"
+            }
+          }
+        ]
+      },
+      "name": "arm-action-nokey"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "## Example 5: ARM Action with Function Key\n\nThis example shows an ARM Action button that includes the optional function key parameter."
+      },
+      "name": "text - example5-header"
+    },
+    {
+      "type": 11,
+      "content": {
+        "version": "LinkItem/1.0",
+        "style": "list",
+        "links": [
+          {
+            "id": "b2c3d4e5-f6a7-8b9c-0d1e-2f3a4b5c6d7e",
+            "linkTarget": "ArmAction",
+            "linkLabel": "🚨 Isolate Device (With Key)",
+            "style": "primary",
+            "linkIsContextBlade": false,
+            "armActionContext": {
+              "path": "https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher?code={FunctionKey}",
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\"action\":\"Isolate Device\",\"tenantId\":\"{TenantId}\",\"deviceIds\":\"test-device-id\"}",
+              "httpMethod": "POST",
+              "description": "Isolate selected device from the network (with function key)"
+            }
+          }
+        ]
+      },
+      "name": "arm-action-withkey"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "## Notes\n\n- **queryType: 10** is required for CustomEndpoint queries\n- **version: \"CustomEndpoint/1.0\"** must be in the query JSON\n- The query must be a **JSON-escaped string**, not a JSON object\n- **Content-Type header** is required for all POST requests\n- **JSONPath transformers** parse the response into table format\n- **Auto-refresh** can be enabled with `isAutoRefreshEnabled` and `autoRefreshSettings`\n- **Function Key** is optional - leave empty for anonymous access\n- **ARM Actions** use `linkTarget: \"ArmAction\"` with `armActionContext`\n\n---\n\n### Comparison: ARMEndpoint vs CustomEndpoint\n\n| Feature | ARMEndpoint (queryType: 12) | CustomEndpoint (queryType: 10) |\n|---------|----------------------------|--------------------------------|\n| Version | ARMEndpoint/1.0 | CustomEndpoint/1.0 |\n| Body field | `httpBodySchema` | `body` |\n| URL field | `path` | `url` |\n| Auto-refresh | Limited | Full support |\n| Function Key | Manual in URL | Parameter substitution |\n| Use case | Azure ARM resources | External APIs, Functions |\n\n---\n\nFor more information, see:\n- [CUSTOMENDPOINT_GUIDE.md](../deployment/CUSTOMENDPOINT_GUIDE.md) - Full guide\n- [WORKBOOK_PARAMETERS_GUIDE.md](../deployment/WORKBOOK_PARAMETERS_GUIDE.md) - Parameter reference\n- [DYNAMIC_FUNCTION_APP_NAME.md](../deployment/DYNAMIC_FUNCTION_APP_NAME.md) - Function app naming"
+      },
+      "name": "text - notes"
+    }
+  ],
+  "defaultResourceIds": [],
+  "fallbackResourceIds": [],
+  "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
+}

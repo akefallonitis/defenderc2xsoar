@@ -125,6 +125,47 @@ def verify_functionappname_parameter(workbook: Dict, workbook_name: str) -> Tupl
     return False, {'found': False, 'issues': ['FunctionAppName parameter not found']}
 
 
+def verify_functionkey_parameter(workbook: Dict, workbook_name: str) -> Tuple[bool, Dict]:
+    """Verify FunctionKey parameter exists and is correctly configured as optional"""
+    print(f"\n{Colors.BOLD}Checking FunctionKey parameter in {workbook_name}...{Colors.RESET}")
+    
+    issues = []
+    
+    # Find parameters configuration
+    for item in workbook.get('items', []):
+        if item.get('type') == 9:  # parameters type
+            params = item.get('content', {}).get('parameters', [])
+            for param in params:
+                if 'FunctionKey' in param.get('name', ''):
+                    print_success(f"Found FunctionKey parameter")
+                    
+                    # Check if NOT required (should be optional)
+                    is_required = param.get('isRequired', False)
+                    if not is_required:
+                        print_success(f"  Parameter is optional: {not is_required}")
+                    else:
+                        print_error(f"  Parameter should be optional but is required: {is_required}")
+                        issues.append("FunctionKey parameter should be optional")
+                    
+                    # Check description
+                    description = param.get('description', '')
+                    if description and 'optional' in description.lower():
+                        print_success(f"  Has description mentioning optional")
+                    else:
+                        print_info(f"  Description should mention optional usage")
+                        issues.append("FunctionKey parameter description should mention it's optional")
+                    
+                    return len(issues) == 0, {
+                        'found': True,
+                        'required': is_required,
+                        'description': description,
+                        'issues': issues
+                    }
+    
+    print_info("FunctionKey parameter not found (acceptable if using anonymous access)")
+    return True, {'found': False, 'issues': []}  # Not finding it is OK
+
+
 def verify_custom_endpoints(workbook: Dict, workbook_name: str) -> Tuple[bool, Dict]:
     """Verify all custom endpoints use correct FunctionAppName pattern"""
     print(f"\n{Colors.BOLD}Checking custom endpoints in {workbook_name}...{Colors.RESET}")
@@ -446,6 +487,7 @@ def main():
         
         # Run checks
         param_passed, param_results = verify_functionappname_parameter(main_workbook, "DefenderC2-Workbook")
+        funckey_passed, funckey_results = verify_functionkey_parameter(main_workbook, "DefenderC2-Workbook")
         endpoint_passed, endpoint_results = verify_custom_endpoints(main_workbook, "DefenderC2-Workbook")
         refresh_passed, refresh_results = verify_auto_refresh(main_workbook, "DefenderC2-Workbook")
         action_passed, action_results = verify_arm_action_endpoints(main_workbook, "DefenderC2-Workbook")
@@ -453,13 +495,14 @@ def main():
         
         results['main_workbook'] = {
             'parameter': param_results,
+            'functionkey': funckey_results,
             'endpoints': endpoint_results,
             'auto_refresh': refresh_results,
             'actions': action_results,
             'arm_contexts': arm_ctx_results
         }
         
-        if not all([param_passed, endpoint_passed, refresh_passed, action_passed, arm_ctx_passed]):
+        if not all([param_passed, funckey_passed, endpoint_passed, refresh_passed, action_passed, arm_ctx_passed]):
             all_passed = False
             
     except Exception as e:
@@ -475,16 +518,18 @@ def main():
         
         # Run checks (skip auto-refresh check for FileOperations)
         param_passed, param_results = verify_functionappname_parameter(file_ops_workbook, "FileOperations")
+        funckey_passed, funckey_results = verify_functionkey_parameter(file_ops_workbook, "FileOperations")
         endpoint_passed, endpoint_results = verify_custom_endpoints(file_ops_workbook, "FileOperations")
         arm_ctx_passed, arm_ctx_results = verify_arm_action_contexts(file_ops_workbook, "FileOperations")
         
         results['file_operations'] = {
             'parameter': param_results,
+            'functionkey': funckey_results,
             'endpoints': endpoint_results,
             'arm_contexts': arm_ctx_results
         }
         
-        if not all([param_passed, endpoint_passed, arm_ctx_passed]):
+        if not all([param_passed, funckey_passed, endpoint_passed, arm_ctx_passed]):
             all_passed = False
             
     except Exception as e:
