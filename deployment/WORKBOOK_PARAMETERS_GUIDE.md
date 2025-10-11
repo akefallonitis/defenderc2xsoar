@@ -58,7 +58,24 @@ This guide explains the parameters used in DefenderC2 workbooks and how to ensur
 
 ### 2.5. Function Key (Optional)
 
-**What it is**: Azure Function App authentication key  
+**What it is**: Azure Function App authentication key
+**How it's used**: Only required if your Function App is not set to anonymous access. If provided, it is appended to the Function App URL as `?code={FunctionKey}` for both Custom Endpoint and ARM Action queries.
+**User action**: Leave blank for anonymous access, or provide the key if required by your Function App.
+**Status**: ✅ Optional, parameterized in all workbook queries
+
+**Sample parameter configuration:**
+```json
+{
+  "name": "FunctionKey",
+  "type": 1,
+  "isRequired": false,
+  "description": "Optional. Only needed if Function App is not anonymous."
+}
+```
+
+**Usage in queries:**
+- If `FunctionKey` is blank, do **not** include `?code=` in the URL.
+- If `FunctionKey` is provided, append `?code={FunctionKey}` to the Function App URL.
 **When needed**: Only if Function App is configured for Function-level authentication (not anonymous)  
 **How to get it**: Azure Portal → Function App → App Keys → Function Keys  
 **User action**: Enter key value or leave empty for anonymous access  

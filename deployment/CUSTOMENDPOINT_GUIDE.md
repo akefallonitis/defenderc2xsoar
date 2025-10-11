@@ -10,55 +10,139 @@ This guide provides a comprehensive, step-by-step reference for implementing ful
 
 ---
 
+
 ## 1. Parameter Autodiscovery & Optional Function Key
 
 ### Required Parameters
-- **FunctionAppName**: User-provided function app name (e.g., "defc2", "mydefender")
-- **TenantId**: Auto-discovered from the selected Log Analytics Workspace
-- **FunctionKey**: Optional parameter, only used if Function App requires authentication
+- **FunctionAppName**: required parameter
+- **TenantId**: auto-discovered from the selected Log Analytics Workspace
+- **FunctionKey**: optional parameter, only used if Function App requires a key
 
-### Sample Parameters Section
-
+**Sample parameters section:**
 ```json
 {
   "parameters": [
-    {
-      "name": "FunctionAppName",
-      "type": 1,
-      "isRequired": true,
-      "value": "__FUNCTION_APP_NAME_PLACEHOLDER__",
-      "description": "Enter your DefenderC2 function app name"
-    },
-    {
-      "name": "TenantId",
-      "type": 1,
-      "isRequired": true,
-      "query": "Resources | where type =~ 'microsoft.operationalinsights/workspaces' | where id == '{Workspace}' | extend TenantId = tostring(properties.customerId) | project value = TenantId, label = TenantId",
-      "crossComponentResources": ["{Subscription}"],
-      "isHiddenWhenLocked": true,
-      "queryType": 1,
-      "resourceType": "microsoft.resourcegraph/resources",
-      "description": "Auto-discovered from Log Analytics Workspace. This is the Workspace ID (Customer ID) used as the target tenant for Defender API calls."
-    },
-    {
-      "name": "FunctionKey",
-      "type": 1,
-      "isRequired": false,
-      "description": "Optional. Only needed if Function App is not configured for anonymous access. Leave empty for anonymous functions."
-    }
+    { "name": "FunctionAppName", "type": 1, "isRequired": true },
+    { "name": "TenantId", "type": 1, "isRequired": true, "query": "Resources | where type =~ 'microsoft.operationalinsights/workspaces' | where id == '{Workspace}' | extend TenantId = tostring(properties.customerId) | project value = TenantId, label = TenantId" },
+    { "name": "FunctionKey", "type": 1, "isRequired": false, "description": "Optional. Only needed if Function App is not anonymous."}
   ]
 }
 ```
 
 ---
 
+
 ## 2. Custom Endpoint (Auto-Refresh, With/Without Function Key)
 
-### How to Configure in Advanced Editor
+**How to write in Advanced Editor:**
+- `queryType`: 10
+- `query`: JSON string for CustomEndpoint/1.0
+- POST method, correct Function App URL, auto-refresh enabled
+- Add `?code={FunctionKey}` to URL only if needed
 
-Custom Endpoint queries use:
-- **queryType**: `10` (Custom Endpoint)
-- **query**: JSON string containing CustomEndpoint/1.0 configuration
+**Sample JSON (No Function Key):**
+```json
+{
+  "type": 3,
+  "content": {
+    "version": "KqlItem/1.0",
+    "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":\"{\\\"action\\\":\\\"Get Devices\\\",\\\"tenantId\\\":\\\"{TenantId}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.devices[*]\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"id\"},{\"path\":\"$.computerDnsName\",\"columnid\":\"computerDnsName\"},{\"path\":\"$.isolationState\",\"columnid\":\"isolationState\"},{\"path\":\"$.healthStatus\",\"columnid\":\"healthStatus\"},{\"path\":\"$.riskScore\",\"columnid\":\"riskScore\"}]}}]}",
+    "size": 0,
+    "title": "Device List (Custom Endpoint Auto-Refresh)",
+    "queryType": 10,
+    "visualization": "table"
+  },
+  "name": "devices-table"
+}
+```
+
+**Sample JSON (With Optional Function Key):**
+```json
+{
+  "type": 3,
+  "content": {
+    "version": "KqlItem/1.0",
+    "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher?code={FunctionKey}\",\"body\":\"{\\\"action\\\":\\\"Get Devices\\\",\\\"tenantId\\\":\\\"{TenantId}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.devices[*]\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"id\"},{\"path\":\"$.computerDnsName\",\"columnid\":\"computerDnsName\"},{\"path\":\"$.isolationState\",\"columnid\":\"isolationState\"},{\"path\":\"$.healthStatus\",\"columnid\":\"healthStatus\"},{\"path\":\"$.riskScore\",\"columnid\":\"riskScore\"}]}}]}",
+    "size": 0,
+    "title": "Device List (Custom Endpoint Auto-Refresh)",
+    "queryType": 10,
+    "visualization": "table"
+  },
+  "name": "devices-table"
+}
+```
+
+## 3. ARM Actions (Manual Button, With/Without Function Key)
+**Use direct POST to Function App.**
+Add `?code={FunctionKey}` to URL only if needed.
+
+**Sample JSON (No Function Key):**
+```json
+{
+  "type": 11,
+  "content": {
+    "version": "LinkItem/1.0",
+    "links": [{
+      "linkTarget": "ArmAction",
+      "linkLabel": "🚨 Isolate Devices",
+      "armActionContext": {
+        "path": "https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher",
+        "headers": [{"name": "Content-Type", "value": "application/json"}],
+        "body": "{\"action\":\"Isolate Device\",\"tenantId\":\"{TenantId}\",\"deviceIds\":\"{DeviceIds}\"}",
+        "httpMethod": "POST"
+      }
+    }]
+  }
+}
+```
+
+**Sample JSON (With Optional Function Key):**
+```json
+{
+  "type": 11,
+  "content": {
+    "version": "LinkItem/1.0",
+    "links": [{
+      "linkTarget": "ArmAction",
+      "linkLabel": "🚨 Isolate Devices",
+      "armActionContext": {
+        "path": "https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher?code={FunctionKey}",
+        "headers": [{"name": "Content-Type", "value": "application/json"}],
+        "body": "{\"action\":\"Isolate Device\",\"tenantId\":\"{TenantId}\",\"deviceIds\":\"{DeviceIds}\"}",
+        "httpMethod": "POST"
+      }
+    }]
+  }
+}
+```
+
+## 4. Tab-by-Tab Functionality Examples
+- **Device Manager**: Get Devices (Custom Endpoint), Isolate Device (ARM Action), Unisolate Device, Restrict App Execution, Run Antivirus Scan
+- **Threat Intel**: List Indicators (Custom Endpoint), Add Indicator (ARM Action)
+- **Action Manager**: Get All Actions (Custom Endpoint)
+- **Hunt Manager**: Get Hunt Status (Custom Endpoint)
+- **Incident Manager**: Get Incidents (Custom Endpoint)
+- **Detection Manager**: List Detections (Custom Endpoint)
+- **Console**: Get Command History (Custom Endpoint)
+
+## 5. Troubleshooting & Validation
+- If workbook queries fail, check Function App authentication (Anonymous/Function)
+- If FunctionKey is blank, URL must not contain ?code=
+- Ensure parameters are passed in body and URL as needed
+- Use JSONPath transformers for parsing
+- See ![Custom Endpoint JSON in workbook editor](https://github.com/user-attachments/assets/a68ad801-3dfa-40cb-8be4-79f345b74045)
+
+## 6. How to Use
+1. Import workbook into Azure Portal
+2. Configure parameters (FunctionAppName, TenantId auto-discovered, FunctionKey optional)
+3. For each query, use queryType: 10 and the CustomEndpoint JSON as above
+4. For ARM Actions, use direct Function App POST as above
+5. Test each tab for correct data/actions
+
+## References
+- ![Custom Endpoint JSON in workbook editor](https://github.com/user-attachments/assets/a68ad801-3dfa-40cb-8be4-79f345b74045)
+- Previous issues for sample code and gotchas
+- [Azure Functions authentication docs](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-http-webhook?tabs=csharp#authorization-keys)
 - **method**: POST
 - **url**: Function App endpoint URL
 - **auto-refresh**: Enabled for automatic data updates
