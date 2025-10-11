@@ -92,6 +92,10 @@ This document summarizes the fixes applied to resolve issues with DeviceId autop
 11. ➕ Create Detection Rule
 12. ✏️ Update Detection Rule
 13. ❌ Delete Detection Rule
+14. 📤 Deploy to Device (FileOperations)
+15. 📥 Download from Library (FileOperations)
+16. 🗑️ Delete from Library (FileOperations)
+17. 📥 Download File from Device (FileOperations)
 
 ### 4. ✅ Custom Endpoint Configuration
 **Status:** ✅ **ALREADY WORKING** - No changes needed
@@ -150,7 +154,8 @@ OVERALL SUMMARY
 
 2. **workbook/FileOperations.workbook**
    - Fixed 1 ARMEndpoint query (added urlParams with api-version)
-   - Total changes: 1 fix
+   - Fixed 4 ARM Actions (added params with api-version)
+   - Total changes: 5 fixes
 
 ## Technical Details
 

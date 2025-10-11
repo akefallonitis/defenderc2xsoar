@@ -289,7 +289,12 @@
                         "value": "application/json"
                       }
                     ],
-                    "params": [],
+                    "params": [
+                      {
+                        "key": "api-version",
+                        "value": "2022-03-01"
+                      }
+                    ],
                     "body": "{\"Function\":\"PutLiveResponseFileFromLibrary\",\"fileName\":\"{DeployFileName}\",\"DeviceIds\":\"{DeployDeviceId}\",\"tenantId\":\"{TenantId}\"}",
                     "httpMethod": "POST",
                     "title": "Deploy File",
@@ -357,7 +362,12 @@
                         "value": "application/json"
                       }
                     ],
-                    "params": [],
+                    "params": [
+                      {
+                        "key": "api-version",
+                        "value": "2022-03-01"
+                      }
+                    ],
                     "body": "{\"Function\":\"GetLibraryFile\",\"fileName\":\"{LibraryFileName}\",\"tenantId\":\"{TenantId}\"}",
                     "httpMethod": "POST",
                     "title": "Download Library File",
@@ -381,7 +391,12 @@
                         "value": "application/json"
                       }
                     ],
-                    "params": [],
+                    "params": [
+                      {
+                        "key": "api-version",
+                        "value": "2022-03-01"
+                      }
+                    ],
                     "body": "{\"Function\":\"DeleteLibraryFile\",\"fileName\":\"{LibraryFileName}\",\"tenantId\":\"{TenantId}\"}",
                     "httpMethod": "POST",
                     "title": "Delete Library File",
@@ -581,7 +596,12 @@
                         "value": "application/json"
                       }
                     ],
-                    "params": [],
+                    "params": [
+                      {
+                        "key": "api-version",
+                        "value": "2022-03-01"
+                      }
+                    ],
                     "body": "{\"Function\":\"GetLiveResponseFile\",\"DeviceId\":\"{DownloadDeviceId}\",\"FilePath\":\"{DownloadFilePath}\",\"tenantId\":\"{TenantId}\"}",
                     "httpMethod": "POST",
                     "title": "Download File",
