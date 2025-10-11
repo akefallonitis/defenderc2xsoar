@@ -159,6 +159,18 @@ The Azure Workbook version includes additional capabilities:
 - **[CONTRIBUTING.md](CONTRIBUTING.md)** - Contributing guidelines
 
 ### 📚 Additional Resources
+
+#### Deployment Documentation
+- **[CUSTOMENDPOINT_GUIDE.md](deployment/CUSTOMENDPOINT_GUIDE.md)** - Complete guide for CustomEndpoint and ARM Actions with optional Function Key support
+- **[WORKBOOK_PARAMETERS_GUIDE.md](deployment/WORKBOOK_PARAMETERS_GUIDE.md)** - Parameter configuration reference
+- **[DYNAMIC_FUNCTION_APP_NAME.md](deployment/DYNAMIC_FUNCTION_APP_NAME.md)** - Dynamic function app naming patterns
+
+#### Examples
+- **[examples/customendpoint-example.json](examples/customendpoint-example.json)** - Example workbook demonstrating CustomEndpoint pattern (queryType: 10)
+- **[examples/README.md](examples/README.md)** - Examples documentation and pattern comparison
+- **[examples/sample-config.md](examples/sample-config.md)** - Sample configuration values
+
+#### Archive
 The `/archive` directory contains supplementary documentation:
 - **Deployment Guides** - Advanced deployment scenarios and troubleshooting
 - **Feature Guides** - Detailed feature documentation and usage examples
