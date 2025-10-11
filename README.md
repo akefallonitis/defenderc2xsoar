@@ -158,6 +158,11 @@ The Azure Workbook version includes additional capabilities:
 - **[QUICKSTART.md](QUICKSTART.md)** - Quick start guide
 - **[CONTRIBUTING.md](CONTRIBUTING.md)** - Contributing guidelines
 
+### 📚 Workbook Configuration Guides
+- **[Custom Endpoint & ARM Actions Guide](docs/WORKBOOK_CUSTOM_ENDPOINT_GUIDE.md)** - Complete guide for implementing Custom Endpoint auto-refresh and ARM Actions
+- **[Sample Queries for All Tabs](docs/CUSTOM_ENDPOINT_SAMPLE_QUERIES.md)** - Copy-paste ready JSON samples for all 7 workbook tabs
+- **[Workbook Parameters Guide](deployment/WORKBOOK_PARAMETERS_GUIDE.md)** - Parameter configuration reference
+
 ### 📚 Additional Resources
 The `/archive` directory contains supplementary documentation:
 - **Deployment Guides** - Advanced deployment scenarios and troubleshooting
