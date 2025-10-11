@@ -1,0 +1,683 @@
+{
+  "version": "Notebook/1.0",
+  "items": [
+    {
+      "type": 1,
+      "content": {
+        "json": "# DefenderC2 Command & Control Console (Custom Endpoint)\n\n## Full Working Implementation with Auto-Refresh and Direct Function App Calls\n\nThis workbook uses **Custom Endpoint** data sources for auto-refresh sections and direct Function App HTTP calls for ARM Actions."
+      },
+      "name": "text - title"
+    },
+    {
+      "type": 9,
+      "content": {
+        "version": "KqlParameterItem/1.0",
+        "parameters": [
+          {
+            "id": "subscription-param",
+            "version": "KqlParameterItem/1.0",
+            "name": "Subscription",
+            "type": 6,
+            "isRequired": true,
+            "multiSelect": true,
+            "quote": "'",
+            "delimiter": ",",
+            "value": [
+              "value::all"
+            ],
+            "typeSettings": {
+              "additionalResourceOptions": [
+                "value::all"
+              ],
+              "includeAll": true,
+              "showDefault": false
+            }
+          },
+          {
+            "id": "workspace-param",
+            "version": "KqlParameterItem/1.0",
+            "name": "Workspace",
+            "type": 5,
+            "isRequired": true,
+            "query": "where type =~ 'microsoft.operationalinsights/workspaces'\n| project id",
+            "crossComponentResources": [
+              "{Subscription}"
+            ],
+            "typeSettings": {
+              "additionalResourceOptions": []
+            },
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources"
+          },
+          {
+            "id": "tenantid-param",
+            "version": "KqlParameterItem/1.0",
+            "name": "TenantId",
+            "type": 1,
+            "isRequired": true,
+            "query": "where type =~ 'microsoft.operationalinsights/workspaces'\n| where id == '{Workspace}'\n| project tenantId",
+            "crossComponentResources": [
+              "{Subscription}"
+            ],
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources",
+            "description": "Auto-discovered from Workspace"
+          },
+          {
+            "id": "functionapp-param",
+            "version": "KqlParameterItem/1.0",
+            "name": "FunctionAppName",
+            "label": "Function App Name",
+            "type": 1,
+            "isRequired": true,
+            "value": "__FUNCTION_APP_NAME_PLACEHOLDER__",
+            "description": "Enter your DefenderC2 function app name (e.g., 'defc2', 'mydefender')"
+          }
+        ],
+        "style": "pills",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "name": "parameters-config"
+    },
+    {
+      "type": 11,
+      "content": {
+        "version": "LinkItem/1.0",
+        "style": "tabs",
+        "links": [
+          {
+            "id": "tab-devices",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "\ud83d\udda5\ufe0f Device Manager",
+            "subTarget": "devices",
+            "style": "link"
+          },
+          {
+            "id": "tab-threat-intel",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "\ud83d\udd0d Threat Intel",
+            "subTarget": "threat-intel",
+            "style": "link"
+          },
+          {
+            "id": "tab-actions",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "\u26a1 Action Manager",
+            "subTarget": "actions",
+            "style": "link"
+          },
+          {
+            "id": "tab-hunt",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "\ud83c\udfaf Hunt Manager",
+            "subTarget": "hunt",
+            "style": "link"
+          },
+          {
+            "id": "tab-incidents",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "\ud83d\udea8 Incident Manager",
+            "subTarget": "incidents",
+            "style": "link"
+          },
+          {
+            "id": "tab-detections",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "\ud83d\udee1\ufe0f Detection Manager",
+            "subTarget": "detections",
+            "style": "link"
+          },
+          {
+            "id": "tab-console",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "\ud83d\udcbb Console",
+            "subTarget": "console",
+            "style": "link"
+          }
+        ]
+      },
+      "name": "tabs"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "## \ud83d\udda5\ufe0f Device Manager\n\n**Using Custom Endpoint with Auto-Refresh**\n\n### Configuration Instructions:\n1. Click **Edit** on the query below\n2. In **Settings** tab:\n   - Query Type: **Custom Endpoint**\n   - Http Method: **POST**\n   - URL: `https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher`\n3. In **Headers** tab:\n   - Add header: `Content-Type` = `application/json`\n4. In **Body** tab:\n   - Body format: **JSON**\n   - Body content: `{\"action\":\"Get Devices\",\"tenantId\":\"{TenantId}\"}`\n5. In **Result Settings** tab:\n   - Result format: **JSON**\n   - JSONPath: `$.devices[*]`\n   - Columns:\n     - `$.id` \u2192 `id`\n     - `$.computerDnsName` \u2192 `computerDnsName`\n     - `$.isolationState` \u2192 `isolationState`\n     - `$.healthStatus` \u2192 `healthStatus`\n     - `$.riskScore` \u2192 `riskScore`\n     - `$.exposureLevel` \u2192 `exposureLevel`\n     - `$.lastSeen` \u2192 `lastSeen`\n     - `$.osPlatform` \u2192 `osPlatform`\n6. In **Advanced Settings**:\n   - Enable **Auto-refresh**\n   - Refresh interval: **30 seconds**"
+            },
+            "name": "text - device-instructions"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "{\"queryType\":0,\"resourceType\":\"microsoft.customendpoint/endpoints\",\"httpSettings\":{\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":\"{\\\"action\\\":\\\"Get Devices\\\",\\\"tenantId\\\":\\\"{TenantId}\\\"}\",\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.devices[*]\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"id\"},{\"path\":\"$.computerDnsName\",\"columnid\":\"computerDnsName\"},{\"path\":\"$.isolationState\",\"columnid\":\"isolationState\"},{\"path\":\"$.healthStatus\",\"columnid\":\"healthStatus\"},{\"path\":\"$.riskScore\",\"columnid\":\"riskScore\"},{\"path\":\"$.exposureLevel\",\"columnid\":\"exposureLevel\"},{\"path\":\"$.lastSeen\",\"columnid\":\"lastSeen\"},{\"path\":\"$.osPlatform\",\"columnid\":\"osPlatform\"}]}}]},\"refreshSettings\":{\"isAutoRefreshEnabled\":true,\"autoRefreshInterval\":\"30\"}}",
+              "size": 0,
+              "title": "Device List (Custom HTTP Auto-Refresh)",
+              "queryType": 0,
+              "resourceType": "microsoft.customendpoint/endpoints",
+              "visualization": "table"
+            },
+            "name": "query - get-devices"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "isolate-deviceids",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "IsolateDeviceIds",
+                  "label": "Device IDs to Isolate",
+                  "type": 1,
+                  "description": "Comma-separated device IDs"
+                },
+                {
+                  "id": "isolation-type",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "IsolationType",
+                  "label": "Isolation Type",
+                  "type": 2,
+                  "isRequired": true,
+                  "value": "Full",
+                  "typeSettings": {
+                    "additionalResourceOptions": []
+                  },
+                  "jsonData": "[\"Full\",\"Selective\"]"
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "name": "parameters - device-actions"
+          },
+          {
+            "type": 11,
+            "content": {
+              "version": "LinkItem/1.0",
+              "style": "list",
+              "links": [
+                {
+                  "id": "link-isolate",
+                  "linkTarget": "ArmAction",
+                  "linkLabel": "\ud83d\udd12 Isolate Devices",
+                  "style": "primary",
+                  "armActionContext": {
+                    "path": "https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher",
+                    "headers": [
+                      {
+                        "name": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "params": [],
+                    "body": "{\"action\":\"Isolate Device\",\"tenantId\":\"{TenantId}\",\"deviceIds\":\"{IsolateDeviceIds}\",\"isolationType\":\"{IsolationType}\",\"comment\":\"Isolated via Custom Endpoint Workbook\"}",
+                    "httpMethod": "POST",
+                    "title": "Isolate Devices",
+                    "description": "Initiating device isolation...",
+                    "actionName": "IsolateDevice",
+                    "runLabel": "Isolate"
+                  }
+                }
+              ]
+            },
+            "conditionalVisibility": {
+              "parameterName": "IsolateDeviceIds",
+              "comparison": "isNotEqualTo",
+              "value": ""
+            },
+            "name": "links - isolate-device"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "devices"
+      },
+      "name": "group - device-manager"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "## \ud83d\udd0d Threat Intelligence Manager\n\n**Using Custom Endpoint for TI Indicators**\n\n### Configuration:\n- Endpoint: `DefenderC2TIManager`\n- Action: `List Indicators`\n- Method: POST\n- Auto-refresh: Not enabled (manual refresh)"
+            },
+            "name": "text - ti-instructions"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "{\"queryType\":0,\"resourceType\":\"microsoft.customendpoint/endpoints\",\"httpSettings\":{\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2TIManager\",\"body\":\"{\\\"action\\\":\\\"List Indicators\\\",\\\"tenantId\\\":\\\"{TenantId}\\\"}\",\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.indicators[*]\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"id\"},{\"path\":\"$.indicatorValue\",\"columnid\":\"indicatorValue\"},{\"path\":\"$.indicatorType\",\"columnid\":\"indicatorType\"},{\"path\":\"$.action\",\"columnid\":\"action\"},{\"path\":\"$.severity\",\"columnid\":\"severity\"},{\"path\":\"$.title\",\"columnid\":\"title\"},{\"path\":\"$.creationTime\",\"columnid\":\"creationTime\"}]}}]}}",
+              "size": 0,
+              "title": "Threat Indicators",
+              "queryType": 0,
+              "resourceType": "microsoft.customendpoint/endpoints",
+              "visualization": "table"
+            },
+            "name": "query - list-indicators"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "file-indicators",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "FileIndicators",
+                  "label": "File Hashes (SHA256)",
+                  "type": 1,
+                  "description": "Comma-separated SHA256 hashes"
+                },
+                {
+                  "id": "file-action",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "FileIndicatorAction",
+                  "label": "Action",
+                  "type": 2,
+                  "isRequired": true,
+                  "value": "Alert",
+                  "typeSettings": {
+                    "additionalResourceOptions": []
+                  },
+                  "jsonData": "[\"Alert\",\"AlertAndBlock\",\"Allowed\"]"
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "name": "parameters - ti-actions"
+          },
+          {
+            "type": 11,
+            "content": {
+              "version": "LinkItem/1.0",
+              "style": "list",
+              "links": [
+                {
+                  "id": "link-add-file-indicator",
+                  "linkTarget": "ArmAction",
+                  "linkLabel": "\u2795 Add File Indicators",
+                  "style": "primary",
+                  "armActionContext": {
+                    "path": "https://{FunctionAppName}.azurewebsites.net/api/DefenderC2TIManager",
+                    "headers": [
+                      {
+                        "name": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "params": [],
+                    "body": "{\"action\":\"Add File Indicators\",\"tenantId\":\"{TenantId}\",\"indicators\":\"{FileIndicators}\",\"indicatorAction\":\"{FileIndicatorAction}\",\"severity\":\"High\",\"title\":\"File Indicators\",\"description\":\"Added via Custom Endpoint Workbook\"}",
+                    "httpMethod": "POST",
+                    "title": "Add File Indicators",
+                    "description": "Adding file indicators...",
+                    "actionName": "AddFileIndicators",
+                    "runLabel": "Add"
+                  }
+                }
+              ]
+            },
+            "conditionalVisibility": {
+              "parameterName": "FileIndicators",
+              "comparison": "isNotEqualTo",
+              "value": ""
+            },
+            "name": "links - add-file-indicators"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "threat-intel"
+      },
+      "name": "group - threat-intel"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "## \u26a1 Action Manager\n\n**Track and manage machine actions**\n\n### Configuration:\n- Endpoint: `DefenderC2Dispatcher`\n- Action: `Get All Actions`\n- Method: POST"
+            },
+            "name": "text - action-instructions"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "{\"queryType\":0,\"resourceType\":\"microsoft.customendpoint/endpoints\",\"httpSettings\":{\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":\"{\\\"action\\\":\\\"Get All Actions\\\",\\\"tenantId\\\":\\\"{TenantId}\\\"}\",\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.actions[*]\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"id\"},{\"path\":\"$.type\",\"columnid\":\"type\"},{\"path\":\"$.status\",\"columnid\":\"status\"},{\"path\":\"$.requestor\",\"columnid\":\"requestor\"},{\"path\":\"$.creationDateTimeUtc\",\"columnid\":\"created\"},{\"path\":\"$.lastUpdateDateTimeUtc\",\"columnid\":\"lastUpdated\"}]}}]}}",
+              "size": 0,
+              "title": "All Machine Actions",
+              "queryType": 0,
+              "resourceType": "microsoft.customendpoint/endpoints",
+              "visualization": "table"
+            },
+            "name": "query - get-actions"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "actions"
+      },
+      "name": "group - actions"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "## \ud83c\udfaf Hunt Manager\n\n**Advanced Hunting Queries**\n\n### Configuration:\n- Endpoint: `DefenderC2HuntManager`\n- Action: `Get Hunt Status`\n- Method: POST"
+            },
+            "name": "text - hunt-instructions"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "{\"queryType\":0,\"resourceType\":\"microsoft.customendpoint/endpoints\",\"httpSettings\":{\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2HuntManager\",\"body\":\"{\\\"action\\\":\\\"Get Hunt Status\\\",\\\"tenantId\\\":\\\"{TenantId}\\\"}\",\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.hunts[*]\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"id\"},{\"path\":\"$.query\",\"columnid\":\"query\"},{\"path\":\"$.status\",\"columnid\":\"status\"},{\"path\":\"$.createdTime\",\"columnid\":\"createdTime\"},{\"path\":\"$.resultCount\",\"columnid\":\"resultCount\"}]}}]}}",
+              "size": 0,
+              "title": "Hunt Queries",
+              "queryType": 0,
+              "resourceType": "microsoft.customendpoint/endpoints",
+              "visualization": "table"
+            },
+            "name": "query - hunt-status"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "hunt"
+      },
+      "name": "group - hunt"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "## \ud83d\udea8 Incident Manager\n\n**Security Incidents Management**\n\n### Configuration:\n- Endpoint: `DefenderC2IncidentManager`\n- Action: `GetIncidents`\n- Method: POST"
+            },
+            "name": "text - incident-instructions"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "{\"queryType\":0,\"resourceType\":\"microsoft.customendpoint/endpoints\",\"httpSettings\":{\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2IncidentManager\",\"body\":\"{\\\"action\\\":\\\"GetIncidents\\\",\\\"tenantId\\\":\\\"{TenantId}\\\"}\",\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.incidents[*]\",\"columns\":[{\"path\":\"$.incidentId\",\"columnid\":\"incidentId\"},{\"path\":\"$.incidentName\",\"columnid\":\"incidentName\"},{\"path\":\"$.severity\",\"columnid\":\"severity\"},{\"path\":\"$.status\",\"columnid\":\"status\"},{\"path\":\"$.createdTime\",\"columnid\":\"createdTime\"},{\"path\":\"$.lastUpdateTime\",\"columnid\":\"lastUpdateTime\"}]}}]}}",
+              "size": 0,
+              "title": "Security Incidents",
+              "queryType": 0,
+              "resourceType": "microsoft.customendpoint/endpoints",
+              "visualization": "table"
+            },
+            "name": "query - get-incidents"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "update-incident-id",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "UpdateIncidentId",
+                  "label": "Incident ID",
+                  "type": 1,
+                  "description": "Incident ID to update"
+                },
+                {
+                  "id": "update-status",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "UpdateStatus",
+                  "label": "New Status",
+                  "type": 2,
+                  "isRequired": true,
+                  "value": "Resolved",
+                  "typeSettings": {
+                    "additionalResourceOptions": []
+                  },
+                  "jsonData": "[\"Active\",\"Resolved\",\"InProgress\"]"
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "name": "parameters - incident-actions"
+          },
+          {
+            "type": 11,
+            "content": {
+              "version": "LinkItem/1.0",
+              "style": "list",
+              "links": [
+                {
+                  "id": "link-update-incident",
+                  "linkTarget": "ArmAction",
+                  "linkLabel": "\u270f\ufe0f Update Incident",
+                  "style": "primary",
+                  "armActionContext": {
+                    "path": "https://{FunctionAppName}.azurewebsites.net/api/DefenderC2IncidentManager",
+                    "headers": [
+                      {
+                        "name": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "params": [],
+                    "body": "{\"action\":\"Update Incident\",\"tenantId\":\"{TenantId}\",\"incidentId\":\"{UpdateIncidentId}\",\"status\":\"{UpdateStatus}\"}",
+                    "httpMethod": "POST",
+                    "title": "Update Incident",
+                    "description": "Updating incident status...",
+                    "actionName": "UpdateIncident",
+                    "runLabel": "Update"
+                  }
+                }
+              ]
+            },
+            "conditionalVisibility": {
+              "parameterName": "UpdateIncidentId",
+              "comparison": "isNotEqualTo",
+              "value": ""
+            },
+            "name": "links - update-incident"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "incidents"
+      },
+      "name": "group - incidents"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "## \ud83d\udee1\ufe0f Detection Manager\n\n**Custom Detection Rules**\n\n### Configuration:\n- Endpoint: `DefenderC2CDManager`\n- Action: `List Detections`\n- Method: POST"
+            },
+            "name": "text - detection-instructions"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "{\"queryType\":0,\"resourceType\":\"microsoft.customendpoint/endpoints\",\"httpSettings\":{\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2CDManager\",\"body\":\"{\\\"action\\\":\\\"List Detections\\\",\\\"tenantId\\\":\\\"{TenantId}\\\"}\",\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.detections[*]\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"id\"},{\"path\":\"$.ruleName\",\"columnid\":\"ruleName\"},{\"path\":\"$.severity\",\"columnid\":\"severity\"},{\"path\":\"$.enabled\",\"columnid\":\"enabled\"},{\"path\":\"$.createdBy\",\"columnid\":\"createdBy\"},{\"path\":\"$.lastModified\",\"columnid\":\"lastModified\"}]}}]}}",
+              "size": 0,
+              "title": "Custom Detection Rules",
+              "queryType": 0,
+              "resourceType": "microsoft.customendpoint/endpoints",
+              "visualization": "table"
+            },
+            "name": "query - list-detections"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "create-rule-name",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "CreateRuleName",
+                  "label": "Rule Name",
+                  "type": 1,
+                  "description": "Name for the new detection rule"
+                },
+                {
+                  "id": "create-rule-query",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "CreateRuleQuery",
+                  "label": "KQL Query",
+                  "type": 1,
+                  "description": "KQL query for detection"
+                },
+                {
+                  "id": "create-rule-severity",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "CreateRuleSeverity",
+                  "label": "Severity",
+                  "type": 2,
+                  "isRequired": true,
+                  "value": "Medium",
+                  "typeSettings": {
+                    "additionalResourceOptions": []
+                  },
+                  "jsonData": "[\"Informational\",\"Low\",\"Medium\",\"High\"]"
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "name": "parameters - detection-actions"
+          },
+          {
+            "type": 11,
+            "content": {
+              "version": "LinkItem/1.0",
+              "style": "list",
+              "links": [
+                {
+                  "id": "link-create-detection",
+                  "linkTarget": "ArmAction",
+                  "linkLabel": "\u2795 Create Detection Rule",
+                  "style": "primary",
+                  "armActionContext": {
+                    "path": "https://{FunctionAppName}.azurewebsites.net/api/DefenderC2CDManager",
+                    "headers": [
+                      {
+                        "name": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "params": [],
+                    "body": "{\"action\":\"Create Detection\",\"tenantId\":\"{TenantId}\",\"ruleName\":\"{CreateRuleName}\",\"query\":\"{CreateRuleQuery}\",\"severity\":\"{CreateRuleSeverity}\"}",
+                    "httpMethod": "POST",
+                    "title": "Create Detection Rule",
+                    "description": "Creating custom detection rule...",
+                    "actionName": "CreateDetection",
+                    "runLabel": "Create"
+                  }
+                }
+              ]
+            },
+            "conditionalVisibility": {
+              "parameterName": "CreateRuleName",
+              "comparison": "isNotEqualTo",
+              "value": ""
+            },
+            "name": "links - create-detection"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "detections"
+      },
+      "name": "group - detections"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "## \ud83d\udcbb Console\n\n**Command History and Orchestration**\n\n### Configuration:\n- Endpoint: `DefenderC2Orchestrator`\n- Action: `Get Command History`\n- Method: POST"
+            },
+            "name": "text - console-instructions"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "{\"queryType\":0,\"resourceType\":\"microsoft.customendpoint/endpoints\",\"httpSettings\":{\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Orchestrator\",\"body\":\"{\\\"action\\\":\\\"Get Command History\\\",\\\"tenantId\\\":\\\"{TenantId}\\\"}\",\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.commands[*]\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"id\"},{\"path\":\"$.command\",\"columnid\":\"command\"},{\"path\":\"$.status\",\"columnid\":\"status\"},{\"path\":\"$.executedBy\",\"columnid\":\"executedBy\"},{\"path\":\"$.executedTime\",\"columnid\":\"executedTime\"},{\"path\":\"$.result\",\"columnid\":\"result\"}]}}]}}",
+              "size": 0,
+              "title": "Command History",
+              "queryType": 0,
+              "resourceType": "microsoft.customendpoint/endpoints",
+              "visualization": "table"
+            },
+            "name": "query - command-history"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "console"
+      },
+      "name": "group - console"
+    }
+  ]
+}
