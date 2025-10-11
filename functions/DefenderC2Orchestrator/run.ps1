@@ -485,6 +485,64 @@ try {
             $result.size = $fileBytes.Length
         }
         
+        "UploadToLibrary" {
+            if (-not $fileName) {
+                throw "File name required for UploadToLibrary"
+            }
+            
+            if (-not $fileContent) {
+                throw "File content required for UploadToLibrary"
+            }
+            
+            Write-Host "📤 Uploading file: $fileName to library container..."
+            
+            # Check if storage context is initialized
+            if (-not $global:StorageContext) {
+                throw "Storage context not initialized. Ensure AzureWebJobsStorage is configured."
+            }
+            
+            # Sanitize file name to prevent path traversal
+            $sanitizedFileName = [System.IO.Path]::GetFileName($fileName)
+            
+            # Decode Base64 content
+            try {
+                $fileBytes = [Convert]::FromBase64String($fileContent)
+                Write-Host "  Decoded content: $($fileBytes.Length) bytes"
+            } catch {
+                throw "Invalid Base64 content: $($_.Exception.Message)"
+            }
+            
+            # Create temporary file
+            $tempFile = [System.IO.Path]::GetTempFileName()
+            try {
+                [System.IO.File]::WriteAllBytes($tempFile, $fileBytes)
+                
+                # Upload to blob storage
+                $uploadResult = Set-AzStorageBlobContent `
+                    -Container "library" `
+                    -Blob $sanitizedFileName `
+                    -File $tempFile `
+                    -Context $global:StorageContext `
+                    -Force `
+                    -ErrorAction Stop
+                
+                Write-Host "✅ File uploaded successfully: $sanitizedFileName ($($fileBytes.Length) bytes)"
+                
+                $result.status = "Success"
+                $result.message = "File uploaded successfully to library"
+                $result.fileName = $sanitizedFileName
+                $result.size = $fileBytes.Length
+                $result.contentType = $uploadResult.ICloudBlob.Properties.ContentType
+                $result.lastModified = $uploadResult.LastModified.DateTime.ToString("o")
+                
+            } finally {
+                # Clean up temporary file
+                if (Test-Path $tempFile) {
+                    Remove-Item $tempFile -Force -ErrorAction SilentlyContinue
+                }
+            }
+        }
+        
         "DeleteLibraryFile" {
             if (-not $fileName) {
                 throw "File name required for DeleteLibraryFile"
@@ -518,7 +576,7 @@ try {
         }
         
         default {
-            throw "Unknown function: $function. Supported functions: GetLiveResponseSessions, InvokeLiveResponseScript, GetLiveResponseOutput, GetLiveResponseFile, PutLiveResponseFile, PutLiveResponseFileFromLibrary, ListLibraryFiles, GetLibraryFile, DeleteLibraryFile"
+            throw "Unknown function: $function. Supported functions: GetLiveResponseSessions, InvokeLiveResponseScript, GetLiveResponseOutput, GetLiveResponseFile, PutLiveResponseFile, PutLiveResponseFileFromLibrary, ListLibraryFiles, UploadToLibrary, GetLibraryFile, DeleteLibraryFile"
         }
     }
 
