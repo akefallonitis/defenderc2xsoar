@@ -4,7 +4,7 @@
     {
       "type": 1,
       "content": {
-        "json": "# DefenderC2 Command & Control Console\n\n> Enterprise-grade automation and orchestration for Microsoft Defender for Endpoint with zero-configuration deployment.\n\n---\n\n## Configuration\n\nSelect your subscription and workspace below. All other settings will be auto-discovered:"
+        "json": "# DefenderC2 Command & Control Console\n\n> Enterprise-grade automation and orchestration for Microsoft Defender for Endpoint with **true zero-configuration deployment**.\n\n---\n\n## Quick Start Configuration\n\nSelect your **DefenderC2 Function App** and **Workspace** - everything else autodiscovers!\n\n### What's Autodiscovered:\n- \u2705 **Subscription ID** (from Function App resource)\n- \u2705 **Resource Group** (from Function App resource)\n- \u2705 **Function App Name** (from Function App resource)\n- \u2705 **Azure AD Tenant ID** (from Function App resource - this is where your App Registration lives!)\n- \u2705 **Function Key** (from deployment parameters or manual entry)\n\n### You Only Select:\n1. \ud83c\udfaf Your DefenderC2 Function App (one click)\n2. \ud83d\udcca Your Log Analytics Workspace (one click)"
       },
       "name": "text - header"
     },
@@ -13,45 +13,19 @@
       "content": {
         "version": "KqlParameterItem/1.0",
         "crossComponentResources": [
-          "{Subscription}"
+          "value::all"
         ],
         "parameters": [
           {
-            "id": "1f74ed9a-e3ed-498d-bd5b-f68f3836a117",
+            "id": "fa1-functionapp-selector",
             "version": "KqlParameterItem/1.0",
-            "name": "Subscription",
-            "type": 6,
-            "isRequired": true,
-            "query": "Resources | where type =~ 'microsoft.operationalinsights/workspaces' | summarize by subscriptionId",
-            "crossComponentResources": [
-              "value::all"
-            ],
-            "typeSettings": {
-              "additionalResourceOptions": [
-                "value::all"
-              ],
-              "includeAll": false,
-              "showDefault": false
-            },
-            "timeContext": {
-              "durationMs": 86400000
-            },
-            "queryType": 1,
-            "resourceType": "microsoft.resourcegraph/resources",
-            "defaultValue": "value::all",
-            "value": [
-              "value::all"
-            ]
-          },
-          {
-            "id": "b616a3a3-4271-4208-b1a9-a92a78efed08",
-            "version": "KqlParameterItem/1.0",
-            "name": "Workspace",
+            "name": "FunctionApp",
+            "label": "DefenderC2 Function App",
             "type": 5,
             "isRequired": true,
-            "query": "Resources | where type =~ 'microsoft.operationalinsights/workspaces' | project id, name, location",
+            "query": "Resources\n| where type =~ 'microsoft.web/sites'\n| where kind contains 'functionapp'\n| where name contains 'defender' or tags.purpose =~ 'defenderc2' or tags.application =~ 'defenderc2'\n| project id, name, resourceGroup, subscriptionId, location, tags\n| order by name asc",
             "crossComponentResources": [
-              "{Subscription}"
+              "value::all"
             ],
             "typeSettings": {
               "additionalResourceOptions": [],
@@ -62,18 +36,42 @@
             },
             "queryType": 1,
             "resourceType": "microsoft.resourcegraph/resources",
-            "value": null
+            "value": null,
+            "description": "Select your DefenderC2 Function App. The list shows Function Apps with 'defender' in the name or tagged with 'purpose=defenderc2'."
           },
           {
-            "id": "8c4e5f38-a6cd-4642-9f0d-2f2e5d7b3c1a",
+            "id": "fa2-workspace-selector",
             "version": "KqlParameterItem/1.0",
-            "name": "TenantId",
-            "label": "Target Tenant ID",
-            "type": 1,
-            "isRequired": false,
-            "query": "Resources | where type =~ 'microsoft.operationalinsights/workspaces' | where id == '{Workspace}' | extend TenantId = tostring(properties.customerId) | project value = TenantId, label = TenantId",
+            "name": "Workspace",
+            "label": "Log Analytics Workspace",
+            "type": 5,
+            "isRequired": true,
+            "query": "Resources\n| where type =~ 'microsoft.operationalinsights/workspaces'\n| project id, name, resourceGroup, location\n| order by name asc",
             "crossComponentResources": [
-              "{Subscription}"
+              "value::all"
+            ],
+            "typeSettings": {
+              "additionalResourceOptions": [],
+              "showDefault": false
+            },
+            "timeContext": {
+              "durationMs": 86400000
+            },
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources",
+            "value": null,
+            "description": "Select your Log Analytics Workspace (for Sentinel data and dashboards)."
+          },
+          {
+            "id": "ad1-subscription-autodiscover",
+            "version": "KqlParameterItem/1.0",
+            "name": "Subscription",
+            "label": "Subscription (Auto)",
+            "type": 1,
+            "isRequired": true,
+            "query": "Resources\n| where id == '{FunctionApp}'\n| project value = subscriptionId",
+            "crossComponentResources": [
+              "value::all"
             ],
             "isHiddenWhenLocked": true,
             "timeContext": {
@@ -81,59 +79,95 @@
             },
             "queryType": 1,
             "resourceType": "microsoft.resourcegraph/resources",
-            "description": "Auto-discovered from Log Analytics Workspace. This is the Workspace ID (Customer ID) used as the target tenant for Defender API calls."
+            "description": "Auto-discovered from selected Function App"
           },
           {
-            "id": "9d5e6f49-b7de-5753-a0e1-3f3f6e8c4d2b",
+            "id": "ad2-resourcegroup-autodiscover",
             "version": "KqlParameterItem/1.0",
-            "name": "FunctionAppName",
-            "label": "Function App Name",
+            "name": "ResourceGroup",
+            "label": "Resource Group (Auto)",
             "type": 1,
             "isRequired": true,
+            "query": "Resources\n| where id == '{FunctionApp}'\n| project value = resourceGroup",
+            "crossComponentResources": [
+              "value::all"
+            ],
+            "isHiddenWhenLocked": true,
+            "timeContext": {
+              "durationMs": 86400000
+            },
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources",
+            "description": "Auto-discovered from selected Function App"
+          },
+          {
+            "id": "ad3-functionappname-autodiscover",
+            "version": "KqlParameterItem/1.0",
+            "name": "FunctionAppName",
+            "label": "Function App Name (Auto)",
+            "type": 1,
+            "isRequired": true,
+            "query": "Resources\n| where id == '{FunctionApp}'\n| project value = name",
+            "crossComponentResources": [
+              "value::all"
+            ],
+            "isHiddenWhenLocked": true,
+            "timeContext": {
+              "durationMs": 86400000
+            },
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources",
+            "description": "Auto-discovered from selected Function App"
+          },
+          {
+            "id": "ad4-tenantid-autodiscover",
+            "version": "KqlParameterItem/1.0",
+            "name": "TenantId",
+            "label": "Azure AD Tenant ID (Auto)",
+            "type": 1,
+            "isRequired": true,
+            "query": "Resources\n| where id == '{FunctionApp}'\n| project value = tenantId",
+            "crossComponentResources": [
+              "value::all"
+            ],
+            "isHiddenWhenLocked": false,
             "typeSettings": {
               "isSearchable": false
             },
             "timeContext": {
               "durationMs": 86400000
             },
-            "description": "Enter your DefenderC2 function app name (e.g., 'defenderc2', 'mydefender'). For function key authentication, append ?code=YOUR_KEY (e.g., 'defenderc2?code=abc123...'). For anonymous auth, just the app name."
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources",
+            "description": "\ud83c\udfaf CRITICAL: Auto-discovered from Function App resource. This is the Azure AD Tenant ID where your App Registration (APPID) is created. This ensures authentication works correctly. Can be manually overridden if needed."
           },
           {
-            "id": "aa70e84a-7847-4d70-842f-e526e7f85695",
+            "id": "ma1-functionkey-manual",
             "version": "KqlParameterItem/1.0",
             "name": "FunctionKey",
-            "label": "Function Key (Optional - Not Currently Used)",
+            "label": "Function Key",
             "type": 1,
             "isRequired": false,
             "defaultValue": "",
-            "description": "DEPRECATED: For function key authentication, append ?code=YOUR_KEY to the Function App Name parameter instead (e.g., 'defenderc2?code=abc123...'). Leave this empty.",
+            "typeSettings": {
+              "isSearchable": false
+            },
             "timeContext": {
               "durationMs": 86400000
-            }
-          },
-          {
-            "id": "c1d2e3f4-g5h6-i7j8-k9l0-m1n2o3p4q5r6",
-            "version": "KqlParameterItem/1.0",
-            "name": "ResourceGroup",
-            "label": "Resource Group",
-            "type": 1,
-            "isRequired": true,
-            "description": "The Azure Resource Group where your Function App is deployed (e.g., 'rg-defenderc2', 'security-resources'). Required for ARM Actions.",
-            "timeContext": {
-              "durationMs": 86400000
-            }
+            },
+            "description": "\ud83d\udd11 Function key for authentication. If deployed via ARM template, this is auto-populated. Otherwise, get it from: Azure Portal \u2192 Function App \u2192 Functions \u2192 Function Keys \u2192 Copy 'default' key"
           },
           {
             "id": "devicelist-parameter",
             "version": "KqlParameterItem/1.0",
             "name": "DeviceList",
-            "label": "Available Devices",
+            "label": "Available Devices (Auto-populated)",
             "type": 2,
             "isRequired": false,
             "multiSelect": true,
             "quote": "'",
             "delimiter": ",",
-            "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":\"{\\\"action\\\":\\\"Get Devices\\\",\\\"tenantId\\\":\\\"{TenantId}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.devices[*]\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"value\"},{\"path\":\"$.computerDnsName\",\"columnid\":\"label\"}]}}]}",
+            "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher?code={FunctionKey}\",\"body\":\"{\\\"action\\\":\\\"Get Devices\\\",\\\"tenantId\\\":\\\"{TenantId}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.devices[*]\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"value\"},{\"path\":\"$.computerDnsName\",\"columnid\":\"label\"}]}}]}",
             "typeSettings": {
               "additionalResourceOptions": [],
               "showDefault": false
@@ -142,7 +176,7 @@
               "durationMs": 86400000
             },
             "queryType": 10,
-            "description": "Select one or more devices from the list. This list is populated automatically from your Defender environment.",
+            "description": "\u2705 Auto-populated from your Defender environment using autodiscovered tenant ID and function app. Refresh automatically when Function App or Tenant ID changes.",
             "value": null
           },
           {
@@ -322,7 +356,7 @@
                   "multiSelect": true,
                   "quote": "'",
                   "delimiter": ",",
-                  "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [{\"name\": \"Content-Type\", \"value\": \"application/json\"}], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": \"{\\\"action\\\":\\\"Get Devices\\\", \\\"tenantId\\\":\\\"{TenantId}\\\"}\", \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.devices[*]\", \"columns\": [{\"path\": \"$.id\", \"columnid\": \"value\"}, {\"path\": \"$.computerDnsName\", \"columnid\": \"label\"}]}}]}",
+                  "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [{\"name\": \"Content-Type\", \"value\": \"application/json\"}], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher?code={FunctionKey}\", \"body\": \"{\\\"action\\\":\\\"Get Devices\\\", \\\"tenantId\\\":\\\"{TenantId}\\\"}\", \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.devices[*]\", \"columns\": [{\"path\": \"$.id\", \"columnid\": \"value\"}, {\"path\": \"$.computerDnsName\", \"columnid\": \"label\"}]}}]}",
                   "queryType": 10,
                   "typeSettings": {
                     "additionalResourceOptions": [],
@@ -367,7 +401,7 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Dispatcher/invocations?api-version=2022-03-01",
+                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Dispatcher/invocations?api-version=2022-03-01",
                     "headers": [
                       {
                         "name": "Content-Type",
@@ -391,7 +425,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":\"{\\\"action\\\":\\\"Isolate Device\\\",\\\"tenantId\\\":\\\"{TenantId}\\\",\\\"deviceIds\\\":\\\"{IsolateDeviceIds}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.actionId\",\"columnid\":\"actionId\"},{\"path\":\"$.status\",\"columnid\":\"status\"},{\"path\":\"$.message\",\"columnid\":\"message\"},{\"path\":\"$.tenantId\",\"columnid\":\"tenantId\"}]}}]}",
+              "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [{\"name\": \"Content-Type\", \"value\": \"application/json\"}], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher?code={FunctionKey}\", \"body\": \"{\\\"action\\\":\\\"Isolate Device\\\",\\\"tenantId\\\":\\\"{TenantId}\\\",\\\"deviceIds\\\":\\\"{IsolateDeviceIds}\\\"}\", \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$\", \"columns\": [{\"path\": \"$.actionId\", \"columnid\": \"actionId\"}, {\"path\": \"$.status\", \"columnid\": \"status\"}, {\"path\": \"$.message\", \"columnid\": \"message\"}, {\"path\": \"$.tenantId\", \"columnid\": \"tenantId\"}]}}]}",
               "size": 0,
               "title": "Isolation Result",
               "queryType": 10
@@ -428,7 +462,7 @@
                   "multiSelect": true,
                   "quote": "'",
                   "delimiter": ",",
-                  "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [{\"name\": \"Content-Type\", \"value\": \"application/json\"}], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": \"{\\\"action\\\":\\\"Get Devices\\\", \\\"tenantId\\\":\\\"{TenantId}\\\"}\", \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.devices[*]\", \"columns\": [{\"path\": \"$.id\", \"columnid\": \"value\"}, {\"path\": \"$.computerDnsName\", \"columnid\": \"label\"}]}}]}",
+                  "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [{\"name\": \"Content-Type\", \"value\": \"application/json\"}], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher?code={FunctionKey}\", \"body\": \"{\\\"action\\\":\\\"Get Devices\\\", \\\"tenantId\\\":\\\"{TenantId}\\\"}\", \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.devices[*]\", \"columns\": [{\"path\": \"$.id\", \"columnid\": \"value\"}, {\"path\": \"$.computerDnsName\", \"columnid\": \"label\"}]}}]}",
                   "queryType": 10,
                   "typeSettings": {
                     "additionalResourceOptions": [],
@@ -457,7 +491,7 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Dispatcher/invocations?api-version=2022-03-01",
+                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Dispatcher/invocations?api-version=2022-03-01",
                     "headers": [
                       {
                         "name": "Content-Type",
@@ -502,7 +536,7 @@
                   "multiSelect": true,
                   "quote": "'",
                   "delimiter": ",",
-                  "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [{\"name\": \"Content-Type\", \"value\": \"application/json\"}], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": \"{\\\"action\\\":\\\"Get Devices\\\", \\\"tenantId\\\":\\\"{TenantId}\\\"}\", \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.devices[*]\", \"columns\": [{\"path\": \"$.id\", \"columnid\": \"value\"}, {\"path\": \"$.computerDnsName\", \"columnid\": \"label\"}]}}]}",
+                  "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [{\"name\": \"Content-Type\", \"value\": \"application/json\"}], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher?code={FunctionKey}\", \"body\": \"{\\\"action\\\":\\\"Get Devices\\\", \\\"tenantId\\\":\\\"{TenantId}\\\"}\", \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.devices[*]\", \"columns\": [{\"path\": \"$.id\", \"columnid\": \"value\"}, {\"path\": \"$.computerDnsName\", \"columnid\": \"label\"}]}}]}",
                   "queryType": 10,
                   "typeSettings": {
                     "additionalResourceOptions": [],
@@ -531,7 +565,7 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Dispatcher/invocations?api-version=2022-03-01",
+                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Dispatcher/invocations?api-version=2022-03-01",
                     "headers": [
                       {
                         "name": "Content-Type",
@@ -576,7 +610,7 @@
                   "multiSelect": true,
                   "quote": "'",
                   "delimiter": ",",
-                  "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [{\"name\": \"Content-Type\", \"value\": \"application/json\"}], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": \"{\\\"action\\\":\\\"Get Devices\\\", \\\"tenantId\\\":\\\"{TenantId}\\\"}\", \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.devices[*]\", \"columns\": [{\"path\": \"$.id\", \"columnid\": \"value\"}, {\"path\": \"$.computerDnsName\", \"columnid\": \"label\"}]}}]}",
+                  "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [{\"name\": \"Content-Type\", \"value\": \"application/json\"}], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher?code={FunctionKey}\", \"body\": \"{\\\"action\\\":\\\"Get Devices\\\", \\\"tenantId\\\":\\\"{TenantId}\\\"}\", \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.devices[*]\", \"columns\": [{\"path\": \"$.id\", \"columnid\": \"value\"}, {\"path\": \"$.computerDnsName\", \"columnid\": \"label\"}]}}]}",
                   "queryType": 10,
                   "typeSettings": {
                     "additionalResourceOptions": [],
@@ -622,7 +656,7 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Dispatcher/invocations?api-version=2022-03-01",
+                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Dispatcher/invocations?api-version=2022-03-01",
                     "headers": [
                       {
                         "name": "Content-Type",
@@ -653,7 +687,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":\"{\\\"action\\\":\\\"Get Devices\\\",\\\"tenantId\\\":\\\"{TenantId}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.devices[*]\",\"columns\":[{\"path\":\"$.deviceName\",\"columnid\":\"Device Name\"},{\"path\":\"$.riskScore\",\"columnid\":\"Risk Score\"},{\"path\":\"$.healthStatus\",\"columnid\":\"Health Status\"},{\"path\":\"$.lastIpAddress\",\"columnid\":\"Last IP\"},{\"path\":\"$.lastSeen\",\"columnid\":\"Last Seen\"},{\"path\":\"$.id\",\"columnid\":\"Device ID\"}]}}]}",
+              "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [{\"name\": \"Content-Type\", \"value\": \"application/json\"}], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher?code={FunctionKey}\", \"body\": \"{\\\"action\\\":\\\"Get Devices\\\",\\\"tenantId\\\":\\\"{TenantId}\\\"}\", \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.devices[*]\", \"columns\": [{\"path\": \"$.deviceName\", \"columnid\": \"Device Name\"}, {\"path\": \"$.riskScore\", \"columnid\": \"Risk Score\"}, {\"path\": \"$.healthStatus\", \"columnid\": \"Health Status\"}, {\"path\": \"$.lastIpAddress\", \"columnid\": \"Last IP\"}, {\"path\": \"$.lastSeen\", \"columnid\": \"Last Seen\"}, {\"path\": \"$.id\", \"columnid\": \"Device ID\"}]}}]}",
               "size": 0,
               "title": "\ud83d\udcbb Device List",
               "showExportToExcel": true,
@@ -790,7 +824,7 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2TIManager/invocations?api-version=2022-03-01",
+                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2TIManager/invocations?api-version=2022-03-01",
                     "headers": [
                       {
                         "name": "Content-Type",
@@ -889,7 +923,7 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2TIManager/invocations?api-version=2022-03-01",
+                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2TIManager/invocations?api-version=2022-03-01",
                     "headers": [
                       {
                         "name": "Content-Type",
@@ -971,7 +1005,7 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2TIManager/invocations?api-version=2022-03-01",
+                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2TIManager/invocations?api-version=2022-03-01",
                     "headers": [
                       {
                         "name": "Content-Type",
@@ -1002,7 +1036,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2TIManager\",\"body\":\"{\\\"action\\\":\\\"List Indicators\\\",\\\"tenantId\\\":\\\"{TenantId}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.indicators[*]\",\"columns\":[{\"path\":\"$.indicatorValue\",\"columnid\":\"Indicator\"},{\"path\":\"$.indicatorType\",\"columnid\":\"Type\"},{\"path\":\"$.action\",\"columnid\":\"Action\"},{\"path\":\"$.severity\",\"columnid\":\"Severity\"},{\"path\":\"$.title\",\"columnid\":\"Title\"},{\"path\":\"$.createdBy\",\"columnid\":\"Created By\"},{\"path\":\"$.creationDateTime\",\"columnid\":\"Created\"}]}}]}",
+              "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [{\"name\": \"Content-Type\", \"value\": \"application/json\"}], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2TIManager?code={FunctionKey}\", \"body\": \"{\\\"action\\\":\\\"List Indicators\\\",\\\"tenantId\\\":\\\"{TenantId}\\\"}\", \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.indicators[*]\", \"columns\": [{\"path\": \"$.indicatorValue\", \"columnid\": \"Indicator\"}, {\"path\": \"$.indicatorType\", \"columnid\": \"Type\"}, {\"path\": \"$.action\", \"columnid\": \"Action\"}, {\"path\": \"$.severity\", \"columnid\": \"Severity\"}, {\"path\": \"$.title\", \"columnid\": \"Title\"}, {\"path\": \"$.createdBy\", \"columnid\": \"Created By\"}, {\"path\": \"$.creationDateTime\", \"columnid\": \"Created\"}]}}]}",
               "size": 0,
               "title": "\ud83d\udccd Active Threat Indicators",
               "showExportToExcel": true,
@@ -1091,7 +1125,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":\"{\\\"action\\\":\\\"Get Actions\\\",\\\"tenantId\\\":\\\"{TenantId}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.actions[*]\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"Action ID\"},{\"path\":\"$.type\",\"columnid\":\"Type\"},{\"path\":\"$.status\",\"columnid\":\"Status\"},{\"path\":\"$.requestor\",\"columnid\":\"Requestor\"},{\"path\":\"$.creationDateTimeUtc\",\"columnid\":\"Created\"},{\"path\":\"$.machineId\",\"columnid\":\"Device ID\"}]}}]}",
+              "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [{\"name\": \"Content-Type\", \"value\": \"application/json\"}], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher?code={FunctionKey}\", \"body\": \"{\\\"action\\\":\\\"Get Actions\\\",\\\"tenantId\\\":\\\"{TenantId}\\\"}\", \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.actions[*]\", \"columns\": [{\"path\": \"$.id\", \"columnid\": \"Action ID\"}, {\"path\": \"$.type\", \"columnid\": \"Type\"}, {\"path\": \"$.status\", \"columnid\": \"Status\"}, {\"path\": \"$.requestor\", \"columnid\": \"Requestor\"}, {\"path\": \"$.creationDateTimeUtc\", \"columnid\": \"Created\"}, {\"path\": \"$.machineId\", \"columnid\": \"Device ID\"}]}}]}",
               "size": 0,
               "title": "\ud83d\udcca Machine Actions (Auto-refreshing every {RefreshInterval}s)",
               "showExportToExcel": true,
@@ -1178,7 +1212,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":\"{\\\"action\\\":\\\"Get Action Status\\\",\\\"tenantId\\\":\\\"{TenantId}\\\",\\\"actionId\\\":\\\"{ActionId}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"Action ID\"},{\"path\":\"$.type\",\"columnid\":\"Type\"},{\"path\":\"$.status\",\"columnid\":\"Status\"},{\"path\":\"$.requestor\",\"columnid\":\"Requestor\"},{\"path\":\"$.creationDateTimeUtc\",\"columnid\":\"Created\"},{\"path\":\"$.lastUpdateDateTimeUtc\",\"columnid\":\"Last Updated\"},{\"path\":\"$.error\",\"columnid\":\"Error\"}]}}]}",
+              "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [{\"name\": \"Content-Type\", \"value\": \"application/json\"}], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher?code={FunctionKey}\", \"body\": \"{\\\"action\\\":\\\"Get Action Status\\\",\\\"tenantId\\\":\\\"{TenantId}\\\",\\\"actionId\\\":\\\"{ActionId}\\\"}\", \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$\", \"columns\": [{\"path\": \"$.id\", \"columnid\": \"Action ID\"}, {\"path\": \"$.type\", \"columnid\": \"Type\"}, {\"path\": \"$.status\", \"columnid\": \"Status\"}, {\"path\": \"$.requestor\", \"columnid\": \"Requestor\"}, {\"path\": \"$.creationDateTimeUtc\", \"columnid\": \"Created\"}, {\"path\": \"$.lastUpdateDateTimeUtc\", \"columnid\": \"Last Updated\"}, {\"path\": \"$.error\", \"columnid\": \"Error\"}]}}]}",
               "size": 0,
               "title": "Action Details",
               "queryType": 10,
@@ -1239,7 +1273,7 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Dispatcher/invocations?api-version=2022-03-01",
+                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Dispatcher/invocations?api-version=2022-03-01",
                     "headers": [
                       {
                         "name": "Content-Type",
@@ -1380,7 +1414,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2HuntManager\",\"body\":\"{\\\"action\\\":\\\"Execute Hunt\\\",\\\"tenantId\\\":\\\"{TenantId}\\\",\\\"huntQuery\\\":\\\"{HuntQuery}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.results[*]\",\"columns\":[{\"path\":\"$.DeviceName\",\"columnid\":\"Device Name\"},{\"path\":\"$.Timestamp\",\"columnid\":\"Timestamp\"},{\"path\":\"$.ActionType\",\"columnid\":\"Action Type\"},{\"path\":\"$.FileName\",\"columnid\":\"File Name\"},{\"path\":\"$.ProcessCommandLine\",\"columnid\":\"Command Line\"},{\"path\":\"$.AccountName\",\"columnid\":\"Account\"}]}}]}",
+              "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [{\"name\": \"Content-Type\", \"value\": \"application/json\"}], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2HuntManager?code={FunctionKey}\", \"body\": \"{\\\"action\\\":\\\"Execute Hunt\\\",\\\"tenantId\\\":\\\"{TenantId}\\\",\\\"huntQuery\\\":\\\"{HuntQuery}\\\"}\", \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.results[*]\", \"columns\": [{\"path\": \"$.DeviceName\", \"columnid\": \"Device Name\"}, {\"path\": \"$.Timestamp\", \"columnid\": \"Timestamp\"}, {\"path\": \"$.ActionType\", \"columnid\": \"Action Type\"}, {\"path\": \"$.FileName\", \"columnid\": \"File Name\"}, {\"path\": \"$.ProcessCommandLine\", \"columnid\": \"Command Line\"}, {\"path\": \"$.AccountName\", \"columnid\": \"Account\"}]}}]}",
               "size": 0,
               "title": "\ud83d\udd0d Hunt Results (Auto-refreshing every {HuntRefreshInterval}s until complete)",
               "showExportToExcel": true,
@@ -1405,7 +1439,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2HuntManager\",\"body\":\"{\\\"action\\\":\\\"Get Hunt Status\\\",\\\"tenantId\\\":\\\"{TenantId}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.status\",\"columnid\":\"Status\"},{\"path\":\"$.rowCount\",\"columnid\":\"Rows\"},{\"path\":\"$.executionTime\",\"columnid\":\"Execution Time\"},{\"path\":\"$.message\",\"columnid\":\"Message\"}]}}]}",
+              "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [{\"name\": \"Content-Type\", \"value\": \"application/json\"}], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2HuntManager?code={FunctionKey}\", \"body\": \"{\\\"action\\\":\\\"Get Hunt Status\\\",\\\"tenantId\\\":\\\"{TenantId}\\\"}\", \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$\", \"columns\": [{\"path\": \"$.status\", \"columnid\": \"Status\"}, {\"path\": \"$.rowCount\", \"columnid\": \"Rows\"}, {\"path\": \"$.executionTime\", \"columnid\": \"Execution Time\"}, {\"path\": \"$.message\", \"columnid\": \"Message\"}]}}]}",
               "size": 0,
               "title": "Hunt Execution Status",
               "queryType": 10,
@@ -1508,7 +1542,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2IncidentManager\",\"body\":\"{\\\"action\\\":\\\"Get Incidents\\\",\\\"tenantId\\\":\\\"{TenantId}\\\",\\\"severity\\\":\\\"{IncidentSeverity}\\\",\\\"status\\\":\\\"{IncidentStatus}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.incidents[*]\",\"columns\":[{\"path\":\"$.incidentId\",\"columnid\":\"Incident ID\"},{\"path\":\"$.incidentName\",\"columnid\":\"Name\"},{\"path\":\"$.severity\",\"columnid\":\"Severity\"},{\"path\":\"$.status\",\"columnid\":\"Status\"},{\"path\":\"$.assignedTo\",\"columnid\":\"Assigned To\"},{\"path\":\"$.createdTime\",\"columnid\":\"Created\"},{\"path\":\"$.lastUpdateTime\",\"columnid\":\"Updated\"}]}}]}",
+              "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [{\"name\": \"Content-Type\", \"value\": \"application/json\"}], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2IncidentManager?code={FunctionKey}\", \"body\": \"{\\\"action\\\":\\\"Get Incidents\\\",\\\"tenantId\\\":\\\"{TenantId}\\\",\\\"severity\\\":\\\"{IncidentSeverity}\\\",\\\"status\\\":\\\"{IncidentStatus}\\\"}\", \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.incidents[*]\", \"columns\": [{\"path\": \"$.incidentId\", \"columnid\": \"Incident ID\"}, {\"path\": \"$.incidentName\", \"columnid\": \"Name\"}, {\"path\": \"$.severity\", \"columnid\": \"Severity\"}, {\"path\": \"$.status\", \"columnid\": \"Status\"}, {\"path\": \"$.assignedTo\", \"columnid\": \"Assigned To\"}, {\"path\": \"$.createdTime\", \"columnid\": \"Created\"}, {\"path\": \"$.lastUpdateTime\", \"columnid\": \"Updated\"}]}}]}",
               "size": 0,
               "title": "\ud83d\udea8 Security Incidents",
               "showExportToExcel": true,
@@ -1636,7 +1670,7 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2IncidentManager/invocations?api-version=2022-03-01",
+                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2IncidentManager/invocations?api-version=2022-03-01",
                     "headers": [
                       {
                         "name": "Content-Type",
@@ -1720,7 +1754,7 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2IncidentManager/invocations?api-version=2022-03-01",
+                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2IncidentManager/invocations?api-version=2022-03-01",
                     "headers": [
                       {
                         "name": "Content-Type",
@@ -1779,7 +1813,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2CDManager\",\"body\":\"{\\\"action\\\":\\\"List Detections\\\",\\\"tenantId\\\":\\\"{TenantId}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.detections[*]\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"ID\"},{\"path\":\"$.displayName\",\"columnid\":\"Name\"},{\"path\":\"$.severity\",\"columnid\":\"Severity\"},{\"path\":\"$.enabled\",\"columnid\":\"Enabled\"},{\"path\":\"$.createdBy\",\"columnid\":\"Created By\"},{\"path\":\"$.lastModified\",\"columnid\":\"Modified\"}]}}]}",
+              "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [{\"name\": \"Content-Type\", \"value\": \"application/json\"}], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2CDManager?code={FunctionKey}\", \"body\": \"{\\\"action\\\":\\\"List Detections\\\",\\\"tenantId\\\":\\\"{TenantId}\\\"}\", \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.detections[*]\", \"columns\": [{\"path\": \"$.id\", \"columnid\": \"ID\"}, {\"path\": \"$.displayName\", \"columnid\": \"Name\"}, {\"path\": \"$.severity\", \"columnid\": \"Severity\"}, {\"path\": \"$.enabled\", \"columnid\": \"Enabled\"}, {\"path\": \"$.createdBy\", \"columnid\": \"Created By\"}, {\"path\": \"$.lastModified\", \"columnid\": \"Modified\"}]}}]}",
               "size": 0,
               "title": "\ud83d\udee1\ufe0f Custom Detection Rules",
               "showExportToExcel": true,
@@ -1865,7 +1899,7 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2CDManager/invocations?api-version=2022-03-01",
+                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2CDManager/invocations?api-version=2022-03-01",
                     "headers": [
                       {
                         "name": "Content-Type",
@@ -1950,7 +1984,7 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2CDManager/invocations?api-version=2022-03-01",
+                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2CDManager/invocations?api-version=2022-03-01",
                     "headers": [
                       {
                         "name": "Content-Type",
@@ -2019,7 +2053,7 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2CDManager/invocations?api-version=2022-03-01",
+                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2CDManager/invocations?api-version=2022-03-01",
                     "headers": [
                       {
                         "name": "Content-Type",
@@ -2055,7 +2089,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2CDManager\",\"body\":\"{\\\"action\\\":\\\"Backup Detections\\\",\\\"tenantId\\\":\\\"{TenantId}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.backup[*]\",\"columns\":[{\"path\":\"$.displayName\",\"columnid\":\"Name\"},{\"path\":\"$.query\",\"columnid\":\"Query\"},{\"path\":\"$.severity\",\"columnid\":\"Severity\"}]}}]}",
+              "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [{\"name\": \"Content-Type\", \"value\": \"application/json\"}], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2CDManager?code={FunctionKey}\", \"body\": \"{\\\"action\\\":\\\"Backup Detections\\\",\\\"tenantId\\\":\\\"{TenantId}\\\"}\", \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.backup[*]\", \"columns\": [{\"path\": \"$.displayName\", \"columnid\": \"Name\"}, {\"path\": \"$.query\", \"columnid\": \"Query\"}, {\"path\": \"$.severity\", \"columnid\": \"Severity\"}]}}]}",
               "size": 0,
               "title": "\ud83d\udcbe Detection Backup",
               "showExportToExcel": true,
@@ -2196,7 +2230,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":\"{\\\"tenantId\\\":\\\"{TenantId}\\\",\\\"action\\\":\\\"{CommandType}\\\",\\\"actionName\\\":\\\"{ActionName}\\\",\\\"deviceIds\\\":\\\"{DeviceIds}\\\",\\\"params\\\":\\\"{CommandParams}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.action\",\"columnid\":\"Action\"},{\"path\":\"$.status\",\"columnid\":\"Status\"},{\"path\":\"$.message\",\"columnid\":\"Message\"},{\"path\":\"$.timestamp\",\"columnid\":\"Timestamp\"},{\"path\":\"$.details\",\"columnid\":\"Details\"},{\"path\":\"$.actionIds\",\"columnid\":\"Action IDs\"}]}}]}",
+              "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [{\"name\": \"Content-Type\", \"value\": \"application/json\"}], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher?code={FunctionKey}\", \"body\": \"{\\\"tenantId\\\":\\\"{TenantId}\\\",\\\"action\\\":\\\"{CommandType}\\\",\\\"actionName\\\":\\\"{ActionName}\\\",\\\"deviceIds\\\":\\\"{DeviceIds}\\\",\\\"params\\\":\\\"{CommandParams}\\\"}\", \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$\", \"columns\": [{\"path\": \"$.action\", \"columnid\": \"Action\"}, {\"path\": \"$.status\", \"columnid\": \"Status\"}, {\"path\": \"$.message\", \"columnid\": \"Message\"}, {\"path\": \"$.timestamp\", \"columnid\": \"Timestamp\"}, {\"path\": \"$.details\", \"columnid\": \"Details\"}, {\"path\": \"$.actionIds\", \"columnid\": \"Action IDs\"}]}}]}",
               "size": 4,
               "title": "\ud83c\udfaf Command Execution Status",
               "noDataMessage": "Click 'Run Query' to execute command",
@@ -2216,7 +2250,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":\"{\\\"tenantId\\\":\\\"{TenantId}\\\",\\\"action\\\":\\\"getstatus\\\",\\\"actionId\\\":\\\"{ActionId}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.action\",\"columnid\":\"Action\"},{\"path\":\"$.status\",\"columnid\":\"Status\"},{\"path\":\"$.message\",\"columnid\":\"Message\"},{\"path\":\"$.details\",\"columnid\":\"Details\"},{\"path\":\"$.actionStatus.status\",\"columnid\":\"Action Status\"},{\"path\":\"$.actionStatus.type\",\"columnid\":\"Type\"}]}}]}",
+              "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [{\"name\": \"Content-Type\", \"value\": \"application/json\"}], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher?code={FunctionKey}\", \"body\": \"{\\\"tenantId\\\":\\\"{TenantId}\\\",\\\"action\\\":\\\"getstatus\\\",\\\"actionId\\\":\\\"{ActionId}\\\"}\", \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$\", \"columns\": [{\"path\": \"$.action\", \"columnid\": \"Action\"}, {\"path\": \"$.status\", \"columnid\": \"Status\"}, {\"path\": \"$.message\", \"columnid\": \"Message\"}, {\"path\": \"$.details\", \"columnid\": \"Details\"}, {\"path\": \"$.actionStatus.status\", \"columnid\": \"Action Status\"}, {\"path\": \"$.actionStatus.type\", \"columnid\": \"Type\"}]}}]}",
               "size": 0,
               "title": "\ud83d\udcca Action Status (Auto-refresh)",
               "noDataMessage": "No active actions to poll. Execute a command first.",
@@ -2278,7 +2312,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":\"{\\\"tenantId\\\":\\\"{TenantId}\\\",\\\"action\\\":\\\"getresults\\\",\\\"actionId\\\":\\\"{ActionId}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.action\",\"columnid\":\"Action\"},{\"path\":\"$.status\",\"columnid\":\"Status\"},{\"path\":\"$.message\",\"columnid\":\"Message\"},{\"path\":\"$.details\",\"columnid\":\"Details\"},{\"path\":\"$.results\",\"columnid\":\"Results\"}]}}]}",
+              "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [{\"name\": \"Content-Type\", \"value\": \"application/json\"}], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher?code={FunctionKey}\", \"body\": \"{\\\"tenantId\\\":\\\"{TenantId}\\\",\\\"action\\\":\\\"getresults\\\",\\\"actionId\\\":\\\"{ActionId}\\\"}\", \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$\", \"columns\": [{\"path\": \"$.action\", \"columnid\": \"Action\"}, {\"path\": \"$.status\", \"columnid\": \"Status\"}, {\"path\": \"$.message\", \"columnid\": \"Message\"}, {\"path\": \"$.details\", \"columnid\": \"Details\"}, {\"path\": \"$.results\", \"columnid\": \"Results\"}]}}]}",
               "size": 0,
               "title": "\ud83d\udccb Command Results",
               "noDataMessage": "No results available yet. Command may still be executing.",
@@ -2304,7 +2338,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":\"{\\\"tenantId\\\":\\\"{TenantId}\\\",\\\"action\\\":\\\"history\\\",\\\"limit\\\":\\\"20\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.history[*]\",\"columns\":[{\"path\":\"$.action\",\"columnid\":\"Action\"},{\"path\":\"$.status\",\"columnid\":\"Status\"},{\"path\":\"$.timestamp\",\"columnid\":\"Timestamp\"},{\"path\":\"$.message\",\"columnid\":\"Message\"},{\"path\":\"$.details\",\"columnid\":\"Details\"}]}}]}",
+              "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [{\"name\": \"Content-Type\", \"value\": \"application/json\"}], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher?code={FunctionKey}\", \"body\": \"{\\\"tenantId\\\":\\\"{TenantId}\\\",\\\"action\\\":\\\"history\\\",\\\"limit\\\":\\\"20\\\"}\", \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.history[*]\", \"columns\": [{\"path\": \"$.action\", \"columnid\": \"Action\"}, {\"path\": \"$.status\", \"columnid\": \"Status\"}, {\"path\": \"$.timestamp\", \"columnid\": \"Timestamp\"}, {\"path\": \"$.message\", \"columnid\": \"Message\"}, {\"path\": \"$.details\", \"columnid\": \"Details\"}]}}]}",
               "size": 4,
               "title": "\ud83d\udcca Execution History (Last 20)",
               "noDataMessage": "No command history available.",
