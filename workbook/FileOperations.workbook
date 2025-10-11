@@ -76,7 +76,7 @@
             "label": "Function App Name",
             "type": 1,
             "isRequired": true,
-            "value": "__FUNCTION_APP_NAME_PLACEHOLDER__",
+            "value": "defc2",
             "typeSettings": {
               "isSearchable": false
             },
