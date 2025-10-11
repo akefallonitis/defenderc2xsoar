@@ -4,10 +4,13 @@
 
 The **DefenderC2 Command & Control Console** provides enterprise-grade automation for Microsoft Defender for Endpoint with **zero manual configuration required**.
 
-## 🚀 What's New: Enhanced Auto-Discovery
+## 🚀 What's New: Enhanced Auto-Discovery & Auto-Populated Parameters
 
 ### Key Improvements
 
+✅ **Device Parameter Auto-Population** - Device lists automatically populated from Defender environment  
+✅ **Multi-Select Device Dropdowns** - Select multiple devices for bulk actions  
+✅ **Auto-Refresh Queries** - Action manager and hunt status auto-refresh every 30 seconds  
 ✅ **Anonymous Function Authentication** - No function keys required  
 ✅ **Automatic Resource Discovery** - Function Apps auto-discovered via Azure Resource Graph  
 ✅ **Environment Variable Integration** - Service Principal ID read from function app settings  
@@ -96,6 +99,52 @@ The Service Principal ID (Client ID) is stored in the Function App's environment
 - Set during function app deployment
 - Read by functions at runtime (no workbook configuration needed)
 
+## 🎛️ Auto-Populated Device Parameters
+
+### Device Selection Made Easy
+Device parameters are now automatically populated from your Defender environment:
+
+**Benefits:**
+- **No manual ID entry** - Select devices from dropdown
+- **Device names shown** - See computer names, not just IDs
+- **Multi-select support** - Choose multiple devices for bulk actions
+- **Always up-to-date** - Device list refreshes automatically
+
+**How It Works:**
+1. Workbook queries DefenderC2Dispatcher endpoint for device list
+2. JSONPath parses response to extract device IDs and names
+3. Devices appear in dropdown with computer name and ID
+4. Select one or more devices for your action
+5. Device IDs automatically passed to Function App
+
+**Affected Actions:**
+- ✅ Isolate Device
+- ✅ Unisolate Device
+- ✅ Restrict App Execution
+- ✅ Run Antivirus Scan
+
+**Technical Details:**
+- Uses Custom Endpoint (queryType: 10)
+- POST to `/api/DefenderC2Dispatcher` with action "Get Devices"
+- JSONPath: `$.devices[*]` with columns for ID and computerDnsName
+- Multi-select enabled for all device parameters
+
+For full technical documentation, see: [DEVICE_PARAMETER_AUTOPOPULATION.md](../deployment/DEVICE_PARAMETER_AUTOPOPULATION.md)
+
+## 🔄 Auto-Refresh Queries
+
+Critical monitoring queries now auto-refresh:
+
+**Action Manager:**
+- Auto-refreshes every 30 seconds
+- Shows real-time status of device actions
+- Includes status indicators (✅ Succeeded, ⏳ In Progress, ❌ Failed)
+
+**Hunt Status:**
+- Auto-refreshes every 30 seconds  
+- Shows status of advanced hunting queries
+- Updates automatically as queries complete
+
 ### Anonymous Authentication
 All functions are configured with `"authLevel": "anonymous"`:
 - No function keys required
@@ -178,7 +227,15 @@ For issues or questions:
 
 ## 📝 Version History
 
-### v2.0 - Enhanced Auto-Discovery (Current)
+### v2.1 - Auto-Populated Device Parameters (Current)
+- **Device parameter auto-population** from Defender environment
+- **Multi-select dropdowns** for all device actions
+- **Auto-refresh** for action manager (30s interval)
+- **Auto-refresh** for hunt status queries (30s interval)
+- **JSONPath parsing** for device list responses
+- Enhanced user experience with dropdown selections
+
+### v2.0 - Enhanced Auto-Discovery
 - Anonymous function authentication
 - Automatic Function App discovery
 - Service Principal from environment variables

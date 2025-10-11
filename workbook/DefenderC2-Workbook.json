@@ -112,6 +112,28 @@
             }
           },
           {
+            "id": "devicelist-parameter",
+            "version": "KqlParameterItem/1.0",
+            "name": "DeviceList",
+            "label": "Available Devices",
+            "type": 2,
+            "isRequired": false,
+            "multiSelect": true,
+            "quote": "'",
+            "delimiter": ",",
+            "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [{\"name\": \"Content-Type\", \"value\": \"application/json\"}], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": \"{\\\"action\\\": \\\"Get Devices\\\", \\\"tenantId\\\": \\\"{TenantId}\\\"}\", \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.devices[*]\", \"columns\": [{\"path\": \"$.id\", \"columnid\": \"value\"}, {\"path\": \"$.computerDnsName\", \"columnid\": \"label\"}]}}]}",
+            "typeSettings": {
+              "additionalResourceOptions": [],
+              "showDefault": false
+            },
+            "timeContext": {
+              "durationMs": 86400000
+            },
+            "queryType": 10,
+            "description": "Select one or more devices from the list. This list is populated automatically from your Defender environment.",
+            "value": null
+          },
+          {
             "id": "b2f8g6b-d9fg-7975-c2g3-5h5h8g0e6f4d",
             "version": "KqlParameterItem/1.0",
             "name": "TimeRange",
@@ -279,11 +301,20 @@
                   "version": "KqlParameterItem/1.0",
                   "name": "IsolateDeviceIds",
                   "label": "Device IDs (comma-separated)",
-                  "type": 1,
+                  "type": 2,
                   "isRequired": false,
-                  "description": "Enter one or more device IDs separated by commas",
+                  "description": "Select one or more devices. List is auto-populated from Defender environment.",
                   "timeContext": {
                     "durationMs": 86400000
+                  },
+                  "multiSelect": true,
+                  "quote": "'",
+                  "delimiter": ",",
+                  "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [{\"name\": \"Content-Type\", \"value\": \"application/json\"}], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": \"{\\\"action\\\": \\\"Get Devices\\\", \\\"tenantId\\\": \\\"{TenantId}\\\"}\", \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.devices[*]\", \"columns\": [{\"path\": \"$.id\", \"columnid\": \"value\"}, {\"path\": \"$.computerDnsName\", \"columnid\": \"label\"}]}}]}",
+                  "queryType": 10,
+                  "typeSettings": {
+                    "additionalResourceOptions": [],
+                    "showDefault": false
                   }
                 },
                 {
@@ -377,11 +408,21 @@
                   "version": "KqlParameterItem/1.0",
                   "name": "UnisolateDeviceIds",
                   "label": "Device IDs (comma-separated)",
-                  "type": 1,
+                  "type": 2,
                   "isRequired": false,
                   "timeContext": {
                     "durationMs": 86400000
-                  }
+                  },
+                  "multiSelect": true,
+                  "quote": "'",
+                  "delimiter": ",",
+                  "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [{\"name\": \"Content-Type\", \"value\": \"application/json\"}], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": \"{\\\"action\\\": \\\"Get Devices\\\", \\\"tenantId\\\": \\\"{TenantId}\\\"}\", \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.devices[*]\", \"columns\": [{\"path\": \"$.id\", \"columnid\": \"value\"}, {\"path\": \"$.computerDnsName\", \"columnid\": \"label\"}]}}]}",
+                  "queryType": 10,
+                  "typeSettings": {
+                    "additionalResourceOptions": [],
+                    "showDefault": false
+                  },
+                  "description": "Select one or more devices. List is auto-populated from Defender environment."
                 }
               ],
               "style": "pills",
@@ -441,11 +482,21 @@
                   "version": "KqlParameterItem/1.0",
                   "name": "RestrictDeviceIds",
                   "label": "Device IDs (comma-separated)",
-                  "type": 1,
+                  "type": 2,
                   "isRequired": false,
                   "timeContext": {
                     "durationMs": 86400000
-                  }
+                  },
+                  "multiSelect": true,
+                  "quote": "'",
+                  "delimiter": ",",
+                  "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [{\"name\": \"Content-Type\", \"value\": \"application/json\"}], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": \"{\\\"action\\\": \\\"Get Devices\\\", \\\"tenantId\\\": \\\"{TenantId}\\\"}\", \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.devices[*]\", \"columns\": [{\"path\": \"$.id\", \"columnid\": \"value\"}, {\"path\": \"$.computerDnsName\", \"columnid\": \"label\"}]}}]}",
+                  "queryType": 10,
+                  "typeSettings": {
+                    "additionalResourceOptions": [],
+                    "showDefault": false
+                  },
+                  "description": "Select one or more devices. List is auto-populated from Defender environment."
                 }
               ],
               "style": "pills",
@@ -505,11 +556,21 @@
                   "version": "KqlParameterItem/1.0",
                   "name": "ScanDeviceIds",
                   "label": "Device IDs (comma-separated)",
-                  "type": 1,
+                  "type": 2,
                   "isRequired": false,
                   "timeContext": {
                     "durationMs": 86400000
-                  }
+                  },
+                  "multiSelect": true,
+                  "quote": "'",
+                  "delimiter": ",",
+                  "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [{\"name\": \"Content-Type\", \"value\": \"application/json\"}], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": \"{\\\"action\\\": \\\"Get Devices\\\", \\\"tenantId\\\": \\\"{TenantId}\\\"}\", \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.devices[*]\", \"columns\": [{\"path\": \"$.id\", \"columnid\": \"value\"}, {\"path\": \"$.computerDnsName\", \"columnid\": \"label\"}]}}]}",
+                  "queryType": 10,
+                  "typeSettings": {
+                    "additionalResourceOptions": [],
+                    "showDefault": false
+                  },
+                  "description": "Select one or more devices. List is auto-populated from Defender environment."
                 },
                 {
                   "id": "scan-type",
@@ -1063,7 +1124,12 @@
                 "filter": true
               }
             },
-            "name": "query - actions-list"
+            "name": "query - actions-list",
+            "isAutoRefreshEnabled": true,
+            "autoRefreshSettings": {
+              "intervalInSeconds": 30,
+              "refreshCondition": "always"
+            }
           },
           {
             "type": 1,
@@ -1343,7 +1409,12 @@
               "comparison": "isNotEqualTo",
               "value": ""
             },
-            "name": "query - hunt-status"
+            "name": "query - hunt-status",
+            "isAutoRefreshEnabled": true,
+            "autoRefreshSettings": {
+              "intervalInSeconds": 30,
+              "refreshCondition": "always"
+            }
           }
         ]
       },
