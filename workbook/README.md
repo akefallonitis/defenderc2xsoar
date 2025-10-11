@@ -23,12 +23,43 @@ The main operational workbook featuring:
 - **Auto-discovery** for all infrastructure components
 - **Anonymous functions** - No authentication keys needed
 - **Enterprise-ready** branding and user experience
+- **ARMEndpoint queries** - Built-in Azure Workbooks authentication and retry logic
+
+### DefenderC2-Working-CustomEndpoint.json
+Alternative implementation using Custom Endpoint queries:
+- **Custom Endpoint** data sources (not ARMEndpoint)
+- **Auto-refresh capability** - Device list refreshes every 30 seconds
+- **Direct Function App calls** for ARM Actions
+- **All core tabs** - Device, Threat Intel, Action, Hunt, Incident, Detection, Console
+- **Manual UI configuration** - Requires setting up each query in Azure Portal UI
+- **Reference implementation** - Demonstrates Custom Endpoint patterns
+- **Documentation**: See [docs/WORKBOOK_CUSTOM_ENDPOINT_GUIDE.md](../docs/WORKBOOK_CUSTOM_ENDPOINT_GUIDE.md)
 
 ### FileOperations.workbook
 Specialized workbook for file operations:
 - Azure Storage library management
 - File deployment to devices
 - Live Response file operations
+
+## 🔀 Which Workbook Should I Use?
+
+### Use DefenderC2-Workbook.json (Recommended)
+✅ **Best for most users**
+- Automatic deployment via ARM template
+- Zero manual configuration needed
+- Built-in Azure authentication and retry logic
+- Tested and validated deployment
+- Production-ready
+
+### Use DefenderC2-Working-CustomEndpoint.json
+⚠️ **For advanced users or specific requirements**
+- Need Custom Endpoint queries instead of ARMEndpoint
+- Want to see auto-refresh implementation with 30-second intervals
+- Learning Custom Endpoint patterns for Azure Workbooks
+- Require manual control over query configuration
+- Reference implementation for custom modifications
+
+**Note**: The Custom Endpoint workbook requires manual configuration in Azure Portal UI for each query. See the [Custom Endpoint Guide](../docs/WORKBOOK_CUSTOM_ENDPOINT_GUIDE.md) for detailed instructions.
 
 ## 🎯 Quick Start
 
