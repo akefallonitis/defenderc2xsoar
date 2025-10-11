@@ -106,7 +106,20 @@
             "label": "Function Key (Optional)",
             "type": 1,
             "isRequired": false,
+            "defaultValue": "",
             "description": "Optional. Only needed if Function App is not configured for anonymous access. Leave empty for anonymous functions.",
+            "timeContext": {
+              "durationMs": 86400000
+            }
+          },
+          {
+            "id": "c1d2e3f4-g5h6-i7j8-k9l0-m1n2o3p4q5r6",
+            "version": "KqlParameterItem/1.0",
+            "name": "ResourceGroup",
+            "label": "Resource Group",
+            "type": 1,
+            "isRequired": true,
+            "description": "The Azure Resource Group where your Function App is deployed (e.g., 'rg-defenderc2', 'security-resources'). Required for ARM Actions.",
             "timeContext": {
               "durationMs": 86400000
             }
@@ -355,19 +368,14 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher",
+                    "path": "{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Dispatcher/invocations?api-version=2022-03-01",
                     "headers": [
                       {
                         "name": "Content-Type",
                         "value": "application/json"
                       }
                     ],
-                    "params": [
-                      {
-                        "key": "api-version",
-                        "value": "2022-03-01"
-                      }
-                    ],
+                    "params": [],
                     "body": "{\"action\":\"Isolate Device\",\"tenantId\":\"{TenantId}\",\"deviceIds\":\"{IsolateDeviceIds}\",\"isolationType\":\"{IsolationType}\",\"comment\":\"Isolated via Workbook\"}",
                     "httpMethod": "POST",
                     "title": "Isolate Devices",
@@ -450,19 +458,14 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher",
+                    "path": "{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Dispatcher/invocations?api-version=2022-03-01",
                     "headers": [
                       {
                         "name": "Content-Type",
                         "value": "application/json"
                       }
                     ],
-                    "params": [
-                      {
-                        "key": "api-version",
-                        "value": "2022-03-01"
-                      }
-                    ],
+                    "params": [],
                     "body": "{\"action\":\"Unisolate Device\",\"tenantId\":\"{TenantId}\",\"deviceIds\":\"{UnisolateDeviceIds}\",\"comment\":\"Unisolated via Workbook\"}",
                     "httpMethod": "POST",
                     "title": "Unisolate Devices",
@@ -529,19 +532,14 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher",
+                    "path": "{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Dispatcher/invocations?api-version=2022-03-01",
                     "headers": [
                       {
                         "name": "Content-Type",
                         "value": "application/json"
                       }
                     ],
-                    "params": [
-                      {
-                        "key": "api-version",
-                        "value": "2022-03-01"
-                      }
-                    ],
+                    "params": [],
                     "body": "{\"action\":\"Restrict App Execution\",\"tenantId\":\"{TenantId}\",\"deviceIds\":\"{RestrictDeviceIds}\",\"comment\":\"App execution restricted via Workbook\"}",
                     "httpMethod": "POST",
                     "title": "Restrict App Execution",
@@ -625,19 +623,14 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher",
+                    "path": "{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Dispatcher/invocations?api-version=2022-03-01",
                     "headers": [
                       {
                         "name": "Content-Type",
                         "value": "application/json"
                       }
                     ],
-                    "params": [
-                      {
-                        "key": "api-version",
-                        "value": "2022-03-01"
-                      }
-                    ],
+                    "params": [],
                     "body": "{\"action\":\"Run Antivirus Scan\",\"tenantId\":\"{TenantId}\",\"deviceIds\":\"{ScanDeviceIds}\",\"scanType\":\"{ScanType}\",\"comment\":\"Scan initiated via Workbook\"}",
                     "httpMethod": "POST",
                     "title": "Run Antivirus Scan",
@@ -798,19 +791,14 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "https://{FunctionAppName}.azurewebsites.net/api/DefenderC2TIManager",
+                    "path": "{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2TIManager/invocations?api-version=2022-03-01",
                     "headers": [
                       {
                         "name": "Content-Type",
                         "value": "application/json"
                       }
                     ],
-                    "params": [
-                      {
-                        "key": "api-version",
-                        "value": "2022-03-01"
-                      }
-                    ],
+                    "params": [],
                     "body": "{\"action\":\"Add File Indicators\",\"tenantId\":\"{TenantId}\",\"indicators\":\"{FileIndicators}\",\"indicatorAction\":\"{FileIndicatorAction}\",\"severity\":\"{FileSeverity}\",\"title\":\"{FileTitle}\",\"description\":\"{FileDescription}\"}",
                     "httpMethod": "POST",
                     "title": "Add File Indicators",
@@ -902,19 +890,14 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "https://{FunctionAppName}.azurewebsites.net/api/DefenderC2TIManager",
+                    "path": "{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2TIManager/invocations?api-version=2022-03-01",
                     "headers": [
                       {
                         "name": "Content-Type",
                         "value": "application/json"
                       }
                     ],
-                    "params": [
-                      {
-                        "key": "api-version",
-                        "value": "2022-03-01"
-                      }
-                    ],
+                    "params": [],
                     "body": "{\"action\":\"Add IP Indicators\",\"tenantId\":\"{TenantId}\",\"indicators\":\"{IpIndicators}\",\"indicatorAction\":\"{IpIndicatorAction}\",\"severity\":\"{IpSeverity}\",\"title\":\"Malicious IPs\",\"description\":\"Known malicious IP addresses\"}",
                     "httpMethod": "POST",
                     "title": "Add IP Indicators",
@@ -989,19 +972,14 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "https://{FunctionAppName}.azurewebsites.net/api/DefenderC2TIManager",
+                    "path": "{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2TIManager/invocations?api-version=2022-03-01",
                     "headers": [
                       {
                         "name": "Content-Type",
                         "value": "application/json"
                       }
                     ],
-                    "params": [
-                      {
-                        "key": "api-version",
-                        "value": "2022-03-01"
-                      }
-                    ],
+                    "params": [],
                     "body": "{\"action\":\"Add URL Indicators\",\"tenantId\":\"{TenantId}\",\"indicators\":\"{UrlIndicators}\",\"indicatorAction\":\"{UrlIndicatorAction}\",\"severity\":\"High\",\"title\":\"Malicious URLs\",\"description\":\"Known malicious URLs and domains\"}",
                     "httpMethod": "POST",
                     "title": "Add URL/Domain Indicators",
@@ -1262,19 +1240,14 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher",
+                    "path": "{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Dispatcher/invocations?api-version=2022-03-01",
                     "headers": [
                       {
                         "name": "Content-Type",
                         "value": "application/json"
                       }
                     ],
-                    "params": [
-                      {
-                        "key": "api-version",
-                        "value": "2022-03-01"
-                      }
-                    ],
+                    "params": [],
                     "body": "{\"action\":\"Cancel Action\",\"tenantId\":\"{TenantId}\",\"actionId\":\"{CancelActionId}\"}",
                     "httpMethod": "POST",
                     "title": "Cancel Action",
@@ -1664,19 +1637,14 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "https://{FunctionAppName}.azurewebsites.net/api/DefenderC2IncidentManager",
+                    "path": "{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2IncidentManager/invocations?api-version=2022-03-01",
                     "headers": [
                       {
                         "name": "Content-Type",
                         "value": "application/json"
                       }
                     ],
-                    "params": [
-                      {
-                        "key": "api-version",
-                        "value": "2022-03-01"
-                      }
-                    ],
+                    "params": [],
                     "body": "{\"action\":\"Update Incident\",\"tenantId\":\"{TenantId}\",\"incidentId\":\"{UpdateIncidentId}\",\"status\":\"{UpdateStatus}\"}",
                     "httpMethod": "POST",
                     "title": "Update Incident",
@@ -1753,19 +1721,14 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "https://{FunctionAppName}.azurewebsites.net/api/DefenderC2IncidentManager",
+                    "path": "{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2IncidentManager/invocations?api-version=2022-03-01",
                     "headers": [
                       {
                         "name": "Content-Type",
                         "value": "application/json"
                       }
                     ],
-                    "params": [
-                      {
-                        "key": "api-version",
-                        "value": "2022-03-01"
-                      }
-                    ],
+                    "params": [],
                     "body": "{\"action\":\"Add Comment\",\"tenantId\":\"{TenantId}\",\"incidentId\":\"{CommentIncidentId}\",\"comment\":\"{IncidentComment}\"}",
                     "httpMethod": "POST",
                     "title": "Add Comment",
@@ -1903,19 +1866,14 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "https://{FunctionAppName}.azurewebsites.net/api/DefenderC2CDManager",
+                    "path": "{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2CDManager/invocations?api-version=2022-03-01",
                     "headers": [
                       {
                         "name": "Content-Type",
                         "value": "application/json"
                       }
                     ],
-                    "params": [
-                      {
-                        "key": "api-version",
-                        "value": "2022-03-01"
-                      }
-                    ],
+                    "params": [],
                     "body": "{\"action\":\"Create Detection\",\"tenantId\":\"{TenantId}\",\"ruleName\":\"{CreateRuleName}\",\"query\":\"{CreateRuleQuery}\",\"severity\":\"{CreateRuleSeverity}\"}",
                     "httpMethod": "POST",
                     "title": "Create Detection Rule",
@@ -1993,19 +1951,14 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "https://{FunctionAppName}.azurewebsites.net/api/DefenderC2CDManager",
+                    "path": "{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2CDManager/invocations?api-version=2022-03-01",
                     "headers": [
                       {
                         "name": "Content-Type",
                         "value": "application/json"
                       }
                     ],
-                    "params": [
-                      {
-                        "key": "api-version",
-                        "value": "2022-03-01"
-                      }
-                    ],
+                    "params": [],
                     "body": "{\"action\":\"Update Detection\",\"tenantId\":\"{TenantId}\",\"ruleId\":\"{UpdateRuleId}\",\"query\":\"{UpdateRuleQuery}\"}",
                     "httpMethod": "POST",
                     "title": "Update Detection Rule",
@@ -2067,19 +2020,14 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "https://{FunctionAppName}.azurewebsites.net/api/DefenderC2CDManager",
+                    "path": "{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2CDManager/invocations?api-version=2022-03-01",
                     "headers": [
                       {
                         "name": "Content-Type",
                         "value": "application/json"
                       }
                     ],
-                    "params": [
-                      {
-                        "key": "api-version",
-                        "value": "2022-03-01"
-                      }
-                    ],
+                    "params": [],
                     "body": "{\"action\":\"Delete Detection\",\"tenantId\":\"{TenantId}\",\"ruleId\":\"{DeleteRuleId}\"}",
                     "httpMethod": "POST",
                     "title": "Delete Detection Rule",
