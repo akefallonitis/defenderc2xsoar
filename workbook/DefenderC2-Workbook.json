@@ -144,7 +144,7 @@
             "label": "Azure AD Tenant ID (Auto)",
             "type": 1,
             "isRequired": true,
-            "query": "Resources\n| where id == '{FunctionApp}'\n| project value = tenantId",
+            "query": "resourcecontainers\n| where type =~ 'microsoft.resources/subscriptions'\n| extend subscriptionGuid = tolower(tostring(subscriptionId))\n| extend tenantGuid = tostring(tenantId)\n| where subscriptionGuid == tolower('{Subscription}')\n| project value = tenantGuid",
             "crossComponentResources": [
               "value::all"
             ],
@@ -156,12 +156,12 @@
               "durationMs": 86400000
             },
             "queryType": 1,
-            "resourceType": "microsoft.resourcegraph/resources",
-            "description": "\ud83c\udfaf CRITICAL: Auto-discovered from Function App resource. This is the Azure AD Tenant ID where your App Registration (APPID) is created. This ensures authentication works correctly. Can be manually overridden if needed.",
+            "resourceType": "microsoft.resourcegraph/resourcecontainers",
+            "description": "\ud83c\udfaf CRITICAL: Auto-discovered from subscription metadata. This is the Azure AD Tenant ID where your App Registration (APPID) is created. Can be manually overridden if needed.",
             "criteriaData": [
               {
                 "criterionType": "param",
-                "value": "{FunctionApp}"
+                "value": "{Subscription}"
               }
             ]
           },
