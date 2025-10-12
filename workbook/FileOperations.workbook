@@ -67,7 +67,13 @@
             "isHiddenWhenLocked": true,
             "queryType": 1,
             "resourceType": "microsoft.resourcegraph/resources",
-            "description": "Auto-discovered from Log Analytics Workspace. This is the Workspace ID (Customer ID) used as the target tenant for Defender API calls."
+            "description": "Auto-discovered from Log Analytics Workspace. This is the Workspace ID (Customer ID) used as the target tenant for Defender API calls.",
+            "criteriaData": [
+              {
+                "criterionType": "param",
+                "value": "{Workspace}"
+              }
+            ]
           },
           {
             "id": "function-app-url",
@@ -76,7 +82,6 @@
             "label": "Function App Name",
             "type": 1,
             "isRequired": true,
-            "value": "__FUNCTION_APP_NAME_PLACEHOLDER__",
             "typeSettings": {
               "isSearchable": false
             },
