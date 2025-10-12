@@ -80,6 +80,38 @@ def find_armendpoint_queries(obj, path="") -> List[Dict]:
     return results
 
 
+def find_customendpoint_queries(obj, path="") -> List[Dict]:
+    """Recursively find all CustomEndpoint queries in a workbook structure"""
+    results = []
+    
+    if isinstance(obj, dict):
+        # Check if this has a query field with CustomEndpoint
+        if 'query' in obj:
+            query = obj.get('query', '')
+            if isinstance(query, str) and 'CustomEndpoint' in query:
+                try:
+                    query_obj = json.loads(query)
+                    if query_obj.get('version') == 'CustomEndpoint/1.0':
+                        results.append({
+                            'path': path,
+                            'query_obj': query_obj,
+                            'parent': obj
+                        })
+                except:
+                    pass
+        
+        # Recurse into dict values
+        for key, value in obj.items():
+            results.extend(find_customendpoint_queries(value, f"{path}.{key}"))
+    
+    elif isinstance(obj, list):
+        # Recurse into list items
+        for i, item in enumerate(obj):
+            results.extend(find_customendpoint_queries(item, f"{path}[{i}]"))
+    
+    return results
+
+
 def verify_functionappname_parameter(workbook: Dict, workbook_name: str) -> Tuple[bool, Dict]:
     """Verify FunctionAppName parameter exists and is correctly configured"""
     print(f"\n{Colors.BOLD}Checking FunctionAppName parameter in {workbook_name}...{Colors.RESET}")
@@ -170,20 +202,32 @@ def verify_custom_endpoints(workbook: Dict, workbook_name: str) -> Tuple[bool, D
     """Verify all custom endpoints use correct FunctionAppName pattern"""
     print(f"\n{Colors.BOLD}Checking custom endpoints in {workbook_name}...{Colors.RESET}")
     
+    # Look for both ARMEndpoint and CustomEndpoint queries
     queries = find_armendpoint_queries(workbook)
+    custom_queries = find_customendpoint_queries(workbook)
     
-    if not queries:
-        print_error("No ARMEndpoint queries found")
-        return False, {'queries': 0, 'issues': ['No ARMEndpoint queries found']}
+    if not queries and not custom_queries:
+        print_error("No endpoint queries found")
+        return False, {'queries': 0, 'issues': ['No endpoint queries found']}
     
-    print_success(f"Found {len(queries)} ARMEndpoint queries")
+    if custom_queries:
+        print_success(f"Found {len(custom_queries)} CustomEndpoint queries (modern pattern)")
+    if queries:
+        print_info(f"Found {len(queries)} ARMEndpoint queries (legacy pattern)")
+        
+    # Use CustomEndpoint queries if available, otherwise fall back to ARMEndpoint
+    if not custom_queries:
+        queries_to_check = queries
+    else:
+        queries_to_check = custom_queries
     
     issues = []
     correct_endpoints = 0
     
-    for i, q in enumerate(queries, 1):
+    for i, q in enumerate(queries_to_check, 1):
         query_obj = q['query_obj']
-        path = query_obj.get('path', '')
+        # CustomEndpoint uses 'url', ARMEndpoint uses 'path'
+        path = query_obj.get('url', query_obj.get('path', ''))
         method = query_obj.get('method', '')
         
         # Check if using FunctionAppName placeholder
@@ -359,10 +403,11 @@ def verify_arm_action_contexts(workbook: Dict, workbook_name: str) -> Tuple[bool
             for h in headers
         )
         
-        # Check URL pattern
-        correct_pattern = path.startswith('https://{FunctionAppName}.azurewebsites.net/api/')
+        # Check URL pattern - should use management.azure.com with full path
+        correct_pattern = path.startswith('https://management.azure.com/subscriptions/')
+        has_api_version = 'api-version' in path
         
-        if has_content_type and correct_pattern:
+        if has_content_type and correct_pattern and has_api_version:
             correct_actions += 1
             print_success(f"  Action {i} ({action_name}): Correct configuration")
         else:
@@ -370,8 +415,11 @@ def verify_arm_action_contexts(workbook: Dict, workbook_name: str) -> Tuple[bool
                 print_error(f"  Action {i} ({action_name}): Missing Content-Type header")
                 issues.append(f"Action {i} ({action_name}) missing Content-Type header")
             if not correct_pattern:
-                print_error(f"  Action {i} ({action_name}): Incorrect URL pattern")
+                print_error(f"  Action {i} ({action_name}): Incorrect URL pattern (should use management.azure.com)")
                 issues.append(f"Action {i} ({action_name}) incorrect URL pattern")
+            if not has_api_version:
+                print_error(f"  Action {i} ({action_name}): Missing api-version parameter")
+                issues.append(f"Action {i} ({action_name}) missing api-version parameter")
     
     if correct_actions == len(actions):
         print_success(f"All {len(actions)} ARM actions correctly configured")
