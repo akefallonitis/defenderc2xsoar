@@ -451,7 +451,12 @@
                         "value": "application/json"
                       }
                     ],
-                    "params": [],
+                    "params": [
+                      {
+                        "key": "api-version",
+                        "value": "2022-03-01"
+                      }
+                    ],
                     "body": "{\"action\":\"Isolate Device\",\"tenantId\":\"{TenantId}\",\"deviceIds\":\"{IsolateDeviceIds}\",\"isolationType\":\"{IsolationType}\",\"comment\":\"Isolated via Workbook\"}",
                     "httpMethod": "POST",
                     "title": "Isolate Devices",
@@ -561,7 +566,12 @@
                         "value": "application/json"
                       }
                     ],
-                    "params": [],
+                    "params": [
+                      {
+                        "key": "api-version",
+                        "value": "2022-03-01"
+                      }
+                    ],
                     "body": "{\"action\":\"Unisolate Device\",\"tenantId\":\"{TenantId}\",\"deviceIds\":\"{UnisolateDeviceIds}\",\"comment\":\"Unisolated via Workbook\"}",
                     "httpMethod": "POST",
                     "title": "Unisolate Devices",
@@ -645,7 +655,12 @@
                         "value": "application/json"
                       }
                     ],
-                    "params": [],
+                    "params": [
+                      {
+                        "key": "api-version",
+                        "value": "2022-03-01"
+                      }
+                    ],
                     "body": "{\"action\":\"Restrict App Execution\",\"tenantId\":\"{TenantId}\",\"deviceIds\":\"{RestrictDeviceIds}\",\"comment\":\"App execution restricted via Workbook\"}",
                     "httpMethod": "POST",
                     "title": "Restrict App Execution",
@@ -746,7 +761,12 @@
                         "value": "application/json"
                       }
                     ],
-                    "params": [],
+                    "params": [
+                      {
+                        "key": "api-version",
+                        "value": "2022-03-01"
+                      }
+                    ],
                     "body": "{\"action\":\"Run Antivirus Scan\",\"tenantId\":\"{TenantId}\",\"deviceIds\":\"{ScanDeviceIds}\",\"scanType\":\"{ScanType}\",\"comment\":\"Scan initiated via Workbook\"}",
                     "httpMethod": "POST",
                     "title": "Run Antivirus Scan",
@@ -919,7 +939,12 @@
                         "value": "application/json"
                       }
                     ],
-                    "params": [],
+                    "params": [
+                      {
+                        "key": "api-version",
+                        "value": "2022-03-01"
+                      }
+                    ],
                     "body": "{\"action\":\"Add File Indicators\",\"tenantId\":\"{TenantId}\",\"indicators\":\"{FileIndicators}\",\"indicatorAction\":\"{FileIndicatorAction}\",\"severity\":\"{FileSeverity}\",\"title\":\"{FileTitle}\",\"description\":\"{FileDescription}\"}",
                     "httpMethod": "POST",
                     "title": "Add File Indicators",
@@ -1018,7 +1043,12 @@
                         "value": "application/json"
                       }
                     ],
-                    "params": [],
+                    "params": [
+                      {
+                        "key": "api-version",
+                        "value": "2022-03-01"
+                      }
+                    ],
                     "body": "{\"action\":\"Add IP Indicators\",\"tenantId\":\"{TenantId}\",\"indicators\":\"{IpIndicators}\",\"indicatorAction\":\"{IpIndicatorAction}\",\"severity\":\"{IpSeverity}\",\"title\":\"Malicious IPs\",\"description\":\"Known malicious IP addresses\"}",
                     "httpMethod": "POST",
                     "title": "Add IP Indicators",
@@ -1100,7 +1130,12 @@
                         "value": "application/json"
                       }
                     ],
-                    "params": [],
+                    "params": [
+                      {
+                        "key": "api-version",
+                        "value": "2022-03-01"
+                      }
+                    ],
                     "body": "{\"action\":\"Add URL Indicators\",\"tenantId\":\"{TenantId}\",\"indicators\":\"{UrlIndicators}\",\"indicatorAction\":\"{UrlIndicatorAction}\",\"severity\":\"High\",\"title\":\"Malicious URLs\",\"description\":\"Known malicious URLs and domains\"}",
                     "httpMethod": "POST",
                     "title": "Add URL/Domain Indicators",
@@ -1393,7 +1428,12 @@
                         "value": "application/json"
                       }
                     ],
-                    "params": [],
+                    "params": [
+                      {
+                        "key": "api-version",
+                        "value": "2022-03-01"
+                      }
+                    ],
                     "body": "{\"action\":\"Cancel Action\",\"tenantId\":\"{TenantId}\",\"actionId\":\"{CancelActionId}\"}",
                     "httpMethod": "POST",
                     "title": "Cancel Action",
@@ -1810,7 +1850,12 @@
                         "value": "application/json"
                       }
                     ],
-                    "params": [],
+                    "params": [
+                      {
+                        "key": "api-version",
+                        "value": "2022-03-01"
+                      }
+                    ],
                     "body": "{\"action\":\"Update Incident\",\"tenantId\":\"{TenantId}\",\"incidentId\":\"{UpdateIncidentId}\",\"status\":\"{UpdateStatus}\"}",
                     "httpMethod": "POST",
                     "title": "Update Incident",
@@ -1894,7 +1939,12 @@
                         "value": "application/json"
                       }
                     ],
-                    "params": [],
+                    "params": [
+                      {
+                        "key": "api-version",
+                        "value": "2022-03-01"
+                      }
+                    ],
                     "body": "{\"action\":\"Add Comment\",\"tenantId\":\"{TenantId}\",\"incidentId\":\"{CommentIncidentId}\",\"comment\":\"{IncidentComment}\"}",
                     "httpMethod": "POST",
                     "title": "Add Comment",
@@ -2044,7 +2094,12 @@
                         "value": "application/json"
                       }
                     ],
-                    "params": [],
+                    "params": [
+                      {
+                        "key": "api-version",
+                        "value": "2022-03-01"
+                      }
+                    ],
                     "body": "{\"action\":\"Create Detection\",\"tenantId\":\"{TenantId}\",\"ruleName\":\"{CreateRuleName}\",\"query\":\"{CreateRuleQuery}\",\"severity\":\"{CreateRuleSeverity}\"}",
                     "httpMethod": "POST",
                     "title": "Create Detection Rule",
@@ -2129,7 +2184,12 @@
                         "value": "application/json"
                       }
                     ],
-                    "params": [],
+                    "params": [
+                      {
+                        "key": "api-version",
+                        "value": "2022-03-01"
+                      }
+                    ],
                     "body": "{\"action\":\"Update Detection\",\"tenantId\":\"{TenantId}\",\"ruleId\":\"{UpdateRuleId}\",\"query\":\"{UpdateRuleQuery}\"}",
                     "httpMethod": "POST",
                     "title": "Update Detection Rule",
@@ -2198,7 +2258,12 @@
                         "value": "application/json"
                       }
                     ],
-                    "params": [],
+                    "params": [
+                      {
+                        "key": "api-version",
+                        "value": "2022-03-01"
+                      }
+                    ],
                     "body": "{\"action\":\"Delete Detection\",\"tenantId\":\"{TenantId}\",\"ruleId\":\"{DeleteRuleId}\"}",
                     "httpMethod": "POST",
                     "title": "Delete Detection Rule",
