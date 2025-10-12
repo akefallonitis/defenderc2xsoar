@@ -79,7 +79,13 @@
             },
             "queryType": 1,
             "resourceType": "microsoft.resourcegraph/resources",
-            "description": "Auto-discovered from selected Function App"
+            "description": "Auto-discovered from selected Function App",
+            "criteriaData": [
+              {
+                "criterionType": "param",
+                "value": "{FunctionApp}"
+              }
+            ]
           },
           {
             "id": "ad2-resourcegroup-autodiscover",
@@ -98,7 +104,13 @@
             },
             "queryType": 1,
             "resourceType": "microsoft.resourcegraph/resources",
-            "description": "Auto-discovered from selected Function App"
+            "description": "Auto-discovered from selected Function App",
+            "criteriaData": [
+              {
+                "criterionType": "param",
+                "value": "{FunctionApp}"
+              }
+            ]
           },
           {
             "id": "ad3-functionappname-autodiscover",
@@ -117,7 +129,13 @@
             },
             "queryType": 1,
             "resourceType": "microsoft.resourcegraph/resources",
-            "description": "Auto-discovered from selected Function App"
+            "description": "Auto-discovered from selected Function App",
+            "criteriaData": [
+              {
+                "criterionType": "param",
+                "value": "{FunctionApp}"
+              }
+            ]
           },
           {
             "id": "ad4-tenantid-autodiscover",
@@ -139,7 +157,28 @@
             },
             "queryType": 1,
             "resourceType": "microsoft.resourcegraph/resources",
-            "description": "\ud83c\udfaf CRITICAL: Auto-discovered from Function App resource. This is the Azure AD Tenant ID where your App Registration (APPID) is created. This ensures authentication works correctly. Can be manually overridden if needed."
+            "description": "\ud83c\udfaf CRITICAL: Auto-discovered from Function App resource. This is the Azure AD Tenant ID where your App Registration (APPID) is created. This ensures authentication works correctly. Can be manually overridden if needed.",
+            "criteriaData": [
+              {
+                "criterionType": "param",
+                "value": "{FunctionApp}"
+              }
+            ]
+          },
+          {
+            "id": "selected-tab-parameter",
+            "version": "KqlParameterItem/1.0",
+            "name": "selectedTab",
+            "label": "Selected Tab (internal)",
+            "type": 1,
+            "isRequired": false,
+            "value": "automator",
+            "query": "",
+            "queryType": 0,
+            "isHiddenWhenLocked": true,
+            "typeSettings": {
+              "isSearchable": false
+            }
           },
           {
             "id": "devicelist-parameter",
