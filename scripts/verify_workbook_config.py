@@ -33,8 +33,9 @@ def verify_workbook(file_path):
     
     results = {
         'arm_endpoint_queries': {'total': 0, 'with_api_version': 0},
-        'arm_actions': {'total': 0, 'with_api_version': 0},
-        'device_params': {'total': 0, 'with_custom_endpoint': 0}
+        'arm_actions': {'total': 0, 'with_api_version': 0, 'with_relative_path': 0, 'without_url_api_version': 0},
+        'device_params': {'total': 0, 'with_custom_endpoint': 0},
+        'custom_endpoint_queries': {'total': 0, 'with_params': 0}
     }
     
     def check_object(obj):
@@ -52,6 +53,15 @@ def verify_workbook(file_path):
                 params = ctx.get('params', [])
                 if any(p.get('key') == 'api-version' or p.get('name') == 'api-version' for p in params):
                     results['arm_actions']['with_api_version'] += 1
+                
+                # Check for relative path (should start with /subscriptions/)
+                path = ctx.get('path', '')
+                if path.startswith('/subscriptions/'):
+                    results['arm_actions']['with_relative_path'] += 1
+                
+                # Check that api-version is NOT in the URL (should only be in params)
+                if 'api-version=' not in path:
+                    results['arm_actions']['without_url_api_version'] += 1
             
             # Check device parameters
             if 'name' in obj and obj['name'] in ['DeviceList', 'IsolateDeviceIds', 'UnisolateDeviceIds', 'RestrictDeviceIds', 'ScanDeviceIds']:
@@ -59,6 +69,14 @@ def verify_workbook(file_path):
                 query = obj.get('query', '')
                 if obj.get('queryType') == 10 and 'CustomEndpoint/1.0' in query:
                     results['device_params']['with_custom_endpoint'] += 1
+            
+            # Check CustomEndpoint queries for proper parameter usage
+            if 'query' in obj and isinstance(obj['query'], str) and 'CustomEndpoint/1.0' in obj['query']:
+                query = obj['query']
+                results['custom_endpoint_queries']['total'] += 1
+                # Check if using parameter substitution like {FunctionAppName} and {TenantId}
+                if '{FunctionAppName}' in query and '{TenantId}' in query:
+                    results['custom_endpoint_queries']['with_params'] += 1
             
             for v in obj.values():
                 check_object(v)
@@ -82,9 +100,22 @@ def verify_workbook(file_path):
     if results['arm_actions']['total'] > 0:
         total = results['arm_actions']['total']
         with_api = results['arm_actions']['with_api_version']
-        status = "✅" if with_api == total else "❌"
-        print(f"{status} ARM Actions: {with_api}/{total} with api-version")
+        with_rel = results['arm_actions']['with_relative_path']
+        without_url_api = results['arm_actions']['without_url_api_version']
+        
+        status_api = "✅" if with_api == total else "❌"
+        print(f"{status_api} ARM Actions: {with_api}/{total} with api-version in params")
         if with_api < total:
+            all_pass = False
+        
+        status_rel = "✅" if with_rel == total else "❌"
+        print(f"{status_rel} ARM Actions: {with_rel}/{total} with relative paths")
+        if with_rel < total:
+            all_pass = False
+        
+        status_no_url = "✅" if without_url_api == total else "❌"
+        print(f"{status_no_url} ARM Actions: {without_url_api}/{total} without api-version in URL")
+        if without_url_api < total:
             all_pass = False
     
     if results['device_params']['total'] > 0:
@@ -93,6 +124,14 @@ def verify_workbook(file_path):
         status = "✅" if with_ce == total else "❌"
         print(f"{status} Device Parameters: {with_ce}/{total} with CustomEndpoint")
         if with_ce < total:
+            all_pass = False
+    
+    if results['custom_endpoint_queries']['total'] > 0:
+        total = results['custom_endpoint_queries']['total']
+        with_params = results['custom_endpoint_queries']['with_params']
+        status = "✅" if with_params == total else "❌"
+        print(f"{status} CustomEndpoint Queries: {with_params}/{total} with parameter substitution")
+        if with_params < total:
             all_pass = False
     
     if all_pass and (results['arm_endpoint_queries']['total'] > 0 or 
