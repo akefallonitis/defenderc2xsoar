@@ -181,7 +181,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [], \"method\": \"POST\", \"batchDisabled\": false, \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.data\", \"columns\": [{\"path\": \"$.fileName\", \"columnid\": \"fileName\"}, {\"path\": \"$.size\", \"columnid\": \"size\"}, {\"path\": \"$.lastModified\", \"columnid\": \"lastModified\"}, {\"path\": \"$.contentType\", \"columnid\": \"contentType\"}]}}, {\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$\", \"columns\": []}}], \"body\": \"{\\\"tenantId\\\": \\\"{TenantId}\\\", \\\"action\\\": \\\"ListLibraryFiles\\\"}\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Orchestrator?action={action}&tenantId={TenantId}\"}",
+              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"batchDisabled\":false,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.data\",\"columns\":[{\"path\":\"$.fileName\",\"columnid\":\"fileName\"},{\"path\":\"$.size\",\"columnid\":\"size\"},{\"path\":\"$.lastModified\",\"columnid\":\"lastModified\"},{\"path\":\"$.contentType\",\"columnid\":\"contentType\"}]}},{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[]}}],\"body\":null,\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Orchestrator\",\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"action\",\"value\":\"ListLibraryFiles\"}]}",
               "size": 0,
               "title": "Library Files",
               "showRefreshButton": true,
