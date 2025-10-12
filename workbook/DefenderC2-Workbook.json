@@ -2688,7 +2688,7 @@
                         "value": "2022-03-01"
                       }
                     ],
-                    "body": "{\"Function\":\"UploadToLibrary\",\"fileName\":\"{LibraryFileNameUpload}\",\"fileContent\":\"{LibraryContentUpload}\",\"tenantId\":\"{TenantId}\"}",
+                    "body": "{\"fileName\": \"{LibraryFileNameUpload}\", \"fileContent\": \"{LibraryContentUpload}\", \"tenantId\": \"{TenantId}\", \"action\": \"UploadToLibrary\"}",
                     "httpMethod": "POST",
                     "title": "Upload to Library",
                     "description": "Uploading {LibraryFileNameUpload} to library",
