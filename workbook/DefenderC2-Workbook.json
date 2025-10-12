@@ -156,7 +156,7 @@
               "durationMs": 86400000
             },
             "queryType": 1,
-            "resourceType": "microsoft.resourcegraph/resourcecontainers",
+            "resourceType": "microsoft.resourcegraph/resources",
             "description": "\ud83c\udfaf CRITICAL: Auto-discovered from subscription metadata. This is the Azure AD Tenant ID where your App Registration (APPID) is created. Can be manually overridden if needed.",
             "criteriaData": [
               {
