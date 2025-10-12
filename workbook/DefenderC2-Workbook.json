@@ -4,7 +4,7 @@
     {
       "type": 1,
       "content": {
-        "json": "# DefenderC2 Command & Control Console\n\n> Enterprise-grade automation and orchestration for Microsoft Defender for Endpoint with **true zero-configuration deployment**.\n\n---\n\n## Quick Start Configuration\n\nSelect your **DefenderC2 Function App** and **Workspace** - everything else autodiscovers!\n\n### What's Autodiscovered:\n- \u2705 **Subscription ID** (from Function App resource)\n- \u2705 **Resource Group** (from Function App resource)\n- \u2705 **Function App Name** (from Function App resource)\n- \u2705 **Azure AD Tenant ID** (from Function App resource - this is where your App Registration lives!)\n- \u2705 **Function Key** (from deployment parameters or manual entry)\n\n### You Only Select:\n1. \ud83c\udfaf Your DefenderC2 Function App (one click)\n2. \ud83d\udcca Your Log Analytics Workspace (one click)"
+        "json": "# DefenderC2 Command & Control Console\n\n> Enterprise-grade automation and orchestration for Microsoft Defender for Endpoint with **true zero-configuration deployment**.\n\n---\n\n## Quick Start Configuration\n\nSelect your **DefenderC2 Function App** and **Workspace** - everything else autodiscovers!\n\n### What's Autodiscovered:\n- \u2705 **Subscription ID** (from Function App resource)\n- \u2705 **Resource Group** (from Function App resource)\n- \u2705 **Function App Name** (from Function App resource)\n- \u2705 **Azure AD Tenant ID** (from Function App resource - this is where your App Registration lives!)\n- \u2705 **API Authentication** (anonymous function endpoint - no key required)\n\n### You Only Select:\n1. \ud83c\udfaf Your DefenderC2 Function App (one click)\n2. \ud83d\udcca Your Log Analytics Workspace (one click)"
       },
       "name": "text - header"
     },
@@ -156,10 +156,6 @@
               {
                 "criterionType": "param",
                 "value": "{FunctionAppName}"
-              },
-              {
-                "criterionType": "param",
-                "value": "{FunctionKey}"
               },
               {
                 "criterionType": "param",
@@ -324,7 +320,7 @@
           {
             "type": 1,
             "content": {
-              "json": "## Defender C2 - Device Response Actions\n\nPerform Microsoft Defender for Endpoint response actions with **ARM Actions** and **JSONPath parsing**.\n\n### Features:\n- \u2705 Azure Resource Graph auto-discovery\n- \u2705 ARM Actions for synchronous operations\n- \u2705 JSONPath output parsing\n- \u2705 Multi-tenancy support with automatic TenantId injection\n- \u2705 Function Key authentication"
+              "json": "## Defender C2 - Device Response Actions\n\nPerform Microsoft Defender for Endpoint response actions with **ARM Actions** and **JSONPath parsing**.\n\n### Features:\n- \u2705 Azure Resource Graph auto-discovery\n- \u2705 ARM Actions for synchronous operations\n- \u2705 JSONPath output parsing\n- \u2705 Multi-tenancy support with automatic TenantId injection\n- \u2705 Anonymous function authentication (no keys needed)"
             },
             "name": "text - automator-intro"
           },
@@ -364,10 +360,6 @@
                     {
                       "criterionType": "param",
                       "value": "{FunctionAppName}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{FunctionKey}"
                     },
                     {
                       "criterionType": "param",
@@ -498,10 +490,6 @@
                     },
                     {
                       "criterionType": "param",
-                      "value": "{FunctionKey}"
-                    },
-                    {
-                      "criterionType": "param",
                       "value": "{TenantId}"
                     }
                   ]
@@ -586,10 +574,6 @@
                     },
                     {
                       "criterionType": "param",
-                      "value": "{FunctionKey}"
-                    },
-                    {
-                      "criterionType": "param",
                       "value": "{TenantId}"
                     }
                   ]
@@ -671,10 +655,6 @@
                     {
                       "criterionType": "param",
                       "value": "{FunctionAppName}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{FunctionKey}"
                     },
                     {
                       "criterionType": "param",
