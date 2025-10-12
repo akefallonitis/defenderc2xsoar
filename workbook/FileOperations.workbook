@@ -287,7 +287,7 @@
                   "style": "primary",
                   "linkIsContextBlade": false,
                   "armActionContext": {
-                    "path": "https://management.azure.com/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Orchestrator/invocations?api-version=2022-03-01",
+                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Orchestrator/invocations",
                     "headers": [
                       {
                         "name": "Content-Type",
@@ -360,7 +360,7 @@
                   "style": "secondary",
                   "linkIsContextBlade": false,
                   "armActionContext": {
-                    "path": "https://management.azure.com/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Orchestrator/invocations?api-version=2022-03-01",
+                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Orchestrator/invocations",
                     "headers": [
                       {
                         "name": "Content-Type",
@@ -389,7 +389,7 @@
                   "style": "secondary",
                   "linkIsContextBlade": false,
                   "armActionContext": {
-                    "path": "https://management.azure.com/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Orchestrator/invocations?api-version=2022-03-01",
+                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Orchestrator/invocations",
                     "headers": [
                       {
                         "name": "Content-Type",
@@ -594,7 +594,7 @@
                   "style": "primary",
                   "linkIsContextBlade": false,
                   "armActionContext": {
-                    "path": "https://management.azure.com/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Orchestrator/invocations?api-version=2022-03-01",
+                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Orchestrator/invocations",
                     "headers": [
                       {
                         "name": "Content-Type",
