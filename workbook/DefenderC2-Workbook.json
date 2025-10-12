@@ -791,11 +791,6 @@
           }
         ]
       },
-      "conditionalVisibility": {
-        "parameterName": "selectedTab",
-        "comparison": "isEqualTo",
-        "value": "automator"
-      },
       "name": "group - automator"
     },
     {
@@ -1150,11 +1145,6 @@
           }
         ]
       },
-      "conditionalVisibility": {
-        "parameterName": "selectedTab",
-        "comparison": "isEqualTo",
-        "value": "threatintel"
-      },
       "name": "group - threatintel"
     },
     {
@@ -1423,11 +1413,6 @@
           }
         ]
       },
-      "conditionalVisibility": {
-        "parameterName": "selectedTab",
-        "comparison": "isEqualTo",
-        "value": "actions"
-      },
       "name": "group - actions"
     },
     {
@@ -1606,11 +1591,6 @@
             }
           }
         ]
-      },
-      "conditionalVisibility": {
-        "parameterName": "selectedTab",
-        "comparison": "isEqualTo",
-        "value": "hunting"
       },
       "name": "group - hunting"
     },
@@ -1933,11 +1913,6 @@
             "name": "links - add-comment"
           }
         ]
-      },
-      "conditionalVisibility": {
-        "parameterName": "selectedTab",
-        "comparison": "isEqualTo",
-        "value": "incidents"
       },
       "name": "group - incidents"
     },
@@ -2272,11 +2247,6 @@
             "name": "query - backup-detections"
           }
         ]
-      },
-      "conditionalVisibility": {
-        "parameterName": "selectedTab",
-        "comparison": "isEqualTo",
-        "value": "detections"
       },
       "name": "group - detections"
     },
@@ -2809,11 +2779,6 @@
             "name": "library-deploy-action"
           }
         ]
-      },
-      "conditionalVisibility": {
-        "parameterName": "selectedTab",
-        "comparison": "isEqualTo",
-        "value": "console"
       },
       "name": "group - console"
     }
