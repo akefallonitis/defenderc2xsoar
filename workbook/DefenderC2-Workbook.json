@@ -23,7 +23,7 @@
             "label": "DefenderC2 Function App",
             "type": 5,
             "isRequired": true,
-            "query": "Resources\n| where type =~ 'microsoft.web/sites'\n| where kind contains 'functionapp'\n| where name contains 'defender' or tags.purpose =~ 'defenderc2' or tags.application =~ 'defenderc2'\n| project id, name, resourceGroup, subscriptionId, location, tags\n| order by name asc",
+            "query": "Resources\n| where type =~ 'microsoft.web/sites'\n| where kind contains 'functionapp'\n| project id, name, resourceGroup, subscriptionId, location, tags\n| order by name asc",
             "crossComponentResources": [
               "value::all"
             ],
@@ -37,7 +37,7 @@
             "queryType": 1,
             "resourceType": "microsoft.resourcegraph/resources",
             "value": null,
-            "description": "Select your DefenderC2 Function App. The list shows Function Apps with 'defender' in the name or tagged with 'purpose=defenderc2'."
+            "description": "Select your DefenderC2 Function App from the list of available Function Apps in your subscription(s)."
           },
           {
             "id": "fa2-workspace-selector",
