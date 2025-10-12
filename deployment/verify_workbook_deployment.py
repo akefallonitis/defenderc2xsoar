@@ -258,6 +258,78 @@ def verify_custom_endpoints(workbook: Dict, workbook_name: str) -> Tuple[bool, D
     }
 
 
+def verify_urlparams_format(workbook: Dict, workbook_name: str) -> Tuple[bool, Dict]:
+    """Verify CustomEndpoint queries use urlParams correctly with variable placeholders"""
+    print(f"\n{Colors.BOLD}Checking urlParams format in {workbook_name}...{Colors.RESET}")
+    
+    custom_queries = find_customendpoint_queries(workbook)
+    
+    if not custom_queries:
+        print_info("No CustomEndpoint queries found")
+        return True, {'queries': 0, 'issues': []}
+    
+    issues = []
+    correct_queries = 0
+    
+    for i, q in enumerate(custom_queries, 1):
+        query_obj = q['query_obj']
+        url = query_obj.get('url', '')
+        body = query_obj.get('body')
+        headers = query_obj.get('headers', [])
+        url_params = query_obj.get('urlParams', [])
+        
+        query_issues = []
+        
+        # Check that body is null or empty
+        if body is not None and body != '':
+            query_issues.append("body should be null")
+        
+        # Check that headers is empty
+        if headers:
+            query_issues.append("headers should be empty for urlParams")
+        
+        # Check that URL doesn't have query string
+        if '?' in url:
+            query_issues.append("URL should not have query string")
+        
+        # Check that urlParams exists
+        if not url_params:
+            query_issues.append("missing urlParams")
+        else:
+            # Check that urlParams use variable placeholders
+            for param in url_params:
+                key = param.get('key', '')
+                value = param.get('value', '')
+                
+                # tenantId should use {TenantId} variable
+                if key == 'tenantId':
+                    if value != '{TenantId}':
+                        if not (value.startswith('{') and value.endswith('}')):
+                            query_issues.append(f"tenantId should use variable placeholder, found: {value}")
+        
+        if query_issues:
+            func_name = url.split('/api/')[-1] if '/api/' in url else 'unknown'
+            print_error(f"  Query {i} ({func_name}): {', '.join(query_issues)}")
+            issues.extend([f"Query {i}: {issue}" for issue in query_issues])
+        else:
+            func_name = url.split('/api/')[-1] if '/api/' in url else 'unknown'
+            action_param = next((p for p in url_params if p.get('key') == 'action'), None)
+            action = action_param.get('value', '') if action_param else ''
+            print_success(f"  Query {i} ({func_name} - {action}): Correct urlParams format")
+            correct_queries += 1
+    
+    if correct_queries == len(custom_queries):
+        print_success(f"All {len(custom_queries)} queries use correct urlParams format")
+    else:
+        print_error(f"Only {correct_queries}/{len(custom_queries)} queries use correct format")
+    
+    return len(issues) == 0, {
+        'total_queries': len(custom_queries),
+        'correct_queries': correct_queries,
+        'issues': issues
+    }
+
+
 def verify_auto_refresh(workbook: Dict, workbook_name: str) -> Tuple[bool, Dict]:
     """Verify auto-refresh configuration"""
     print(f"\n{Colors.BOLD}Checking auto-refresh configuration in {workbook_name}...{Colors.RESET}")
@@ -537,6 +609,7 @@ def main():
         param_passed, param_results = verify_functionappname_parameter(main_workbook, "DefenderC2-Workbook")
         funckey_passed, funckey_results = verify_functionkey_parameter(main_workbook, "DefenderC2-Workbook")
         endpoint_passed, endpoint_results = verify_custom_endpoints(main_workbook, "DefenderC2-Workbook")
+        urlparams_passed, urlparams_results = verify_urlparams_format(main_workbook, "DefenderC2-Workbook")
         refresh_passed, refresh_results = verify_auto_refresh(main_workbook, "DefenderC2-Workbook")
         action_passed, action_results = verify_arm_action_endpoints(main_workbook, "DefenderC2-Workbook")
         arm_ctx_passed, arm_ctx_results = verify_arm_action_contexts(main_workbook, "DefenderC2-Workbook")
@@ -545,12 +618,13 @@ def main():
             'parameter': param_results,
             'functionkey': funckey_results,
             'endpoints': endpoint_results,
+            'urlparams': urlparams_results,
             'auto_refresh': refresh_results,
             'actions': action_results,
             'arm_contexts': arm_ctx_results
         }
         
-        if not all([param_passed, funckey_passed, endpoint_passed, refresh_passed, action_passed, arm_ctx_passed]):
+        if not all([param_passed, funckey_passed, endpoint_passed, urlparams_passed, refresh_passed, action_passed, arm_ctx_passed]):
             all_passed = False
             
     except Exception as e:
@@ -568,16 +642,18 @@ def main():
         param_passed, param_results = verify_functionappname_parameter(file_ops_workbook, "FileOperations")
         funckey_passed, funckey_results = verify_functionkey_parameter(file_ops_workbook, "FileOperations")
         endpoint_passed, endpoint_results = verify_custom_endpoints(file_ops_workbook, "FileOperations")
+        urlparams_passed, urlparams_results = verify_urlparams_format(file_ops_workbook, "FileOperations")
         arm_ctx_passed, arm_ctx_results = verify_arm_action_contexts(file_ops_workbook, "FileOperations")
         
         results['file_operations'] = {
             'parameter': param_results,
             'functionkey': funckey_results,
             'endpoints': endpoint_results,
+            'urlparams': urlparams_results,
             'arm_contexts': arm_ctx_results
         }
         
-        if not all([param_passed, funckey_passed, endpoint_passed, arm_ctx_passed]):
+        if not all([param_passed, funckey_passed, endpoint_passed, urlparams_passed, arm_ctx_passed]):
             all_passed = False
             
     except Exception as e:
