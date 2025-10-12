@@ -142,22 +142,6 @@
             "description": "\ud83c\udfaf CRITICAL: Auto-discovered from Function App resource. This is the Azure AD Tenant ID where your App Registration (APPID) is created. This ensures authentication works correctly. Can be manually overridden if needed."
           },
           {
-            "id": "ma1-functionkey-manual",
-            "version": "KqlParameterItem/1.0",
-            "name": "FunctionKey",
-            "label": "Function Key",
-            "type": 1,
-            "isRequired": false,
-            "defaultValue": "",
-            "typeSettings": {
-              "isSearchable": false
-            },
-            "timeContext": {
-              "durationMs": 86400000
-            },
-            "description": "\ud83d\udd11 Function key for authentication. If deployed via ARM template, this is auto-populated. Otherwise, get it from: Azure Portal \u2192 Function App \u2192 Functions \u2192 Function Keys \u2192 Copy 'default' key"
-          },
-          {
             "id": "devicelist-parameter",
             "version": "KqlParameterItem/1.0",
             "name": "DeviceList",
@@ -461,10 +445,6 @@
                 {
                   "criterionType": "param",
                   "value": "{FunctionAppName}"
-                },
-                {
-                  "criterionType": "param",
-                  "value": "{FunctionKey}"
                 },
                 {
                   "criterionType": "param",
@@ -781,10 +761,6 @@
                 {
                   "criterionType": "param",
                   "value": "{FunctionAppName}"
-                },
-                {
-                  "criterionType": "param",
-                  "value": "{FunctionKey}"
                 },
                 {
                   "criterionType": "param",
@@ -1147,10 +1123,6 @@
                 },
                 {
                   "criterionType": "param",
-                  "value": "{FunctionKey}"
-                },
-                {
-                  "criterionType": "param",
                   "value": "{TenantId}"
                 }
               ]
@@ -1288,10 +1260,6 @@
                 },
                 {
                   "criterionType": "param",
-                  "value": "{FunctionKey}"
-                },
-                {
-                  "criterionType": "param",
                   "value": "{TenantId}"
                 }
               ]
@@ -1351,10 +1319,6 @@
                 {
                   "criterionType": "param",
                   "value": "{FunctionAppName}"
-                },
-                {
-                  "criterionType": "param",
-                  "value": "{FunctionKey}"
                 },
                 {
                   "criterionType": "param",
@@ -1567,10 +1531,6 @@
                 },
                 {
                   "criterionType": "param",
-                  "value": "{FunctionKey}"
-                },
-                {
-                  "criterionType": "param",
                   "value": "{TenantId}"
                 }
               ]
@@ -1607,10 +1567,6 @@
                 {
                   "criterionType": "param",
                   "value": "{FunctionAppName}"
-                },
-                {
-                  "criterionType": "param",
-                  "value": "{FunctionKey}"
                 },
                 {
                   "criterionType": "param",
@@ -1779,10 +1735,6 @@
                 {
                   "criterionType": "param",
                   "value": "{FunctionAppName}"
-                },
-                {
-                  "criterionType": "param",
-                  "value": "{FunctionKey}"
                 },
                 {
                   "criterionType": "param",
@@ -2005,10 +1957,6 @@
                 {
                   "criterionType": "param",
                   "value": "{FunctionAppName}"
-                },
-                {
-                  "criterionType": "param",
-                  "value": "{FunctionKey}"
                 },
                 {
                   "criterionType": "param",
@@ -2298,10 +2246,6 @@
                 },
                 {
                   "criterionType": "param",
-                  "value": "{FunctionKey}"
-                },
-                {
-                  "criterionType": "param",
                   "value": "{TenantId}"
                 }
               ]
@@ -2519,10 +2463,6 @@
                 },
                 {
                   "criterionType": "param",
-                  "value": "{FunctionKey}"
-                },
-                {
-                  "criterionType": "param",
                   "value": "{TenantId}"
                 }
               ]
@@ -2590,10 +2530,6 @@
                 },
                 {
                   "criterionType": "param",
-                  "value": "{FunctionKey}"
-                },
-                {
-                  "criterionType": "param",
                   "value": "{TenantId}"
                 }
               ]
@@ -2627,10 +2563,6 @@
                 {
                   "criterionType": "param",
                   "value": "{FunctionAppName}"
-                },
-                {
-                  "criterionType": "param",
-                  "value": "{FunctionKey}"
                 },
                 {
                   "criterionType": "param",
@@ -2698,10 +2630,6 @@
                 },
                 {
                   "criterionType": "param",
-                  "value": "{FunctionKey}"
-                },
-                {
-                  "criterionType": "param",
                   "value": "{TenantId}"
                 }
               ]
@@ -2730,10 +2658,6 @@
                 {
                   "criterionType": "param",
                   "value": "{FunctionAppName}"
-                },
-                {
-                  "criterionType": "param",
-                  "value": "{FunctionKey}"
                 },
                 {
                   "criterionType": "param",
@@ -2807,10 +2731,6 @@
                 {
                   "criterionType": "param",
                   "value": "{FunctionAppName}"
-                },
-                {
-                  "criterionType": "param",
-                  "value": "{FunctionKey}"
                 },
                 {
                   "criterionType": "param",
