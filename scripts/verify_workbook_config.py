@@ -35,8 +35,16 @@ def verify_workbook(file_path):
         'arm_endpoint_queries': {'total': 0, 'with_api_version': 0},
         'arm_actions': {'total': 0, 'with_api_version': 0, 'with_relative_path': 0, 'without_url_api_version': 0},
         'device_params': {'total': 0, 'with_custom_endpoint': 0},
-        'custom_endpoint_queries': {'total': 0, 'with_params': 0}
+        'custom_endpoint_queries': {'total': 0, 'with_params': 0},
+        'global_params': {'expected': [], 'found': [], 'missing': []}
     }
+    
+    # Define expected global parameters per workbook
+    basename = os.path.basename(file_path)
+    if 'DefenderC2-Workbook' in basename:
+        results['global_params']['expected'] = ['FunctionApp', 'Workspace', 'Subscription', 'ResourceGroup', 'FunctionAppName', 'TenantId']
+    elif 'FileOperations' in basename:
+        results['global_params']['expected'] = ['Workspace', 'FunctionAppName', 'TenantId']
     
     def check_object(obj):
         if isinstance(obj, dict):
@@ -77,6 +85,15 @@ def verify_workbook(file_path):
                 # Check if using parameter substitution like {FunctionAppName} and {TenantId}
                 if '{FunctionAppName}' in query and '{TenantId}' in query:
                     results['custom_endpoint_queries']['with_params'] += 1
+            
+            # Check for global parameters
+            if obj.get('version') == 'KqlParameterItem/1.0' and 'name' in obj:
+                param_name = obj['name']
+                if param_name in results['global_params']['expected']:
+                    if obj.get('isGlobal', False):
+                        results['global_params']['found'].append(param_name)
+                    else:
+                        results['global_params']['missing'].append(param_name)
             
             for v in obj.values():
                 check_object(v)
@@ -132,6 +149,18 @@ def verify_workbook(file_path):
         status = "✅" if with_params == total else "❌"
         print(f"{status} CustomEndpoint Queries: {with_params}/{total} with parameter substitution")
         if with_params < total:
+            all_pass = False
+    
+    # Check global parameters
+    if results['global_params']['expected']:
+        expected = results['global_params']['expected']
+        found = results['global_params']['found']
+        missing = results['global_params']['missing']
+        
+        status = "✅" if len(found) == len(expected) and len(missing) == 0 else "❌"
+        print(f"{status} Global Parameters: {len(found)}/{len(expected)} marked as global")
+        if missing:
+            print(f"   ⚠️  Missing global flag: {', '.join(missing)}")
             all_pass = False
     
     if all_pass and (results['arm_endpoint_queries']['total'] > 0 or 
