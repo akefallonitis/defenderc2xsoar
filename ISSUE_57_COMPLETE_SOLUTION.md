@@ -24,25 +24,31 @@
 - `scripts/fix_arm_paths_constructed.py` - Fixed paths
 
 ### Problem 2: CustomEndpoint Stuck in Infinite Refresh Loop
-**Symptom**: DeviceList and other CustomEndpoint parameters "keeps stack in refreshing"
+**Symptom**: DeviceList and other CustomEndpoint parameters "keeps stuck in refreshing" with loading spinner
 
-**Root Cause**: CustomEndpoint criteriaData referenced `{FunctionAppName}` creating circular dependency:
-```
-User selects {FunctionApp}
-  ↓
-{FunctionAppName} ARG query starts (derives name from resource ID)
-  ↓
-DeviceList criteriaData waits for {FunctionAppName}
-  ↓
-CustomEndpoint tries to call URL: https://{FunctionAppName}.azurewebsites.net/...
-  ↓
-{FunctionAppName} not yet resolved → INFINITE REFRESH LOOP
+**Root Cause**: CustomEndpoint criteriaData was incomplete - it only had `{FunctionApp}`, but the query URL used `{FunctionAppName}` and urlParams used `{TenantId}`. This caused the CustomEndpoint to execute before these derived parameters were populated, leading to stuck state.
+
+**Fix Evolution**:
+1. **Commit 8b5a709** - Changed criteriaData from `{FunctionAppName}` → `{FunctionApp}` (partial fix)
+2. **Commit f7fe609** - Added `{FunctionAppName}` AND `{TenantId}` to criteriaData (complete fix)
+
+**Why Both Changes Needed**:
+- **{FunctionApp} in criteriaData**: Triggers refresh when Function App is selected
+- **{FunctionAppName} in criteriaData**: Ensures query waits until name is extracted from resource ID
+- **{TenantId} in criteriaData**: Ensures query waits until tenant ID is populated
+
+**Complete criteriaData now**:
+```json
+[
+  {"criterionType": "param", "value": "{FunctionApp}"},       // Trigger
+  {"criterionType": "param", "value": "{FunctionAppName}"},   // Wait for URL param
+  {"criterionType": "param", "value": "{TenantId}"}           // Wait for urlParams
+]
 ```
 
-**Fix (Commit 8b5a709)**:
-- Updated criteriaData in 21 CustomEndpoint parameters
-- Changed `{FunctionAppName}` → `{FunctionApp}` in criteriaData
-- Script: `scripts/fix_customendpoint_criteria.py`
+**Scripts**: 
+- `scripts/fix_customendpoint_criteria.py` - Changed to {FunctionApp}
+- `scripts/fix_customendpoint_complete_criteria.py` - Added missing params
 
 ## 🔄 Correct Evaluation Flow (After Fix)
 
@@ -111,8 +117,9 @@ ACTION-SPECIFIC PARAMETERS:
 
 **CustomEndpoints** (Type 10 - Custom Endpoint):
 - URL uses `https://{FunctionAppName}.azurewebsites.net/...`
-- criteriaData must include `{FunctionApp}` (not {FunctionAppName})
-- Without it: circular dependency → infinite refresh loop
+- urlParams use `{TenantId}` and other parameters
+- criteriaData must include ALL parameters used in query: `{FunctionApp}`, `{FunctionAppName}`, `{TenantId}`
+- Without complete criteriaData: query executes before parameters ready → stuck refreshing
 
 ## 🧪 Testing Verification
 
@@ -143,17 +150,18 @@ ACTION-SPECIFIC PARAMETERS:
 |-----------|--------|-------|
 | ARM Actions | `<unset>` in path | ✅ Correct resource ID |
 | ARM Action Count | 15 broken | ✅ 15 fixed |
-| CustomEndpoints | Infinite refresh | ✅ Evaluates correctly |
+| CustomEndpoints | Stuck refreshing | ✅ Evaluates correctly |
 | CustomEndpoint Count | 21 broken | ✅ 21 fixed |
 | DeviceList Dropdown | Stuck refreshing | ✅ Populates devices |
 | Parameter Auto-population | Failed | ✅ Works |
-| Total Changes | - | 81 criteriaData fixes |
+| Total Changes | - | 117 fixes (60+21+15+21) |
 
 ## 🔗 Related Commits
 
 1. **2f3f95b** - Fix ARM action criteriaData (60 changes) - Added {FunctionApp} to criteriaData
-2. **8b5a709** - Fix CustomEndpoint criteriaData (21 changes) - Broke circular dependency
+2. **8b5a709** - Fix CustomEndpoint criteriaData (21 changes) - Changed to {FunctionApp}
 3. **f0ba2e0** - Fix ARM action paths (15 changes) - Use constructed text parameter paths
+4. **f7fe609** - Fix CustomEndpoint complete criteriaData (21 changes) - Added {FunctionAppName} & {TenantId}
 
 ## 📚 Key Learnings
 
