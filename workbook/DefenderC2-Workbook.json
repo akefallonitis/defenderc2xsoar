@@ -491,15 +491,7 @@
                   "criteriaData": [
                     {
                       "criterionType": "param",
-                      "value": "{Subscription}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{ResourceGroup}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{FunctionAppName}"
+                      "value": "{FunctionApp}"
                     },
                     {
                       "criterionType": "param",
@@ -645,15 +637,7 @@
                   "criteriaData": [
                     {
                       "criterionType": "param",
-                      "value": "{Subscription}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{ResourceGroup}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{FunctionAppName}"
+                      "value": "{FunctionApp}"
                     },
                     {
                       "criterionType": "param",
@@ -769,15 +753,7 @@
                   "criteriaData": [
                     {
                       "criterionType": "param",
-                      "value": "{Subscription}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{ResourceGroup}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{FunctionAppName}"
+                      "value": "{FunctionApp}"
                     },
                     {
                       "criterionType": "param",
@@ -915,15 +891,7 @@
                   "criteriaData": [
                     {
                       "criterionType": "param",
-                      "value": "{Subscription}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{ResourceGroup}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{FunctionAppName}"
+                      "value": "{FunctionApp}"
                     },
                     {
                       "criterionType": "param",
@@ -1147,15 +1115,7 @@
                   "criteriaData": [
                     {
                       "criterionType": "param",
-                      "value": "{Subscription}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{ResourceGroup}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{FunctionAppName}"
+                      "value": "{FunctionApp}"
                     },
                     {
                       "criterionType": "param",
@@ -1315,15 +1275,7 @@
                   "criteriaData": [
                     {
                       "criterionType": "param",
-                      "value": "{Subscription}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{ResourceGroup}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{FunctionAppName}"
+                      "value": "{FunctionApp}"
                     },
                     {
                       "criterionType": "param",
@@ -1457,15 +1409,7 @@
                   "criteriaData": [
                     {
                       "criterionType": "param",
-                      "value": "{Subscription}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{ResourceGroup}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{FunctionAppName}"
+                      "value": "{FunctionApp}"
                     },
                     {
                       "criterionType": "param",
@@ -1789,15 +1733,7 @@
                   "criteriaData": [
                     {
                       "criterionType": "param",
-                      "value": "{Subscription}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{ResourceGroup}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{FunctionAppName}"
+                      "value": "{FunctionApp}"
                     },
                     {
                       "criterionType": "param",
@@ -2246,15 +2182,7 @@
                   "criteriaData": [
                     {
                       "criterionType": "param",
-                      "value": "{Subscription}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{ResourceGroup}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{FunctionAppName}"
+                      "value": "{FunctionApp}"
                     },
                     {
                       "criterionType": "param",
@@ -2374,15 +2302,7 @@
                   "criteriaData": [
                     {
                       "criterionType": "param",
-                      "value": "{Subscription}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{ResourceGroup}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{FunctionAppName}"
+                      "value": "{FunctionApp}"
                     },
                     {
                       "criterionType": "param",
@@ -2573,15 +2493,7 @@
                   "criteriaData": [
                     {
                       "criterionType": "param",
-                      "value": "{Subscription}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{ResourceGroup}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{FunctionAppName}"
+                      "value": "{FunctionApp}"
                     },
                     {
                       "criterionType": "param",
@@ -2706,15 +2618,7 @@
                   "criteriaData": [
                     {
                       "criterionType": "param",
-                      "value": "{Subscription}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{ResourceGroup}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{FunctionAppName}"
+                      "value": "{FunctionApp}"
                     },
                     {
                       "criterionType": "param",
@@ -2814,15 +2718,7 @@
                   "criteriaData": [
                     {
                       "criterionType": "param",
-                      "value": "{Subscription}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{ResourceGroup}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{FunctionAppName}"
+                      "value": "{FunctionApp}"
                     },
                     {
                       "criterionType": "param",
@@ -3340,15 +3236,7 @@
                   "criteriaData": [
                     {
                       "criterionType": "param",
-                      "value": "{Subscription}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{ResourceGroup}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{FunctionAppName}"
+                      "value": "{FunctionApp}"
                     },
                     {
                       "criterionType": "param",
@@ -3454,15 +3342,7 @@
                   "criteriaData": [
                     {
                       "criterionType": "param",
-                      "value": "{Subscription}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{ResourceGroup}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{FunctionAppName}"
+                      "value": "{FunctionApp}"
                     },
                     {
                       "criterionType": "param",
