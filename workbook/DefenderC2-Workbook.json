@@ -454,51 +454,66 @@
                   "linkIsContextBlade": true,
                   "armActionContext": {
                     "path": "{FunctionApp}/functions/DefenderC2Dispatcher/invocations",
-                    "headers": [
-                      {
-                        "name": "Content-Type",
-                        "value": "application/json"
-                      }
-                    ],
+                    "headers": [],
                     "params": [
                       {
                         "key": "api-version",
                         "value": "2022-03-01"
+                      },
+                      {
+                        "key": "action",
+                        "value": "Isolate Device"
+                      },
+                      {
+                        "key": "tenantId",
+                        "value": "{TenantId}"
+                      },
+                      {
+                        "key": "deviceIds",
+                        "value": "{DeviceList}"
+                      },
+                      {
+                        "key": "isolationType",
+                        "value": "{IsolationType}"
+                      },
+                      {
+                        "key": "comment",
+                        "value": "Isolated via Workbook"
                       }
                     ],
-                    "body": "{\"action\":\"Isolate Device\",\"tenantId\":\"{TenantId}\",\"deviceIds\":\"{DeviceList}\",\"isolationType\":\"{IsolationType}\",\"comment\":\"Isolated via Workbook\"}",
+                    "body": null,
                     "httpMethod": "POST",
                     "title": "Isolate Devices",
                     "description": "Initiating device isolation...",
                     "actionName": "Isolate",
                     "runLabel": "Isolate Devices"
+                  },
+                  "criteriaData": [
+                    {
+                      "criterionType": "param",
+                      "value": "{Subscription}"
                     },
-                    "criteriaData": [
-                      {
-                        "criterionType": "param",
-                        "value": "{Subscription}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{ResourceGroup}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{FunctionAppName}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{TenantId}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{DeviceList}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{IsolationType}"
-                      }
-                    ]
+                    {
+                      "criterionType": "param",
+                      "value": "{ResourceGroup}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionAppName}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{TenantId}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{DeviceList}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{IsolationType}"
+                    }
+                  ]
                 }
               ]
             },
@@ -597,47 +612,58 @@
                   "linkIsContextBlade": true,
                   "armActionContext": {
                     "path": "{FunctionApp}/functions/DefenderC2Dispatcher/invocations",
-                    "headers": [
-                      {
-                        "name": "Content-Type",
-                        "value": "application/json"
-                      }
-                    ],
+                    "headers": [],
                     "params": [
                       {
                         "key": "api-version",
                         "value": "2022-03-01"
+                      },
+                      {
+                        "key": "action",
+                        "value": "Unisolate Device"
+                      },
+                      {
+                        "key": "tenantId",
+                        "value": "{TenantId}"
+                      },
+                      {
+                        "key": "deviceIds",
+                        "value": "{DeviceList}"
+                      },
+                      {
+                        "key": "comment",
+                        "value": "Unisolated via Workbook"
                       }
                     ],
-                    "body": "{\"action\":\"Unisolate Device\",\"tenantId\":\"{TenantId}\",\"deviceIds\":\"{DeviceList}\",\"comment\":\"Unisolated via Workbook\"}",
+                    "body": null,
                     "httpMethod": "POST",
                     "title": "Unisolate Devices",
                     "description": "Removing device isolation...",
                     "actionName": "Unisolate",
                     "runLabel": "Unisolate Devices"
+                  },
+                  "criteriaData": [
+                    {
+                      "criterionType": "param",
+                      "value": "{Subscription}"
                     },
-                    "criteriaData": [
-                      {
-                        "criterionType": "param",
-                        "value": "{Subscription}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{ResourceGroup}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{FunctionAppName}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{TenantId}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{DeviceList}"
-                      }
-                    ]
+                    {
+                      "criterionType": "param",
+                      "value": "{ResourceGroup}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionAppName}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{TenantId}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{DeviceList}"
+                    }
+                  ]
                 }
               ]
             },
@@ -710,47 +736,58 @@
                   "linkIsContextBlade": true,
                   "armActionContext": {
                     "path": "{FunctionApp}/functions/DefenderC2Dispatcher/invocations",
-                    "headers": [
-                      {
-                        "name": "Content-Type",
-                        "value": "application/json"
-                      }
-                    ],
+                    "headers": [],
                     "params": [
                       {
                         "key": "api-version",
                         "value": "2022-03-01"
+                      },
+                      {
+                        "key": "action",
+                        "value": "Restrict App Execution"
+                      },
+                      {
+                        "key": "tenantId",
+                        "value": "{TenantId}"
+                      },
+                      {
+                        "key": "deviceIds",
+                        "value": "{DeviceList}"
+                      },
+                      {
+                        "key": "comment",
+                        "value": "App execution restricted via Workbook"
                       }
                     ],
-                    "body": "{\"action\":\"Restrict App Execution\",\"tenantId\":\"{TenantId}\",\"deviceIds\":\"{DeviceList}\",\"comment\":\"App execution restricted via Workbook\"}",
+                    "body": null,
                     "httpMethod": "POST",
                     "title": "Restrict App Execution",
                     "description": "Restricting application execution...",
                     "actionName": "Restrict",
                     "runLabel": "Restrict Apps"
+                  },
+                  "criteriaData": [
+                    {
+                      "criterionType": "param",
+                      "value": "{Subscription}"
                     },
-                    "criteriaData": [
-                      {
-                        "criterionType": "param",
-                        "value": "{Subscription}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{ResourceGroup}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{FunctionAppName}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{TenantId}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{DeviceList}"
-                      }
-                    ]
+                    {
+                      "criterionType": "param",
+                      "value": "{ResourceGroup}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionAppName}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{TenantId}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{DeviceList}"
+                    }
+                  ]
                 }
               ]
             },
@@ -841,51 +878,66 @@
                   "linkIsContextBlade": true,
                   "armActionContext": {
                     "path": "{FunctionApp}/functions/DefenderC2Dispatcher/invocations",
-                    "headers": [
-                      {
-                        "name": "Content-Type",
-                        "value": "application/json"
-                      }
-                    ],
+                    "headers": [],
                     "params": [
                       {
                         "key": "api-version",
                         "value": "2022-03-01"
+                      },
+                      {
+                        "key": "action",
+                        "value": "Run Antivirus Scan"
+                      },
+                      {
+                        "key": "tenantId",
+                        "value": "{TenantId}"
+                      },
+                      {
+                        "key": "deviceIds",
+                        "value": "{DeviceList}"
+                      },
+                      {
+                        "key": "scanType",
+                        "value": "{ScanType}"
+                      },
+                      {
+                        "key": "comment",
+                        "value": "Scan initiated via Workbook"
                       }
                     ],
-                    "body": "{\"action\":\"Run Antivirus Scan\",\"tenantId\":\"{TenantId}\",\"deviceIds\":\"{DeviceList}\",\"scanType\":\"{ScanType}\",\"comment\":\"Scan initiated via Workbook\"}",
+                    "body": null,
                     "httpMethod": "POST",
                     "title": "Run Antivirus Scan",
                     "description": "Starting antivirus scan...",
                     "actionName": "Scan",
                     "runLabel": "Run Scan"
+                  },
+                  "criteriaData": [
+                    {
+                      "criterionType": "param",
+                      "value": "{Subscription}"
                     },
-                    "criteriaData": [
-                      {
-                        "criterionType": "param",
-                        "value": "{Subscription}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{ResourceGroup}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{FunctionAppName}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{TenantId}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{DeviceList}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{ScanType}"
-                      }
-                    ]
+                    {
+                      "criterionType": "param",
+                      "value": "{ResourceGroup}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionAppName}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{TenantId}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{DeviceList}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{ScanType}"
+                    }
+                  ]
                 }
               ]
             },
@@ -1050,63 +1102,86 @@
                   "linkIsContextBlade": true,
                   "armActionContext": {
                     "path": "{FunctionApp}/functions/DefenderC2TIManager/invocations",
-                    "headers": [
-                      {
-                        "name": "Content-Type",
-                        "value": "application/json"
-                      }
-                    ],
+                    "headers": [],
                     "params": [
                       {
                         "key": "api-version",
                         "value": "2022-03-01"
+                      },
+                      {
+                        "key": "action",
+                        "value": "Add File Indicators"
+                      },
+                      {
+                        "key": "tenantId",
+                        "value": "{TenantId}"
+                      },
+                      {
+                        "key": "indicators",
+                        "value": "{FileIndicators}"
+                      },
+                      {
+                        "key": "indicatorAction",
+                        "value": "{FileIndicatorAction}"
+                      },
+                      {
+                        "key": "severity",
+                        "value": "{FileSeverity}"
+                      },
+                      {
+                        "key": "title",
+                        "value": "{FileTitle}"
+                      },
+                      {
+                        "key": "description",
+                        "value": "{FileDescription}"
                       }
                     ],
-                    "body": "{\"action\":\"Add File Indicators\",\"tenantId\":\"{TenantId}\",\"indicators\":\"{FileIndicators}\",\"indicatorAction\":\"{FileIndicatorAction}\",\"severity\":\"{FileSeverity}\",\"title\":\"{FileTitle}\",\"description\":\"{FileDescription}\"}",
+                    "body": null,
                     "httpMethod": "POST",
                     "title": "Add File Indicators",
                     "description": "Adding file indicators to MDE...",
                     "actionName": "AddFileIndicators",
                     "runLabel": "Add Indicators"
+                  },
+                  "criteriaData": [
+                    {
+                      "criterionType": "param",
+                      "value": "{Subscription}"
                     },
-                    "criteriaData": [
-                      {
-                        "criterionType": "param",
-                        "value": "{Subscription}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{ResourceGroup}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{FunctionAppName}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{TenantId}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{FileIndicators}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{FileIndicatorAction}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{FileSeverity}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{FileTitle}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{FileDescription}"
-                      }
-                    ]
+                    {
+                      "criterionType": "param",
+                      "value": "{ResourceGroup}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionAppName}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{TenantId}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{FileIndicators}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{FileIndicatorAction}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{FileSeverity}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{FileTitle}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{FileDescription}"
+                    }
+                  ]
                 }
               ]
             },
@@ -1195,55 +1270,78 @@
                   "linkIsContextBlade": true,
                   "armActionContext": {
                     "path": "{FunctionApp}/functions/DefenderC2TIManager/invocations",
-                    "headers": [
-                      {
-                        "name": "Content-Type",
-                        "value": "application/json"
-                      }
-                    ],
+                    "headers": [],
                     "params": [
                       {
                         "key": "api-version",
                         "value": "2022-03-01"
+                      },
+                      {
+                        "key": "action",
+                        "value": "Add IP Indicators"
+                      },
+                      {
+                        "key": "tenantId",
+                        "value": "{TenantId}"
+                      },
+                      {
+                        "key": "indicators",
+                        "value": "{IpIndicators}"
+                      },
+                      {
+                        "key": "indicatorAction",
+                        "value": "{IpIndicatorAction}"
+                      },
+                      {
+                        "key": "severity",
+                        "value": "{IpSeverity}"
+                      },
+                      {
+                        "key": "title",
+                        "value": "Malicious IPs"
+                      },
+                      {
+                        "key": "description",
+                        "value": "Known malicious IP addresses"
                       }
                     ],
-                    "body": "{\"action\":\"Add IP Indicators\",\"tenantId\":\"{TenantId}\",\"indicators\":\"{IpIndicators}\",\"indicatorAction\":\"{IpIndicatorAction}\",\"severity\":\"{IpSeverity}\",\"title\":\"Malicious IPs\",\"description\":\"Known malicious IP addresses\"}",
+                    "body": null,
                     "httpMethod": "POST",
                     "title": "Add IP Indicators",
                     "description": "Adding IP indicators to MDE...",
                     "actionName": "AddIpIndicators",
                     "runLabel": "Add Indicators"
+                  },
+                  "criteriaData": [
+                    {
+                      "criterionType": "param",
+                      "value": "{Subscription}"
                     },
-                    "criteriaData": [
-                      {
-                        "criterionType": "param",
-                        "value": "{Subscription}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{ResourceGroup}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{FunctionAppName}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{TenantId}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{IpIndicators}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{IpIndicatorAction}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{IpSeverity}"
-                      }
-                    ]
+                    {
+                      "criterionType": "param",
+                      "value": "{ResourceGroup}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionAppName}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{TenantId}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{IpIndicators}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{IpIndicatorAction}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{IpSeverity}"
+                    }
+                  ]
                 }
               ]
             },
@@ -1314,51 +1412,74 @@
                   "linkIsContextBlade": true,
                   "armActionContext": {
                     "path": "{FunctionApp}/functions/DefenderC2TIManager/invocations",
-                    "headers": [
-                      {
-                        "name": "Content-Type",
-                        "value": "application/json"
-                      }
-                    ],
+                    "headers": [],
                     "params": [
                       {
                         "key": "api-version",
                         "value": "2022-03-01"
+                      },
+                      {
+                        "key": "action",
+                        "value": "Add URL Indicators"
+                      },
+                      {
+                        "key": "tenantId",
+                        "value": "{TenantId}"
+                      },
+                      {
+                        "key": "indicators",
+                        "value": "{UrlIndicators}"
+                      },
+                      {
+                        "key": "indicatorAction",
+                        "value": "{UrlIndicatorAction}"
+                      },
+                      {
+                        "key": "severity",
+                        "value": "High"
+                      },
+                      {
+                        "key": "title",
+                        "value": "Malicious URLs"
+                      },
+                      {
+                        "key": "description",
+                        "value": "Known malicious URLs and domains"
                       }
                     ],
-                    "body": "{\"action\":\"Add URL Indicators\",\"tenantId\":\"{TenantId}\",\"indicators\":\"{UrlIndicators}\",\"indicatorAction\":\"{UrlIndicatorAction}\",\"severity\":\"High\",\"title\":\"Malicious URLs\",\"description\":\"Known malicious URLs and domains\"}",
+                    "body": null,
                     "httpMethod": "POST",
                     "title": "Add URL/Domain Indicators",
                     "description": "Adding URL/domain indicators to MDE...",
                     "actionName": "AddUrlIndicators",
                     "runLabel": "Add Indicators"
+                  },
+                  "criteriaData": [
+                    {
+                      "criterionType": "param",
+                      "value": "{Subscription}"
                     },
-                    "criteriaData": [
-                      {
-                        "criterionType": "param",
-                        "value": "{Subscription}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{ResourceGroup}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{FunctionAppName}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{TenantId}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{UrlIndicators}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{UrlIndicatorAction}"
-                      }
-                    ]
+                    {
+                      "criterionType": "param",
+                      "value": "{ResourceGroup}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionAppName}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{TenantId}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{UrlIndicators}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{UrlIndicatorAction}"
+                    }
+                  ]
                 }
               ]
             },
@@ -1639,47 +1760,54 @@
                   "linkIsContextBlade": true,
                   "armActionContext": {
                     "path": "{FunctionApp}/functions/DefenderC2Dispatcher/invocations",
-                    "headers": [
-                      {
-                        "name": "Content-Type",
-                        "value": "application/json"
-                      }
-                    ],
+                    "headers": [],
                     "params": [
                       {
                         "key": "api-version",
                         "value": "2022-03-01"
+                      },
+                      {
+                        "key": "action",
+                        "value": "Cancel Action"
+                      },
+                      {
+                        "key": "tenantId",
+                        "value": "{TenantId}"
+                      },
+                      {
+                        "key": "actionId",
+                        "value": "{CancelActionId}"
                       }
                     ],
-                    "body": "{\"action\":\"Cancel Action\",\"tenantId\":\"{TenantId}\",\"actionId\":\"{CancelActionId}\"}",
+                    "body": null,
                     "httpMethod": "POST",
                     "title": "Cancel Action",
                     "description": "Cancelling machine action...",
                     "actionName": "CancelAction",
                     "runLabel": "Cancel"
+                  },
+                  "criteriaData": [
+                    {
+                      "criterionType": "param",
+                      "value": "{Subscription}"
                     },
-                    "criteriaData": [
-                      {
-                        "criterionType": "param",
-                        "value": "{Subscription}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{ResourceGroup}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{FunctionAppName}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{TenantId}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{CancelActionId}"
-                      }
-                    ]
+                    {
+                      "criterionType": "param",
+                      "value": "{ResourceGroup}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionAppName}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{TenantId}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{CancelActionId}"
+                    }
+                  ]
                 }
               ]
             },
@@ -2085,51 +2213,62 @@
                   "linkIsContextBlade": true,
                   "armActionContext": {
                     "path": "{FunctionApp}/functions/DefenderC2IncidentManager/invocations",
-                    "headers": [
-                      {
-                        "name": "Content-Type",
-                        "value": "application/json"
-                      }
-                    ],
+                    "headers": [],
                     "params": [
                       {
                         "key": "api-version",
                         "value": "2022-03-01"
+                      },
+                      {
+                        "key": "action",
+                        "value": "Update Incident"
+                      },
+                      {
+                        "key": "tenantId",
+                        "value": "{TenantId}"
+                      },
+                      {
+                        "key": "incidentId",
+                        "value": "{UpdateIncidentId}"
+                      },
+                      {
+                        "key": "status",
+                        "value": "{UpdateStatus}"
                       }
                     ],
-                    "body": "{\"action\":\"Update Incident\",\"tenantId\":\"{TenantId}\",\"incidentId\":\"{UpdateIncidentId}\",\"status\":\"{UpdateStatus}\"}",
+                    "body": null,
                     "httpMethod": "POST",
                     "title": "Update Incident",
                     "description": "Updating incident status...",
                     "actionName": "UpdateIncident",
                     "runLabel": "Update"
+                  },
+                  "criteriaData": [
+                    {
+                      "criterionType": "param",
+                      "value": "{Subscription}"
                     },
-                    "criteriaData": [
-                      {
-                        "criterionType": "param",
-                        "value": "{Subscription}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{ResourceGroup}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{FunctionAppName}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{TenantId}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{UpdateIncidentId}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{UpdateStatus}"
-                      }
-                    ]
+                    {
+                      "criterionType": "param",
+                      "value": "{ResourceGroup}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionAppName}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{TenantId}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{UpdateIncidentId}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{UpdateStatus}"
+                    }
+                  ]
                 }
               ]
             },
@@ -2202,51 +2341,62 @@
                   "linkIsContextBlade": true,
                   "armActionContext": {
                     "path": "{FunctionApp}/functions/DefenderC2IncidentManager/invocations",
-                    "headers": [
-                      {
-                        "name": "Content-Type",
-                        "value": "application/json"
-                      }
-                    ],
+                    "headers": [],
                     "params": [
                       {
                         "key": "api-version",
                         "value": "2022-03-01"
+                      },
+                      {
+                        "key": "action",
+                        "value": "Add Comment"
+                      },
+                      {
+                        "key": "tenantId",
+                        "value": "{TenantId}"
+                      },
+                      {
+                        "key": "incidentId",
+                        "value": "{CommentIncidentId}"
+                      },
+                      {
+                        "key": "comment",
+                        "value": "{IncidentComment}"
                       }
                     ],
-                    "body": "{\"action\":\"Add Comment\",\"tenantId\":\"{TenantId}\",\"incidentId\":\"{CommentIncidentId}\",\"comment\":\"{IncidentComment}\"}",
+                    "body": null,
                     "httpMethod": "POST",
                     "title": "Add Comment",
                     "description": "Adding comment to incident...",
                     "actionName": "AddComment",
                     "runLabel": "Add"
+                  },
+                  "criteriaData": [
+                    {
+                      "criterionType": "param",
+                      "value": "{Subscription}"
                     },
-                    "criteriaData": [
-                      {
-                        "criterionType": "param",
-                        "value": "{Subscription}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{ResourceGroup}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{FunctionAppName}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{TenantId}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{CommentIncidentId}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{IncidentComment}"
-                      }
-                    ]
+                    {
+                      "criterionType": "param",
+                      "value": "{ResourceGroup}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionAppName}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{TenantId}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{CommentIncidentId}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{IncidentComment}"
+                    }
+                  ]
                 }
               ]
             },
@@ -2386,55 +2536,70 @@
                   "linkIsContextBlade": true,
                   "armActionContext": {
                     "path": "{FunctionApp}/functions/DefenderC2CDManager/invocations",
-                    "headers": [
-                      {
-                        "name": "Content-Type",
-                        "value": "application/json"
-                      }
-                    ],
+                    "headers": [],
                     "params": [
                       {
                         "key": "api-version",
                         "value": "2022-03-01"
+                      },
+                      {
+                        "key": "action",
+                        "value": "Create Detection"
+                      },
+                      {
+                        "key": "tenantId",
+                        "value": "{TenantId}"
+                      },
+                      {
+                        "key": "ruleName",
+                        "value": "{CreateRuleName}"
+                      },
+                      {
+                        "key": "query",
+                        "value": "{CreateRuleQuery}"
+                      },
+                      {
+                        "key": "severity",
+                        "value": "{CreateRuleSeverity}"
                       }
                     ],
-                    "body": "{\"action\":\"Create Detection\",\"tenantId\":\"{TenantId}\",\"ruleName\":\"{CreateRuleName}\",\"query\":\"{CreateRuleQuery}\",\"severity\":\"{CreateRuleSeverity}\"}",
+                    "body": null,
                     "httpMethod": "POST",
                     "title": "Create Detection Rule",
                     "description": "Creating custom detection rule...",
                     "actionName": "CreateDetection",
                     "runLabel": "Create"
+                  },
+                  "criteriaData": [
+                    {
+                      "criterionType": "param",
+                      "value": "{Subscription}"
                     },
-                    "criteriaData": [
-                      {
-                        "criterionType": "param",
-                        "value": "{Subscription}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{ResourceGroup}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{FunctionAppName}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{TenantId}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{CreateRuleName}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{CreateRuleQuery}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{CreateRuleSeverity}"
-                      }
-                    ]
+                    {
+                      "criterionType": "param",
+                      "value": "{ResourceGroup}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionAppName}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{TenantId}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{CreateRuleName}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{CreateRuleQuery}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{CreateRuleSeverity}"
+                    }
+                  ]
                 }
               ]
             },
@@ -2508,51 +2673,62 @@
                   "linkIsContextBlade": true,
                   "armActionContext": {
                     "path": "{FunctionApp}/functions/DefenderC2CDManager/invocations",
-                    "headers": [
-                      {
-                        "name": "Content-Type",
-                        "value": "application/json"
-                      }
-                    ],
+                    "headers": [],
                     "params": [
                       {
                         "key": "api-version",
                         "value": "2022-03-01"
+                      },
+                      {
+                        "key": "action",
+                        "value": "Update Detection"
+                      },
+                      {
+                        "key": "tenantId",
+                        "value": "{TenantId}"
+                      },
+                      {
+                        "key": "ruleId",
+                        "value": "{UpdateRuleId}"
+                      },
+                      {
+                        "key": "query",
+                        "value": "{UpdateRuleQuery}"
                       }
                     ],
-                    "body": "{\"action\":\"Update Detection\",\"tenantId\":\"{TenantId}\",\"ruleId\":\"{UpdateRuleId}\",\"query\":\"{UpdateRuleQuery}\"}",
+                    "body": null,
                     "httpMethod": "POST",
                     "title": "Update Detection Rule",
                     "description": "Updating detection rule...",
                     "actionName": "UpdateDetection",
                     "runLabel": "Update"
+                  },
+                  "criteriaData": [
+                    {
+                      "criterionType": "param",
+                      "value": "{Subscription}"
                     },
-                    "criteriaData": [
-                      {
-                        "criterionType": "param",
-                        "value": "{Subscription}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{ResourceGroup}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{FunctionAppName}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{TenantId}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{UpdateRuleId}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{UpdateRuleQuery}"
-                      }
-                    ]
+                    {
+                      "criterionType": "param",
+                      "value": "{ResourceGroup}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionAppName}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{TenantId}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{UpdateRuleId}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{UpdateRuleQuery}"
+                    }
+                  ]
                 }
               ]
             },
@@ -2609,47 +2785,54 @@
                   "linkIsContextBlade": true,
                   "armActionContext": {
                     "path": "{FunctionApp}/functions/DefenderC2CDManager/invocations",
-                    "headers": [
-                      {
-                        "name": "Content-Type",
-                        "value": "application/json"
-                      }
-                    ],
+                    "headers": [],
                     "params": [
                       {
                         "key": "api-version",
                         "value": "2022-03-01"
+                      },
+                      {
+                        "key": "action",
+                        "value": "Delete Detection"
+                      },
+                      {
+                        "key": "tenantId",
+                        "value": "{TenantId}"
+                      },
+                      {
+                        "key": "ruleId",
+                        "value": "{DeleteRuleId}"
                       }
                     ],
-                    "body": "{\"action\":\"Delete Detection\",\"tenantId\":\"{TenantId}\",\"ruleId\":\"{DeleteRuleId}\"}",
+                    "body": null,
                     "httpMethod": "POST",
                     "title": "Delete Detection Rule",
                     "description": "Deleting detection rule...",
                     "actionName": "DeleteDetection",
                     "runLabel": "Delete"
+                  },
+                  "criteriaData": [
+                    {
+                      "criterionType": "param",
+                      "value": "{Subscription}"
                     },
-                    "criteriaData": [
-                      {
-                        "criterionType": "param",
-                        "value": "{Subscription}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{ResourceGroup}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{FunctionAppName}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{TenantId}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{DeleteRuleId}"
-                      }
-                    ]
+                    {
+                      "criterionType": "param",
+                      "value": "{ResourceGroup}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionAppName}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{TenantId}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{DeleteRuleId}"
+                    }
+                  ]
                 }
               ]
             },
@@ -3124,51 +3307,62 @@
                   "linkIsContextBlade": false,
                   "armActionContext": {
                     "path": "{FunctionApp}/functions/DefenderC2Orchestrator/invocations",
-                    "headers": [
-                      {
-                        "name": "Content-Type",
-                        "value": "application/json"
-                      }
-                    ],
+                    "headers": [],
                     "params": [
                       {
                         "key": "api-version",
                         "value": "2022-03-01"
+                      },
+                      {
+                        "key": "fileName",
+                        "value": "{LibraryFileNameUpload}"
+                      },
+                      {
+                        "key": "fileContent",
+                        "value": "{LibraryContentUpload}"
+                      },
+                      {
+                        "key": "tenantId",
+                        "value": "{TenantId}"
+                      },
+                      {
+                        "key": "action",
+                        "value": "UploadToLibrary"
                       }
                     ],
-                    "body": "{\"fileName\": \"{LibraryFileNameUpload}\", \"fileContent\": \"{LibraryContentUpload}\", \"tenantId\": \"{TenantId}\", \"action\": \"UploadToLibrary\"}",
+                    "body": null,
                     "httpMethod": "POST",
                     "title": "Upload to Library",
                     "description": "Uploading {LibraryFileNameUpload} to library",
                     "actionName": "Upload",
                     "runLabel": "Upload"
+                  },
+                  "criteriaData": [
+                    {
+                      "criterionType": "param",
+                      "value": "{Subscription}"
                     },
-                    "criteriaData": [
-                      {
-                        "criterionType": "param",
-                        "value": "{Subscription}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{ResourceGroup}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{FunctionAppName}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{TenantId}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{LibraryFileNameUpload}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{LibraryContentUpload}"
-                      }
-                    ]
+                    {
+                      "criterionType": "param",
+                      "value": "{ResourceGroup}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionAppName}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{TenantId}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{LibraryFileNameUpload}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{LibraryContentUpload}"
+                    }
+                  ]
                 }
               ]
             },
@@ -3223,51 +3417,66 @@
                   "linkIsContextBlade": false,
                   "armActionContext": {
                     "path": "{FunctionApp}/functions/DefenderC2Dispatcher/invocations",
-                    "headers": [
-                      {
-                        "name": "Content-Type",
-                        "value": "application/json"
-                      }
-                    ],
+                    "headers": [],
                     "params": [
                       {
                         "key": "api-version",
                         "value": "2022-03-01"
+                      },
+                      {
+                        "key": "action",
+                        "value": "PutFile"
+                      },
+                      {
+                        "key": "deviceIds",
+                        "value": "{DeviceIds}"
+                      },
+                      {
+                        "key": "fileName",
+                        "value": "{LibraryDeployFileName}"
+                      },
+                      {
+                        "key": "libraryFile",
+                        "value": true
+                      },
+                      {
+                        "key": "tenantId",
+                        "value": "{TenantId}"
                       }
                     ],
-                    "body": "{\"action\":\"PutFile\",\"deviceIds\":\"{DeviceIds}\",\"fileName\":\"{LibraryDeployFileName}\",\"libraryFile\":true,\"tenantId\":\"{TenantId}\"}",
+                    "body": null,
                     "httpMethod": "POST",
                     "title": "Deploy from Library",
                     "description": "Deploying {LibraryDeployFileName} from library to {DeviceIds}",
                     "actionName": "Deploy",
                     "runLabel": "Deploy"
+                  },
+                  "criteriaData": [
+                    {
+                      "criterionType": "param",
+                      "value": "{Subscription}"
                     },
-                    "criteriaData": [
-                      {
-                        "criterionType": "param",
-                        "value": "{Subscription}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{ResourceGroup}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{FunctionAppName}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{TenantId}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{DeviceIds}"
-                      },
-                      {
-                        "criterionType": "param",
-                        "value": "{LibraryDeployFileName}"
-                      }
-                    ]
+                    {
+                      "criterionType": "param",
+                      "value": "{ResourceGroup}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionAppName}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{TenantId}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{DeviceIds}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{LibraryDeployFileName}"
+                    }
+                  ]
                 }
               ]
             },
