@@ -158,6 +158,7 @@
               "additionalResourceOptions": [
                 "value::1"
               ],
+              "selectFirstItem": true,
               "showDefault": false
             },
             "timeContext": {
@@ -165,7 +166,7 @@
             },
             "queryType": 1,
             "resourceType": "microsoft.resourcegraph/resources",
-            "value": null,
+            "defaultValue": "value::1",
             "description": "Select your Microsoft Defender XDR Tenant ID from available tenants (Azure Lighthouse delegations). Shows all accessible tenant IDs.",
             "isGlobal": true
           },
@@ -197,6 +198,7 @@
             "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.devices[*]\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"value\"},{\"path\":\"$.computerDnsName\",\"columnid\":\"label\"}]}}],\"urlParams\":[{\"key\":\"action\",\"value\":\"Get Devices\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"}]}",
             "criteriaData": [
               {
+                "condition": "if (FunctionApp is not empty && FunctionAppName is not empty && TenantId is not empty), alwaysShow",
                 "criterionType": "param",
                 "value": "{FunctionApp}"
               },
