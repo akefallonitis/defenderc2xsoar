@@ -204,6 +204,10 @@
               },
               {
                 "criterionType": "param",
+                "value": "{FunctionAppName}"
+              },
+              {
+                "criterionType": "param",
                 "value": "{TenantId}"
               }
             ],
@@ -408,6 +412,10 @@
                     },
                     {
                       "criterionType": "param",
+                      "value": "{FunctionAppName}"
+                    },
+                    {
+                      "criterionType": "param",
                       "value": "{TenantId}"
                     }
                   ],
@@ -526,6 +534,10 @@
                 },
                 {
                   "criterionType": "param",
+                  "value": "{FunctionAppName}"
+                },
+                {
+                  "criterionType": "param",
                   "value": "{TenantId}"
                 }
               ]
@@ -573,6 +585,10 @@
                     {
                       "criterionType": "param",
                       "value": "{FunctionApp}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionAppName}"
                     },
                     {
                       "criterionType": "param",
@@ -692,6 +708,10 @@
                     },
                     {
                       "criterionType": "param",
+                      "value": "{FunctionAppName}"
+                    },
+                    {
+                      "criterionType": "param",
                       "value": "{TenantId}"
                     }
                   ],
@@ -805,6 +825,10 @@
                     {
                       "criterionType": "param",
                       "value": "{FunctionApp}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionAppName}"
                     },
                     {
                       "criterionType": "param",
@@ -932,6 +956,10 @@
                 {
                   "criterionType": "param",
                   "value": "{FunctionApp}"
+                },
+                {
+                  "criterionType": "param",
+                  "value": "{FunctionAppName}"
                 },
                 {
                   "criterionType": "param",
@@ -1453,6 +1481,10 @@
                 },
                 {
                   "criterionType": "param",
+                  "value": "{FunctionAppName}"
+                },
+                {
+                  "criterionType": "param",
                   "value": "{TenantId}"
                 }
               ]
@@ -1585,6 +1617,10 @@
                 },
                 {
                   "criterionType": "param",
+                  "value": "{FunctionAppName}"
+                },
+                {
+                  "criterionType": "param",
                   "value": "{TenantId}"
                 }
               ]
@@ -1644,6 +1680,10 @@
                 {
                   "criterionType": "param",
                   "value": "{FunctionApp}"
+                },
+                {
+                  "criterionType": "param",
+                  "value": "{FunctionAppName}"
                 },
                 {
                   "criterionType": "param",
@@ -1878,6 +1918,10 @@
                 },
                 {
                   "criterionType": "param",
+                  "value": "{FunctionAppName}"
+                },
+                {
+                  "criterionType": "param",
                   "value": "{TenantId}"
                 }
               ]
@@ -1914,6 +1958,10 @@
                 {
                   "criterionType": "param",
                   "value": "{FunctionApp}"
+                },
+                {
+                  "criterionType": "param",
+                  "value": "{FunctionAppName}"
                 },
                 {
                   "criterionType": "param",
@@ -2077,6 +2125,10 @@
                 {
                   "criterionType": "param",
                   "value": "{FunctionApp}"
+                },
+                {
+                  "criterionType": "param",
+                  "value": "{FunctionAppName}"
                 },
                 {
                   "criterionType": "param",
@@ -2366,6 +2418,10 @@
                 {
                   "criterionType": "param",
                   "value": "{FunctionApp}"
+                },
+                {
+                  "criterionType": "param",
+                  "value": "{FunctionAppName}"
                 },
                 {
                   "criterionType": "param",
@@ -2763,6 +2819,10 @@
                 },
                 {
                   "criterionType": "param",
+                  "value": "{FunctionAppName}"
+                },
+                {
+                  "criterionType": "param",
                   "value": "{TenantId}"
                 }
               ]
@@ -2979,6 +3039,10 @@
                 },
                 {
                   "criterionType": "param",
+                  "value": "{FunctionAppName}"
+                },
+                {
+                  "criterionType": "param",
                   "value": "{TenantId}"
                 }
               ]
@@ -3046,6 +3110,10 @@
                 },
                 {
                   "criterionType": "param",
+                  "value": "{FunctionAppName}"
+                },
+                {
+                  "criterionType": "param",
                   "value": "{TenantId}"
                 }
               ]
@@ -3079,6 +3147,10 @@
                 {
                   "criterionType": "param",
                   "value": "{FunctionApp}"
+                },
+                {
+                  "criterionType": "param",
+                  "value": "{FunctionAppName}"
                 },
                 {
                   "criterionType": "param",
@@ -3146,6 +3218,10 @@
                 },
                 {
                   "criterionType": "param",
+                  "value": "{FunctionAppName}"
+                },
+                {
+                  "criterionType": "param",
                   "value": "{TenantId}"
                 }
               ]
@@ -3174,6 +3250,10 @@
                 {
                   "criterionType": "param",
                   "value": "{FunctionApp}"
+                },
+                {
+                  "criterionType": "param",
+                  "value": "{FunctionAppName}"
                 },
                 {
                   "criterionType": "param",
@@ -3276,6 +3356,10 @@
                 {
                   "criterionType": "param",
                   "value": "{FunctionApp}"
+                },
+                {
+                  "criterionType": "param",
+                  "value": "{FunctionAppName}"
                 },
                 {
                   "criterionType": "param",
