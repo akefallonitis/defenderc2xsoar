@@ -466,7 +466,7 @@
                         "value": "2022-03-01"
                       }
                     ],
-                    "body": "{\"action\":\"Isolate Device\",\"tenantId\":\"{TenantId}\",\"deviceIds\":\"{IsolateDeviceIds}\",\"isolationType\":\"{IsolationType}\",\"comment\":\"Isolated via Workbook\"}",
+                    "body": "{\"action\":\"Isolate Device\",\"tenantId\":\"{TenantId}\",\"deviceIds\":\"{DeviceList}\",\"isolationType\":\"{IsolationType}\",\"comment\":\"Isolated via Workbook\"}",
                     "httpMethod": "POST",
                     "title": "Isolate Devices",
                     "description": "Initiating device isolation...",
@@ -492,7 +492,7 @@
                       },
                       {
                         "criterionType": "param",
-                        "value": "{IsolateDeviceIds}"
+                        "value": "{DeviceList}"
                       },
                       {
                         "criterionType": "param",
@@ -609,7 +609,7 @@
                         "value": "2022-03-01"
                       }
                     ],
-                    "body": "{\"action\":\"Unisolate Device\",\"tenantId\":\"{TenantId}\",\"deviceIds\":\"{UnisolateDeviceIds}\",\"comment\":\"Unisolated via Workbook\"}",
+                    "body": "{\"action\":\"Unisolate Device\",\"tenantId\":\"{TenantId}\",\"deviceIds\":\"{DeviceList}\",\"comment\":\"Unisolated via Workbook\"}",
                     "httpMethod": "POST",
                     "title": "Unisolate Devices",
                     "description": "Removing device isolation...",
@@ -635,7 +635,7 @@
                       },
                       {
                         "criterionType": "param",
-                        "value": "{UnisolateDeviceIds}"
+                        "value": "{DeviceList}"
                       }
                     ]
                 }
@@ -722,7 +722,7 @@
                         "value": "2022-03-01"
                       }
                     ],
-                    "body": "{\"action\":\"Restrict App Execution\",\"tenantId\":\"{TenantId}\",\"deviceIds\":\"{RestrictDeviceIds}\",\"comment\":\"App execution restricted via Workbook\"}",
+                    "body": "{\"action\":\"Restrict App Execution\",\"tenantId\":\"{TenantId}\",\"deviceIds\":\"{DeviceList}\",\"comment\":\"App execution restricted via Workbook\"}",
                     "httpMethod": "POST",
                     "title": "Restrict App Execution",
                     "description": "Restricting application execution...",
@@ -748,7 +748,7 @@
                       },
                       {
                         "criterionType": "param",
-                        "value": "{RestrictDeviceIds}"
+                        "value": "{DeviceList}"
                       }
                     ]
                 }
@@ -853,7 +853,7 @@
                         "value": "2022-03-01"
                       }
                     ],
-                    "body": "{\"action\":\"Run Antivirus Scan\",\"tenantId\":\"{TenantId}\",\"deviceIds\":\"{ScanDeviceIds}\",\"scanType\":\"{ScanType}\",\"comment\":\"Scan initiated via Workbook\"}",
+                    "body": "{\"action\":\"Run Antivirus Scan\",\"tenantId\":\"{TenantId}\",\"deviceIds\":\"{DeviceList}\",\"scanType\":\"{ScanType}\",\"comment\":\"Scan initiated via Workbook\"}",
                     "httpMethod": "POST",
                     "title": "Run Antivirus Scan",
                     "description": "Starting antivirus scan...",
@@ -879,7 +879,7 @@
                       },
                       {
                         "criterionType": "param",
-                        "value": "{ScanDeviceIds}"
+                        "value": "{DeviceList}"
                       },
                       {
                         "criterionType": "param",
