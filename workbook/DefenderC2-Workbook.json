@@ -453,7 +453,7 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Dispatcher/invocations",
+                    "path": "{FunctionApp}/functions/DefenderC2Dispatcher/invocations",
                     "headers": [
                       {
                         "name": "Content-Type",
@@ -596,7 +596,7 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Dispatcher/invocations",
+                    "path": "{FunctionApp}/functions/DefenderC2Dispatcher/invocations",
                     "headers": [
                       {
                         "name": "Content-Type",
@@ -709,7 +709,7 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Dispatcher/invocations",
+                    "path": "{FunctionApp}/functions/DefenderC2Dispatcher/invocations",
                     "headers": [
                       {
                         "name": "Content-Type",
@@ -840,7 +840,7 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Dispatcher/invocations",
+                    "path": "{FunctionApp}/functions/DefenderC2Dispatcher/invocations",
                     "headers": [
                       {
                         "name": "Content-Type",
@@ -1049,7 +1049,7 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2TIManager/invocations",
+                    "path": "{FunctionApp}/functions/DefenderC2TIManager/invocations",
                     "headers": [
                       {
                         "name": "Content-Type",
@@ -1194,7 +1194,7 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2TIManager/invocations",
+                    "path": "{FunctionApp}/functions/DefenderC2TIManager/invocations",
                     "headers": [
                       {
                         "name": "Content-Type",
@@ -1313,7 +1313,7 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2TIManager/invocations",
+                    "path": "{FunctionApp}/functions/DefenderC2TIManager/invocations",
                     "headers": [
                       {
                         "name": "Content-Type",
@@ -1638,7 +1638,7 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Dispatcher/invocations",
+                    "path": "{FunctionApp}/functions/DefenderC2Dispatcher/invocations",
                     "headers": [
                       {
                         "name": "Content-Type",
@@ -2084,7 +2084,7 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2IncidentManager/invocations",
+                    "path": "{FunctionApp}/functions/DefenderC2IncidentManager/invocations",
                     "headers": [
                       {
                         "name": "Content-Type",
@@ -2201,7 +2201,7 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2IncidentManager/invocations",
+                    "path": "{FunctionApp}/functions/DefenderC2IncidentManager/invocations",
                     "headers": [
                       {
                         "name": "Content-Type",
@@ -2385,7 +2385,7 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2CDManager/invocations",
+                    "path": "{FunctionApp}/functions/DefenderC2CDManager/invocations",
                     "headers": [
                       {
                         "name": "Content-Type",
@@ -2507,7 +2507,7 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2CDManager/invocations",
+                    "path": "{FunctionApp}/functions/DefenderC2CDManager/invocations",
                     "headers": [
                       {
                         "name": "Content-Type",
@@ -2608,7 +2608,7 @@
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2CDManager/invocations",
+                    "path": "{FunctionApp}/functions/DefenderC2CDManager/invocations",
                     "headers": [
                       {
                         "name": "Content-Type",
@@ -3123,7 +3123,7 @@
                   "style": "primary",
                   "linkIsContextBlade": false,
                   "armActionContext": {
-                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Orchestrator/invocations",
+                    "path": "{FunctionApp}/functions/DefenderC2Orchestrator/invocations",
                     "headers": [
                       {
                         "name": "Content-Type",
@@ -3222,7 +3222,7 @@
                   "style": "primary",
                   "linkIsContextBlade": false,
                   "armActionContext": {
-                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Dispatcher/invocations",
+                    "path": "{FunctionApp}/functions/DefenderC2Dispatcher/invocations",
                     "headers": [
                       {
                         "name": "Content-Type",
