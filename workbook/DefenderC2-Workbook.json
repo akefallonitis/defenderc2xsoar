@@ -404,7 +404,8 @@
                       "criterionType": "param",
                       "value": "{TenantId}"
                     }
-                  ]
+                  ],
+                  "value": null
                 },
                 {
                   "id": "isolate-type",
@@ -536,7 +537,8 @@
                       "criterionType": "param",
                       "value": "{TenantId}"
                     }
-                  ]
+                  ],
+                  "value": null
                 }
               ],
               "style": "pills",
@@ -625,7 +627,8 @@
                       "criterionType": "param",
                       "value": "{TenantId}"
                     }
-                  ]
+                  ],
+                  "value": null
                 }
               ],
               "style": "pills",
@@ -714,7 +717,8 @@
                       "criterionType": "param",
                       "value": "{TenantId}"
                     }
-                  ]
+                  ],
+                  "value": null
                 },
                 {
                   "id": "scan-type",
