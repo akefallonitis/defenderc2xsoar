@@ -1,6 +1,14 @@
 # Workbook Verification Summary
 
-## ✅ VERIFICATION COMPLETE - ALL REQUIREMENTS MET
+## ⚠️ OUTDATED REPORT ⚠️
+
+**This verification report describes an older implementation with ARMEndpoint queries.** The current implementation uses CustomEndpoint queries exclusively. For current verification results, run `python3 scripts/verify_workbook_config.py`.
+
+**For current implementation, see:** `ISSUE_57_COMPLETE_FIX.md`
+
+---
+
+## ✅ VERIFICATION COMPLETE - ALL REQUIREMENTS MET (Historical)
 
 ### Date: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
 

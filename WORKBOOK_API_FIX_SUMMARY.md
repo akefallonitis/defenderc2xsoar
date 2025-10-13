@@ -1,6 +1,14 @@
 # Workbook API Endpoint Fix Summary
 
-## 🚨 Critical Issue Resolved
+## ⚠️ OUTDATED DOCUMENTATION ⚠️
+
+**This document describes an intermediate fix that was superseded by Issue #57.** All ARMEndpoint queries were subsequently converted to CustomEndpoint queries (queryType: 10). This document is retained for historical purposes.
+
+**For current implementation, see:** `ISSUE_57_COMPLETE_FIX.md`
+
+---
+
+## 🚨 Critical Issue Resolved (Historical)
 
 After the previous PR merge, the workbook was showing the error:
 ```

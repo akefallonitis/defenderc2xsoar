@@ -1,10 +1,18 @@
 # Workbook Deployment Verification Report
 
-## Executive Summary
+## ⚠️ OUTDATED REPORT ⚠️
 
-This report documents the comprehensive verification of the DefenderC2 workbook deployment, confirming that all requirements are met for proper auto-discovery, custom endpoints, auto-refresh functionality, and ARM template deployment.
+**This verification report describes an older implementation with ARMEndpoint queries.** The current implementation uses CustomEndpoint queries exclusively. For current verification, run `python3 scripts/verify_workbook_config.py`.
 
-**Status: ✅ ALL REQUIREMENTS VERIFIED AND WORKING**
+**For current implementation, see:** `ISSUE_57_COMPLETE_FIX.md`
+
+---
+
+## Executive Summary (Historical)
+
+This report documents a historical verification. The current implementation differs (uses CustomEndpoint instead of ARMEndpoint).
+
+**Historical Status: ✅ ALL REQUIREMENTS VERIFIED AND WORKING**
 
 ---
 

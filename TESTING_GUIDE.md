@@ -1,19 +1,27 @@
 # Testing Guide for DefenderC2 Workbook Fixes
 
+## ⚠️ OUTDATED REFERENCES ⚠️
+
+**Note:** This guide references ARMEndpoint queries that no longer exist. All ARMEndpoint queries were converted to CustomEndpoint queries in Issue #57. The testing procedures are still valid, but references to "ARMEndpoint queries" should be understood as "CustomEndpoint queries" in the current implementation.
+
+**For current implementation details, see:** `ISSUE_57_COMPLETE_FIX.md`
+
+---
+
 ## Overview
-This guide provides step-by-step instructions for testing the fixes applied to resolve DeviceId autopopulation and ARM endpoint configuration issues.
+This guide provides step-by-step instructions for testing the workbook functionality. While it originally described testing ARMEndpoint fixes, the testing procedures apply to the current CustomEndpoint implementation.
 
-## What Was Fixed
+## What Was Fixed (Current Implementation)
 
-### 1. ARMEndpoint Queries (15 total)
-- **Issue:** Missing `api-version` URL parameter causing "Please provide the api-version URL parameter" errors
-- **Fix:** Added `urlParams` with `api-version=2022-03-01` to all ARMEndpoint queries
-- **Files:** DefenderC2-Workbook.json (14), FileOperations.workbook (1)
+### 1. Query Implementation
+- **Current State:** All queries use CustomEndpoint (queryType: 10) - zero ARMEndpoint queries
+- **Configuration:** Proper parameter substitution for {FunctionAppName} and {TenantId}
+- **Files:** DefenderC2-Workbook.json (21 queries), FileOperations.workbook (1 query)
 
-### 2. ARM Actions (17 total)
-- **Issue:** Missing `api-version` parameter potentially causing API errors
-- **Fix:** Added `params` with `api-version=2022-03-01` to all ARM Actions
-- **Files:** DefenderC2-Workbook.json (13), FileOperations.workbook (4)
+### 2. ARM Actions (19 total)
+- **Current State:** All ARM Actions use relative paths with api-version in params array
+- **Configuration:** No duplicate api-version, proper Azure Resource Manager API paths
+- **Files:** DefenderC2-Workbook.json (15 actions), FileOperations.workbook (4 actions)
 
 ### 3. Device Parameters (5 total)
 - **Status:** Already correctly configured - no changes needed
