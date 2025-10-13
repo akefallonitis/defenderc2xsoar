@@ -411,7 +411,8 @@
                       "value": "{TenantId}"
                     }
                   ],
-                  "value": null
+                  "value": null,
+                  "isGlobal": true
                 },
                 {
                   "id": "isolate-type",
@@ -428,7 +429,8 @@
                   "defaultValue": "Full",
                   "timeContext": {
                     "durationMs": 86400000
-                  }
+                  },
+                  "isGlobal": true
                 }
               ],
               "style": "pills",
@@ -544,7 +546,8 @@
                       "value": "{TenantId}"
                     }
                   ],
-                  "value": null
+                  "value": null,
+                  "isGlobal": true
                 }
               ],
               "style": "pills",
@@ -634,7 +637,8 @@
                       "value": "{TenantId}"
                     }
                   ],
-                  "value": null
+                  "value": null,
+                  "isGlobal": true
                 }
               ],
               "style": "pills",
@@ -724,7 +728,8 @@
                       "value": "{TenantId}"
                     }
                   ],
-                  "value": null
+                  "value": null,
+                  "isGlobal": true
                 },
                 {
                   "id": "scan-type",
@@ -741,7 +746,8 @@
                   "defaultValue": "Full",
                   "timeContext": {
                     "durationMs": 86400000
-                  }
+                  },
+                  "isGlobal": true
                 }
               ],
               "style": "pills",
@@ -859,7 +865,8 @@
                   "description": "SHA1, SHA256, or MD5 hashes separated by commas",
                   "timeContext": {
                     "durationMs": 86400000
-                  }
+                  },
+                  "isGlobal": true
                 },
                 {
                   "id": "file-action-id",
@@ -876,7 +883,8 @@
                   "defaultValue": "AlertAndBlock",
                   "timeContext": {
                     "durationMs": 86400000
-                  }
+                  },
+                  "isGlobal": true
                 },
                 {
                   "id": "file-severity-id",
@@ -893,7 +901,8 @@
                   "defaultValue": "High",
                   "timeContext": {
                     "durationMs": 86400000
-                  }
+                  },
+                  "isGlobal": true
                 },
                 {
                   "id": "file-title-id",
@@ -906,7 +915,8 @@
                   "value": "Malicious files",
                   "timeContext": {
                     "durationMs": 86400000
-                  }
+                  },
+                  "isGlobal": true
                 },
                 {
                   "id": "file-desc-id",
@@ -919,7 +929,8 @@
                   "value": "Known malware hashes",
                   "timeContext": {
                     "durationMs": 86400000
-                  }
+                  },
+                  "isGlobal": true
                 }
               ],
               "style": "pills",
@@ -989,7 +1000,8 @@
                   "description": "IPv4 or IPv6 addresses separated by commas",
                   "timeContext": {
                     "durationMs": 86400000
-                  }
+                  },
+                  "isGlobal": true
                 },
                 {
                   "id": "ip-action-id",
@@ -1006,7 +1018,8 @@
                   "defaultValue": "AlertAndBlock",
                   "timeContext": {
                     "durationMs": 86400000
-                  }
+                  },
+                  "isGlobal": true
                 },
                 {
                   "id": "ip-severity-id",
@@ -1023,7 +1036,8 @@
                   "defaultValue": "High",
                   "timeContext": {
                     "durationMs": 86400000
-                  }
+                  },
+                  "isGlobal": true
                 }
               ],
               "style": "pills",
@@ -1093,7 +1107,8 @@
                   "description": "URLs or domain names separated by commas",
                   "timeContext": {
                     "durationMs": 86400000
-                  }
+                  },
+                  "isGlobal": true
                 },
                 {
                   "id": "url-action-id",
@@ -1110,7 +1125,8 @@
                   "defaultValue": "AlertAndBlock",
                   "timeContext": {
                     "durationMs": 86400000
-                  }
+                  },
+                  "isGlobal": true
                 }
               ],
               "style": "pills",
@@ -1408,7 +1424,8 @@
                   "isRequired": false,
                   "timeContext": {
                     "durationMs": 86400000
-                  }
+                  },
+                  "isGlobal": true
                 }
               ],
               "style": "pills",
@@ -1814,7 +1831,8 @@
                   "isRequired": false,
                   "timeContext": {
                     "durationMs": 86400000
-                  }
+                  },
+                  "isGlobal": true
                 },
                 {
                   "id": "update-status-id",
@@ -1830,7 +1848,8 @@
                   "jsonData": "[\"Active\", \"Resolved\", \"InProgress\", \"Redirected\"]",
                   "timeContext": {
                     "durationMs": 86400000
-                  }
+                  },
+                  "isGlobal": true
                 }
               ],
               "style": "pills",
@@ -1904,7 +1923,8 @@
                   "isRequired": false,
                   "timeContext": {
                     "durationMs": 86400000
-                  }
+                  },
+                  "isGlobal": true
                 },
                 {
                   "id": "incident-comment-id",
@@ -1919,7 +1939,8 @@
                   },
                   "timeContext": {
                     "durationMs": 86400000
-                  }
+                  },
+                  "isGlobal": true
                 }
               ],
               "style": "pills",
@@ -2041,7 +2062,8 @@
                   "isRequired": false,
                   "timeContext": {
                     "durationMs": 86400000
-                  }
+                  },
+                  "isGlobal": true
                 },
                 {
                   "id": "create-rule-query",
@@ -2057,7 +2079,8 @@
                   },
                   "timeContext": {
                     "durationMs": 86400000
-                  }
+                  },
+                  "isGlobal": true
                 },
                 {
                   "id": "create-rule-severity",
@@ -2074,7 +2097,8 @@
                   "defaultValue": "Medium",
                   "timeContext": {
                     "durationMs": 86400000
-                  }
+                  },
+                  "isGlobal": true
                 }
               ],
               "style": "pills",
@@ -2148,7 +2172,8 @@
                   "isRequired": false,
                   "timeContext": {
                     "durationMs": 86400000
-                  }
+                  },
+                  "isGlobal": true
                 },
                 {
                   "id": "update-rule-query",
@@ -2164,7 +2189,8 @@
                   },
                   "timeContext": {
                     "durationMs": 86400000
-                  }
+                  },
+                  "isGlobal": true
                 }
               ],
               "style": "pills",
@@ -2238,7 +2264,8 @@
                   "isRequired": false,
                   "timeContext": {
                     "durationMs": 86400000
-                  }
+                  },
+                  "isGlobal": true
                 }
               ],
               "style": "pills",
@@ -2405,7 +2432,8 @@
                   "description": "Enter one or more device IDs separated by commas",
                   "timeContext": {
                     "durationMs": 86400000
-                  }
+                  },
+                  "isGlobal": true
                 },
                 {
                   "id": "command-params-console",
@@ -2445,7 +2473,8 @@
                     "parameterName": "CommandType",
                     "comparison": "isEqualTo",
                     "value": "\ud83d\udce4 Upload to Library"
-                  }
+                  },
+                  "isGlobal": true
                 },
                 {
                   "id": "library-content-upload",
@@ -2462,7 +2491,8 @@
                     "parameterName": "CommandType",
                     "comparison": "isEqualTo",
                     "value": "\ud83d\udce4 Upload to Library"
-                  }
+                  },
+                  "isGlobal": true
                 },
                 {
                   "id": "library-filename-get",
@@ -2494,7 +2524,8 @@
                     "parameterName": "CommandType",
                     "comparison": "isEqualTo",
                     "value": "\ud83d\ude80 Deploy from Library"
-                  }
+                  },
+                  "isGlobal": true
                 }
               ],
               "style": "pills",

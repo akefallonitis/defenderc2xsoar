@@ -34,7 +34,8 @@
               "showDefault": false
             },
             "queryType": 1,
-            "resourceType": "microsoft.resourcegraph/resources"
+            "resourceType": "microsoft.resourcegraph/resources",
+            "isGlobal": true
           },
           {
             "id": "workspace-param",
@@ -251,7 +252,8 @@
                   "isRequired": true,
                   "typeSettings": {
                     "multiLineText": false
-                  }
+                  },
+                  "isGlobal": true
                 },
                 {
                   "id": "deploy-deviceid",
@@ -262,7 +264,8 @@
                   "isRequired": true,
                   "typeSettings": {
                     "multiLineText": false
-                  }
+                  },
+                  "isGlobal": true
                 }
               ],
               "style": "pills",
@@ -335,7 +338,8 @@
                   "isRequired": true,
                   "typeSettings": {
                     "multiLineText": false
-                  }
+                  },
+                  "isGlobal": true
                 }
               ],
               "style": "pills",
@@ -557,7 +561,8 @@
                   "name": "DownloadDeviceId",
                   "label": "Device ID",
                   "type": 1,
-                  "isRequired": true
+                  "isRequired": true,
+                  "isGlobal": true
                 },
                 {
                   "id": "download-filepath",
@@ -569,7 +574,8 @@
                   "value": "C:\\Windows\\Temp\\",
                   "typeSettings": {
                     "multiLineText": false
-                  }
+                  },
+                  "isGlobal": true
                 }
               ],
               "style": "pills",
