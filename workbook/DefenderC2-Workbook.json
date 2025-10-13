@@ -200,7 +200,7 @@
             "criteriaData": [
               {
                 "criterionType": "param",
-                "value": "{FunctionAppName}"
+                "value": "{FunctionApp}"
               },
               {
                 "criterionType": "param",
@@ -404,7 +404,7 @@
                   "criteriaData": [
                     {
                       "criterionType": "param",
-                      "value": "{FunctionAppName}"
+                      "value": "{FunctionApp}"
                     },
                     {
                       "criterionType": "param",
@@ -522,7 +522,7 @@
               "criteriaData": [
                 {
                   "criterionType": "param",
-                  "value": "{FunctionAppName}"
+                  "value": "{FunctionApp}"
                 },
                 {
                   "criterionType": "param",
@@ -572,7 +572,7 @@
                   "criteriaData": [
                     {
                       "criterionType": "param",
-                      "value": "{FunctionAppName}"
+                      "value": "{FunctionApp}"
                     },
                     {
                       "criterionType": "param",
@@ -688,7 +688,7 @@
                   "criteriaData": [
                     {
                       "criterionType": "param",
-                      "value": "{FunctionAppName}"
+                      "value": "{FunctionApp}"
                     },
                     {
                       "criterionType": "param",
@@ -804,7 +804,7 @@
                   "criteriaData": [
                     {
                       "criterionType": "param",
-                      "value": "{FunctionAppName}"
+                      "value": "{FunctionApp}"
                     },
                     {
                       "criterionType": "param",
@@ -931,7 +931,7 @@
               "criteriaData": [
                 {
                   "criterionType": "param",
-                  "value": "{FunctionAppName}"
+                  "value": "{FunctionApp}"
                 },
                 {
                   "criterionType": "param",
@@ -1449,7 +1449,7 @@
               "criteriaData": [
                 {
                   "criterionType": "param",
-                  "value": "{FunctionAppName}"
+                  "value": "{FunctionApp}"
                 },
                 {
                   "criterionType": "param",
@@ -1581,7 +1581,7 @@
               "criteriaData": [
                 {
                   "criterionType": "param",
-                  "value": "{FunctionAppName}"
+                  "value": "{FunctionApp}"
                 },
                 {
                   "criterionType": "param",
@@ -1643,7 +1643,7 @@
               "criteriaData": [
                 {
                   "criterionType": "param",
-                  "value": "{FunctionAppName}"
+                  "value": "{FunctionApp}"
                 },
                 {
                   "criterionType": "param",
@@ -1874,7 +1874,7 @@
               "criteriaData": [
                 {
                   "criterionType": "param",
-                  "value": "{FunctionAppName}"
+                  "value": "{FunctionApp}"
                 },
                 {
                   "criterionType": "param",
@@ -1913,7 +1913,7 @@
               "criteriaData": [
                 {
                   "criterionType": "param",
-                  "value": "{FunctionAppName}"
+                  "value": "{FunctionApp}"
                 },
                 {
                   "criterionType": "param",
@@ -2076,7 +2076,7 @@
               "criteriaData": [
                 {
                   "criterionType": "param",
-                  "value": "{FunctionAppName}"
+                  "value": "{FunctionApp}"
                 },
                 {
                   "criterionType": "param",
@@ -2365,7 +2365,7 @@
               "criteriaData": [
                 {
                   "criterionType": "param",
-                  "value": "{FunctionAppName}"
+                  "value": "{FunctionApp}"
                 },
                 {
                   "criterionType": "param",
@@ -2759,7 +2759,7 @@
               "criteriaData": [
                 {
                   "criterionType": "param",
-                  "value": "{FunctionAppName}"
+                  "value": "{FunctionApp}"
                 },
                 {
                   "criterionType": "param",
@@ -2975,7 +2975,7 @@
               "criteriaData": [
                 {
                   "criterionType": "param",
-                  "value": "{FunctionAppName}"
+                  "value": "{FunctionApp}"
                 },
                 {
                   "criterionType": "param",
@@ -3042,7 +3042,7 @@
               "criteriaData": [
                 {
                   "criterionType": "param",
-                  "value": "{FunctionAppName}"
+                  "value": "{FunctionApp}"
                 },
                 {
                   "criterionType": "param",
@@ -3078,7 +3078,7 @@
               "criteriaData": [
                 {
                   "criterionType": "param",
-                  "value": "{FunctionAppName}"
+                  "value": "{FunctionApp}"
                 },
                 {
                   "criterionType": "param",
@@ -3142,7 +3142,7 @@
               "criteriaData": [
                 {
                   "criterionType": "param",
-                  "value": "{FunctionAppName}"
+                  "value": "{FunctionApp}"
                 },
                 {
                   "criterionType": "param",
@@ -3173,7 +3173,7 @@
               "criteriaData": [
                 {
                   "criterionType": "param",
-                  "value": "{FunctionAppName}"
+                  "value": "{FunctionApp}"
                 },
                 {
                   "criterionType": "param",
@@ -3275,7 +3275,7 @@
               "criteriaData": [
                 {
                   "criterionType": "param",
-                  "value": "{FunctionAppName}"
+                  "value": "{FunctionApp}"
                 },
                 {
                   "criterionType": "param",
