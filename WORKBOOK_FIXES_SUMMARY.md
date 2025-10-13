@@ -1,7 +1,20 @@
 # DefenderC2 Workbook Fixes Summary
 
-## Overview
-This document summarizes the fixes applied to resolve issues with DeviceId autopopulation and ARM endpoint configuration after PR merge.
+## ⚠️ OUTDATED DOCUMENTATION ⚠️
+
+**This document describes an intermediate implementation that was superseded by Issue #57.**
+
+**For current implementation, see:** `ISSUE_57_COMPLETE_FIX.md`
+
+**Key Changes Since This Document:**
+- All ARMEndpoint queries converted to CustomEndpoint (queryType: 10)
+- Zero ARMEndpoint queries remain in workbooks
+- ARM Actions still use the fixes described here (relative paths, api-version in params)
+
+---
+
+## Historical Overview
+This document originally described fixes for DeviceId autopopulation and ARMEndpoint configuration, but those ARMEndpoint queries no longer exist.
 
 ## Issues Fixed
 
@@ -17,57 +30,58 @@ This document summarizes the fixes applied to resolve issues with DeviceId autop
 - JSONPath parsing: `$.devices[*]` with columns: `id` (value), `computerDnsName` (label)
 - All 5 device parameters (DeviceList, IsolateDeviceIds, UnisolateDeviceIds, RestrictDeviceIds, ScanDeviceIds) are configured correctly
 
-### 2. ✅ ARMEndpoint Queries - API Version Parameter
-**Issue:** ARMEndpoint queries were missing the required `api-version` URL parameter, causing errors like "Please provide the api-version URL parameter (e.g., api-version=2019-06-01)".
+### 2. ❌ ARMEndpoint Queries - SUPERSEDED
+**Original Issue:** ARMEndpoint queries were missing the required `api-version` URL parameter.
 
-**Solution:** Added `urlParams` array with `api-version=2022-03-01` to all ARMEndpoint queries.
+**Intermediate Solution:** Added `urlParams` array with `api-version=2022-03-01`.
 
-**Files Modified:**
-- `workbook/DefenderC2-Workbook.json`: Fixed 14 ARMEndpoint queries
-- `workbook/FileOperations.workbook`: Fixed 1 ARMEndpoint query
+**Final Solution (Issue #57):** Converted all ARMEndpoint queries to CustomEndpoint queries.
 
-**Changes Applied:**
+**Why Changed:** ARMEndpoint is designed for Azure Resource Manager APIs. Custom Function Apps should use CustomEndpoint (queryType: 10) instead.
+
+**Current Implementation:**
 ```json
 {
-  "version": "ARMEndpoint/1.0",
-  "method": "POST",
-  "path": "https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher",
-  "urlParams": [
-    {"name": "api-version", "value": "2022-03-01"}
-  ],
-  "headers": [...],
-  "body": "...",
-  "transformers": [...]
+  "queryType": 10,
+  "query": "{
+    \"version\": \"CustomEndpoint/1.0\",
+    \"method\": \"POST\",
+    \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",
+    \"body\": \"{\\\"action\\\": \\\"Get Devices\\\", \\\"tenantId\\\": \\\"{TenantId}\\\"}\",
+    \"transformers\": [...]
+  }"
 }
 ```
 
-**Queries Fixed:**
-1. Isolation Result (Device Actions)
-2. Device List (Device Actions)
-3. Threat Indicators (Threat Intel Manager)
-4. Machine Actions Auto-refresh (Action Manager)
-5. Action Details (Action Manager)
-6. Security Incidents (Incident Manager)
-7. Hunt Results Auto-refresh (Hunt Manager)
-8. Hunt Query Execution (Hunt Manager)
-9. Custom Detection Rules (Custom Detection Manager)
-10. Detection Backup (Custom Detection Manager)
-11. Command Execution (Interactive Console)
-12. Action Status (Interactive Console)
-13. Action Results (Interactive Console)
-14. Execution History (Interactive Console)
+**Current State:**
+- `workbook/DefenderC2-Workbook.json`: 21 CustomEndpoint queries (0 ARMEndpoint)
+- `workbook/FileOperations.workbook`: 1 CustomEndpoint query (0 ARMEndpoint)
 
-### 3. ✅ ARM Actions - API Version Parameter
-**Issue:** ARM Actions (button clicks for device isolation, incident updates, etc.) were missing the `api-version` parameter, potentially causing API errors.
+**Queries Converted to CustomEndpoint:**
+All queries now use CustomEndpoint (queryType: 10) with proper parameter substitution for {FunctionAppName} and {TenantId}. This includes queries across all workbook tabs:
+- Device Actions
+- Threat Intel Manager
+- Action Manager
+- Incident Manager
+- Hunt Manager
+- Custom Detection Manager
+- Interactive Console
+- File Operations
 
-**Solution:** Added `params` array with `api-version=2022-03-01` to all ARM Actions.
+### 3. ✅ ARM Actions - Still Accurate
+**Issue:** ARM Actions had multiple problems:
+- Using full URLs instead of relative paths
+- api-version in both URL and params (duplicate)
+- Missing proper Azure Resource Manager API structure
 
-**Changes Applied:**
+**Solution:** Fixed all ARM Actions to use Azure best practices (see `ARM_ACTION_FIX_SUMMARY.md` for details).
+
+**Current Implementation:**
 ```json
 {
   "linkTarget": "ArmAction",
   "armActionContext": {
-    "path": "https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher",
+    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Dispatcher/invocations",
     "httpMethod": "POST",
     "headers": [...],
     "body": "...",
@@ -77,6 +91,11 @@ This document summarizes the fixes applied to resolve issues with DeviceId autop
   }
 }
 ```
+
+**Key Points:**
+- Relative path starting with `/subscriptions/`
+- api-version only in params array (not in URL)
+- Proper Azure Resource Manager API structure
 
 **Actions Fixed:**
 1. 🚨 Isolate Devices
@@ -108,54 +127,62 @@ This document summarizes the fixes applied to resolve issues with DeviceId autop
   - JSONPath transformers for response parsing
   - Parameter substitution for `{FunctionAppName}` and `{TenantId}`
 
-## Validation Results
+## Current Validation Results
 
-### Final Validation Report
+### Latest Validation Report (Post Issue #57)
 ```
 ================================================================================
 DEFENDERC2 WORKBOOK VALIDATION REPORT
 ================================================================================
 
-📋 REQUIREMENT 1: DeviceId Autopopulation
+📋 Device Parameters
 --------------------------------------------------------------------------------
   ✅ DeviceList: CustomEndpoint/1.0
   ✅ IsolateDeviceIds: CustomEndpoint/1.0
   ✅ UnisolateDeviceIds: CustomEndpoint/1.0
   ✅ RestrictDeviceIds: CustomEndpoint/1.0
   ✅ ScanDeviceIds: CustomEndpoint/1.0
-
   ✅ PASS: All 5 device parameters use CustomEndpoint/1.0
 
-⚙️  REQUIREMENT 2: ARMEndpoint Queries with api-version
+⚙️  CustomEndpoint Queries
 --------------------------------------------------------------------------------
-  ✅ PASS: All 14 ARMEndpoint queries have api-version parameter
+  ✅ PASS: 21 CustomEndpoint queries with parameter substitution
+  ✅ PASS: 0 ARMEndpoint queries (correctly converted)
 
-🔗 REQUIREMENT 3: ARM Actions with api-version Parameter
+🔗 ARM Actions
 --------------------------------------------------------------------------------
-  ✅ PASS: All 13 ARM Actions have api-version parameter
+  ✅ PASS: 15 ARM Actions with api-version in params
+  ✅ PASS: 15 ARM Actions with relative paths
+  ✅ PASS: 15 ARM Actions without api-version in URL
+
+📊 Global Parameters
+--------------------------------------------------------------------------------
+  ✅ PASS: 6/6 parameters marked as global
 
 ================================================================================
 OVERALL SUMMARY
 --------------------------------------------------------------------------------
   ✅ Device Parameters: 5/5 using CustomEndpoint
-  ✅ ARMEndpoint Queries: 14/14 with api-version
-  ✅ ARM Actions: 13/13 with api-version
+  ✅ CustomEndpoint Queries: 21/21 with parameter substitution
+  ✅ ARM Actions: 15/15 properly configured
+  ✅ Global Parameters: 6/6 marked correctly
 
   ✅✅✅ ALL REQUIREMENTS MET ✅✅✅
 ================================================================================
 ```
 
-## Files Modified
+## Files Current State
 
 1. **workbook/DefenderC2-Workbook.json**
-   - Fixed 14 ARMEndpoint queries (added urlParams with api-version)
-   - Fixed 13 ARM Actions (added params with api-version)
-   - Total changes: 27 fixes
+   - 21 CustomEndpoint queries (0 ARMEndpoint)
+   - 15 ARM Actions with relative paths and api-version
+   - 5 device parameters with CustomEndpoint
+   - 6 global parameters
 
 2. **workbook/FileOperations.workbook**
-   - Fixed 1 ARMEndpoint query (added urlParams with api-version)
-   - Fixed 4 ARM Actions (added params with api-version)
-   - Total changes: 5 fixes
+   - 1 CustomEndpoint query (0 ARMEndpoint)
+   - 4 ARM Actions with relative paths and api-version
+   - 3 global parameters
 
 ## Technical Details
 

@@ -2,12 +2,14 @@
 
 ## Overview
 
-This PR resolves all issues identified in the problem statement related to:
-1. DeviceId autopopulation errors
-2. ARM Action endpoint API version errors
-3. Custom Endpoint query configuration
+**Note:** This documentation is outdated. The changes described here were superseded by Issue #57 fix which converted all ARMEndpoint queries to CustomEndpoint queries. See `ISSUE_57_COMPLETE_FIX.md` for the current implementation.
 
-**Status:** ✅ Complete and Validated
+**Current State:**
+1. All queries use CustomEndpoint (queryType: 10) - zero ARMEndpoint queries remain
+2. All ARM Actions use relative paths with api-version in params array
+3. Device parameters correctly configured with CustomEndpoint
+
+**Status:** ✅ Superseded by Issue #57 Fix
 
 ## Issue Context
 
@@ -19,70 +21,60 @@ After merging the latest PR, several problems were reported:
 **Screenshot from Issue:**
 ![image](https://github.com/user-attachments/assets/9704a02d-d8d7-4adc-add3-0d481a36011c)
 
-## Changes Made
+## Changes Made (Superseded)
 
-### 1. ARMEndpoint Queries - Added api-version Parameter
+### 1. Query Implementation - Now Uses CustomEndpoint
 
-**Problem:** 15 ARMEndpoint queries missing `urlParams` with `api-version`, causing API errors
+**Current Implementation:** All queries were converted to CustomEndpoint (queryType: 10)
 
-**Solution:** Added `urlParams` array with `api-version=2022-03-01` to all queries
+**Previous Approach (Obsolete):** ARMEndpoint queries with urlParams
+
+**Why Changed:** Issue #57 identified that CustomEndpoint is the correct pattern for Function App queries, as ARMEndpoint is intended for Azure Resource Manager APIs, not custom Function App endpoints.
 
 **Files Modified:**
-- `workbook/DefenderC2-Workbook.json` (14 queries)
-- `workbook/FileOperations.workbook` (1 query)
+- `workbook/DefenderC2-Workbook.json` (21 CustomEndpoint queries)
+- `workbook/FileOperations.workbook` (1 CustomEndpoint query)
 
-**Example Fix:**
+**Current Implementation:**
 ```json
-// BEFORE
 {
-  "version": "ARMEndpoint/1.0",
-  "method": "POST",
-  "path": "https://{FunctionAppName}.azurewebsites.net/api/...",
-  "body": "..."
-}
-
-// AFTER
-{
-  "version": "ARMEndpoint/1.0",
-  "method": "POST",
-  "path": "https://{FunctionAppName}.azurewebsites.net/api/...",
-  "urlParams": [{"name": "api-version", "value": "2022-03-01"}],
-  "body": "..."
+  "queryType": 10,
+  "query": "{
+    \"version\": \"CustomEndpoint/1.0\",
+    \"method\": \"POST\",
+    \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",
+    \"body\": \"{\\\"action\\\": \\\"Get Devices\\\", \\\"tenantId\\\": \\\"{TenantId}\\\"}\",
+    \"transformers\": [...]
+  }"
 }
 ```
 
-### 2. ARM Actions - Added api-version Parameter
+### 2. ARM Actions - Corrected to Use Relative Paths
 
-**Problem:** 17 ARM Actions missing `api-version` in params array
+**Current Implementation:** ARM Actions use relative paths with api-version in params array
 
-**Solution:** Added `params` with `api-version=2022-03-01` to all actions
+**Changes Made:**
+- Converted full URLs to relative paths starting with `/subscriptions/`
+- Ensured api-version only in params array (not in URL)
+- Added proper Azure Resource Manager API path structure
 
 **Files Modified:**
-- `workbook/DefenderC2-Workbook.json` (13 actions)
+- `workbook/DefenderC2-Workbook.json` (15 actions)
 - `workbook/FileOperations.workbook` (4 actions)
 
-**Example Fix:**
+**Current Implementation:**
 ```json
-// BEFORE
 {
   "armActionContext": {
-    "path": "https://{FunctionAppName}.azurewebsites.net/api/...",
-    "httpMethod": "POST",
-    "body": "...",
-    "params": []
-  }
-}
-
-// AFTER
-{
-  "armActionContext": {
-    "path": "https://{FunctionAppName}.azurewebsites.net/api/...",
+    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Dispatcher/invocations",
     "httpMethod": "POST",
     "body": "...",
     "params": [{"key": "api-version", "value": "2022-03-01"}]
   }
 }
 ```
+
+See `ARM_ACTION_FIX_SUMMARY.md` for complete details.
 
 ### 3. Device Parameters - Verification
 
@@ -95,74 +87,87 @@ All 5 device parameters already use `CustomEndpoint/1.0` with proper configurati
 - RestrictDeviceIds
 - ScanDeviceIds
 
-## Commits in This PR
+## Implementation History
 
-1. **Initial plan** - Analyzed the issue and created implementation plan
-2. **Fix ARMEndpoint queries** - Added api-version to 14 queries
-3. **Fix ARM Actions** - Added api-version to 13+4 actions
-4. **Add verification script** - Created automated validation tool
-5. **Add documentation** - Complete testing guide and resolution diagrams
+This document describes an intermediate fix that was superseded by Issue #57:
 
-## Files Changed
+1. **Initial Approach** - ARMEndpoint queries with api-version parameter
+2. **Final Implementation (Issue #57)** - All queries converted to CustomEndpoint
+3. **ARM Actions Fix** - Relative paths with proper api-version placement
+4. **Global Parameters** - Key parameters marked as global for nested groups
+5. **Verification** - Automated validation confirms correct implementation
 
-### Workbook Files (Fixes)
-- `workbook/DefenderC2-Workbook.json` - 27 fixes (14 queries + 13 actions)
-- `workbook/FileOperations.workbook` - 5 fixes (1 query + 4 actions)
+## Current State
 
-### Documentation (New)
-- `WORKBOOK_FIXES_SUMMARY.md` - Technical details and validation results
-- `TESTING_GUIDE.md` - Step-by-step testing procedures
-- `ISSUE_RESOLUTION_DIAGRAM.md` - Visual before/after comparison
-- `PR_SUMMARY.md` - This file
+### Workbook Files
+- `workbook/DefenderC2-Workbook.json` - 21 CustomEndpoint queries, 15 ARM Actions
+- `workbook/FileOperations.workbook` - 1 CustomEndpoint query, 4 ARM Actions
 
-### Scripts (New)
-- `scripts/verify_workbook_config.py` - Automated configuration verification
+### Authoritative Documentation
+- `ISSUE_57_COMPLETE_FIX.md` - **Current implementation details**
+- `ARM_ACTION_FIX_SUMMARY.md` - ARM Action fixes (still accurate)
+- `GLOBAL_PARAMETERS_FIX.md` - Parameter scoping fixes
+- `scripts/verify_workbook_config.py` - Automated validation
 
-## Validation
+### Outdated Documentation (Historical Only)
+- `WORKBOOK_FIXES_SUMMARY.md` - Describes obsolete ARMEndpoint approach
+- `ISSUE_RESOLUTION_DIAGRAM.md` - Shows obsolete ARMEndpoint fixes
+- `PR_SUMMARY.md` - This file (now updated with clarification)
+
+## Current Validation (As of Issue #57)
 
 ### Automated Verification
 
 ```bash
 $ python3 scripts/verify_workbook_config.py
 
-================================================================================
-DefenderC2 Workbook Configuration Verification
-================================================================================
-
 DefenderC2-Workbook.json:
-  ✅ ARMEndpoint Queries: 14/14 with api-version
-  ✅ ARM Actions: 13/13 with api-version
+  ✅ ARM Actions: 15/15 with api-version in params
+  ✅ ARM Actions: 15/15 with relative paths
+  ✅ ARM Actions: 15/15 without api-version in URL
   ✅ Device Parameters: 5/5 with CustomEndpoint
+  ✅ CustomEndpoint Queries: 21/21 with parameter substitution
+  ✅ Global Parameters: 6/6 marked as global
   ✅✅✅ ALL CHECKS PASSED ✅✅✅
 
 FileOperations.workbook:
-  ✅ ARMEndpoint Queries: 1/1 with api-version
-  ✅ ARM Actions: 4/4 with api-version
+  ✅ ARM Actions: 4/4 with api-version in params
+  ✅ ARM Actions: 4/4 with relative paths
+  ✅ ARM Actions: 4/4 without api-version in URL
+  ✅ CustomEndpoint Queries: 1/1 with parameter substitution
+  ✅ Global Parameters: 3/3 marked as global
   ✅✅✅ ALL CHECKS PASSED ✅✅✅
 
 🎉 SUCCESS: All workbooks are correctly configured!
 ```
 
-### JSON Validation
-
-Both workbook files validated successfully:
-- ✅ DefenderC2-Workbook.json - Valid JSON
-- ✅ FileOperations.workbook - Valid JSON
+**Key Points:**
+- Zero ARMEndpoint queries (all converted to CustomEndpoint)
+- All ARM Actions use proper relative paths
+- All queries use parameter substitution correctly
 
 ## Testing Recommendations
 
-### Quick Test
+### Verification
 ```bash
+# Run automated checks
 python3 scripts/verify_workbook_config.py
+
+# Should show:
+# - All CustomEndpoint queries with parameter substitution
+# - All ARM Actions with relative paths and api-version
+# - All device parameters with CustomEndpoint
+# - All global parameters marked correctly
 ```
 
-### Full Testing
-See `TESTING_GUIDE.md` for comprehensive testing procedures including:
-- Device parameter dropdown testing
-- Query execution testing
-- ARM Action testing
-- Auto-refresh functionality testing
-- All workbook tabs validation
+### Deployment Testing
+After deploying to Azure:
+- Device parameter dropdowns should populate
+- All queries should execute without errors
+- ARM Actions should work correctly
+- No "api-version" or "query failed" errors should appear
+
+See `TESTING_GUIDE.md` for detailed procedures.
 
 ## Impact Assessment
 
@@ -213,14 +218,21 @@ git checkout c523d42~1 workbook/
 
 ## Documentation Reference
 
-- `WORKBOOK_FIXES_SUMMARY.md` - Complete technical summary with validation results
-- `TESTING_GUIDE.md` - Detailed testing procedures for all components
-- `ISSUE_RESOLUTION_DIAGRAM.md` - Visual representation of issue and resolution
-- `scripts/verify_workbook_config.py` - Run automated verification
+### Current Documentation
+- `ISSUE_57_COMPLETE_FIX.md` - **Primary reference for current implementation**
+- `ARM_ACTION_FIX_SUMMARY.md` - ARM Action fixes details
+- `GLOBAL_PARAMETERS_FIX.md` - Parameter scoping explanation
+- `TESTING_GUIDE.md` - Deployment and testing procedures
+- `scripts/verify_workbook_config.py` - Automated validation
+
+### Historical Documentation (Superseded)
+- `WORKBOOK_FIXES_SUMMARY.md` - Obsolete ARMEndpoint approach
+- `ISSUE_RESOLUTION_DIAGRAM.md` - Obsolete fix diagrams
 
 ## Related Issues
 
-Fixes: "Fix issues: DeviceId autopopulation and ARM Action/Custom Endpoint problems after PR merge"
+- Issue #57 - Complete conversion to CustomEndpoint queries (current implementation)
+- Earlier issues - ARM Action path fixes, parameter scoping fixes
 
 ## Reviewer Notes
 

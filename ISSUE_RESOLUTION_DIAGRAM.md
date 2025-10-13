@@ -1,5 +1,17 @@
 # Issue Resolution Diagram
 
+## ⚠️ OUTDATED DOCUMENTATION ⚠️
+
+**This document describes an intermediate fix that was superseded by Issue #57.**
+
+**For current implementation, see:** `ISSUE_57_COMPLETE_FIX.md`
+
+**Key Changes:**
+- All ARMEndpoint queries converted to CustomEndpoint
+- ARM Actions fixes described here are still accurate
+
+---
+
 ## Original Issue (From Screenshot)
 
 ```
@@ -24,81 +36,82 @@
 ### Root Causes Identified:
 
 1. **Device Parameter Error:** 
-   - Appeared to be failing (but was actually correctly configured)
-   - The `<query failed>` might have been due to Function App issues, not configuration
+   - Was correctly configured with CustomEndpoint
+   - The `<query failed>` was due to Function App issues, not configuration
 
-2. **ARMEndpoint Query Error:**
-   - Missing `urlParams` with `api-version` parameter
-   - Caused "Please provide the api-version URL parameter" error
+2. **Query Implementation (Superseded):**
+   - Initial fix: Added api-version to ARMEndpoint queries
+   - Final fix (Issue #57): Converted all to CustomEndpoint queries
+   - Reason: ARMEndpoint is for Azure Resource Manager APIs, not custom Function Apps
 
 3. **ARM Actions:**
-   - Missing `api-version` in params array
-   - Could cause silent failures or API errors
+   - Using full URLs instead of relative paths
+   - api-version in wrong location (URL instead of params)
+   - Fixed to use Azure best practices
 
 ---
 
-## Solution Applied
+## Solution Evolution
 
-### Fix 1: ARMEndpoint Queries
+### Fix 1: Query Implementation (Final Solution - Issue #57)
 
-**Before:**
+**Intermediate Approach (Obsolete):**
 ```json
 {
   "version": "ARMEndpoint/1.0",
   "method": "POST",
   "path": "https://{FunctionAppName}.azurewebsites.net/api/...",
+  "urlParams": [{"name": "api-version", "value": "2022-03-01"}],
   "body": "...",
   "transformers": [...]
 }
 ```
-❌ Missing urlParams
+❌ ARMEndpoint is for Azure Resource Manager, not custom Function Apps
 
-**After:**
+**Current Implementation:**
 ```json
 {
-  "version": "ARMEndpoint/1.0",
-  "method": "POST",
-  "path": "https://{FunctionAppName}.azurewebsites.net/api/...",
-  "urlParams": [                              ← ADDED
-    {"name": "api-version", "value": "2022-03-01"}
-  ],
-  "body": "...",
-  "transformers": [...]
+  "queryType": 10,
+  "query": "{
+    \"version\": \"CustomEndpoint/1.0\",
+    \"method\": \"POST\",
+    \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",
+    \"body\": \"{\\\"action\\\": \\\"Get Devices\\\", \\\"tenantId\\\": \\\"{TenantId}\\\"}\",
+    \"transformers\": [...]
+  }"
 }
 ```
-✅ Now includes api-version
+✅ Correct pattern for custom Function App endpoints
 
-### Fix 2: ARM Actions
+### Fix 2: ARM Actions (Still Accurate)
 
 **Before:**
 ```json
 {
   "linkTarget": "ArmAction",
   "armActionContext": {
-    "path": "https://{FunctionAppName}.azurewebsites.net/api/...",
+    "path": "https://management.azure.com/subscriptions/{Subscription}/.../invocations?api-version=2022-03-01",
     "httpMethod": "POST",
     "body": "...",
-    "params": []                              ← Empty
+    "params": [{"key": "api-version", "value": "2022-03-01"}]
   }
 }
 ```
-❌ Empty params array
+❌ Full URL with duplicate api-version
 
 **After:**
 ```json
 {
   "linkTarget": "ArmAction",
   "armActionContext": {
-    "path": "https://{FunctionAppName}.azurewebsites.net/api/...",
+    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Dispatcher/invocations",
     "httpMethod": "POST",
     "body": "...",
-    "params": [                               ← ADDED
-      {"key": "api-version", "value": "2022-03-01"}
-    ]
+    "params": [{"key": "api-version", "value": "2022-03-01"}]
   }
 }
 ```
-✅ Now includes api-version
+✅ Relative path with api-version only in params
 
 ### Fix 3: Device Parameters (Already Correct)
 
@@ -162,22 +175,24 @@
 
 ---
 
-## Fix Summary by Component
+## Current State by Component
 
 ### DefenderC2-Workbook.json
 
-| Component | Before | After | Status |
-|-----------|--------|-------|--------|
-| Device Parameters (5) | ✅ CustomEndpoint | ✅ CustomEndpoint | No change needed |
-| ARMEndpoint Queries (14) | ❌ No api-version | ✅ With api-version | Fixed |
-| ARM Actions (13) | ❌ No api-version | ✅ With api-version | Fixed |
+| Component | Current State | Notes |
+|-----------|---------------|-------|
+| Device Parameters (5) | ✅ CustomEndpoint | Correctly configured |
+| CustomEndpoint Queries (21) | ✅ With parameter substitution | All queries converted from ARMEndpoint |
+| ARM Actions (15) | ✅ Relative paths + api-version | Following Azure best practices |
+| Global Parameters (6) | ✅ Marked as global | For nested group access |
 
 ### FileOperations.workbook
 
-| Component | Before | After | Status |
-|-----------|--------|-------|--------|
-| ARMEndpoint Queries (1) | ❌ No api-version | ✅ With api-version | Fixed |
-| ARM Actions (4) | ❌ No api-version | ✅ With api-version | Fixed |
+| Component | Current State | Notes |
+|-----------|---------------|-------|
+| CustomEndpoint Queries (1) | ✅ With parameter substitution | Converted from ARMEndpoint |
+| ARM Actions (4) | ✅ Relative paths + api-version | Following Azure best practices |
+| Global Parameters (3) | ✅ Marked as global | For nested group access |
 
 ---
 
@@ -222,27 +237,29 @@
 
 ---
 
-## Testing Status
+## Current Testing Status
 
 ```
-Pre-Deployment:
+Automated Verification:
   ✅ JSON validation passed
-  ✅ All configurations verified
+  ✅ All 21 CustomEndpoint queries verified
+  ✅ All 19 ARM Actions verified (15 + 4)
+  ✅ All device parameters verified
+  ✅ All global parameters verified
   ✅ Verification script passes
 
-Post-Deployment Testing Required:
+Deployment Verification Required:
   ⏳ Device parameter dropdown population
-  ⏳ All table queries load without errors
+  ⏳ All CustomEndpoint queries execute correctly
   ⏳ ARM Actions execute successfully
-  ⏳ Auto-refresh functionality works
-  ⏳ No regression in existing features
+  ⏳ No "api-version" or "query failed" errors
 
-Expected Outcome:
-  ✅ No "api-version URL parameter" errors
-  ✅ All queries and actions work correctly
-  ✅ Device dropdowns populate
-  ✅ Tables display data
-  ✅ Actions execute without errors
+Expected Results:
+  ✅ Zero ARMEndpoint queries (all converted to CustomEndpoint)
+  ✅ All queries use proper parameter substitution
+  ✅ Device dropdowns populate correctly
+  ✅ Tables display data without errors
+  ✅ Actions execute with relative paths
 ```
 
 ---
@@ -259,7 +276,7 @@ python3 scripts/verify_workbook_config.py
 
 ---
 
-**Issue Status:** ✅ RESOLVED  
-**Commits:** 3 (Initial plan + ARMEndpoint fix + ARM Actions fix)  
-**Files Modified:** 4 (2 workbooks + 2 documentation files + 1 script)  
-**Total Fixes:** 32 (15 queries + 17 actions)
+**Issue Status:** ✅ RESOLVED (via Issue #57)  
+**Implementation:** CustomEndpoint queries + ARM Action best practices  
+**Current State:** 22 CustomEndpoint queries, 19 ARM Actions, 9 global parameters  
+**Documentation:** See `ISSUE_57_COMPLETE_FIX.md` for authoritative details
