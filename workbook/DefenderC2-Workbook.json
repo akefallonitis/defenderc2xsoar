@@ -472,7 +472,33 @@
                     "description": "Initiating device isolation...",
                     "actionName": "Isolate",
                     "runLabel": "Isolate Devices"
-                  }
+                    },
+                    "criteriaData": [
+                      {
+                        "criterionType": "param",
+                        "value": "{Subscription}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{ResourceGroup}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{FunctionAppName}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{TenantId}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{IsolateDeviceIds}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{IsolationType}"
+                      }
+                    ]
                 }
               ]
             },
@@ -589,7 +615,29 @@
                     "description": "Removing device isolation...",
                     "actionName": "Unisolate",
                     "runLabel": "Unisolate Devices"
-                  }
+                    },
+                    "criteriaData": [
+                      {
+                        "criterionType": "param",
+                        "value": "{Subscription}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{ResourceGroup}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{FunctionAppName}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{TenantId}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{UnisolateDeviceIds}"
+                      }
+                    ]
                 }
               ]
             },
@@ -680,7 +728,29 @@
                     "description": "Restricting application execution...",
                     "actionName": "Restrict",
                     "runLabel": "Restrict Apps"
-                  }
+                    },
+                    "criteriaData": [
+                      {
+                        "criterionType": "param",
+                        "value": "{Subscription}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{ResourceGroup}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{FunctionAppName}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{TenantId}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{RestrictDeviceIds}"
+                      }
+                    ]
                 }
               ]
             },
@@ -789,7 +859,33 @@
                     "description": "Starting antivirus scan...",
                     "actionName": "Scan",
                     "runLabel": "Run Scan"
-                  }
+                    },
+                    "criteriaData": [
+                      {
+                        "criterionType": "param",
+                        "value": "{Subscription}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{ResourceGroup}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{FunctionAppName}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{TenantId}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{ScanDeviceIds}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{ScanType}"
+                      }
+                    ]
                 }
               ]
             },
@@ -972,7 +1068,45 @@
                     "description": "Adding file indicators to MDE...",
                     "actionName": "AddFileIndicators",
                     "runLabel": "Add Indicators"
-                  }
+                    },
+                    "criteriaData": [
+                      {
+                        "criterionType": "param",
+                        "value": "{Subscription}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{ResourceGroup}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{FunctionAppName}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{TenantId}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{FileIndicators}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{FileIndicatorAction}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{FileSeverity}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{FileTitle}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{FileDescription}"
+                      }
+                    ]
                 }
               ]
             },
@@ -1079,7 +1213,37 @@
                     "description": "Adding IP indicators to MDE...",
                     "actionName": "AddIpIndicators",
                     "runLabel": "Add Indicators"
-                  }
+                    },
+                    "criteriaData": [
+                      {
+                        "criterionType": "param",
+                        "value": "{Subscription}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{ResourceGroup}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{FunctionAppName}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{TenantId}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{IpIndicators}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{IpIndicatorAction}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{IpSeverity}"
+                      }
+                    ]
                 }
               ]
             },
@@ -1168,7 +1332,33 @@
                     "description": "Adding URL/domain indicators to MDE...",
                     "actionName": "AddUrlIndicators",
                     "runLabel": "Add Indicators"
-                  }
+                    },
+                    "criteriaData": [
+                      {
+                        "criterionType": "param",
+                        "value": "{Subscription}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{ResourceGroup}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{FunctionAppName}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{TenantId}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{UrlIndicators}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{UrlIndicatorAction}"
+                      }
+                    ]
                 }
               ]
             },
@@ -1467,7 +1657,29 @@
                     "description": "Cancelling machine action...",
                     "actionName": "CancelAction",
                     "runLabel": "Cancel"
-                  }
+                    },
+                    "criteriaData": [
+                      {
+                        "criterionType": "param",
+                        "value": "{Subscription}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{ResourceGroup}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{FunctionAppName}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{TenantId}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{CancelActionId}"
+                      }
+                    ]
                 }
               ]
             },
@@ -1891,7 +2103,33 @@
                     "description": "Updating incident status...",
                     "actionName": "UpdateIncident",
                     "runLabel": "Update"
-                  }
+                    },
+                    "criteriaData": [
+                      {
+                        "criterionType": "param",
+                        "value": "{Subscription}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{ResourceGroup}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{FunctionAppName}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{TenantId}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{UpdateIncidentId}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{UpdateStatus}"
+                      }
+                    ]
                 }
               ]
             },
@@ -1982,7 +2220,33 @@
                     "description": "Adding comment to incident...",
                     "actionName": "AddComment",
                     "runLabel": "Add"
-                  }
+                    },
+                    "criteriaData": [
+                      {
+                        "criterionType": "param",
+                        "value": "{Subscription}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{ResourceGroup}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{FunctionAppName}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{TenantId}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{CommentIncidentId}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{IncidentComment}"
+                      }
+                    ]
                 }
               ]
             },
@@ -2140,7 +2404,37 @@
                     "description": "Creating custom detection rule...",
                     "actionName": "CreateDetection",
                     "runLabel": "Create"
-                  }
+                    },
+                    "criteriaData": [
+                      {
+                        "criterionType": "param",
+                        "value": "{Subscription}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{ResourceGroup}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{FunctionAppName}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{TenantId}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{CreateRuleName}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{CreateRuleQuery}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{CreateRuleSeverity}"
+                      }
+                    ]
                 }
               ]
             },
@@ -2232,7 +2526,33 @@
                     "description": "Updating detection rule...",
                     "actionName": "UpdateDetection",
                     "runLabel": "Update"
-                  }
+                    },
+                    "criteriaData": [
+                      {
+                        "criterionType": "param",
+                        "value": "{Subscription}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{ResourceGroup}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{FunctionAppName}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{TenantId}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{UpdateRuleId}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{UpdateRuleQuery}"
+                      }
+                    ]
                 }
               ]
             },
@@ -2307,7 +2627,29 @@
                     "description": "Deleting detection rule...",
                     "actionName": "DeleteDetection",
                     "runLabel": "Delete"
-                  }
+                    },
+                    "criteriaData": [
+                      {
+                        "criterionType": "param",
+                        "value": "{Subscription}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{ResourceGroup}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{FunctionAppName}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{TenantId}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{DeleteRuleId}"
+                      }
+                    ]
                 }
               ]
             },
@@ -2800,7 +3142,33 @@
                     "description": "Uploading {LibraryFileNameUpload} to library",
                     "actionName": "Upload",
                     "runLabel": "Upload"
-                  }
+                    },
+                    "criteriaData": [
+                      {
+                        "criterionType": "param",
+                        "value": "{Subscription}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{ResourceGroup}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{FunctionAppName}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{TenantId}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{LibraryFileNameUpload}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{LibraryContentUpload}"
+                      }
+                    ]
                 }
               ]
             },
@@ -2873,7 +3241,33 @@
                     "description": "Deploying {LibraryDeployFileName} from library to {DeviceIds}",
                     "actionName": "Deploy",
                     "runLabel": "Deploy"
-                  }
+                    },
+                    "criteriaData": [
+                      {
+                        "criterionType": "param",
+                        "value": "{Subscription}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{ResourceGroup}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{FunctionAppName}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{TenantId}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{DeviceIds}"
+                      },
+                      {
+                        "criterionType": "param",
+                        "value": "{LibraryDeployFileName}"
+                      }
+                    ]
                 }
               ]
             },
