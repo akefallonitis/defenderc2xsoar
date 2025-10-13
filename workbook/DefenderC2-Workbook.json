@@ -2836,10 +2836,10 @@
                         "value": "2022-03-01"
                       }
                     ],
-                    "body": "{\"action\":\"PutFile\",\"deviceIds\":\"{TargetDevices}\",\"fileName\":\"{LibraryDeployFileName}\",\"libraryFile\":true,\"tenantId\":\"{TenantId}\"}",
+                    "body": "{\"action\":\"PutFile\",\"deviceIds\":\"{DeviceIds}\",\"fileName\":\"{LibraryDeployFileName}\",\"libraryFile\":true,\"tenantId\":\"{TenantId}\"}",
                     "httpMethod": "POST",
                     "title": "Deploy from Library",
-                    "description": "Deploying {LibraryDeployFileName} from library to {TargetDevices}",
+                    "description": "Deploying {LibraryDeployFileName} from library to {DeviceIds}",
                     "actionName": "Deploy",
                     "runLabel": "Deploy"
                   }
