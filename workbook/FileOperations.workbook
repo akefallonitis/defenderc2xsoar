@@ -51,7 +51,8 @@
               "showDefault": false
             },
             "queryType": 1,
-            "resourceType": "microsoft.resourcegraph/resources"
+            "resourceType": "microsoft.resourcegraph/resources",
+            "isGlobal": true
           },
           {
             "id": "tenant-id",
@@ -73,7 +74,8 @@
                 "criterionType": "param",
                 "value": "{Workspace}"
               }
-            ]
+            ],
+            "isGlobal": true
           },
           {
             "id": "function-app-url",
@@ -85,7 +87,8 @@
             "typeSettings": {
               "isSearchable": false
             },
-            "description": "Enter your DefenderC2 function app name (e.g., 'defc2', 'mydefender', 'sec-functions'). This is the name of your Azure Function App."
+            "description": "Enter your DefenderC2 function app name (e.g., 'defc2', 'mydefender', 'sec-functions'). This is the name of your Azure Function App.",
+            "isGlobal": true
           },
           {
             "id": "ad98be24-ec22-4631-a52f-d07b6b995e07",
