@@ -143,30 +143,51 @@
             "isGlobal": true
           },
           {
-            "id": "ad4-tenantid-autodiscover",
+            "id": "ad4-tenantid-selector",
             "version": "KqlParameterItem/1.0",
             "name": "TenantId",
-            "label": "Azure AD Tenant ID (Auto)",
-            "type": 1,
+            "label": "Microsoft Defender XDR Tenant ID",
+            "type": 2,
             "isRequired": true,
-            "query": "Resources\n| where id == '{FunctionApp}'\n| project value = tenantId",
+            "multiSelect": false,
+            "query": "ResourceContainers\n| where type == 'microsoft.resources/subscriptions'\n| project tenantId\n| distinct tenantId\n| project value = tenantId, label = tenantId\n| union (datatable(value:string, label:string) [\n  '', 'Enter Tenant ID manually...'\n])\n| order by label asc",
             "crossComponentResources": [
               "value::all"
             ],
-            "isHiddenWhenLocked": true,
             "typeSettings": {
-              "isSearchable": false
+              "additionalResourceOptions": [],
+              "showDefault": false
             },
             "timeContext": {
               "durationMs": 86400000
             },
             "queryType": 1,
             "resourceType": "microsoft.resourcegraph/resources",
-            "description": "Auto-discovered from Function App resource. This is the Azure AD Tenant ID where your App Registration is registered.",
+            "value": null,
+            "description": "Select your Microsoft Defender XDR Tenant ID from available tenants (Lighthouse delegations) or enter manually. This is the tenant where your Defender data resides.",
+            "isGlobal": true
+          },
+          {
+            "id": "ad4b-tenantid-manual",
+            "version": "KqlParameterItem/1.0",
+            "name": "TenantIdManual",
+            "label": "Enter Tenant ID (if not in list)",
+            "type": 1,
+            "isRequired": false,
+            "value": "",
+            "isHiddenWhenLocked": false,
+            "typeSettings": {
+              "isSearchable": false
+            },
+            "timeContext": {
+              "durationMs": 86400000
+            },
+            "description": "Optional: Enter a tenant ID manually if it's not available in the dropdown list above.",
             "criteriaData": [
               {
+                "condition": "if (TenantId is empty), show",
                 "criterionType": "param",
-                "value": "{FunctionApp}"
+                "value": "{TenantId}"
               }
             ],
             "isGlobal": true
