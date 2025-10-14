@@ -164,7 +164,7 @@
             "style": "primary",
             "linkIsContextBlade": true,
             "armActionContext": {
-              "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Dispatcher/invocations",
+              "path": "{FunctionApp}/functions/DefenderC2Dispatcher/invocations",
               "headers": [],
               "params": [
                 {"key": "api-version", "value": "2022-03-01"},
@@ -184,10 +184,7 @@
             "criteriaData": [
               {"criterionType": "param", "value": "{FunctionApp}"},
               {"criterionType": "param", "value": "{TenantId}"},
-              {"criterionType": "param", "value": "{DeviceList}"},
-              {"criterionType": "param", "value": "{Subscription}"},
-              {"criterionType": "param", "value": "{ResourceGroup}"},
-              {"criterionType": "param", "value": "{FunctionAppName}"}
+              {"criterionType": "param", "value": "{DeviceList}"}
             ]
           },
           {
@@ -198,7 +195,7 @@
             "style": "secondary",
             "linkIsContextBlade": true,
             "armActionContext": {
-              "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Dispatcher/invocations",
+              "path": "{FunctionApp}/functions/DefenderC2Dispatcher/invocations",
               "headers": [],
               "params": [
                 {"key": "api-version", "value": "2022-03-01"},
@@ -217,10 +214,7 @@
             "criteriaData": [
               {"criterionType": "param", "value": "{FunctionApp}"},
               {"criterionType": "param", "value": "{TenantId}"},
-              {"criterionType": "param", "value": "{DeviceList}"},
-              {"criterionType": "param", "value": "{Subscription}"},
-              {"criterionType": "param", "value": "{ResourceGroup}"},
-              {"criterionType": "param", "value": "{FunctionAppName}"}
+              {"criterionType": "param", "value": "{DeviceList}"}
             ]
           },
           {
@@ -231,7 +225,7 @@
             "style": "secondary",
             "linkIsContextBlade": true,
             "armActionContext": {
-              "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Dispatcher/invocations",
+              "path": "{FunctionApp}/functions/DefenderC2Dispatcher/invocations",
               "headers": [],
               "params": [
                 {"key": "api-version", "value": "2022-03-01"},
@@ -251,10 +245,7 @@
             "criteriaData": [
               {"criterionType": "param", "value": "{FunctionApp}"},
               {"criterionType": "param", "value": "{TenantId}"},
-              {"criterionType": "param", "value": "{DeviceList}"},
-              {"criterionType": "param", "value": "{Subscription}"},
-              {"criterionType": "param", "value": "{ResourceGroup}"},
-              {"criterionType": "param", "value": "{FunctionAppName}"}
+              {"criterionType": "param", "value": "{DeviceList}"}
             ]
           }
         ]
