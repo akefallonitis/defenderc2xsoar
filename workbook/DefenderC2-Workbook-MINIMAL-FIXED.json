@@ -143,9 +143,11 @@
         "links": [
           {
             "id": "isolate-action",
+            "cellValue": "unused",
             "linkTarget": "ArmAction",
             "linkLabel": "🔒 Isolate Devices",
             "style": "primary",
+            "linkIsContextBlade": true,
             "armActionContext": {
               "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Dispatcher/invocations",
               "headers": [],
@@ -158,22 +160,25 @@
                 {"key": "comment", "value": "Isolated via Workbook"}
               ],
               "body": null,
-              "httpMethod": "POST"
+              "httpMethod": "POST",
+              "title": "Isolate Devices",
+              "description": "Initiating device isolation...",
+              "actionName": "Isolate",
+              "runLabel": "Isolate Devices"
             },
             "criteriaData": [
               {"criterionType": "param", "value": "{FunctionApp}"},
-              {"criterionType": "param", "value": "{Subscription}"},
-              {"criterionType": "param", "value": "{ResourceGroup}"},
-              {"criterionType": "param", "value": "{FunctionAppName}"},
               {"criterionType": "param", "value": "{TenantId}"},
               {"criterionType": "param", "value": "{DeviceList}"}
             ]
           },
           {
             "id": "unisolate-action",
+            "cellValue": "unused",
             "linkTarget": "ArmAction",
             "linkLabel": "🔓 Unisolate Devices",
             "style": "secondary",
+            "linkIsContextBlade": true,
             "armActionContext": {
               "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Dispatcher/invocations",
               "headers": [],
@@ -185,22 +190,25 @@
                 {"key": "comment", "value": "Unisolated via Workbook"}
               ],
               "body": null,
-              "httpMethod": "POST"
+              "httpMethod": "POST",
+              "title": "Unisolate Devices",
+              "description": "Removing device isolation...",
+              "actionName": "Unisolate",
+              "runLabel": "Unisolate Devices"
             },
             "criteriaData": [
               {"criterionType": "param", "value": "{FunctionApp}"},
-              {"criterionType": "param", "value": "{Subscription}"},
-              {"criterionType": "param", "value": "{ResourceGroup}"},
-              {"criterionType": "param", "value": "{FunctionAppName}"},
               {"criterionType": "param", "value": "{TenantId}"},
               {"criterionType": "param", "value": "{DeviceList}"}
             ]
           },
           {
             "id": "scan-action",
+            "cellValue": "unused",
             "linkTarget": "ArmAction",
             "linkLabel": "🔍 Run Antivirus Scan",
             "style": "secondary",
+            "linkIsContextBlade": true,
             "armActionContext": {
               "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Dispatcher/invocations",
               "headers": [],
@@ -213,13 +221,14 @@
                 {"key": "comment", "value": "Scan initiated via Workbook"}
               ],
               "body": null,
-              "httpMethod": "POST"
+              "httpMethod": "POST",
+              "title": "Run Antivirus Scan",
+              "description": "Initiating antivirus scan...",
+              "actionName": "Scan",
+              "runLabel": "Run Scan"
             },
             "criteriaData": [
               {"criterionType": "param", "value": "{FunctionApp}"},
-              {"criterionType": "param", "value": "{Subscription}"},
-              {"criterionType": "param", "value": "{ResourceGroup}"},
-              {"criterionType": "param", "value": "{FunctionAppName}"},
               {"criterionType": "param", "value": "{TenantId}"},
               {"criterionType": "param", "value": "{DeviceList}"}
             ]
