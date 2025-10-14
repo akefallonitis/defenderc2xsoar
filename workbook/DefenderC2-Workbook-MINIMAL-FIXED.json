@@ -42,6 +42,9 @@
             "query": "Resources | where id == '{FunctionApp}' | project value = subscriptionId",
             "crossComponentResources": ["value::all"],
             "isHiddenWhenLocked": true,
+            "timeContext": {
+              "durationMs": 86400000
+            },
             "queryType": 1,
             "resourceType": "microsoft.resourcegraph/resources",
             "criteriaData": [
@@ -58,6 +61,9 @@
             "query": "Resources | where id == '{FunctionApp}' | project value = resourceGroup",
             "crossComponentResources": ["value::all"],
             "isHiddenWhenLocked": true,
+            "timeContext": {
+              "durationMs": 86400000
+            },
             "queryType": 1,
             "resourceType": "microsoft.resourcegraph/resources",
             "criteriaData": [
@@ -74,6 +80,9 @@
             "query": "Resources | where id == '{FunctionApp}' | project value = name",
             "crossComponentResources": ["value::all"],
             "isHiddenWhenLocked": true,
+            "timeContext": {
+              "durationMs": 86400000
+            },
             "queryType": 1,
             "resourceType": "microsoft.resourcegraph/resources",
             "criteriaData": [
@@ -88,12 +97,16 @@
             "type": 2,
             "isRequired": true,
             "isGlobal": true,
-            "query": "ResourceContainers | where type == 'microsoft.resources/subscriptions' | project tenantId | distinct tenantId | project value = tenantId, label = tenantId",
+            "multiSelect": false,
+            "query": "ResourceContainers | where type == 'microsoft.resources/subscriptions' | project tenantId | distinct tenantId | project value = tenantId, label = strcat('🏢 Tenant: ', tenantId) | order by label asc",
             "crossComponentResources": ["value::all"],
             "typeSettings": {
               "additionalResourceOptions": ["value::1"],
-              "selectAllValue": "*",
+              "selectFirstItem": true,
               "showDefault": false
+            },
+            "timeContext": {
+              "durationMs": 86400000
             },
             "queryType": 1,
             "resourceType": "microsoft.resourcegraph/resources",
@@ -112,9 +125,11 @@
             "delimiter": ",",
             "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.devices[*]\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"value\"},{\"path\":\"$.computerDnsName\",\"columnid\":\"label\"}]}}],\"urlParams\":[{\"key\":\"action\",\"value\":\"Get Devices\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"}]}",
             "typeSettings": {
-              "additionalResourceOptions": ["value::all"],
-              "selectAllValue": "*",
+              "additionalResourceOptions": [],
               "showDefault": false
+            },
+            "timeContext": {
+              "durationMs": 86400000
             },
             "queryType": 10,
             "criteriaData": [
