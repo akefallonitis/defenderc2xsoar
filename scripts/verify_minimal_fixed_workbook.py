@@ -93,11 +93,16 @@ def verify_workbook():
         else:
             print(f"    ✓ Params: {len(params_list)} parameters")
         
-        # Check criteriaData is simplified
+        # Check criteriaData includes all required parameters
+        # Note: Derived parameters ({Subscription}, {ResourceGroup}, {FunctionAppName}) 
+        # MUST be included in criteriaData even though they're auto-discovered.
+        # This tells Azure Workbooks to wait for them to resolve before building the ARM URL.
         criteria_values = [c['value'] for c in action['criteriaData']]
-        if '{Subscription}' in criteria_values or '{ResourceGroup}' in criteria_values or '{FunctionAppName}' in criteria_values:
-            errors.append(f"{label}: criteriaData should not include derived parameters")
-            print(f"    ✗ CriteriaData includes unnecessary parameters: {criteria_values}")
+        required_in_criteria = ['{FunctionApp}', '{Subscription}', '{ResourceGroup}', '{FunctionAppName}']
+        missing_required = [p for p in required_in_criteria if p not in criteria_values]
+        if missing_required:
+            errors.append(f"{label}: criteriaData missing required parameters: {missing_required}")
+            print(f"    ✗ CriteriaData missing: {missing_required}")
         else:
             print(f"    ✓ CriteriaData: {', '.join(criteria_values)}")
     
@@ -144,7 +149,7 @@ def verify_workbook():
         print("\nAll checks completed successfully!")
         print("\nThe workbook is correctly configured with:")
         print("  • ARM action paths using {FunctionApp} directly")
-        print("  • Simplified criteriaData (no derived parameters)")
+        print("  • Complete criteriaData including derived parameters")
         print("  • CustomEndpoint queries with urlParams (not body)")
         print("  • All parameters marked as global")
     
