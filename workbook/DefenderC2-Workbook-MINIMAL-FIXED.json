@@ -243,6 +243,18 @@
               {
                 "criterionType": "param",
                 "value": "{DeviceList}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{Subscription}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{ResourceGroup}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{FunctionAppName}"
               }
             ]
           },
@@ -297,6 +309,18 @@
               {
                 "criterionType": "param",
                 "value": "{DeviceList}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{Subscription}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{ResourceGroup}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{FunctionAppName}"
               }
             ]
           },
@@ -355,6 +379,18 @@
               {
                 "criterionType": "param",
                 "value": "{DeviceList}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{Subscription}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{ResourceGroup}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{FunctionAppName}"
               }
             ]
           }

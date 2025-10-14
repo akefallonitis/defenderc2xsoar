@@ -93,19 +93,20 @@ def verify_workbook():
         else:
             print(f"    ✓ Params: {len(params_list)} parameters")
         
-        # Check criteriaData includes only directly used parameters
-        # Note: According to MINIMAL_FIXED_WORKBOOK_FIX.md, criteriaData should ONLY
-        # include parameters directly referenced in the ARM action, not derived parameters.
-        # This prevents parameter resolver confusion.
+        # Check criteriaData includes ALL required parameters (including derived ones)
+        # Note: According to PR #86, criteriaData must include ALL parameters that the action
+        # depends on, including derived parameters (Subscription, ResourceGroup, FunctionAppName).
+        # This ensures Azure Workbook waits for all parameters to be resolved before executing.
         criteria_values = [c['value'] for c in action['criteriaData']]
-        expected_criteria = {'{FunctionApp}', '{TenantId}', '{DeviceList}'}
+        expected_criteria = {'{FunctionApp}', '{TenantId}', '{DeviceList}', 
+                           '{Subscription}', '{ResourceGroup}', '{FunctionAppName}'}
         actual_criteria = set(criteria_values)
         
         if actual_criteria != expected_criteria:
-            errors.append(f"{label}: criteriaData should only include FunctionApp, TenantId, DeviceList. Got: {criteria_values}")
+            errors.append(f"{label}: criteriaData must include all 6 parameters (FunctionApp, TenantId, DeviceList, Subscription, ResourceGroup, FunctionAppName). Got: {criteria_values}")
             print(f"    ✗ CriteriaData incorrect: {', '.join(criteria_values)}")
         else:
-            print(f"    ✓ CriteriaData: {', '.join(criteria_values)}")
+            print(f"    ✓ CriteriaData: {', '.join(sorted(criteria_values))}")
     
     # Verify device grid display
     print("\n✅ Device Grid Display Check:")
@@ -150,7 +151,7 @@ def verify_workbook():
         print("\nAll checks completed successfully!")
         print("\nThe workbook is correctly configured with:")
         print("  • ARM action paths using {FunctionApp} directly")
-        print("  • Simplified criteriaData (only directly used parameters)")
+        print("  • Complete criteriaData including all derived parameters")
         print("  • CustomEndpoint queries with urlParams (not body)")
         print("  • All parameters marked as global")
     
