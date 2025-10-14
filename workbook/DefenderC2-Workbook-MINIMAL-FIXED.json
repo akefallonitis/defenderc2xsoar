@@ -274,7 +274,7 @@
         "version": "KqlItem/1.0",
         "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.devices[*]\",\"columns\":[{\"path\":\"$.computerDnsName\",\"columnid\":\"Device Name\"},{\"path\":\"$.riskScore\",\"columnid\":\"Risk Score\"},{\"path\":\"$.healthStatus\",\"columnid\":\"Health Status\"},{\"path\":\"$.lastIpAddress\",\"columnid\":\"IP Address\"},{\"path\":\"$.id\",\"columnid\":\"Device ID\"}]}}],\"urlParams\":[{\"key\":\"action\",\"value\":\"Get Devices\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"}]}",
         "size": 0,
-        "title": "Device List",
+        "title": "💻 Device List - Live Data",
         "showExportToExcel": true,
         "queryType": 10,
         "visualization": "table",
@@ -284,11 +284,7 @@
           {"criterionType": "param", "value": "{TenantId}"}
         ]
       },
-      "conditionalVisibility": {
-        "parameterName": "TenantId",
-        "comparison": "isNotEqualTo",
-        "value": ""
-      }
+      "name": "device-grid-display"
     }
   ],
   "fallbackResourceIds": ["Azure Monitor"],
