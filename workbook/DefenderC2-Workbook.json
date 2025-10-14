@@ -186,10 +186,10 @@
             }
           },
           {
-            "id": "devicelist-parameter",
+            "id": "devicelist-parameter-global",
             "version": "KqlParameterItem/1.0",
             "name": "DeviceList",
-            "label": "Available Devices (Auto-populated)",
+            "label": "Available Devices",
             "type": 2,
             "isRequired": false,
             "multiSelect": true,
@@ -198,7 +198,6 @@
             "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.devices[*]\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"value\"},{\"path\":\"$.computerDnsName\",\"columnid\":\"label\"}]}}],\"urlParams\":[{\"key\":\"action\",\"value\":\"Get Devices\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"}]}",
             "criteriaData": [
               {
-                "condition": "if (FunctionApp is not empty && FunctionAppName is not empty && TenantId is not empty), alwaysShow",
                 "criterionType": "param",
                 "value": "{FunctionApp}"
               },
@@ -219,8 +218,9 @@
               "durationMs": 86400000
             },
             "queryType": 10,
-            "description": "✅ Auto-populated from your Defender environment using autodiscovered tenant ID and function app. Refresh automatically when Function App or Tenant ID changes.",
-            "value": null
+            "description": "✅ Auto-populated from your Defender environment. Select devices for actions across all tabs.",
+            "value": null,
+            "isGlobal": true
           },
           {
             "id": "b2f8g6b-d9fg-7975-c2g3-5h5h8g0e6f4d",
@@ -284,7 +284,8 @@
             },
             "value": {
               "durationMs": 2592000000
-            }
+            },
+            "isGlobal": true
           }
         ],
         "style": "pills",
@@ -400,8 +401,7 @@
                   "defaultValue": "Full",
                   "timeContext": {
                     "durationMs": 86400000
-                  },
-                  "isGlobal": true
+                  }
                 }
               ],
               "style": "pills",
@@ -475,6 +475,18 @@
                     {
                       "criterionType": "param",
                       "value": "{IsolationType}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{Subscription}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{ResourceGroup}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionAppName}"
                     }
                   ]
                 }
@@ -582,6 +594,18 @@
                     {
                       "criterionType": "param",
                       "value": "{DeviceList}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{Subscription}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{ResourceGroup}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionAppName}"
                     }
                   ]
                 }
@@ -664,6 +688,18 @@
                     {
                       "criterionType": "param",
                       "value": "{DeviceList}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{Subscription}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{ResourceGroup}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionAppName}"
                     }
                   ]
                 }
@@ -698,8 +734,7 @@
                   "defaultValue": "Full",
                   "timeContext": {
                     "durationMs": 86400000
-                  },
-                  "isGlobal": true
+                  }
                 }
               ],
               "style": "pills",
@@ -773,6 +808,18 @@
                     {
                       "criterionType": "param",
                       "value": "{ScanType}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{Subscription}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{ResourceGroup}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionAppName}"
                     }
                   ]
                 }
@@ -1013,6 +1060,18 @@
                     {
                       "criterionType": "param",
                       "value": "{FileDescription}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{Subscription}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{ResourceGroup}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionAppName}"
                     }
                   ]
                 }
@@ -1165,6 +1224,18 @@
                     {
                       "criterionType": "param",
                       "value": "{IpSeverity}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{Subscription}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{ResourceGroup}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionAppName}"
                     }
                   ]
                 }
@@ -1295,6 +1366,18 @@
                     {
                       "criterionType": "param",
                       "value": "{UrlIndicatorAction}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{Subscription}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{ResourceGroup}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionAppName}"
                     }
                   ]
                 }
@@ -1627,6 +1710,18 @@
                     {
                       "criterionType": "param",
                       "value": "{CancelActionId}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{Subscription}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{ResourceGroup}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionAppName}"
                     }
                   ]
                 }
@@ -2092,6 +2187,18 @@
                     {
                       "criterionType": "param",
                       "value": "{UpdateStatus}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{Subscription}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{ResourceGroup}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionAppName}"
                     }
                   ]
                 }
@@ -2212,6 +2319,18 @@
                     {
                       "criterionType": "param",
                       "value": "{IncidentComment}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{Subscription}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{ResourceGroup}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionAppName}"
                     }
                   ]
                 }
@@ -2411,6 +2530,18 @@
                     {
                       "criterionType": "param",
                       "value": "{CreateRuleSeverity}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{Subscription}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{ResourceGroup}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionAppName}"
                     }
                   ]
                 }
@@ -2532,6 +2663,18 @@
                     {
                       "criterionType": "param",
                       "value": "{UpdateRuleQuery}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{Subscription}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{ResourceGroup}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionAppName}"
                     }
                   ]
                 }
@@ -2628,6 +2771,18 @@
                     {
                       "criterionType": "param",
                       "value": "{DeleteRuleId}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{Subscription}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{ResourceGroup}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionAppName}"
                     }
                   ]
                 }
@@ -3174,6 +3329,18 @@
                     {
                       "criterionType": "param",
                       "value": "{LibraryContentUpload}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{Subscription}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{ResourceGroup}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionAppName}"
                     }
                   ]
                 }
@@ -3284,6 +3451,18 @@
                     {
                       "criterionType": "param",
                       "value": "{LibraryDeployFileName}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{Subscription}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{ResourceGroup}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionAppName}"
                     }
                   ]
                 }
