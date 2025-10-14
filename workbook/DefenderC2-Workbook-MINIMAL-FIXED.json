@@ -110,7 +110,7 @@
             "multiSelect": true,
             "quote": "'",
             "delimiter": ",",
-            "query": "{\"version\":\"CustomEndpoint/1.0\",\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"headers\":[{\"key\":\"Content-Type\",\"value\":\"application/json\"}],\"body\":\"{\\\"action\\\":\\\"Get Devices\\\",\\\"tenantId\\\":\\\"{TenantId}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.devices[*]\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"value\"},{\"path\":\"$.computerDnsName\",\"columnid\":\"label\"}]}}]}",
+            "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.devices[*]\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"value\"},{\"path\":\"$.computerDnsName\",\"columnid\":\"label\"}]}}],\"urlParams\":[{\"key\":\"action\",\"value\":\"Get Devices\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"}]}",
             "typeSettings": {
               "additionalResourceOptions": ["value::all"],
               "selectAllValue": "*",
@@ -148,14 +148,17 @@
             "style": "primary",
             "armActionContext": {
               "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Dispatcher/invocations",
+              "headers": [],
               "params": [
-                {"key": "api-version", "value": "2022-03-01"}
+                {"key": "api-version", "value": "2022-03-01"},
+                {"key": "action", "value": "Isolate Device"},
+                {"key": "tenantId", "value": "{TenantId}"},
+                {"key": "deviceIds", "value": "{DeviceList}"},
+                {"key": "isolationType", "value": "Full"},
+                {"key": "comment", "value": "Isolated via Workbook"}
               ],
-              "body": "{\"action\":\"Isolate Device\",\"tenantId\":\"{TenantId}\",\"deviceIds\":\"{DeviceList}\",\"isolationType\":\"Full\",\"comment\":\"Isolated via Workbook\"}",
-              "httpMethod": "POST",
-              "headers": [
-                {"key": "Content-Type", "value": "application/json"}
-              ]
+              "body": null,
+              "httpMethod": "POST"
             },
             "criteriaData": [
               {"criterionType": "param", "value": "{FunctionApp}"},
@@ -173,14 +176,16 @@
             "style": "secondary",
             "armActionContext": {
               "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Dispatcher/invocations",
+              "headers": [],
               "params": [
-                {"key": "api-version", "value": "2022-03-01"}
+                {"key": "api-version", "value": "2022-03-01"},
+                {"key": "action", "value": "Unisolate Device"},
+                {"key": "tenantId", "value": "{TenantId}"},
+                {"key": "deviceIds", "value": "{DeviceList}"},
+                {"key": "comment", "value": "Unisolated via Workbook"}
               ],
-              "body": "{\"action\":\"Unisolate Device\",\"tenantId\":\"{TenantId}\",\"deviceIds\":\"{DeviceList}\",\"comment\":\"Unisolated via Workbook\"}",
-              "httpMethod": "POST",
-              "headers": [
-                {"key": "Content-Type", "value": "application/json"}
-              ]
+              "body": null,
+              "httpMethod": "POST"
             },
             "criteriaData": [
               {"criterionType": "param", "value": "{FunctionApp}"},
@@ -198,14 +203,17 @@
             "style": "secondary",
             "armActionContext": {
               "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Dispatcher/invocations",
+              "headers": [],
               "params": [
-                {"key": "api-version", "value": "2022-03-01"}
+                {"key": "api-version", "value": "2022-03-01"},
+                {"key": "action", "value": "Run Antivirus Scan"},
+                {"key": "tenantId", "value": "{TenantId}"},
+                {"key": "deviceIds", "value": "{DeviceList}"},
+                {"key": "scanType", "value": "Quick"},
+                {"key": "comment", "value": "Scan initiated via Workbook"}
               ],
-              "body": "{\"action\":\"Run Antivirus Scan\",\"tenantId\":\"{TenantId}\",\"deviceIds\":\"{DeviceList}\",\"scanType\":\"Quick\",\"comment\":\"Scan initiated via Workbook\"}",
-              "httpMethod": "POST",
-              "headers": [
-                {"key": "Content-Type", "value": "application/json"}
-              ]
+              "body": null,
+              "httpMethod": "POST"
             },
             "criteriaData": [
               {"criterionType": "param", "value": "{FunctionApp}"},
@@ -229,7 +237,7 @@
       "type": 3,
       "content": {
         "version": "KqlItem/1.0",
-        "query": "{\"version\":\"CustomEndpoint/1.0\",\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"headers\":[{\"key\":\"Content-Type\",\"value\":\"application/json\"}],\"body\":\"{\\\"action\\\":\\\"Get Devices\\\",\\\"tenantId\\\":\\\"{TenantId}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.devices[*]\",\"columns\":[{\"path\":\"$.computerDnsName\",\"columnid\":\"Device Name\"},{\"path\":\"$.riskScore\",\"columnid\":\"Risk Score\"},{\"path\":\"$.healthStatus\",\"columnid\":\"Health Status\"},{\"path\":\"$.lastIpAddress\",\"columnid\":\"IP Address\"},{\"path\":\"$.id\",\"columnid\":\"Device ID\"}]}}]}",
+        "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.devices[*]\",\"columns\":[{\"path\":\"$.computerDnsName\",\"columnid\":\"Device Name\"},{\"path\":\"$.riskScore\",\"columnid\":\"Risk Score\"},{\"path\":\"$.healthStatus\",\"columnid\":\"Health Status\"},{\"path\":\"$.lastIpAddress\",\"columnid\":\"IP Address\"},{\"path\":\"$.id\",\"columnid\":\"Device ID\"}]}}],\"urlParams\":[{\"key\":\"action\",\"value\":\"Get Devices\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"}]}",
         "size": 0,
         "title": "Device List",
         "queryType": 12,
