@@ -36,12 +36,12 @@
             "id": "subscription-id",
             "version": "KqlParameterItem/1.0",
             "name": "Subscription",
+            "label": "📋 Subscription ID",
             "type": 1,
             "isRequired": true,
             "isGlobal": true,
             "query": "Resources | where id == '{FunctionApp}' | project value = subscriptionId",
             "crossComponentResources": ["value::all"],
-            "isHiddenWhenLocked": true,
             "timeContext": {
               "durationMs": 86400000
             },
@@ -55,12 +55,12 @@
             "id": "resource-group",
             "version": "KqlParameterItem/1.0",
             "name": "ResourceGroup",
+            "label": "📦 Resource Group",
             "type": 1,
             "isRequired": true,
             "isGlobal": true,
             "query": "Resources | where id == '{FunctionApp}' | project value = resourceGroup",
             "crossComponentResources": ["value::all"],
-            "isHiddenWhenLocked": true,
             "timeContext": {
               "durationMs": 86400000
             },
@@ -74,12 +74,12 @@
             "id": "function-name",
             "version": "KqlParameterItem/1.0",
             "name": "FunctionAppName",
+            "label": "⚡ Function App Name",
             "type": 1,
             "isRequired": true,
             "isGlobal": true,
             "query": "Resources | where id == '{FunctionApp}' | project value = name",
             "crossComponentResources": ["value::all"],
-            "isHiddenWhenLocked": true,
             "timeContext": {
               "durationMs": 86400000
             },
@@ -116,7 +116,7 @@
             "id": "device-list",
             "version": "KqlParameterItem/1.0",
             "name": "DeviceList",
-            "label": "Select Devices",
+            "label": "💻 Select Devices",
             "type": 2,
             "isRequired": false,
             "isGlobal": true,
@@ -132,6 +132,7 @@
               "durationMs": 86400000
             },
             "queryType": 10,
+            "description": "✅ Auto-populated from Defender XDR. Depends on Function App Name and Tenant ID.",
             "criteriaData": [
               {"criterionType": "param", "value": "{FunctionApp}"},
               {"criterionType": "param", "value": "{FunctionAppName}"},
