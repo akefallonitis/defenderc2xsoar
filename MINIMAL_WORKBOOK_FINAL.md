@@ -6,6 +6,27 @@
 https://raw.githubusercontent.com/akefallonitis/defenderc2xsoar/main/workbook/DefenderC2-Workbook-MINIMAL-FIXED.json
 ```
 
+## 🆕 Latest Fix (October 14, 2025)
+
+**Issue**: After commit 622c425, minimal workbook still not functioning properly  
+**Root Cause**: ARM actions had TOO MANY parameters in criteriaData (6 instead of 3)  
+**Fix Applied**: Simplified criteriaData to include only directly referenced parameters
+
+### CriteriaData Fix Details
+ARM actions now include **only 3 parameters** in criteriaData:
+- ✅ `{FunctionApp}` - Used in ARM action path
+- ✅ `{TenantId}` - Used in params array  
+- ✅ `{DeviceList}` - Used in params array
+
+❌ Removed unnecessary derived parameters:
+- `{Subscription}` - Auto-discovered but not directly used
+- `{ResourceGroup}` - Auto-discovered but not directly used
+- `{FunctionAppName}` - Auto-discovered but not directly used
+
+**Why This Matters**: Including unused parameters in criteriaData confuses Azure Workbook's parameter resolver, causing ARM actions to fail with `<unset>` values.
+
+---
+
 ## 🔧 All Fixes Applied
 
 ### **1. Auto-Discovery Parameters - Fixed Query Syntax**
@@ -198,7 +219,7 @@ Once the minimal workbook works, you can expand it:
 3. **CustomEndpoint queries** use **urlParams**, not body JSON
 4. **QueryType matters**: Type 10 for CustomEndpoints, Type 1 for Resource Graph
 5. **Global parameters** (`isGlobal: true`) are required for cross-component access
-6. **CriteriaData** must include ALL parameters referenced in the component
+6. **CriteriaData** must include ONLY parameters **directly referenced** in the component (not derived parameters)
 
 ---
 
@@ -217,5 +238,5 @@ If issues persist:
 ---
 
 **Last Updated**: October 14, 2025  
-**Commit**: `233afb8`  
+**Latest Commit**: `43fa6a0` (criteriaData simplification fix)  
 **Status**: ✅ Ready for deployment
