@@ -93,24 +93,23 @@
             "id": "tenant-id",
             "version": "KqlParameterItem/1.0",
             "name": "TenantId",
-            "label": "Defender XDR Tenant",
+            "label": "🏢 Defender XDR Tenant",
             "type": 2,
             "isRequired": true,
             "isGlobal": true,
             "multiSelect": false,
-            "query": "ResourceContainers | where type == 'microsoft.resources/subscriptions' | project tenantId | distinct tenantId | project value = tenantId, label = strcat('🏢 Tenant: ', tenantId) | order by label asc",
+            "query": "ResourceContainers | where type == 'microsoft.resources/subscriptions' | project tenantId | distinct tenantId | project value = tenantId, label = strcat('Tenant: ', tenantId) | order by label asc",
             "crossComponentResources": ["value::all"],
             "typeSettings": {
-              "additionalResourceOptions": ["value::1"],
+              "additionalResourceOptions": [],
               "selectFirstItem": true,
               "showDefault": false
             },
             "timeContext": {
-              "durationMs": 86400000
+              "durationMs": 0
             },
             "queryType": 1,
-            "resourceType": "microsoft.resourcegraph/resources",
-            "defaultValue": "value::1"
+            "resourceType": "microsoft.resourcegraph/resources"
           },
           {
             "id": "device-list",
@@ -129,7 +128,7 @@
               "showDefault": false
             },
             "timeContext": {
-              "durationMs": 86400000
+              "durationMs": 0
             },
             "queryType": 10,
             "description": "✅ Auto-populated from Defender XDR. Depends on Function App Name and Tenant ID.",
