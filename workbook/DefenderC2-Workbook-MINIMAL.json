@@ -1,0 +1,222 @@
+{
+  "version": "Notebook/1.0",
+  "items": [
+    {
+      "type": 1,
+      "content": {
+        "json": "# 🖥️ DefenderC2 Command & Control Console\n\n> **Simple, working version - No infinite loops!**\n\n## Quick Start\n\n1. Select your **DefenderC2 Function App**\n2. Select your **Tenant ID**\n3. Select **Devices** from the dropdown\n4. Use the action buttons below\n\n---"
+      },
+      "name": "header"
+    },
+    {
+      "type": 9,
+      "content": {
+        "version": "KqlParameterItem/1.0",
+        "crossComponentResources": ["value::all"],
+        "parameters": [
+          {
+            "id": "func-app",
+            "version": "KqlParameterItem/1.0",
+            "name": "FunctionApp",
+            "label": "DefenderC2 Function App",
+            "type": 5,
+            "isRequired": true,
+            "query": "Resources | where type =~ 'microsoft.web/sites' | where kind contains 'functionapp' | project id, name, resourceGroup, subscriptionId | order by name asc",
+            "crossComponentResources": ["value::all"],
+            "typeSettings": {
+              "additionalResourceOptions": [],
+              "showDefault": false
+            },
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources"
+          },
+          {
+            "id": "subscription",
+            "version": "KqlParameterItem/1.0",
+            "name": "Subscription",
+            "type": 1,
+            "query": "Resources | where id == '{FunctionApp}' | project value = subscriptionId",
+            "crossComponentResources": ["value::all"],
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources",
+            "criteriaData": [{"criterionType": "param", "value": "{FunctionApp}"}]
+          },
+          {
+            "id": "resource-group",
+            "version": "KqlParameterItem/1.0",
+            "name": "ResourceGroup",
+            "type": 1,
+            "query": "Resources | where id == '{FunctionApp}' | project value = resourceGroup",
+            "crossComponentResources": ["value::all"],
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources",
+            "criteriaData": [{"criterionType": "param", "value": "{FunctionApp}"}]
+          },
+          {
+            "id": "function-name",
+            "version": "KqlParameterItem/1.0",
+            "name": "FunctionAppName",
+            "type": 1,
+            "query": "Resources | where id == '{FunctionApp}' | project value = name",
+            "crossComponentResources": ["value::all"],
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources",
+            "criteriaData": [{"criterionType": "param", "value": "{FunctionApp}"}]
+          },
+          {
+            "id": "tenant-id",
+            "version": "KqlParameterItem/1.0",
+            "name": "TenantId",
+            "label": "Defender XDR Tenant",
+            "type": 2,
+            "isRequired": true,
+            "query": "ResourceContainers | where type == 'microsoft.resources/subscriptions' | project tenantId | distinct tenantId | project value = tenantId, label = tenantId",
+            "crossComponentResources": ["value::all"],
+            "typeSettings": {
+              "additionalResourceOptions": ["value::1"],
+              "selectFirstItem": true
+            },
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources",
+            "defaultValue": "value::1"
+          },
+          {
+            "id": "device-list",
+            "version": "KqlParameterItem/1.0",
+            "name": "DeviceList",
+            "label": "Select Devices",
+            "type": 2,
+            "multiSelect": true,
+            "quote": "'",
+            "delimiter": ",",
+            "query": "{\"version\":\"CustomEndpoint/1.0\",\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.devices[*]\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"value\"},{\"path\":\"$.computerDnsName\",\"columnid\":\"label\"}]}}],\"urlParams\":[{\"key\":\"action\",\"value\":\"Get Devices\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"}]}",
+            "queryType": 10,
+            "criteriaData": [
+              {"criterionType": "param", "value": "{FunctionApp}"},
+              {"criterionType": "param", "value": "{FunctionAppName}"},
+              {"criterionType": "param", "value": "{TenantId}"}
+            ]
+          }
+        ],
+        "style": "pills",
+        "queryType": 1,
+        "resourceType": "microsoft.resourcegraph/resources"
+      },
+      "name": "parameters"
+    },
+    {
+      "type": 11,
+      "content": {
+        "version": "LinkItem/1.0",
+        "style": "list",
+        "links": [
+          {
+            "id": "isolate-action",
+            "linkTarget": "ArmAction",
+            "linkLabel": "🚨 Isolate Devices",
+            "style": "primary",
+            "armActionContext": {
+              "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Dispatcher/invocations",
+              "params": [
+                {"key": "api-version", "value": "2022-03-01"},
+                {"key": "action", "value": "Isolate Device"},
+                {"key": "tenantId", "value": "{TenantId}"},
+                {"key": "deviceIds", "value": "{DeviceList}"},
+                {"key": "isolationType", "value": "Full"},
+                {"key": "comment", "value": "Isolated via Workbook"}
+              ],
+              "httpMethod": "POST"
+            },
+            "criteriaData": [
+              {"criterionType": "param", "value": "{FunctionApp}"},
+              {"criterionType": "param", "value": "{Subscription}"},
+              {"criterionType": "param", "value": "{ResourceGroup}"},
+              {"criterionType": "param", "value": "{FunctionAppName}"},
+              {"criterionType": "param", "value": "{TenantId}"},
+              {"criterionType": "param", "value": "{DeviceList}"}
+            ]
+          },
+          {
+            "id": "unisolate-action",
+            "linkTarget": "ArmAction",
+            "linkLabel": "🔓 Unisolate Devices",
+            "style": "secondary",
+            "armActionContext": {
+              "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Dispatcher/invocations",
+              "params": [
+                {"key": "api-version", "value": "2022-03-01"},
+                {"key": "action", "value": "Unisolate Device"},
+                {"key": "tenantId", "value": "{TenantId}"},
+                {"key": "deviceIds", "value": "{DeviceList}"},
+                {"key": "comment", "value": "Unisolated via Workbook"}
+              ],
+              "httpMethod": "POST"
+            },
+            "criteriaData": [
+              {"criterionType": "param", "value": "{FunctionApp}"},
+              {"criterionType": "param", "value": "{Subscription}"},
+              {"criterionType": "param", "value": "{ResourceGroup}"},
+              {"criterionType": "param", "value": "{FunctionAppName}"},
+              {"criterionType": "param", "value": "{TenantId}"},
+              {"criterionType": "param", "value": "{DeviceList}"}
+            ]
+          },
+          {
+            "id": "scan-action",
+            "linkTarget": "ArmAction",
+            "linkLabel": "🔍 Run Antivirus Scan",
+            "style": "secondary",
+            "armActionContext": {
+              "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Dispatcher/invocations",
+              "params": [
+                {"key": "api-version", "value": "2022-03-01"},
+                {"key": "action", "value": "Run Antivirus Scan"},
+                {"key": "tenantId", "value": "{TenantId}"},
+                {"key": "deviceIds", "value": "{DeviceList}"},
+                {"key": "scanType", "value": "Quick"},
+                {"key": "comment", "value": "Scan via Workbook"}
+              ],
+              "httpMethod": "POST"
+            },
+            "criteriaData": [
+              {"criterionType": "param", "value": "{FunctionApp}"},
+              {"criterionType": "param", "value": "{Subscription}"},
+              {"criterionType": "param", "value": "{ResourceGroup}"},
+              {"criterionType": "param", "value": "{FunctionAppName}"},
+              {"criterionType": "param", "value": "{TenantId}"},
+              {"criterionType": "param", "value": "{DeviceList}"}
+            ]
+          }
+        ]
+      },
+      "name": "actions"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "---\n\n## 💻 Device List\n\nDevices in your Defender environment:"
+      },
+      "name": "device-list-header"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "{\"version\":\"CustomEndpoint/1.0\",\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.devices[*]\",\"columns\":[{\"path\":\"$.computerDnsName\",\"columnid\":\"Device Name\"},{\"path\":\"$.riskScore\",\"columnid\":\"Risk Score\"},{\"path\":\"$.healthStatus\",\"columnid\":\"Health Status\"},{\"path\":\"$.lastIpAddress\",\"columnid\":\"Last IP\"},{\"path\":\"$.id\",\"columnid\":\"Device ID\"}]}}],\"urlParams\":[{\"key\":\"action\",\"value\":\"Get Devices\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"}]}",
+        "size": 0,
+        "title": "Connected Devices",
+        "queryType": 10,
+        "visualization": "table",
+        "criteriaData": [
+          {"criterionType": "param", "value": "{FunctionApp}"},
+          {"criterionType": "param", "value": "{FunctionAppName}"},
+          {"criterionType": "param", "value": "{TenantId}"}
+        ]
+      },
+      "name": "device-grid"
+    }
+  ],
+  "styleSettings": {},
+  "fallbackResourceIds": [],
+  "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
+}
