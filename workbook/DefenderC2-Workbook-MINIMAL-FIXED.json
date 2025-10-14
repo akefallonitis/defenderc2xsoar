@@ -149,11 +149,6 @@
       "type": 1,
       "content": {
         "json": "---\n\n## Device Actions\n\nSelect one or more devices above, then click an action button below."
-      },
-      "conditionalVisibility": {
-        "parameterName": "TenantId",
-        "comparison": "isNotEqualTo",
-        "value": ""
       }
     },
     {
@@ -270,11 +265,6 @@
       "type": 1,
       "content": {
         "json": "---\n\n## Connected Devices\n\nDevices in your selected Defender XDR tenant:"
-      },
-      "conditionalVisibility": {
-        "parameterName": "TenantId",
-        "comparison": "isNotEqualTo",
-        "value": ""
       }
     },
     {
