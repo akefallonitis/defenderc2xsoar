@@ -169,7 +169,10 @@
             "criteriaData": [
               {"criterionType": "param", "value": "{FunctionApp}"},
               {"criterionType": "param", "value": "{TenantId}"},
-              {"criterionType": "param", "value": "{DeviceList}"}
+              {"criterionType": "param", "value": "{DeviceList}"},
+              {"criterionType": "param", "value": "{Subscription}"},
+              {"criterionType": "param", "value": "{ResourceGroup}"},
+              {"criterionType": "param", "value": "{FunctionAppName}"}
             ]
           },
           {
@@ -199,7 +202,10 @@
             "criteriaData": [
               {"criterionType": "param", "value": "{FunctionApp}"},
               {"criterionType": "param", "value": "{TenantId}"},
-              {"criterionType": "param", "value": "{DeviceList}"}
+              {"criterionType": "param", "value": "{DeviceList}"},
+              {"criterionType": "param", "value": "{Subscription}"},
+              {"criterionType": "param", "value": "{ResourceGroup}"},
+              {"criterionType": "param", "value": "{FunctionAppName}"}
             ]
           },
           {
@@ -230,7 +236,10 @@
             "criteriaData": [
               {"criterionType": "param", "value": "{FunctionApp}"},
               {"criterionType": "param", "value": "{TenantId}"},
-              {"criterionType": "param", "value": "{DeviceList}"}
+              {"criterionType": "param", "value": "{DeviceList}"},
+              {"criterionType": "param", "value": "{Subscription}"},
+              {"criterionType": "param", "value": "{ResourceGroup}"},
+              {"criterionType": "param", "value": "{FunctionAppName}"}
             ]
           }
         ]
