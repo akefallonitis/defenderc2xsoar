@@ -40,7 +40,7 @@
             "id": "subscription-id",
             "version": "KqlParameterItem/1.0",
             "name": "Subscription",
-            "label": "\ud83d\udccb Subscription ID",
+            "label": "📋 Subscription ID",
             "type": 1,
             "isRequired": true,
             "isGlobal": true,
@@ -64,7 +64,7 @@
             "id": "resource-group",
             "version": "KqlParameterItem/1.0",
             "name": "ResourceGroup",
-            "label": "\ud83d\udce6 Resource Group",
+            "label": "📦 Resource Group",
             "type": 1,
             "isRequired": true,
             "isGlobal": true,
@@ -88,7 +88,7 @@
             "id": "function-name",
             "version": "KqlParameterItem/1.0",
             "name": "FunctionAppName",
-            "label": "\u26a1 Function App Name",
+            "label": "⚡ Function App Name",
             "type": 1,
             "isRequired": true,
             "isGlobal": true,
@@ -117,7 +117,7 @@
             "isRequired": true,
             "isGlobal": true,
             "multiSelect": false,
-            "query": "ResourceContainers | where type == 'microsoft.resources/subscriptions' | project tenantId | distinct tenantId | project value = tenantId, label = strcat('\ud83c\udfe2 Tenant: ', tenantId) | order by label asc",
+            "query": "ResourceContainers | where type == 'microsoft.resources/subscriptions' | project tenantId | distinct tenantId | project value = tenantId, label = strcat('🏢 Tenant: ', tenantId) | order by label asc",
             "crossComponentResources": [
               "value::all"
             ],
@@ -139,7 +139,7 @@
             "id": "device-list",
             "version": "KqlParameterItem/1.0",
             "name": "DeviceList",
-            "label": "\ud83d\udcbb Select Devices",
+            "label": "💻 Select Devices",
             "type": 2,
             "isRequired": false,
             "isGlobal": true,
@@ -155,7 +155,7 @@
               "durationMs": 86400000
             },
             "queryType": 10,
-            "description": "\u2705 Auto-populated from Defender XDR. Depends on Function App Name and Tenant ID.",
+            "description": "✅ Auto-populated from Defender XDR. Depends on Function App Name and Tenant ID.",
             "criteriaData": [
               {
                 "criterionType": "param",
@@ -192,11 +192,11 @@
             "id": "isolate-action",
             "cellValue": "unused",
             "linkTarget": "ArmAction",
-            "linkLabel": "\ud83d\udd12 Isolate Devices",
+            "linkLabel": "🔒 Isolate Devices",
             "style": "primary",
             "linkIsContextBlade": true,
             "armActionContext": {
-              "path": "{FunctionApp}/functions/DefenderC2Dispatcher/invocations",
+              "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Dispatcher/invocations",
               "headers": [],
               "params": [
                 {
@@ -243,6 +243,18 @@
               {
                 "criterionType": "param",
                 "value": "{DeviceList}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{Subscription}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{ResourceGroup}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{FunctionAppName}"
               }
             ]
           },
@@ -250,11 +262,11 @@
             "id": "unisolate-action",
             "cellValue": "unused",
             "linkTarget": "ArmAction",
-            "linkLabel": "\ud83d\udd13 Unisolate Devices",
+            "linkLabel": "🔓 Unisolate Devices",
             "style": "secondary",
             "linkIsContextBlade": true,
             "armActionContext": {
-              "path": "{FunctionApp}/functions/DefenderC2Dispatcher/invocations",
+              "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Dispatcher/invocations",
               "headers": [],
               "params": [
                 {
@@ -297,6 +309,18 @@
               {
                 "criterionType": "param",
                 "value": "{DeviceList}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{Subscription}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{ResourceGroup}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{FunctionAppName}"
               }
             ]
           },
@@ -304,11 +328,11 @@
             "id": "scan-action",
             "cellValue": "unused",
             "linkTarget": "ArmAction",
-            "linkLabel": "\ud83d\udd0d Run Antivirus Scan",
+            "linkLabel": "🔍 Run Antivirus Scan",
             "style": "secondary",
             "linkIsContextBlade": true,
             "armActionContext": {
-              "path": "{FunctionApp}/functions/DefenderC2Dispatcher/invocations",
+              "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Dispatcher/invocations",
               "headers": [],
               "params": [
                 {
@@ -355,6 +379,18 @@
               {
                 "criterionType": "param",
                 "value": "{DeviceList}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{Subscription}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{ResourceGroup}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{FunctionAppName}"
               }
             ]
           }
@@ -373,7 +409,7 @@
         "version": "KqlItem/1.0",
         "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.devices[*]\",\"columns\":[{\"path\":\"$.computerDnsName\",\"columnid\":\"Device Name\"},{\"path\":\"$.riskScore\",\"columnid\":\"Risk Score\"},{\"path\":\"$.healthStatus\",\"columnid\":\"Health Status\"},{\"path\":\"$.lastIpAddress\",\"columnid\":\"IP Address\"},{\"path\":\"$.id\",\"columnid\":\"Device ID\"}]}}],\"urlParams\":[{\"key\":\"action\",\"value\":\"Get Devices\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"}]}",
         "size": 0,
-        "title": "\ud83d\udcbb Device List - Live Data",
+        "title": "💻 Device List - Live Data",
         "showExportToExcel": true,
         "queryType": 10,
         "visualization": "table",
