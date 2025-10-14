@@ -3284,10 +3284,6 @@
                     {
                       "criterionType": "param",
                       "value": "{LibraryDeployFileName}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{DeviceList}"
                     }
                   ]
                 }
