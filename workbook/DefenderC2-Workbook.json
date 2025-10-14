@@ -386,43 +386,6 @@
               "version": "KqlParameterItem/1.0",
               "parameters": [
                 {
-                  "id": "isolate-deviceids",
-                  "version": "KqlParameterItem/1.0",
-                  "name": "IsolateDeviceIds",
-                  "label": "Device IDs (comma-separated)",
-                  "type": 2,
-                  "isRequired": false,
-                  "description": "Select one or more devices. List is auto-populated from Defender environment.",
-                  "timeContext": {
-                    "durationMs": 86400000
-                  },
-                  "multiSelect": true,
-                  "quote": "'",
-                  "delimiter": ",",
-                  "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.devices[*]\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"value\"},{\"path\":\"$.computerDnsName\",\"columnid\":\"label\"}]}}],\"urlParams\":[{\"key\":\"action\",\"value\":\"Get Devices\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"}]}",
-                  "queryType": 10,
-                  "typeSettings": {
-                    "additionalResourceOptions": [],
-                    "showDefault": false
-                  },
-                  "criteriaData": [
-                    {
-                      "criterionType": "param",
-                      "value": "{FunctionApp}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{FunctionAppName}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{TenantId}"
-                    }
-                  ],
-                  "value": null,
-                  "isGlobal": true
-                },
-                {
                   "id": "isolate-type",
                   "version": "KqlParameterItem/1.0",
                   "name": "IsolationType",
@@ -542,11 +505,6 @@
                 }
               ]
             },
-            "conditionalVisibility": {
-              "parameterName": "IsolateDeviceIds",
-              "comparison": "isNotEqualTo",
-              "value": ""
-            },
             "name": "query - isolate-result"
           },
           {
@@ -560,45 +518,7 @@
             "type": 9,
             "content": {
               "version": "KqlParameterItem/1.0",
-              "parameters": [
-                {
-                  "id": "unisolate-deviceids",
-                  "version": "KqlParameterItem/1.0",
-                  "name": "UnisolateDeviceIds",
-                  "label": "Device IDs (comma-separated)",
-                  "type": 2,
-                  "isRequired": false,
-                  "timeContext": {
-                    "durationMs": 86400000
-                  },
-                  "multiSelect": true,
-                  "quote": "'",
-                  "delimiter": ",",
-                  "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.devices[*]\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"value\"},{\"path\":\"$.computerDnsName\",\"columnid\":\"label\"}]}}],\"urlParams\":[{\"key\":\"action\",\"value\":\"Get Devices\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"}]}",
-                  "queryType": 10,
-                  "typeSettings": {
-                    "additionalResourceOptions": [],
-                    "showDefault": false
-                  },
-                  "description": "Select one or more devices. List is auto-populated from Defender environment.",
-                  "criteriaData": [
-                    {
-                      "criterionType": "param",
-                      "value": "{FunctionApp}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{FunctionAppName}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{TenantId}"
-                    }
-                  ],
-                  "value": null,
-                  "isGlobal": true
-                }
-              ],
+              "parameters": [],
               "style": "pills",
               "queryType": 0,
               "resourceType": "microsoft.operationalinsights/workspaces"
@@ -680,45 +600,7 @@
             "type": 9,
             "content": {
               "version": "KqlParameterItem/1.0",
-              "parameters": [
-                {
-                  "id": "restrict-deviceids",
-                  "version": "KqlParameterItem/1.0",
-                  "name": "RestrictDeviceIds",
-                  "label": "Device IDs (comma-separated)",
-                  "type": 2,
-                  "isRequired": false,
-                  "timeContext": {
-                    "durationMs": 86400000
-                  },
-                  "multiSelect": true,
-                  "quote": "'",
-                  "delimiter": ",",
-                  "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.devices[*]\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"value\"},{\"path\":\"$.computerDnsName\",\"columnid\":\"label\"}]}}],\"urlParams\":[{\"key\":\"action\",\"value\":\"Get Devices\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"}]}",
-                  "queryType": 10,
-                  "typeSettings": {
-                    "additionalResourceOptions": [],
-                    "showDefault": false
-                  },
-                  "description": "Select one or more devices. List is auto-populated from Defender environment.",
-                  "criteriaData": [
-                    {
-                      "criterionType": "param",
-                      "value": "{FunctionApp}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{FunctionAppName}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{TenantId}"
-                    }
-                  ],
-                  "value": null,
-                  "isGlobal": true
-                }
-              ],
+              "parameters": [],
               "style": "pills",
               "queryType": 0,
               "resourceType": "microsoft.operationalinsights/workspaces"
@@ -801,43 +683,6 @@
             "content": {
               "version": "KqlParameterItem/1.0",
               "parameters": [
-                {
-                  "id": "scan-deviceids",
-                  "version": "KqlParameterItem/1.0",
-                  "name": "ScanDeviceIds",
-                  "label": "Device IDs (comma-separated)",
-                  "type": 2,
-                  "isRequired": false,
-                  "timeContext": {
-                    "durationMs": 86400000
-                  },
-                  "multiSelect": true,
-                  "quote": "'",
-                  "delimiter": ",",
-                  "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.devices[*]\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"value\"},{\"path\":\"$.computerDnsName\",\"columnid\":\"label\"}]}}],\"urlParams\":[{\"key\":\"action\",\"value\":\"Get Devices\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"}]}",
-                  "queryType": 10,
-                  "typeSettings": {
-                    "additionalResourceOptions": [],
-                    "showDefault": false
-                  },
-                  "description": "Select one or more devices. List is auto-populated from Defender environment.",
-                  "criteriaData": [
-                    {
-                      "criterionType": "param",
-                      "value": "{FunctionApp}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{FunctionAppName}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{TenantId}"
-                    }
-                  ],
-                  "value": null,
-                  "isGlobal": true
-                },
                 {
                   "id": "scan-type",
                   "version": "KqlParameterItem/1.0",
@@ -3439,6 +3284,10 @@
                     {
                       "criterionType": "param",
                       "value": "{LibraryDeployFileName}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{DeviceList}"
                     }
                   ]
                 }
