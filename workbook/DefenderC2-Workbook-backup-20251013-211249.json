@@ -4,7 +4,7 @@
     {
       "type": 1,
       "content": {
-        "json": "<style>\n/* DefenderC2 Retro Terminal Theme - Matrix/Green Phosphor CRT Style */\n.workbook-content {\n    background-color: #000000 !important;\n    font-family: 'Courier New', 'Consolas', monospace !important;\n    color: #00ff00 !important;\n}\n\n/* Headers and titles */\n.workbook-content h1, \n.workbook-content h2, \n.workbook-content h3 {\n    color: #00ff00 !important;\n    text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;\n    border-bottom: 2px solid #00ff00 !important;\n    font-family: 'Courier New', monospace !important;\n}\n\n/* Parameter panels and inputs */\n.workbook-content .parameter-container {\n    background-color: #001100 !important;\n    border: 1px solid #00ff00 !important;\n    padding: 10px !important;\n}\n\n.workbook-content input, \n.workbook-content select, \n.workbook-content textarea {\n    background-color: #000000 !important;\n    color: #00ff00 !important;\n    border: 1px solid #00ff00 !important;\n    font-family: 'Courier New', monospace !important;\n}\n\n/* Tables */\n.workbook-content table {\n    background-color: #000000 !important;\n    border: 1px solid #00ff00 !important;\n}\n\n.workbook-content th {\n    background-color: #001a00 !important;\n    color: #00ff00 !important;\n    border: 1px solid #00ff00 !important;\n    text-shadow: 0 0 5px #00ff00;\n}\n\n.workbook-content td {\n    background-color: #000000 !important;\n    color: #00ff00 !important;\n    border: 1px solid #003300 !important;\n}\n\n.workbook-content tr:hover td {\n    background-color: #001100 !important;\n}\n\n/* Buttons and links */\n.workbook-content button, \n.workbook-content .link-item {\n    background-color: #001100 !important;\n    color: #00ff00 !important;\n    border: 2px solid #00ff00 !important;\n    text-shadow: 0 0 5px #00ff00;\n    font-family: 'Courier New', monospace !important;\n    padding: 8px 16px !important;\n    transition: all 0.2s !important;\n}\n\n.workbook-content button:hover, \n.workbook-content .link-item:hover {\n    background-color: #00ff00 !important;\n    color: #000000 !important;\n    box-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;\n}\n\n/* Tabs */\n.workbook-content .tab-item {\n    background-color: #000000 !important;\n    color: #00ff00 !important;\n    border: 1px solid #00ff00 !important;\n}\n\n.workbook-content .tab-item.active {\n    background-color: #001a00 !important;\n    box-shadow: 0 0 10px #00ff00;\n}\n\n/* Code blocks and console */\n.workbook-content pre, \n.workbook-content code {\n    background-color: #000000 !important;\n    color: #00ff00 !important;\n    border: 1px solid #00ff00 !important;\n    font-family: 'Courier New', monospace !important;\n}\n\n/* Interactive console specific styling */\n.workbook-content .console-output {\n    background-color: #000000 !important;\n    color: #00ff00 !important;\n    border: 2px solid #00ff00 !important;\n    padding: 10px !important;\n    font-family: 'Courier New', monospace !important;\n    min-height: 400px !important;\n    box-shadow: inset 0 0 20px #001100;\n}\n\n/* CRT scanline effect */\n.workbook-content::before {\n    content: \" \";\n    display: block;\n    position: fixed;\n    top: 0;\n    left: 0;\n    bottom: 0;\n    right: 0;\n    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));\n    z-index: 2;\n    background-size: 100% 2px, 3px 100%;\n    pointer-events: none;\n}\n\n/* Terminal prompt cursor */\n.workbook-content .console-prompt::after {\n    content: \"\u258b\";\n    animation: blink 1s infinite;\n    color: #00ff00;\n}\n\n@keyframes blink {\n    0%, 49% { opacity: 1; }\n    50%, 100% { opacity: 0; }\n}\n\n/* Success indicators */\n.workbook-content .status-success {\n    color: #00ff00 !important;\n    text-shadow: 0 0 5px #00ff00;\n}\n\n/* Warning indicators */\n.workbook-content .status-warning {\n    color: #ffff00 !important;\n    text-shadow: 0 0 5px #ffff00;\n}\n\n/* Error indicators */\n.workbook-content .status-error {\n    color: #ff0000 !important;\n    text-shadow: 0 0 5px #ff0000;\n}\n\n/* Glow effect for important elements */\n.workbook-content .highlight {\n    box-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 30px #00ff00;\n}\n</style>\n\n# \ud83d\udda5\ufe0f DefenderC2 Command & Control Console\n\n> **Enterprise-grade automation and orchestration for Microsoft Defender for Endpoint**  \n> *Streamlined workbook with single global device list - no infinite loops!*\n\n---\n\n## \ud83c\udfa8 Retro Terminal Theme\n\nThis workbook features a **retro green phosphor CRT terminal theme** inspired by classic command-line interfaces.\n\n## \u26a1 Quick Start Configuration\n\nSelect your **DefenderC2 Function App** and **Workspace** - everything else autodiscovers!\n\n### What's Autodiscovered:\n- \u2705 **Subscription ID** (from Function App resource)\n- \u2705 **Resource Group** (from Function App resource)  \n- \u2705 **Function App Name** (from Function App resource)\n- \u2705 **Azure AD Tenant ID** (from Function App resource - this is where your App Registration lives!)\n- \u2705 **API Authentication** (anonymous function endpoint - no key required)\n\n### You Only Select:\n1. \ud83c\udfaf Your DefenderC2 Function App (one click)\n2. \ud83d\udcca Your Log Analytics Workspace (one click)\n\n---\n\n## \ud83d\udccb Tabs Overview\n\n| Tab | Function | Description |\n|-----|----------|-------------|\n| **\ud83c\udfe0 Overview** | Dashboard | Quick stats, health status, recent actions |\n| **\ud83d\udcbb Device Management** | Device Actions | Isolate, scan, restrict, investigate devices |\n| **\ud83d\udee1\ufe0f Threat Intel Manager** | Indicators | Manage file/network/certificate indicators |\n| **\ud83d\udccb Action Manager** | Action Tracking | View and manage device actions |\n| **\ud83d\udd0d Hunt Manager** | Advanced Hunting | Execute KQL hunting queries |\n| **\ud83d\udea8 Incident Manager** | Incident Response | Manage security incidents |\n| **\u2699\ufe0f Custom Detection Manager** | Detection Rules | Manage custom detection rules |\n| **\ud83d\udcac Interactive Console** | Live Response | Shell-like command interface with async execution |\n| **\ud83d\udcda Library Operations** | File Management | Manage scripts and files in library |\n\n---"
+        "json": "<style>\n/* DefenderC2 Retro Terminal Theme - Matrix/Green Phosphor CRT Style */\n.workbook-content {\n    background-color: #000000 !important;\n    font-family: 'Courier New', 'Consolas', monospace !important;\n    color: #00ff00 !important;\n}\n\n/* Headers and titles */\n.workbook-content h1, \n.workbook-content h2, \n.workbook-content h3 {\n    color: #00ff00 !important;\n    text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;\n    border-bottom: 2px solid #00ff00 !important;\n    font-family: 'Courier New', monospace !important;\n}\n\n/* Parameter panels and inputs */\n.workbook-content .parameter-container {\n    background-color: #001100 !important;\n    border: 1px solid #00ff00 !important;\n    padding: 10px !important;\n}\n\n.workbook-content input, \n.workbook-content select, \n.workbook-content textarea {\n    background-color: #000000 !important;\n    color: #00ff00 !important;\n    border: 1px solid #00ff00 !important;\n    font-family: 'Courier New', monospace !important;\n}\n\n/* Tables */\n.workbook-content table {\n    background-color: #000000 !important;\n    border: 1px solid #00ff00 !important;\n}\n\n.workbook-content th {\n    background-color: #001a00 !important;\n    color: #00ff00 !important;\n    border: 1px solid #00ff00 !important;\n    text-shadow: 0 0 5px #00ff00;\n}\n\n.workbook-content td {\n    background-color: #000000 !important;\n    color: #00ff00 !important;\n    border: 1px solid #003300 !important;\n}\n\n.workbook-content tr:hover td {\n    background-color: #001100 !important;\n}\n\n/* Buttons and links */\n.workbook-content button, \n.workbook-content .link-item {\n    background-color: #001100 !important;\n    color: #00ff00 !important;\n    border: 2px solid #00ff00 !important;\n    text-shadow: 0 0 5px #00ff00;\n    font-family: 'Courier New', monospace !important;\n    padding: 8px 16px !important;\n    transition: all 0.2s !important;\n}\n\n.workbook-content button:hover, \n.workbook-content .link-item:hover {\n    background-color: #00ff00 !important;\n    color: #000000 !important;\n    box-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;\n}\n\n/* Tabs */\n.workbook-content .tab-item {\n    background-color: #000000 !important;\n    color: #00ff00 !important;\n    border: 1px solid #00ff00 !important;\n}\n\n.workbook-content .tab-item.active {\n    background-color: #001a00 !important;\n    box-shadow: 0 0 10px #00ff00;\n}\n\n/* Code blocks and console */\n.workbook-content pre, \n.workbook-content code {\n    background-color: #000000 !important;\n    color: #00ff00 !important;\n    border: 1px solid #00ff00 !important;\n    font-family: 'Courier New', monospace !important;\n}\n\n/* Interactive console specific styling */\n.workbook-content .console-output {\n    background-color: #000000 !important;\n    color: #00ff00 !important;\n    border: 2px solid #00ff00 !important;\n    padding: 10px !important;\n    font-family: 'Courier New', monospace !important;\n    min-height: 400px !important;\n    box-shadow: inset 0 0 20px #001100;\n}\n\n/* CRT scanline effect */\n.workbook-content::before {\n    content: \" \";\n    display: block;\n    position: fixed;\n    top: 0;\n    left: 0;\n    bottom: 0;\n    right: 0;\n    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));\n    z-index: 2;\n    background-size: 100% 2px, 3px 100%;\n    pointer-events: none;\n}\n\n/* Terminal prompt cursor */\n.workbook-content .console-prompt::after {\n    content: \"▋\";\n    animation: blink 1s infinite;\n    color: #00ff00;\n}\n\n@keyframes blink {\n    0%, 49% { opacity: 1; }\n    50%, 100% { opacity: 0; }\n}\n\n/* Success indicators */\n.workbook-content .status-success {\n    color: #00ff00 !important;\n    text-shadow: 0 0 5px #00ff00;\n}\n\n/* Warning indicators */\n.workbook-content .status-warning {\n    color: #ffff00 !important;\n    text-shadow: 0 0 5px #ffff00;\n}\n\n/* Error indicators */\n.workbook-content .status-error {\n    color: #ff0000 !important;\n    text-shadow: 0 0 5px #ff0000;\n}\n\n/* Glow effect for important elements */\n.workbook-content .highlight {\n    box-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 30px #00ff00;\n}\n</style>\n\n# 🖥️ DefenderC2 Command & Control Console\n\n> **Enterprise-grade automation and orchestration for Microsoft Defender for Endpoint**  \n> *Port of @msdirtbag/MDEAutomator with retro terminal aesthetic*\n\n---\n\n## 🎨 Retro Terminal Theme\n\nThis workbook features a **retro green phosphor CRT terminal theme** inspired by classic command-line interfaces.\n\n## ⚡ Quick Start Configuration\n\nSelect your **DefenderC2 Function App** and **Workspace** - everything else autodiscovers!\n\n### What's Autodiscovered:\n- ✅ **Subscription ID** (from Function App resource)\n- ✅ **Resource Group** (from Function App resource)  \n- ✅ **Function App Name** (from Function App resource)\n- ✅ **Azure AD Tenant ID** (from Function App resource - this is where your App Registration lives!)\n- ✅ **API Authentication** (anonymous function endpoint - no key required)\n\n### You Only Select:\n1. 🎯 Your DefenderC2 Function App (one click)\n2. 📊 Your Log Analytics Workspace (one click)\n\n---\n\n## 📋 Tabs Overview\n\n| Tab | Function | Description |\n|-----|----------|-------------|\n| **🎯 Defender C2** | Device Actions | Isolate, scan, restrict devices |\n| **🛡️ Threat Intel Manager** | Indicators | Manage file/network/certificate indicators |\n| **📋 Action Manager** | Action Tracking | View and manage device actions |\n| **🔍 Hunt Manager** | Advanced Hunting | Execute KQL hunting queries |\n| **🚨 Incident Manager** | Incident Response | Manage security incidents |\n| **⚙️ Custom Detection Manager** | Detection Rules | Manage custom detection rules |\n| **🖥️ Interactive Console** | Live Response | Shell-like command interface with async execution |\n\n---"
       },
       "name": "text - header"
     },
@@ -23,7 +23,7 @@
             "label": "DefenderC2 Function App",
             "type": 5,
             "isRequired": true,
-            "query": "Resources\n| where type =~ 'microsoft.web/sites'\n| where kind contains 'functionapp'\n| project id, name, resourceGroup, subscriptionId, location\n| order by name asc",
+            "query": "Resources\n| where type =~ 'microsoft.web/sites'\n| where kind contains 'functionapp'\n| project id, name, resourceGroup, subscriptionId, location, tags\n| order by name asc",
             "crossComponentResources": [
               "value::all"
             ],
@@ -37,7 +37,7 @@
             "queryType": 1,
             "resourceType": "microsoft.resourcegraph/resources",
             "value": null,
-            "description": "Select your DefenderC2 Function App from the list",
+            "description": "Select your DefenderC2 Function App from the list of available Function Apps in your subscription(s).",
             "isGlobal": true
           },
           {
@@ -61,11 +61,11 @@
             "queryType": 1,
             "resourceType": "microsoft.resourcegraph/resources",
             "value": null,
-            "description": "Select your Log Analytics Workspace",
+            "description": "Select your Log Analytics Workspace (for Sentinel data and dashboards).",
             "isGlobal": true
           },
           {
-            "id": "ad1-subscription",
+            "id": "ad1-subscription-autodiscover",
             "version": "KqlParameterItem/1.0",
             "name": "Subscription",
             "label": "Subscription (Auto)",
@@ -81,7 +81,7 @@
             },
             "queryType": 1,
             "resourceType": "microsoft.resourcegraph/resources",
-            "description": "Auto-discovered from Function App",
+            "description": "Auto-discovered from selected Function App",
             "criteriaData": [
               {
                 "criterionType": "param",
@@ -91,7 +91,7 @@
             "isGlobal": true
           },
           {
-            "id": "ad2-resourcegroup",
+            "id": "ad2-resourcegroup-autodiscover",
             "version": "KqlParameterItem/1.0",
             "name": "ResourceGroup",
             "label": "Resource Group (Auto)",
@@ -107,7 +107,7 @@
             },
             "queryType": 1,
             "resourceType": "microsoft.resourcegraph/resources",
-            "description": "Auto-discovered from Function App",
+            "description": "Auto-discovered from selected Function App",
             "criteriaData": [
               {
                 "criterionType": "param",
@@ -117,7 +117,7 @@
             "isGlobal": true
           },
           {
-            "id": "ad3-functionappname",
+            "id": "ad3-functionappname-autodiscover",
             "version": "KqlParameterItem/1.0",
             "name": "FunctionAppName",
             "label": "Function App Name (Auto)",
@@ -133,7 +133,7 @@
             },
             "queryType": 1,
             "resourceType": "microsoft.resourcegraph/resources",
-            "description": "Auto-discovered from Function App",
+            "description": "Auto-discovered from selected Function App",
             "criteriaData": [
               {
                 "criterionType": "param",
@@ -143,21 +143,22 @@
             "isGlobal": true
           },
           {
-            "id": "ad4-tenantid",
+            "id": "ad4-tenantid-selector",
             "version": "KqlParameterItem/1.0",
             "name": "TenantId",
-            "label": "Defender XDR Tenant",
+            "label": "Microsoft Defender XDR Tenant ID",
             "type": 2,
             "isRequired": true,
             "multiSelect": false,
-            "quote": "'",
-            "delimiter": ",",
-            "query": "ResourceContainers\n| where type =~ 'microsoft.resources/subscriptions'\n| project value = tenantId, label = strcat(name, ' (', tenantId, ')')\n| distinct value, label\n| order by label asc",
+            "query": "ResourceContainers\n| where type == 'microsoft.resources/subscriptions'\n| project tenantId\n| distinct tenantId\n| project value = tenantId, label = strcat('🏢 Tenant: ', tenantId)\n| order by label asc",
             "crossComponentResources": [
               "value::all"
             ],
             "typeSettings": {
-              "additionalResourceOptions": [],
+              "additionalResourceOptions": [
+                "value::1"
+              ],
+              "selectFirstItem": true,
               "showDefault": false
             },
             "timeContext": {
@@ -165,38 +166,42 @@
             },
             "queryType": 1,
             "resourceType": "microsoft.resourcegraph/resources",
-            "value": null,
-            "description": "Select target tenant (for Lighthouse multi-tenant support)",
-            "criteriaData": [
-              {
-                "criterionType": "param",
-                "value": "{FunctionApp}"
-              }
-            ],
+            "defaultValue": "value::1",
+            "description": "Select your Microsoft Defender XDR Tenant ID from available tenants (Azure Lighthouse delegations). Shows all accessible tenant IDs.",
             "isGlobal": true
           },
           {
-            "id": "dl1-devicelist-global",
+            "id": "selected-tab-parameter",
+            "version": "KqlParameterItem/1.0",
+            "name": "selectedTab",
+            "label": "Selected Tab (internal)",
+            "type": 1,
+            "isRequired": false,
+            "value": "automator",
+            "query": "",
+            "queryType": 0,
+            "isHiddenWhenLocked": true,
+            "typeSettings": {
+              "isSearchable": false
+            }
+          },
+          {
+            "id": "devicelist-parameter",
             "version": "KqlParameterItem/1.0",
             "name": "DeviceList",
-            "label": "Available Devices",
+            "label": "Available Devices (Auto-populated)",
             "type": 2,
             "isRequired": false,
             "multiSelect": true,
             "quote": "'",
             "delimiter": ",",
-            "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":null,\"urlParams\":[{\"key\":\"action\",\"value\":\"Get Devices\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"}],\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.devices[*]\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"value\"},{\"path\":\"$.computerDnsName\",\"columnid\":\"label\"}]}}]}",
-            "typeSettings": {
-              "additionalResourceOptions": [],
-              "showDefault": false
-            },
-            "timeContext": {
-              "durationMs": 86400000
-            },
-            "queryType": 10,
-            "value": null,
-            "description": "Select device(s) for actions - single global list, no duplicates!",
+            "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.devices[*]\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"value\"},{\"path\":\"$.computerDnsName\",\"columnid\":\"label\"}]}}],\"urlParams\":[{\"key\":\"action\",\"value\":\"Get Devices\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"}]}",
             "criteriaData": [
+              {
+                "condition": "if (FunctionApp is not empty && FunctionAppName is not empty && TenantId is not empty), alwaysShow",
+                "criterionType": "param",
+                "value": "{FunctionApp}"
+              },
               {
                 "criterionType": "param",
                 "value": "{FunctionAppName}"
@@ -206,29 +211,24 @@
                 "value": "{TenantId}"
               }
             ],
-            "isGlobal": true
-          },
-          {
-            "id": "tab-selector",
-            "version": "KqlParameterItem/1.0",
-            "name": "selectedTab",
-            "type": 1,
-            "value": "overview",
-            "isHiddenWhenLocked": true,
+            "typeSettings": {
+              "additionalResourceOptions": [],
+              "showDefault": false
+            },
             "timeContext": {
               "durationMs": 86400000
-            }
+            },
+            "queryType": 10,
+            "description": "✅ Auto-populated from your Defender environment using autodiscovered tenant ID and function app. Refresh automatically when Function App or Tenant ID changes.",
+            "value": null
           },
           {
-            "id": "tr1-timerange",
+            "id": "b2f8g6b-d9fg-7975-c2g3-5h5h8g0e6f4d",
             "version": "KqlParameterItem/1.0",
             "name": "TimeRange",
             "label": "Time Range",
             "type": 4,
             "isRequired": true,
-            "value": {
-              "durationMs": 2592000000
-            },
             "typeSettings": {
               "selectableValues": [
                 {
@@ -268,8 +268,7 @@
                   "durationMs": 2419200000
                 },
                 {
-                  "durationMs": 2592000000,
-                  "isInitialTime": true
+                  "durationMs": 2592000000
                 },
                 {
                   "durationMs": 5184000000
@@ -283,8 +282,9 @@
             "timeContext": {
               "durationMs": 86400000
             },
-            "description": "Time range for queries and data display",
-            "isGlobal": true
+            "value": {
+              "durationMs": 2592000000
+            }
           }
         ],
         "style": "pills",
@@ -294,77 +294,65 @@
       "name": "parameters - configuration"
     },
     {
-      "type": 10,
+      "type": 11,
       "content": {
-        "chartId": "workbook-tabs",
         "version": "LinkItem/1.0",
-        "size": 1,
-        "linkTarget": "parameter",
-        "param": "selectedTab",
         "style": "tabs",
         "links": [
           {
-            "id": "tab-overview",
-            "cellValue": "overview",
+            "id": "4e8c3d7a-2b1f-4a8d-9e5c-1a2b3c4d5e6f",
+            "cellValue": "selectedTab",
             "linkTarget": "parameter",
-            "linkLabel": "\ud83c\udfe0 Overview",
-            "subTarget": "selectedTab",
+            "linkLabel": "Defender C2",
+            "subTarget": "automator",
             "style": "link"
           },
           {
-            "id": "tab-devices",
-            "cellValue": "devices",
+            "id": "5f9d4e8b-3c2g-5b9e-0f6d-2b3c4d5e6f7g",
+            "cellValue": "selectedTab",
             "linkTarget": "parameter",
-            "linkLabel": "\ud83d\udcbb Device Management",
-            "subTarget": "selectedTab",
+            "linkLabel": "Threat Intel Manager",
+            "subTarget": "threatintel",
             "style": "link"
           },
           {
-            "id": "tab-ti",
-            "cellValue": "threatintel",
+            "id": "6g0e5f9c-4d3h-6c0f-1g7e-3c4d5e6f7g8h",
+            "cellValue": "selectedTab",
             "linkTarget": "parameter",
-            "linkLabel": "\ud83d\udd0d Threat Intelligence",
-            "subTarget": "selectedTab",
+            "linkLabel": "Action Manager",
+            "subTarget": "actions",
             "style": "link"
           },
           {
-            "id": "tab-incidents",
-            "cellValue": "incidents",
+            "id": "7h1f6g0d-5e4i-7d1g-2h8f-4d5e6f7g8h9i",
+            "cellValue": "selectedTab",
             "linkTarget": "parameter",
-            "linkLabel": "\ud83d\udea8 Incident Response",
-            "subTarget": "selectedTab",
+            "linkLabel": "Hunt Manager",
+            "subTarget": "hunting",
             "style": "link"
           },
           {
-            "id": "tab-detections",
-            "cellValue": "detections",
+            "id": "8i2g7h1e-6f5j-8e2h-3i9g-5e6f7g8h9i0j",
+            "cellValue": "selectedTab",
             "linkTarget": "parameter",
-            "linkLabel": "\ud83c\udfaf Custom Detections",
-            "subTarget": "selectedTab",
+            "linkLabel": "Incident Manager",
+            "subTarget": "incidents",
             "style": "link"
           },
           {
-            "id": "tab-hunting",
-            "cellValue": "hunting",
+            "id": "9j3h8i2f-7g6k-9f3i-4j0h-6f7g8h9i0j1k",
+            "cellValue": "selectedTab",
             "linkTarget": "parameter",
-            "linkLabel": "\ud83d\udd0e Advanced Hunting",
-            "subTarget": "selectedTab",
+            "linkLabel": "Custom Detection Manager",
+            "subTarget": "detections",
             "style": "link"
           },
           {
-            "id": "tab-console",
-            "cellValue": "console",
+            "id": "0k4i9j3g-8h7m-1h5k-6l2j-8h9i0j1k2l3m",
+            "cellValue": "selectedTab",
             "linkTarget": "parameter",
-            "linkLabel": "\ud83d\udcac Interactive Console",
-            "subTarget": "selectedTab",
-            "style": "link"
-          },
-          {
-            "id": "tab-library",
-            "cellValue": "library",
-            "linkTarget": "parameter",
-            "linkLabel": "\ud83d\udcda Library Operations",
-            "subTarget": "selectedTab",
+            "linkLabel": "🖥️ Interactive Console",
+            "subTarget": "console",
             "style": "link"
           }
         ]
@@ -376,100 +364,19 @@
       "content": {
         "version": "NotebookGroup/1.0",
         "groupType": "editable",
+        "title": "🎯 Device Actions",
         "items": [
           {
             "type": 1,
             "content": {
-              "json": "## \ud83c\udfe0 Overview Dashboard\n\n**Quick stats and status overview for your DefenderC2 environment.**\n\nSelect devices from the **Available Devices** dropdown above to perform actions in the **Device Management** tab.\n\n---"
-            },
-            "name": "text - overview-header"
-          },
-          {
-            "type": 3,
-            "content": {
-              "version": "KqlItem/1.0",
-              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":null,\"urlParams\":[{\"key\":\"action\",\"value\":\"Get Devices\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"}],\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.devices[*]\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"id\"},{\"path\":\"$.computerDnsName\",\"columnid\":\"deviceName\"},{\"path\":\"$.healthStatus\",\"columnid\":\"healthStatus\"},{\"path\":\"$.riskScore\",\"columnid\":\"riskScore\"},{\"path\":\"$.isolationState\",\"columnid\":\"isolationState\"},{\"path\":\"$.osPlatform\",\"columnid\":\"platform\"}]}}]}",
-              "size": 0,
-              "title": "\ud83d\udcca Connected Devices",
-              "queryType": 10,
-              "visualization": "table",
-              "gridSettings": {
-                "formatters": [
-                  {
-                    "columnMatch": "healthStatus",
-                    "formatter": 18,
-                    "formatOptions": {
-                      "thresholdsOptions": "icons",
-                      "thresholdsGrid": [
-                        {
-                          "operator": "==",
-                          "thresholdValue": "Active",
-                          "representation": "success"
-                        },
-                        {
-                          "operator": "Default",
-                          "thresholdValue": null,
-                          "representation": "warning"
-                        }
-                      ]
-                    }
-                  },
-                  {
-                    "columnMatch": "riskScore",
-                    "formatter": 8,
-                    "formatOptions": {
-                      "palette": "redGreen",
-                      "aggregation": "Max"
-                    }
-                  }
-                ]
-              },
-              "criteriaData": [
-                {
-                  "criterionType": "param",
-                  "value": "{FunctionAppName}"
-                },
-                {
-                  "criterionType": "param",
-                  "value": "{TenantId}"
-                }
-              ]
-            },
-            "name": "query - devices-overview"
-          },
-          {
-            "type": 1,
-            "content": {
-              "json": "### \u26a1 Quick Actions\n\n1. Select your target tenant from **Defender XDR Tenant** dropdown\n2. Select one or more devices from **Available Devices** dropdown  \n3. Navigate to **Device Management** tab for actions:\n   - \ud83d\udea8 Isolate Devices\n   - \u2705 Unisolate Devices\n   - \ud83d\udd12 Restrict App Execution\n   - \ud83d\udd13 Unrestrict App Execution\n   - \ud83d\udd0d Run Antivirus Scan\n   - \ud83d\udce6 Collect Investigation Package\n   - \ud83d\uded1 Stop & Quarantine File\n\n---"
-            },
-            "name": "text - quick-actions-help"
-          }
-        ]
-      },
-      "conditionalVisibility": {
-        "parameterName": "selectedTab",
-        "comparison": "isEqualTo",
-        "value": "overview"
-      },
-      "name": "group - overview"
-    },
-    {
-      "type": 12,
-      "content": {
-        "version": "NotebookGroup/1.0",
-        "groupType": "editable",
-        "items": [
-          {
-            "type": 1,
-            "content": {
-              "json": "## Defender C2 - Device Response Actions\n\nPerform Microsoft Defender for Endpoint response actions with **ARM Actions** and **JSONPath parsing**.\n\n### Features:\n- \u2705 Azure Resource Graph auto-discovery\n- \u2705 ARM Actions for synchronous operations\n- \u2705 JSONPath output parsing\n- \u2705 Multi-tenancy support with automatic TenantId injection\n- \u2705 Anonymous function authentication (no keys needed)"
+              "json": "## Defender C2 - Device Response Actions\n\nPerform Microsoft Defender for Endpoint response actions with **ARM Actions** and **JSONPath parsing**.\n\n### Features:\n- ✅ Azure Resource Graph auto-discovery\n- ✅ ARM Actions for synchronous operations\n- ✅ JSONPath output parsing\n- ✅ Multi-tenancy support with automatic TenantId injection\n- ✅ Anonymous function authentication (no keys needed)"
             },
             "name": "text - automator-intro"
           },
           {
             "type": 1,
             "content": {
-              "json": "---\n## \ud83d\udea8 Isolate Device\n\nIsolate devices from the network using ARM Actions with JSONPath transformers."
+              "json": "---\n## 🚨 Isolate Device\n\nIsolate devices from the network using ARM Actions with JSONPath transformers."
             },
             "name": "text - isolate-header"
           },
@@ -478,6 +385,43 @@
             "content": {
               "version": "KqlParameterItem/1.0",
               "parameters": [
+                {
+                  "id": "isolate-deviceids",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "IsolateDeviceIds",
+                  "label": "Device IDs (comma-separated)",
+                  "type": 2,
+                  "isRequired": false,
+                  "description": "Select one or more devices. List is auto-populated from Defender environment.",
+                  "timeContext": {
+                    "durationMs": 86400000
+                  },
+                  "multiSelect": true,
+                  "quote": "'",
+                  "delimiter": ",",
+                  "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.devices[*]\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"value\"},{\"path\":\"$.computerDnsName\",\"columnid\":\"label\"}]}}],\"urlParams\":[{\"key\":\"action\",\"value\":\"Get Devices\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"}]}",
+                  "queryType": 10,
+                  "typeSettings": {
+                    "additionalResourceOptions": [],
+                    "showDefault": false
+                  },
+                  "criteriaData": [
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionApp}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionAppName}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{TenantId}"
+                    }
+                  ],
+                  "value": null,
+                  "isGlobal": true
+                },
                 {
                   "id": "isolate-type",
                   "version": "KqlParameterItem/1.0",
@@ -513,7 +457,7 @@
                   "id": "isolate-action",
                   "cellValue": "unused",
                   "linkTarget": "ArmAction",
-                  "linkLabel": "\ud83d\udea8 Isolate Devices",
+                  "linkLabel": "🚨 Isolate Devices",
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
@@ -579,7 +523,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.actionId\",\"columnid\":\"actionId\"},{\"path\":\"$.status\",\"columnid\":\"status\"},{\"path\":\"$.message\",\"columnid\":\"message\"},{\"path\":\"$.tenantId\",\"columnid\":\"tenantId\"}]}}],\"urlParams\":[{\"key\":\"action\",\"value\":\"Isolate Device\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"deviceIds\",\"value\":\"{DeviceList}\"}]}",
+              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.actionId\",\"columnid\":\"actionId\"},{\"path\":\"$.status\",\"columnid\":\"status\"},{\"path\":\"$.message\",\"columnid\":\"message\"},{\"path\":\"$.tenantId\",\"columnid\":\"tenantId\"}]}}],\"urlParams\":[{\"key\":\"action\",\"value\":\"Isolate Device\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"deviceIds\",\"value\":\"{IsolateDeviceIds}\"}]}",
               "size": 0,
               "title": "Isolation Result",
               "queryType": 10,
@@ -608,9 +552,58 @@
           {
             "type": 1,
             "content": {
-              "json": "---\n## \ud83d\udd13 Unisolate Device\n\nRemove network isolation from devices."
+              "json": "---\n## 🔓 Unisolate Device\n\nRemove network isolation from devices."
             },
             "name": "text - unisolate-header"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "unisolate-deviceids",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "UnisolateDeviceIds",
+                  "label": "Device IDs (comma-separated)",
+                  "type": 2,
+                  "isRequired": false,
+                  "timeContext": {
+                    "durationMs": 86400000
+                  },
+                  "multiSelect": true,
+                  "quote": "'",
+                  "delimiter": ",",
+                  "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.devices[*]\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"value\"},{\"path\":\"$.computerDnsName\",\"columnid\":\"label\"}]}}],\"urlParams\":[{\"key\":\"action\",\"value\":\"Get Devices\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"}]}",
+                  "queryType": 10,
+                  "typeSettings": {
+                    "additionalResourceOptions": [],
+                    "showDefault": false
+                  },
+                  "description": "Select one or more devices. List is auto-populated from Defender environment.",
+                  "criteriaData": [
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionApp}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionAppName}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{TenantId}"
+                    }
+                  ],
+                  "value": null,
+                  "isGlobal": true
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "name": "parameters - unisolate"
           },
           {
             "type": 11,
@@ -622,7 +615,7 @@
                   "id": "unisolate-action",
                   "cellValue": "unused",
                   "linkTarget": "ArmAction",
-                  "linkLabel": "\ud83d\udd13 Unisolate Devices",
+                  "linkLabel": "🔓 Unisolate Devices",
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
@@ -679,9 +672,58 @@
           {
             "type": 1,
             "content": {
-              "json": "---\n## \ud83d\udee1\ufe0f Restrict App Execution\n\nRestrict app execution to Microsoft-signed binaries only."
+              "json": "---\n## 🛡️ Restrict App Execution\n\nRestrict app execution to Microsoft-signed binaries only."
             },
             "name": "text - restrict-header"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "restrict-deviceids",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "RestrictDeviceIds",
+                  "label": "Device IDs (comma-separated)",
+                  "type": 2,
+                  "isRequired": false,
+                  "timeContext": {
+                    "durationMs": 86400000
+                  },
+                  "multiSelect": true,
+                  "quote": "'",
+                  "delimiter": ",",
+                  "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.devices[*]\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"value\"},{\"path\":\"$.computerDnsName\",\"columnid\":\"label\"}]}}],\"urlParams\":[{\"key\":\"action\",\"value\":\"Get Devices\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"}]}",
+                  "queryType": 10,
+                  "typeSettings": {
+                    "additionalResourceOptions": [],
+                    "showDefault": false
+                  },
+                  "description": "Select one or more devices. List is auto-populated from Defender environment.",
+                  "criteriaData": [
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionApp}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionAppName}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{TenantId}"
+                    }
+                  ],
+                  "value": null,
+                  "isGlobal": true
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "name": "parameters - restrict"
           },
           {
             "type": 11,
@@ -693,7 +735,7 @@
                   "id": "restrict-action",
                   "cellValue": "unused",
                   "linkTarget": "ArmAction",
-                  "linkLabel": "\ud83d\udee1\ufe0f Restrict App Execution",
+                  "linkLabel": "🛡️ Restrict App Execution",
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
@@ -750,7 +792,7 @@
           {
             "type": 1,
             "content": {
-              "json": "---\n## \ud83d\udd0d Run Antivirus Scan\n\nExecute a full antivirus scan on devices."
+              "json": "---\n## 🔍 Run Antivirus Scan\n\nExecute a full antivirus scan on devices."
             },
             "name": "text - scan-header"
           },
@@ -759,6 +801,43 @@
             "content": {
               "version": "KqlParameterItem/1.0",
               "parameters": [
+                {
+                  "id": "scan-deviceids",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "ScanDeviceIds",
+                  "label": "Device IDs (comma-separated)",
+                  "type": 2,
+                  "isRequired": false,
+                  "timeContext": {
+                    "durationMs": 86400000
+                  },
+                  "multiSelect": true,
+                  "quote": "'",
+                  "delimiter": ",",
+                  "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.devices[*]\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"value\"},{\"path\":\"$.computerDnsName\",\"columnid\":\"label\"}]}}],\"urlParams\":[{\"key\":\"action\",\"value\":\"Get Devices\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"}]}",
+                  "queryType": 10,
+                  "typeSettings": {
+                    "additionalResourceOptions": [],
+                    "showDefault": false
+                  },
+                  "description": "Select one or more devices. List is auto-populated from Defender environment.",
+                  "criteriaData": [
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionApp}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionAppName}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{TenantId}"
+                    }
+                  ],
+                  "value": null,
+                  "isGlobal": true
+                },
                 {
                   "id": "scan-type",
                   "version": "KqlParameterItem/1.0",
@@ -794,7 +873,7 @@
                   "id": "scan-action",
                   "cellValue": "unused",
                   "linkTarget": "ArmAction",
-                  "linkLabel": "\ud83d\udd0d Run Antivirus Scan",
+                  "linkLabel": "🔍 Run Antivirus Scan",
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
@@ -859,7 +938,7 @@
           {
             "type": 1,
             "content": {
-              "json": "---\n## \ud83d\udcbb Get Devices\n\nRetrieve device list with JSONPath parsing."
+              "json": "---\n## 💻 Get Devices\n\nRetrieve device list with JSONPath parsing."
             },
             "name": "text - getdevices-header"
           },
@@ -869,7 +948,7 @@
               "version": "KqlItem/1.0",
               "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.devices[*]\",\"columns\":[{\"path\":\"$.deviceName\",\"columnid\":\"Device Name\"},{\"path\":\"$.riskScore\",\"columnid\":\"Risk Score\"},{\"path\":\"$.healthStatus\",\"columnid\":\"Health Status\"},{\"path\":\"$.lastIpAddress\",\"columnid\":\"Last IP\"},{\"path\":\"$.lastSeen\",\"columnid\":\"Last Seen\"},{\"path\":\"$.id\",\"columnid\":\"Device ID\"}]}}],\"body\":null,\"urlParams\":[{\"key\":\"action\",\"value\":\"Get Devices\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"}]}",
               "size": 0,
-              "title": "\ud83d\udcbb Device List",
+              "title": "💻 Device List",
               "showExportToExcel": true,
               "queryType": 10,
               "visualization": "table",
@@ -892,31 +971,26 @@
           }
         ]
       },
-      "conditionalVisibility": {
-        "parameterName": "selectedTab",
-        "comparison": "isEqualTo",
-        "value": "devices"
-      },
-      "name": "group - device-management"
+      "name": "group - automator"
     },
     {
       "type": 12,
       "content": {
         "version": "NotebookGroup/1.0",
         "groupType": "editable",
-        "title": "\ud83d\udccd Threat Intelligence Manager",
+        "title": "📍 Threat Intelligence Manager",
         "items": [
           {
             "type": 1,
             "content": {
-              "json": "## \ud83d\udccd Threat Intelligence Manager\n\nManage threat indicators (IOCs) in Microsoft Defender for Endpoint with **ARM Actions** and **JSONPath parsing**.\n\n### Features:\n- \u2705 Batch indicator submission (File/IP/URL/Domain)\n- \u2705 ARM Actions for synchronous operations\n- \u2705 JSONPath output parsing\n- \u2705 Multi-tenancy support"
+              "json": "## 📍 Threat Intelligence Manager\n\nManage threat indicators (IOCs) in Microsoft Defender for Endpoint with **ARM Actions** and **JSONPath parsing**.\n\n### Features:\n- ✅ Batch indicator submission (File/IP/URL/Domain)\n- ✅ ARM Actions for synchronous operations\n- ✅ JSONPath output parsing\n- ✅ Multi-tenancy support"
             },
             "name": "text - ti-intro"
           },
           {
             "type": 1,
             "content": {
-              "json": "---\n## \ud83d\udcc4 Add File Indicators (Batch)\n\nSubmit multiple file hashes at once with ARM Actions."
+              "json": "---\n## 📄 Add File Indicators (Batch)\n\nSubmit multiple file hashes at once with ARM Actions."
             },
             "name": "text - file-indicators"
           },
@@ -1019,7 +1093,7 @@
                   "id": "file-add-action",
                   "cellValue": "unused",
                   "linkTarget": "ArmAction",
-                  "linkLabel": "\ud83d\udcc4 Add File Indicators",
+                  "linkLabel": "📄 Add File Indicators",
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
@@ -1104,7 +1178,7 @@
           {
             "type": 1,
             "content": {
-              "json": "---\n## \ud83c\udf10 Add IP Indicators (Batch)\n\nSubmit multiple IP addresses at once."
+              "json": "---\n## 🌐 Add IP Indicators (Batch)\n\nSubmit multiple IP addresses at once."
             },
             "name": "text - ip-indicators"
           },
@@ -1179,7 +1253,7 @@
                   "id": "ip-add-action",
                   "cellValue": "unused",
                   "linkTarget": "ArmAction",
-                  "linkLabel": "\ud83c\udf10 Add IP Indicators",
+                  "linkLabel": "🌐 Add IP Indicators",
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
@@ -1256,7 +1330,7 @@
           {
             "type": 1,
             "content": {
-              "json": "---\n## \ud83d\udd17 Add URL/Domain Indicators (Batch)\n\nSubmit multiple URLs or domains at once."
+              "json": "---\n## 🔗 Add URL/Domain Indicators (Batch)\n\nSubmit multiple URLs or domains at once."
             },
             "name": "text - url-indicators"
           },
@@ -1313,7 +1387,7 @@
                   "id": "url-add-action",
                   "cellValue": "unused",
                   "linkTarget": "ArmAction",
-                  "linkLabel": "\ud83d\udd17 Add URL/Domain Indicators",
+                  "linkLabel": "🔗 Add URL/Domain Indicators",
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
@@ -1386,7 +1460,7 @@
           {
             "type": 1,
             "content": {
-              "json": "---\n## \ud83d\udcca List All Indicators\n\nView all threat indicators with JSONPath parsing."
+              "json": "---\n## 📊 List All Indicators\n\nView all threat indicators with JSONPath parsing."
             },
             "name": "text - list-indicators"
           },
@@ -1396,7 +1470,7 @@
               "version": "KqlItem/1.0",
               "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2TIManager\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.indicators[*]\",\"columns\":[{\"path\":\"$.indicatorValue\",\"columnid\":\"Indicator\"},{\"path\":\"$.indicatorType\",\"columnid\":\"Type\"},{\"path\":\"$.action\",\"columnid\":\"Action\"},{\"path\":\"$.severity\",\"columnid\":\"Severity\"},{\"path\":\"$.title\",\"columnid\":\"Title\"},{\"path\":\"$.createdBy\",\"columnid\":\"Created By\"},{\"path\":\"$.creationDateTime\",\"columnid\":\"Created\"}]}}],\"urlParams\":[{\"key\":\"action\",\"value\":\"List Indicators\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"}]}",
               "size": 0,
-              "title": "\ud83d\udccd Active Threat Indicators",
+              "title": "📍 Active Threat Indicators",
               "showExportToExcel": true,
               "queryType": 10,
               "visualization": "table",
@@ -1419,26 +1493,21 @@
           }
         ]
       },
-      "name": "group - threatintel",
-      "conditionalVisibility": {
-        "parameterName": "selectedTab",
-        "comparison": "isEqualTo",
-        "value": "threatintel"
-      }
+      "name": "group - threatintel"
     },
     {
       "type": 12,
       "content": {
         "version": "NotebookGroup/1.0",
         "groupType": "editable",
-        "title": "\ud83d\udea8 Incident Manager",
+        "title": "⚙️ Action Manager",
         "items": [
           {
             "type": 1,
             "content": {
-              "json": "## \ud83d\udea8 Incident Manager\n\nManage security incidents with **filters** and **JSONPath parsing**.\n\n### Features:\n- \u2705 Severity and status filtering\n- \u2705 JSONPath output parsing\n- \u2705 Update incidents via ARM Actions\n- \u2705 Add comments to incidents"
+              "json": "## ⚙️ Action Manager\n\nView and manage machine actions with **auto-refresh** and **JSONPath parsing**.\n\n### Features:\n- ✅ Auto-refresh with configurable intervals\n- ✅ JSONPath output parsing\n- ✅ Status filtering\n- ✅ Cancel actions via ARM Actions"
             },
-            "name": "text - incident-intro"
+            "name": "text - actions-intro"
           },
           {
             "type": 9,
@@ -1446,26 +1515,9 @@
               "version": "KqlParameterItem/1.0",
               "parameters": [
                 {
-                  "id": "incident-severity-id",
+                  "id": "actions-status-filter",
                   "version": "KqlParameterItem/1.0",
-                  "name": "IncidentSeverity",
-                  "label": "Severity Filter",
-                  "type": 2,
-                  "isRequired": false,
-                  "typeSettings": {
-                    "additionalResourceOptions": [],
-                    "showDefault": false
-                  },
-                  "jsonData": "[\"All\", \"Informational\", \"Low\", \"Medium\", \"High\"]",
-                  "defaultValue": "All",
-                  "timeContext": {
-                    "durationMs": 86400000
-                  }
-                },
-                {
-                  "id": "incident-status-id",
-                  "version": "KqlParameterItem/1.0",
-                  "name": "IncidentStatus",
+                  "name": "StatusFilter",
                   "label": "Status Filter",
                   "type": 2,
                   "isRequired": false,
@@ -1473,8 +1525,25 @@
                     "additionalResourceOptions": [],
                     "showDefault": false
                   },
-                  "jsonData": "[\"All\", \"Active\", \"Resolved\", \"InProgress\", \"Redirected\"]",
-                  "defaultValue": "Active",
+                  "jsonData": "[\"All\", \"Pending\", \"InProgress\", \"Succeeded\", \"Failed\"]",
+                  "defaultValue": "All",
+                  "timeContext": {
+                    "durationMs": 86400000
+                  }
+                },
+                {
+                  "id": "actions-refresh-id",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "RefreshInterval",
+                  "label": "Auto-Refresh",
+                  "type": 2,
+                  "isRequired": true,
+                  "typeSettings": {
+                    "additionalResourceOptions": [],
+                    "showDefault": false
+                  },
+                  "jsonData": "[\"10\", \"30\", \"60\", \"300\"]",
+                  "defaultValue": "30",
                   "timeContext": {
                     "durationMs": 86400000
                   }
@@ -1484,54 +1553,27 @@
               "queryType": 0,
               "resourceType": "microsoft.operationalinsights/workspaces"
             },
-            "name": "parameters - incident-filters"
+            "name": "parameters - actions"
           },
           {
             "type": 1,
             "content": {
-              "json": "---\n## \ud83d\udcca Get Incidents\n\nView incidents with filtering options."
+              "json": "---\n## 📊 Get All Actions\n\nView all machine actions with auto-refresh enabled."
             },
-            "name": "text - get-incidents"
+            "name": "text - get-actions"
           },
           {
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2IncidentManager\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.incidents[*]\",\"columns\":[{\"path\":\"$.incidentId\",\"columnid\":\"Incident ID\"},{\"path\":\"$.incidentName\",\"columnid\":\"Name\"},{\"path\":\"$.severity\",\"columnid\":\"Severity\"},{\"path\":\"$.status\",\"columnid\":\"Status\"},{\"path\":\"$.assignedTo\",\"columnid\":\"Assigned To\"},{\"path\":\"$.createdTime\",\"columnid\":\"Created\"},{\"path\":\"$.lastUpdateTime\",\"columnid\":\"Updated\"}]}}],\"urlParams\":[{\"key\":\"action\",\"value\":\"Get Incidents\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"severity\",\"value\":\"{IncidentSeverity}\"},{\"key\":\"status\",\"value\":\"{IncidentStatus}\"}]}",
+              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.actions[*]\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"Action ID\"},{\"path\":\"$.type\",\"columnid\":\"Type\"},{\"path\":\"$.status\",\"columnid\":\"Status\"},{\"path\":\"$.requestor\",\"columnid\":\"Requestor\"},{\"path\":\"$.creationDateTimeUtc\",\"columnid\":\"Created\"},{\"path\":\"$.machineId\",\"columnid\":\"Device ID\"}]}}],\"urlParams\":[{\"key\":\"action\",\"value\":\"Get Actions\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"}]}",
               "size": 0,
-              "title": "\ud83d\udea8 Security Incidents",
+              "title": "📊 Machine Actions (Auto-refreshing every {RefreshInterval}s)",
               "showExportToExcel": true,
               "queryType": 10,
               "visualization": "table",
               "gridSettings": {
                 "formatters": [
-                  {
-                    "columnMatch": "Severity",
-                    "formatter": 18,
-                    "formatOptions": {
-                      "thresholdsOptions": "colors",
-                      "thresholdsGrid": [
-                        {
-                          "operator": "==",
-                          "thresholdValue": "High",
-                          "representation": "red",
-                          "text": "\ud83d\udd34 {0}"
-                        },
-                        {
-                          "operator": "==",
-                          "thresholdValue": "Medium",
-                          "representation": "orange",
-                          "text": "\u26a0\ufe0f {0}"
-                        },
-                        {
-                          "operator": "==",
-                          "thresholdValue": "Low",
-                          "representation": "green",
-                          "text": "\u2139\ufe0f {0}"
-                        }
-                      ]
-                    }
-                  },
                   {
                     "columnMatch": "Status",
                     "formatter": 18,
@@ -1540,21 +1582,27 @@
                       "thresholdsGrid": [
                         {
                           "operator": "==",
-                          "thresholdValue": "Active",
-                          "representation": "red",
-                          "text": "\ud83d\udd34 {0}"
-                        },
-                        {
-                          "operator": "==",
-                          "thresholdValue": "Resolved",
+                          "thresholdValue": "Succeeded",
                           "representation": "green",
-                          "text": "\u2705 {0}"
+                          "text": "✅ {0}"
                         },
                         {
                           "operator": "==",
                           "thresholdValue": "InProgress",
                           "representation": "orange",
-                          "text": "\u23f3 {0}"
+                          "text": "⏳ {0}"
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Pending",
+                          "representation": "yellow",
+                          "text": "⏸️ {0}"
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Failed",
+                          "representation": "red",
+                          "text": "❌ {0}"
                         }
                       ]
                     }
@@ -1577,14 +1625,19 @@
                 }
               ]
             },
-            "name": "query - incidents"
+            "name": "query - actions-list",
+            "isAutoRefreshEnabled": true,
+            "autoRefreshSettings": {
+              "intervalInSeconds": 30,
+              "refreshCondition": "always"
+            }
           },
           {
             "type": 1,
             "content": {
-              "json": "---\n## \u270f\ufe0f Update Incident\n\nUpdate incident status or assignment."
+              "json": "---\n## 🔍 Get Action Status\n\nRetrieve status of a specific action."
             },
-            "name": "text - update-incident"
+            "name": "text - action-status"
           },
           {
             "type": 9,
@@ -1592,274 +1645,37 @@
               "version": "KqlParameterItem/1.0",
               "parameters": [
                 {
-                  "id": "update-incident-id",
+                  "id": "action-id-param",
                   "version": "KqlParameterItem/1.0",
-                  "name": "UpdateIncidentId",
-                  "label": "Incident ID",
+                  "name": "ActionId",
+                  "label": "Action ID",
                   "type": 1,
                   "isRequired": false,
+                  "description": "Enter specific action ID to query",
                   "timeContext": {
                     "durationMs": 86400000
-                  },
-                  "isGlobal": true
-                },
-                {
-                  "id": "update-status-id",
-                  "version": "KqlParameterItem/1.0",
-                  "name": "UpdateStatus",
-                  "label": "New Status",
-                  "type": 2,
-                  "isRequired": false,
-                  "typeSettings": {
-                    "additionalResourceOptions": [],
-                    "showDefault": false
-                  },
-                  "jsonData": "[\"Active\", \"Resolved\", \"InProgress\", \"Redirected\"]",
-                  "timeContext": {
-                    "durationMs": 86400000
-                  },
-                  "isGlobal": true
+                  }
                 }
               ],
               "style": "pills",
               "queryType": 0,
               "resourceType": "microsoft.operationalinsights/workspaces"
             },
-            "name": "parameters - update-incident"
-          },
-          {
-            "type": 11,
-            "content": {
-              "version": "LinkItem/1.0",
-              "style": "list",
-              "links": [
-                {
-                  "id": "update-incident-action",
-                  "cellValue": "unused",
-                  "linkTarget": "ArmAction",
-                  "linkLabel": "\u270f\ufe0f Update Incident",
-                  "style": "primary",
-                  "linkIsContextBlade": true,
-                  "armActionContext": {
-                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2IncidentManager/invocations",
-                    "headers": [],
-                    "params": [
-                      {
-                        "key": "api-version",
-                        "value": "2022-03-01"
-                      },
-                      {
-                        "key": "action",
-                        "value": "Update Incident"
-                      },
-                      {
-                        "key": "tenantId",
-                        "value": "{TenantId}"
-                      },
-                      {
-                        "key": "incidentId",
-                        "value": "{UpdateIncidentId}"
-                      },
-                      {
-                        "key": "status",
-                        "value": "{UpdateStatus}"
-                      }
-                    ],
-                    "body": null,
-                    "httpMethod": "POST",
-                    "title": "Update Incident",
-                    "description": "Updating incident status...",
-                    "actionName": "UpdateIncident",
-                    "runLabel": "Update"
-                  },
-                  "criteriaData": [
-                    {
-                      "criterionType": "param",
-                      "value": "{FunctionApp}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{TenantId}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{UpdateIncidentId}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{UpdateStatus}"
-                    }
-                  ]
-                }
-              ]
-            },
-            "conditionalVisibility": {
-              "parameterName": "UpdateIncidentId",
-              "comparison": "isNotEqualTo",
-              "value": ""
-            },
-            "name": "links - update-incident"
-          },
-          {
-            "type": 1,
-            "content": {
-              "json": "---\n## \ud83d\udcac Add Comment to Incident\n\nAdd a comment to an existing incident."
-            },
-            "name": "text - add-comment"
-          },
-          {
-            "type": 9,
-            "content": {
-              "version": "KqlParameterItem/1.0",
-              "parameters": [
-                {
-                  "id": "comment-incident-id",
-                  "version": "KqlParameterItem/1.0",
-                  "name": "CommentIncidentId",
-                  "label": "Incident ID",
-                  "type": 1,
-                  "isRequired": false,
-                  "timeContext": {
-                    "durationMs": 86400000
-                  },
-                  "isGlobal": true
-                },
-                {
-                  "id": "incident-comment-id",
-                  "version": "KqlParameterItem/1.0",
-                  "name": "IncidentComment",
-                  "label": "Comment",
-                  "type": 1,
-                  "isRequired": false,
-                  "typeSettings": {
-                    "multiLineText": true,
-                    "multiLineHeight": 5
-                  },
-                  "timeContext": {
-                    "durationMs": 86400000
-                  },
-                  "isGlobal": true
-                }
-              ],
-              "style": "pills",
-              "queryType": 0,
-              "resourceType": "microsoft.operationalinsights/workspaces"
-            },
-            "name": "parameters - add-comment"
-          },
-          {
-            "type": 11,
-            "content": {
-              "version": "LinkItem/1.0",
-              "style": "list",
-              "links": [
-                {
-                  "id": "add-comment-action",
-                  "cellValue": "unused",
-                  "linkTarget": "ArmAction",
-                  "linkLabel": "\ud83d\udcac Add Comment",
-                  "style": "primary",
-                  "linkIsContextBlade": true,
-                  "armActionContext": {
-                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2IncidentManager/invocations",
-                    "headers": [],
-                    "params": [
-                      {
-                        "key": "api-version",
-                        "value": "2022-03-01"
-                      },
-                      {
-                        "key": "action",
-                        "value": "Add Comment"
-                      },
-                      {
-                        "key": "tenantId",
-                        "value": "{TenantId}"
-                      },
-                      {
-                        "key": "incidentId",
-                        "value": "{CommentIncidentId}"
-                      },
-                      {
-                        "key": "comment",
-                        "value": "{IncidentComment}"
-                      }
-                    ],
-                    "body": null,
-                    "httpMethod": "POST",
-                    "title": "Add Comment",
-                    "description": "Adding comment to incident...",
-                    "actionName": "AddComment",
-                    "runLabel": "Add"
-                  },
-                  "criteriaData": [
-                    {
-                      "criterionType": "param",
-                      "value": "{FunctionApp}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{TenantId}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{CommentIncidentId}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{IncidentComment}"
-                    }
-                  ]
-                }
-              ]
-            },
-            "conditionalVisibility": {
-              "parameterName": "CommentIncidentId",
-              "comparison": "isNotEqualTo",
-              "value": ""
-            },
-            "name": "links - add-comment"
-          }
-        ]
-      },
-      "name": "group - incidents",
-      "conditionalVisibility": {
-        "parameterName": "selectedTab",
-        "comparison": "isEqualTo",
-        "value": "incidents"
-      }
-    },
-    {
-      "type": 12,
-      "content": {
-        "version": "NotebookGroup/1.0",
-        "groupType": "editable",
-        "title": "\ud83d\udee1\ufe0f Custom Detection Manager",
-        "items": [
-          {
-            "type": 1,
-            "content": {
-              "json": "## \ud83d\udee1\ufe0f Custom Detection Manager\n\nManage custom detection rules with **ARM Actions** and **JSONPath parsing**.\n\n### Features:\n- \u2705 List all detections with JSONPath\n- \u2705 Create/Update/Delete via ARM Actions\n- \u2705 Backup detections for migration\n- \u2705 Sample detection templates"
-            },
-            "name": "text - detection-intro"
-          },
-          {
-            "type": 1,
-            "content": {
-              "json": "---\n## \ud83d\udccb List All Detections\n\nView all custom detection rules with JSONPath parsing."
-            },
-            "name": "text - list-detections"
+            "name": "parameters - action-id"
           },
           {
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2CDManager\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.detections[*]\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"ID\"},{\"path\":\"$.displayName\",\"columnid\":\"Name\"},{\"path\":\"$.severity\",\"columnid\":\"Severity\"},{\"path\":\"$.enabled\",\"columnid\":\"Enabled\"},{\"path\":\"$.createdBy\",\"columnid\":\"Created By\"},{\"path\":\"$.lastModified\",\"columnid\":\"Modified\"}]}}],\"urlParams\":[{\"key\":\"action\",\"value\":\"List Detections\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"}]}",
+              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"Action ID\"},{\"path\":\"$.type\",\"columnid\":\"Type\"},{\"path\":\"$.status\",\"columnid\":\"Status\"},{\"path\":\"$.requestor\",\"columnid\":\"Requestor\"},{\"path\":\"$.creationDateTimeUtc\",\"columnid\":\"Created\"},{\"path\":\"$.lastUpdateDateTimeUtc\",\"columnid\":\"Last Updated\"},{\"path\":\"$.error\",\"columnid\":\"Error\"}]}}],\"urlParams\":[{\"key\":\"action\",\"value\":\"Get Action Status\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"actionId\",\"value\":\"{ActionId}\"}]}",
               "size": 0,
-              "title": "\ud83d\udee1\ufe0f Custom Detection Rules",
-              "showExportToExcel": true,
+              "title": "Action Details",
               "queryType": 10,
-              "visualization": "table",
+              "isAutoRefreshEnabled": true,
+              "autoRefreshSettings": {
+                "intervalInSeconds": 30,
+                "runOnLoad": true
+              },
               "criteriaData": [
                 {
                   "criterionType": "param",
@@ -1875,161 +1691,19 @@
                 }
               ]
             },
-            "name": "query - list-detections"
-          },
-          {
-            "type": 1,
-            "content": {
-              "json": "---\n## \u2795 Create Detection Rule\n\nCreate a new custom detection rule."
-            },
-            "name": "text - create-detection"
-          },
-          {
-            "type": 9,
-            "content": {
-              "version": "KqlParameterItem/1.0",
-              "parameters": [
-                {
-                  "id": "create-rule-name",
-                  "version": "KqlParameterItem/1.0",
-                  "name": "CreateRuleName",
-                  "label": "Rule Name",
-                  "type": 1,
-                  "isRequired": false,
-                  "timeContext": {
-                    "durationMs": 86400000
-                  },
-                  "isGlobal": true
-                },
-                {
-                  "id": "create-rule-query",
-                  "version": "KqlParameterItem/1.0",
-                  "name": "CreateRuleQuery",
-                  "label": "KQL Query",
-                  "type": 1,
-                  "isRequired": false,
-                  "typeSettings": {
-                    "multiLineText": true,
-                    "editorLanguage": "kql",
-                    "multiLineHeight": 10
-                  },
-                  "timeContext": {
-                    "durationMs": 86400000
-                  },
-                  "isGlobal": true
-                },
-                {
-                  "id": "create-rule-severity",
-                  "version": "KqlParameterItem/1.0",
-                  "name": "CreateRuleSeverity",
-                  "label": "Severity",
-                  "type": 2,
-                  "isRequired": false,
-                  "typeSettings": {
-                    "additionalResourceOptions": [],
-                    "showDefault": false
-                  },
-                  "jsonData": "[\"Informational\", \"Low\", \"Medium\", \"High\"]",
-                  "defaultValue": "Medium",
-                  "timeContext": {
-                    "durationMs": 86400000
-                  },
-                  "isGlobal": true
-                }
-              ],
-              "style": "pills",
-              "queryType": 0,
-              "resourceType": "microsoft.operationalinsights/workspaces"
-            },
-            "name": "parameters - create-detection"
-          },
-          {
-            "type": 11,
-            "content": {
-              "version": "LinkItem/1.0",
-              "style": "list",
-              "links": [
-                {
-                  "id": "create-detection-action",
-                  "cellValue": "unused",
-                  "linkTarget": "ArmAction",
-                  "linkLabel": "\u2795 Create Detection Rule",
-                  "style": "primary",
-                  "linkIsContextBlade": true,
-                  "armActionContext": {
-                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2CDManager/invocations",
-                    "headers": [],
-                    "params": [
-                      {
-                        "key": "api-version",
-                        "value": "2022-03-01"
-                      },
-                      {
-                        "key": "action",
-                        "value": "Create Detection"
-                      },
-                      {
-                        "key": "tenantId",
-                        "value": "{TenantId}"
-                      },
-                      {
-                        "key": "ruleName",
-                        "value": "{CreateRuleName}"
-                      },
-                      {
-                        "key": "query",
-                        "value": "{CreateRuleQuery}"
-                      },
-                      {
-                        "key": "severity",
-                        "value": "{CreateRuleSeverity}"
-                      }
-                    ],
-                    "body": null,
-                    "httpMethod": "POST",
-                    "title": "Create Detection Rule",
-                    "description": "Creating custom detection rule...",
-                    "actionName": "CreateDetection",
-                    "runLabel": "Create"
-                  },
-                  "criteriaData": [
-                    {
-                      "criterionType": "param",
-                      "value": "{FunctionApp}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{TenantId}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{CreateRuleName}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{CreateRuleQuery}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{CreateRuleSeverity}"
-                    }
-                  ]
-                }
-              ]
-            },
             "conditionalVisibility": {
-              "parameterName": "CreateRuleName",
+              "parameterName": "ActionId",
               "comparison": "isNotEqualTo",
               "value": ""
             },
-            "name": "links - create-detection"
+            "name": "query - action-status"
           },
           {
             "type": 1,
             "content": {
-              "json": "---\n## \u270f\ufe0f Update Detection Rule\n\nModify an existing detection rule."
+              "json": "---\n## 🛑 Cancel Action\n\nCancel a specific pending action."
             },
-            "name": "text - update-detection"
+            "name": "text - cancel-action"
           },
           {
             "type": 9,
@@ -2037,131 +1711,10 @@
               "version": "KqlParameterItem/1.0",
               "parameters": [
                 {
-                  "id": "update-rule-id",
+                  "id": "cancel-action-id",
                   "version": "KqlParameterItem/1.0",
-                  "name": "UpdateRuleId",
-                  "label": "Rule ID",
-                  "type": 1,
-                  "isRequired": false,
-                  "timeContext": {
-                    "durationMs": 86400000
-                  },
-                  "isGlobal": true
-                },
-                {
-                  "id": "update-rule-query",
-                  "version": "KqlParameterItem/1.0",
-                  "name": "UpdateRuleQuery",
-                  "label": "New KQL Query",
-                  "type": 1,
-                  "isRequired": false,
-                  "typeSettings": {
-                    "multiLineText": true,
-                    "editorLanguage": "kql",
-                    "multiLineHeight": 10
-                  },
-                  "timeContext": {
-                    "durationMs": 86400000
-                  },
-                  "isGlobal": true
-                }
-              ],
-              "style": "pills",
-              "queryType": 0,
-              "resourceType": "microsoft.operationalinsights/workspaces"
-            },
-            "name": "parameters - update-detection"
-          },
-          {
-            "type": 11,
-            "content": {
-              "version": "LinkItem/1.0",
-              "style": "list",
-              "links": [
-                {
-                  "id": "update-detection-action",
-                  "cellValue": "unused",
-                  "linkTarget": "ArmAction",
-                  "linkLabel": "\u270f\ufe0f Update Detection Rule",
-                  "style": "primary",
-                  "linkIsContextBlade": true,
-                  "armActionContext": {
-                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2CDManager/invocations",
-                    "headers": [],
-                    "params": [
-                      {
-                        "key": "api-version",
-                        "value": "2022-03-01"
-                      },
-                      {
-                        "key": "action",
-                        "value": "Update Detection"
-                      },
-                      {
-                        "key": "tenantId",
-                        "value": "{TenantId}"
-                      },
-                      {
-                        "key": "ruleId",
-                        "value": "{UpdateRuleId}"
-                      },
-                      {
-                        "key": "query",
-                        "value": "{UpdateRuleQuery}"
-                      }
-                    ],
-                    "body": null,
-                    "httpMethod": "POST",
-                    "title": "Update Detection Rule",
-                    "description": "Updating detection rule...",
-                    "actionName": "UpdateDetection",
-                    "runLabel": "Update"
-                  },
-                  "criteriaData": [
-                    {
-                      "criterionType": "param",
-                      "value": "{FunctionApp}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{TenantId}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{UpdateRuleId}"
-                    },
-                    {
-                      "criterionType": "param",
-                      "value": "{UpdateRuleQuery}"
-                    }
-                  ]
-                }
-              ]
-            },
-            "conditionalVisibility": {
-              "parameterName": "UpdateRuleId",
-              "comparison": "isNotEqualTo",
-              "value": ""
-            },
-            "name": "links - update-detection"
-          },
-          {
-            "type": 1,
-            "content": {
-              "json": "---\n## \u274c Delete Detection Rule\n\nRemove a custom detection rule."
-            },
-            "name": "text - delete-detection"
-          },
-          {
-            "type": 9,
-            "content": {
-              "version": "KqlParameterItem/1.0",
-              "parameters": [
-                {
-                  "id": "delete-rule-id",
-                  "version": "KqlParameterItem/1.0",
-                  "name": "DeleteRuleId",
-                  "label": "Rule ID to Delete",
+                  "name": "CancelActionId",
+                  "label": "Action ID to Cancel",
                   "type": 1,
                   "isRequired": false,
                   "timeContext": {
@@ -2174,7 +1727,7 @@
               "queryType": 0,
               "resourceType": "microsoft.operationalinsights/workspaces"
             },
-            "name": "parameters - delete-detection"
+            "name": "parameters - cancel-action"
           },
           {
             "type": 11,
@@ -2183,14 +1736,14 @@
               "style": "list",
               "links": [
                 {
-                  "id": "delete-detection-action",
+                  "id": "cancel-action-link",
                   "cellValue": "unused",
                   "linkTarget": "ArmAction",
-                  "linkLabel": "\u274c Delete Detection Rule",
+                  "linkLabel": "🛑 Cancel Action",
                   "style": "primary",
                   "linkIsContextBlade": true,
                   "armActionContext": {
-                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2CDManager/invocations",
+                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Dispatcher/invocations",
                     "headers": [],
                     "params": [
                       {
@@ -2199,23 +1752,23 @@
                       },
                       {
                         "key": "action",
-                        "value": "Delete Detection"
+                        "value": "Cancel Action"
                       },
                       {
                         "key": "tenantId",
                         "value": "{TenantId}"
                       },
                       {
-                        "key": "ruleId",
-                        "value": "{DeleteRuleId}"
+                        "key": "actionId",
+                        "value": "{CancelActionId}"
                       }
                     ],
                     "body": null,
                     "httpMethod": "POST",
-                    "title": "Delete Detection Rule",
-                    "description": "Deleting detection rule...",
-                    "actionName": "DeleteDetection",
-                    "runLabel": "Delete"
+                    "title": "Cancel Action",
+                    "description": "Cancelling machine action...",
+                    "actionName": "CancelAction",
+                    "runLabel": "Cancel"
                   },
                   "criteriaData": [
                     {
@@ -2228,80 +1781,41 @@
                     },
                     {
                       "criterionType": "param",
-                      "value": "{DeleteRuleId}"
+                      "value": "{CancelActionId}"
                     }
                   ]
                 }
               ]
             },
             "conditionalVisibility": {
-              "parameterName": "DeleteRuleId",
+              "parameterName": "CancelActionId",
               "comparison": "isNotEqualTo",
               "value": ""
             },
-            "name": "links - delete-detection"
-          },
-          {
-            "type": 1,
-            "content": {
-              "json": "---\n## \ud83d\udcbe Backup Detections\n\nExport all detection rules for backup or migration."
-            },
-            "name": "text - backup-detections"
-          },
-          {
-            "type": 3,
-            "content": {
-              "version": "KqlItem/1.0",
-              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2CDManager\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.backup[*]\",\"columns\":[{\"path\":\"$.displayName\",\"columnid\":\"Name\"},{\"path\":\"$.query\",\"columnid\":\"Query\"},{\"path\":\"$.severity\",\"columnid\":\"Severity\"}]}}],\"urlParams\":[{\"key\":\"action\",\"value\":\"Backup Detections\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"}]}",
-              "size": 0,
-              "title": "\ud83d\udcbe Detection Backup",
-              "showExportToExcel": true,
-              "queryType": 10,
-              "visualization": "table",
-              "criteriaData": [
-                {
-                  "criterionType": "param",
-                  "value": "{FunctionApp}"
-                },
-                {
-                  "criterionType": "param",
-                  "value": "{FunctionAppName}"
-                },
-                {
-                  "criterionType": "param",
-                  "value": "{TenantId}"
-                }
-              ]
-            },
-            "name": "query - backup-detections"
+            "name": "links - cancel-action"
           }
         ]
       },
-      "name": "group - detections",
-      "conditionalVisibility": {
-        "parameterName": "selectedTab",
-        "comparison": "isEqualTo",
-        "value": "detections"
-      }
+      "name": "group - actions"
     },
     {
       "type": 12,
       "content": {
         "version": "NotebookGroup/1.0",
         "groupType": "editable",
-        "title": "\ud83d\udd0d Hunt Manager",
+        "title": "🔍 Hunt Manager",
         "items": [
           {
             "type": 1,
             "content": {
-              "json": "## \ud83d\udd0d Hunt Manager\n\nExecute advanced hunting queries with **async polling** and **JSONPath parsing**.\n\n### Features:\n- \u2705 Async hunt execution with auto-refresh\n- \u2705 JSONPath result parsing\n- \u2705 Sample query templates\n- \u2705 Export to Excel capability"
+              "json": "## 🔍 Hunt Manager\n\nExecute advanced hunting queries with **async polling** and **JSONPath parsing**.\n\n### Features:\n- ✅ Async hunt execution with auto-refresh\n- ✅ JSONPath result parsing\n- ✅ Sample query templates\n- ✅ Export to Excel capability"
             },
             "name": "text - hunt-intro"
           },
           {
             "type": 1,
             "content": {
-              "json": "---\n## \ud83d\udcdd Sample Queries\n\nSelect a sample query or enter your own KQL."
+              "json": "---\n## 📝 Sample Queries\n\nSelect a sample query or enter your own KQL."
             },
             "name": "text - sample-header"
           },
@@ -2383,7 +1897,7 @@
           {
             "type": 1,
             "content": {
-              "json": "---\n## \ud83c\udfaf Execute Hunt\n\nRun your hunt query with automatic result polling."
+              "json": "---\n## 🎯 Execute Hunt\n\nRun your hunt query with automatic result polling."
             },
             "name": "text - execute-hunt"
           },
@@ -2393,7 +1907,7 @@
               "version": "KqlItem/1.0",
               "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2HuntManager\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.results[*]\",\"columns\":[{\"path\":\"$.DeviceName\",\"columnid\":\"Device Name\"},{\"path\":\"$.Timestamp\",\"columnid\":\"Timestamp\"},{\"path\":\"$.ActionType\",\"columnid\":\"Action Type\"},{\"path\":\"$.FileName\",\"columnid\":\"File Name\"},{\"path\":\"$.ProcessCommandLine\",\"columnid\":\"Command Line\"},{\"path\":\"$.AccountName\",\"columnid\":\"Account\"}]}}],\"urlParams\":[{\"key\":\"action\",\"value\":\"Execute Hunt\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"huntQuery\",\"value\":\"{HuntQuery}\"}]}",
               "size": 0,
-              "title": "\ud83d\udd0d Hunt Results (Auto-refreshing every {HuntRefreshInterval}s until complete)",
+              "title": "🔍 Hunt Results (Auto-refreshing every {HuntRefreshInterval}s until complete)",
               "showExportToExcel": true,
               "queryType": 10,
               "visualization": "table",
@@ -2422,7 +1936,7 @@
           {
             "type": 1,
             "content": {
-              "json": "---\n## \ud83d\udcca Hunt Status\n\nMonitor the status of your hunt query execution."
+              "json": "---\n## 📊 Hunt Status\n\nMonitor the status of your hunt query execution."
             },
             "name": "text - hunt-status"
           },
@@ -2469,12 +1983,855 @@
           }
         ]
       },
-      "name": "group - hunting",
-      "conditionalVisibility": {
-        "parameterName": "selectedTab",
-        "comparison": "isEqualTo",
-        "value": "hunting"
-      }
+      "name": "group - hunting"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "🚨 Incident Manager",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "## 🚨 Incident Manager\n\nManage security incidents with **filters** and **JSONPath parsing**.\n\n### Features:\n- ✅ Severity and status filtering\n- ✅ JSONPath output parsing\n- ✅ Update incidents via ARM Actions\n- ✅ Add comments to incidents"
+            },
+            "name": "text - incident-intro"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "incident-severity-id",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "IncidentSeverity",
+                  "label": "Severity Filter",
+                  "type": 2,
+                  "isRequired": false,
+                  "typeSettings": {
+                    "additionalResourceOptions": [],
+                    "showDefault": false
+                  },
+                  "jsonData": "[\"All\", \"Informational\", \"Low\", \"Medium\", \"High\"]",
+                  "defaultValue": "All",
+                  "timeContext": {
+                    "durationMs": 86400000
+                  }
+                },
+                {
+                  "id": "incident-status-id",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "IncidentStatus",
+                  "label": "Status Filter",
+                  "type": 2,
+                  "isRequired": false,
+                  "typeSettings": {
+                    "additionalResourceOptions": [],
+                    "showDefault": false
+                  },
+                  "jsonData": "[\"All\", \"Active\", \"Resolved\", \"InProgress\", \"Redirected\"]",
+                  "defaultValue": "Active",
+                  "timeContext": {
+                    "durationMs": 86400000
+                  }
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "name": "parameters - incident-filters"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---\n## 📊 Get Incidents\n\nView incidents with filtering options."
+            },
+            "name": "text - get-incidents"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2IncidentManager\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.incidents[*]\",\"columns\":[{\"path\":\"$.incidentId\",\"columnid\":\"Incident ID\"},{\"path\":\"$.incidentName\",\"columnid\":\"Name\"},{\"path\":\"$.severity\",\"columnid\":\"Severity\"},{\"path\":\"$.status\",\"columnid\":\"Status\"},{\"path\":\"$.assignedTo\",\"columnid\":\"Assigned To\"},{\"path\":\"$.createdTime\",\"columnid\":\"Created\"},{\"path\":\"$.lastUpdateTime\",\"columnid\":\"Updated\"}]}}],\"urlParams\":[{\"key\":\"action\",\"value\":\"Get Incidents\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"severity\",\"value\":\"{IncidentSeverity}\"},{\"key\":\"status\",\"value\":\"{IncidentStatus}\"}]}",
+              "size": 0,
+              "title": "🚨 Security Incidents",
+              "showExportToExcel": true,
+              "queryType": 10,
+              "visualization": "table",
+              "gridSettings": {
+                "formatters": [
+                  {
+                    "columnMatch": "Severity",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "colors",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "==",
+                          "thresholdValue": "High",
+                          "representation": "red",
+                          "text": "🔴 {0}"
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Medium",
+                          "representation": "orange",
+                          "text": "⚠️ {0}"
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Low",
+                          "representation": "green",
+                          "text": "ℹ️ {0}"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "columnMatch": "Status",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "colors",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Active",
+                          "representation": "red",
+                          "text": "🔴 {0}"
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Resolved",
+                          "representation": "green",
+                          "text": "✅ {0}"
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "InProgress",
+                          "representation": "orange",
+                          "text": "⏳ {0}"
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "filter": true
+              },
+              "criteriaData": [
+                {
+                  "criterionType": "param",
+                  "value": "{FunctionApp}"
+                },
+                {
+                  "criterionType": "param",
+                  "value": "{FunctionAppName}"
+                },
+                {
+                  "criterionType": "param",
+                  "value": "{TenantId}"
+                }
+              ]
+            },
+            "name": "query - incidents"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---\n## ✏️ Update Incident\n\nUpdate incident status or assignment."
+            },
+            "name": "text - update-incident"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "update-incident-id",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "UpdateIncidentId",
+                  "label": "Incident ID",
+                  "type": 1,
+                  "isRequired": false,
+                  "timeContext": {
+                    "durationMs": 86400000
+                  },
+                  "isGlobal": true
+                },
+                {
+                  "id": "update-status-id",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "UpdateStatus",
+                  "label": "New Status",
+                  "type": 2,
+                  "isRequired": false,
+                  "typeSettings": {
+                    "additionalResourceOptions": [],
+                    "showDefault": false
+                  },
+                  "jsonData": "[\"Active\", \"Resolved\", \"InProgress\", \"Redirected\"]",
+                  "timeContext": {
+                    "durationMs": 86400000
+                  },
+                  "isGlobal": true
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "name": "parameters - update-incident"
+          },
+          {
+            "type": 11,
+            "content": {
+              "version": "LinkItem/1.0",
+              "style": "list",
+              "links": [
+                {
+                  "id": "update-incident-action",
+                  "cellValue": "unused",
+                  "linkTarget": "ArmAction",
+                  "linkLabel": "✏️ Update Incident",
+                  "style": "primary",
+                  "linkIsContextBlade": true,
+                  "armActionContext": {
+                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2IncidentManager/invocations",
+                    "headers": [],
+                    "params": [
+                      {
+                        "key": "api-version",
+                        "value": "2022-03-01"
+                      },
+                      {
+                        "key": "action",
+                        "value": "Update Incident"
+                      },
+                      {
+                        "key": "tenantId",
+                        "value": "{TenantId}"
+                      },
+                      {
+                        "key": "incidentId",
+                        "value": "{UpdateIncidentId}"
+                      },
+                      {
+                        "key": "status",
+                        "value": "{UpdateStatus}"
+                      }
+                    ],
+                    "body": null,
+                    "httpMethod": "POST",
+                    "title": "Update Incident",
+                    "description": "Updating incident status...",
+                    "actionName": "UpdateIncident",
+                    "runLabel": "Update"
+                  },
+                  "criteriaData": [
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionApp}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{TenantId}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{UpdateIncidentId}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{UpdateStatus}"
+                    }
+                  ]
+                }
+              ]
+            },
+            "conditionalVisibility": {
+              "parameterName": "UpdateIncidentId",
+              "comparison": "isNotEqualTo",
+              "value": ""
+            },
+            "name": "links - update-incident"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---\n## 💬 Add Comment to Incident\n\nAdd a comment to an existing incident."
+            },
+            "name": "text - add-comment"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "comment-incident-id",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "CommentIncidentId",
+                  "label": "Incident ID",
+                  "type": 1,
+                  "isRequired": false,
+                  "timeContext": {
+                    "durationMs": 86400000
+                  },
+                  "isGlobal": true
+                },
+                {
+                  "id": "incident-comment-id",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "IncidentComment",
+                  "label": "Comment",
+                  "type": 1,
+                  "isRequired": false,
+                  "typeSettings": {
+                    "multiLineText": true,
+                    "multiLineHeight": 5
+                  },
+                  "timeContext": {
+                    "durationMs": 86400000
+                  },
+                  "isGlobal": true
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "name": "parameters - add-comment"
+          },
+          {
+            "type": 11,
+            "content": {
+              "version": "LinkItem/1.0",
+              "style": "list",
+              "links": [
+                {
+                  "id": "add-comment-action",
+                  "cellValue": "unused",
+                  "linkTarget": "ArmAction",
+                  "linkLabel": "💬 Add Comment",
+                  "style": "primary",
+                  "linkIsContextBlade": true,
+                  "armActionContext": {
+                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2IncidentManager/invocations",
+                    "headers": [],
+                    "params": [
+                      {
+                        "key": "api-version",
+                        "value": "2022-03-01"
+                      },
+                      {
+                        "key": "action",
+                        "value": "Add Comment"
+                      },
+                      {
+                        "key": "tenantId",
+                        "value": "{TenantId}"
+                      },
+                      {
+                        "key": "incidentId",
+                        "value": "{CommentIncidentId}"
+                      },
+                      {
+                        "key": "comment",
+                        "value": "{IncidentComment}"
+                      }
+                    ],
+                    "body": null,
+                    "httpMethod": "POST",
+                    "title": "Add Comment",
+                    "description": "Adding comment to incident...",
+                    "actionName": "AddComment",
+                    "runLabel": "Add"
+                  },
+                  "criteriaData": [
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionApp}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{TenantId}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{CommentIncidentId}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{IncidentComment}"
+                    }
+                  ]
+                }
+              ]
+            },
+            "conditionalVisibility": {
+              "parameterName": "CommentIncidentId",
+              "comparison": "isNotEqualTo",
+              "value": ""
+            },
+            "name": "links - add-comment"
+          }
+        ]
+      },
+      "name": "group - incidents"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "🛡️ Custom Detection Manager",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "## 🛡️ Custom Detection Manager\n\nManage custom detection rules with **ARM Actions** and **JSONPath parsing**.\n\n### Features:\n- ✅ List all detections with JSONPath\n- ✅ Create/Update/Delete via ARM Actions\n- ✅ Backup detections for migration\n- ✅ Sample detection templates"
+            },
+            "name": "text - detection-intro"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---\n## 📋 List All Detections\n\nView all custom detection rules with JSONPath parsing."
+            },
+            "name": "text - list-detections"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2CDManager\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.detections[*]\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"ID\"},{\"path\":\"$.displayName\",\"columnid\":\"Name\"},{\"path\":\"$.severity\",\"columnid\":\"Severity\"},{\"path\":\"$.enabled\",\"columnid\":\"Enabled\"},{\"path\":\"$.createdBy\",\"columnid\":\"Created By\"},{\"path\":\"$.lastModified\",\"columnid\":\"Modified\"}]}}],\"urlParams\":[{\"key\":\"action\",\"value\":\"List Detections\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"}]}",
+              "size": 0,
+              "title": "🛡️ Custom Detection Rules",
+              "showExportToExcel": true,
+              "queryType": 10,
+              "visualization": "table",
+              "criteriaData": [
+                {
+                  "criterionType": "param",
+                  "value": "{FunctionApp}"
+                },
+                {
+                  "criterionType": "param",
+                  "value": "{FunctionAppName}"
+                },
+                {
+                  "criterionType": "param",
+                  "value": "{TenantId}"
+                }
+              ]
+            },
+            "name": "query - list-detections"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---\n## ➕ Create Detection Rule\n\nCreate a new custom detection rule."
+            },
+            "name": "text - create-detection"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "create-rule-name",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "CreateRuleName",
+                  "label": "Rule Name",
+                  "type": 1,
+                  "isRequired": false,
+                  "timeContext": {
+                    "durationMs": 86400000
+                  },
+                  "isGlobal": true
+                },
+                {
+                  "id": "create-rule-query",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "CreateRuleQuery",
+                  "label": "KQL Query",
+                  "type": 1,
+                  "isRequired": false,
+                  "typeSettings": {
+                    "multiLineText": true,
+                    "editorLanguage": "kql",
+                    "multiLineHeight": 10
+                  },
+                  "timeContext": {
+                    "durationMs": 86400000
+                  },
+                  "isGlobal": true
+                },
+                {
+                  "id": "create-rule-severity",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "CreateRuleSeverity",
+                  "label": "Severity",
+                  "type": 2,
+                  "isRequired": false,
+                  "typeSettings": {
+                    "additionalResourceOptions": [],
+                    "showDefault": false
+                  },
+                  "jsonData": "[\"Informational\", \"Low\", \"Medium\", \"High\"]",
+                  "defaultValue": "Medium",
+                  "timeContext": {
+                    "durationMs": 86400000
+                  },
+                  "isGlobal": true
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "name": "parameters - create-detection"
+          },
+          {
+            "type": 11,
+            "content": {
+              "version": "LinkItem/1.0",
+              "style": "list",
+              "links": [
+                {
+                  "id": "create-detection-action",
+                  "cellValue": "unused",
+                  "linkTarget": "ArmAction",
+                  "linkLabel": "➕ Create Detection Rule",
+                  "style": "primary",
+                  "linkIsContextBlade": true,
+                  "armActionContext": {
+                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2CDManager/invocations",
+                    "headers": [],
+                    "params": [
+                      {
+                        "key": "api-version",
+                        "value": "2022-03-01"
+                      },
+                      {
+                        "key": "action",
+                        "value": "Create Detection"
+                      },
+                      {
+                        "key": "tenantId",
+                        "value": "{TenantId}"
+                      },
+                      {
+                        "key": "ruleName",
+                        "value": "{CreateRuleName}"
+                      },
+                      {
+                        "key": "query",
+                        "value": "{CreateRuleQuery}"
+                      },
+                      {
+                        "key": "severity",
+                        "value": "{CreateRuleSeverity}"
+                      }
+                    ],
+                    "body": null,
+                    "httpMethod": "POST",
+                    "title": "Create Detection Rule",
+                    "description": "Creating custom detection rule...",
+                    "actionName": "CreateDetection",
+                    "runLabel": "Create"
+                  },
+                  "criteriaData": [
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionApp}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{TenantId}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{CreateRuleName}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{CreateRuleQuery}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{CreateRuleSeverity}"
+                    }
+                  ]
+                }
+              ]
+            },
+            "conditionalVisibility": {
+              "parameterName": "CreateRuleName",
+              "comparison": "isNotEqualTo",
+              "value": ""
+            },
+            "name": "links - create-detection"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---\n## ✏️ Update Detection Rule\n\nModify an existing detection rule."
+            },
+            "name": "text - update-detection"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "update-rule-id",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "UpdateRuleId",
+                  "label": "Rule ID",
+                  "type": 1,
+                  "isRequired": false,
+                  "timeContext": {
+                    "durationMs": 86400000
+                  },
+                  "isGlobal": true
+                },
+                {
+                  "id": "update-rule-query",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "UpdateRuleQuery",
+                  "label": "New KQL Query",
+                  "type": 1,
+                  "isRequired": false,
+                  "typeSettings": {
+                    "multiLineText": true,
+                    "editorLanguage": "kql",
+                    "multiLineHeight": 10
+                  },
+                  "timeContext": {
+                    "durationMs": 86400000
+                  },
+                  "isGlobal": true
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "name": "parameters - update-detection"
+          },
+          {
+            "type": 11,
+            "content": {
+              "version": "LinkItem/1.0",
+              "style": "list",
+              "links": [
+                {
+                  "id": "update-detection-action",
+                  "cellValue": "unused",
+                  "linkTarget": "ArmAction",
+                  "linkLabel": "✏️ Update Detection Rule",
+                  "style": "primary",
+                  "linkIsContextBlade": true,
+                  "armActionContext": {
+                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2CDManager/invocations",
+                    "headers": [],
+                    "params": [
+                      {
+                        "key": "api-version",
+                        "value": "2022-03-01"
+                      },
+                      {
+                        "key": "action",
+                        "value": "Update Detection"
+                      },
+                      {
+                        "key": "tenantId",
+                        "value": "{TenantId}"
+                      },
+                      {
+                        "key": "ruleId",
+                        "value": "{UpdateRuleId}"
+                      },
+                      {
+                        "key": "query",
+                        "value": "{UpdateRuleQuery}"
+                      }
+                    ],
+                    "body": null,
+                    "httpMethod": "POST",
+                    "title": "Update Detection Rule",
+                    "description": "Updating detection rule...",
+                    "actionName": "UpdateDetection",
+                    "runLabel": "Update"
+                  },
+                  "criteriaData": [
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionApp}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{TenantId}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{UpdateRuleId}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{UpdateRuleQuery}"
+                    }
+                  ]
+                }
+              ]
+            },
+            "conditionalVisibility": {
+              "parameterName": "UpdateRuleId",
+              "comparison": "isNotEqualTo",
+              "value": ""
+            },
+            "name": "links - update-detection"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---\n## ❌ Delete Detection Rule\n\nRemove a custom detection rule."
+            },
+            "name": "text - delete-detection"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "delete-rule-id",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "DeleteRuleId",
+                  "label": "Rule ID to Delete",
+                  "type": 1,
+                  "isRequired": false,
+                  "timeContext": {
+                    "durationMs": 86400000
+                  },
+                  "isGlobal": true
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "name": "parameters - delete-detection"
+          },
+          {
+            "type": 11,
+            "content": {
+              "version": "LinkItem/1.0",
+              "style": "list",
+              "links": [
+                {
+                  "id": "delete-detection-action",
+                  "cellValue": "unused",
+                  "linkTarget": "ArmAction",
+                  "linkLabel": "❌ Delete Detection Rule",
+                  "style": "primary",
+                  "linkIsContextBlade": true,
+                  "armActionContext": {
+                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2CDManager/invocations",
+                    "headers": [],
+                    "params": [
+                      {
+                        "key": "api-version",
+                        "value": "2022-03-01"
+                      },
+                      {
+                        "key": "action",
+                        "value": "Delete Detection"
+                      },
+                      {
+                        "key": "tenantId",
+                        "value": "{TenantId}"
+                      },
+                      {
+                        "key": "ruleId",
+                        "value": "{DeleteRuleId}"
+                      }
+                    ],
+                    "body": null,
+                    "httpMethod": "POST",
+                    "title": "Delete Detection Rule",
+                    "description": "Deleting detection rule...",
+                    "actionName": "DeleteDetection",
+                    "runLabel": "Delete"
+                  },
+                  "criteriaData": [
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionApp}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{TenantId}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{DeleteRuleId}"
+                    }
+                  ]
+                }
+              ]
+            },
+            "conditionalVisibility": {
+              "parameterName": "DeleteRuleId",
+              "comparison": "isNotEqualTo",
+              "value": ""
+            },
+            "name": "links - delete-detection"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---\n## 💾 Backup Detections\n\nExport all detection rules for backup or migration."
+            },
+            "name": "text - backup-detections"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2CDManager\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.backup[*]\",\"columns\":[{\"path\":\"$.displayName\",\"columnid\":\"Name\"},{\"path\":\"$.query\",\"columnid\":\"Query\"},{\"path\":\"$.severity\",\"columnid\":\"Severity\"}]}}],\"urlParams\":[{\"key\":\"action\",\"value\":\"Backup Detections\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"}]}",
+              "size": 0,
+              "title": "💾 Detection Backup",
+              "showExportToExcel": true,
+              "queryType": 10,
+              "visualization": "table",
+              "criteriaData": [
+                {
+                  "criterionType": "param",
+                  "value": "{FunctionApp}"
+                },
+                {
+                  "criterionType": "param",
+                  "value": "{FunctionAppName}"
+                },
+                {
+                  "criterionType": "param",
+                  "value": "{TenantId}"
+                }
+              ]
+            },
+            "name": "query - backup-detections"
+          }
+        ]
+      },
+      "name": "group - detections"
     },
     {
       "type": 12,
@@ -2485,7 +2842,7 @@
           {
             "type": 1,
             "content": {
-              "json": "## \ud83d\udda5\ufe0f Interactive Console - Live Response Command Execution\n\n### \ud83c\udfaf Shell-Like Interface with Async Execution\n\n<div style=\"background-color: #000000; color: #00ff00; border: 2px solid #00ff00; padding: 20px; font-family: 'Courier New', monospace; box-shadow: 0 0 20px #001100;\">\n\n```\n\u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557\n\u2551                    DefenderC2 Interactive Live Response Shell                \u2551\n\u2551                          Port of @msdirtbag/MDEAutomator                     \u2551\n\u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d\n\n SYSTEM STATUS: OPERATIONAL\n CONNECTION: ACTIVE\n AUTH: MULTI-TENANT APP REGISTRATION\n MODE: ASYNC EXECUTION WITH AUTO-POLLING\n\n\u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 FEATURES                                                                    \u2502\n\u251c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2524\n\u2502 \u2705 Async Command Execution      \u2502 Commands run in background via Function  \u2502\n\u2502 \u2705 Auto-Polling Results         \u2502 Automatic status checking (configurable) \u2502\n\u2502 \u2705 JSON Response Parsing        \u2502 Structured output display                \u2502\n\u2502 \u2705 Multi-Action Support         \u2502 Device actions, queries, API calls       \u2502\n\u2502 \u2705 Execution History Tracking   \u2502 Command audit trail                      \u2502\n\u2502 \u2705 Library File Operations      \u2502 Upload, deploy, download files           \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256f\n\n\u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 AVAILABLE COMMAND TYPES                                                     \u2502\n\u251c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2524\n\u2502 \ud83c\udfaf DefenderC2Dispatcher    \u2502 Device actions (Isolate, Scan, Restrict)    \u2502\n\u2502 \ud83d\udd0d DefenderC2HuntManager   \u2502 Advanced Hunting (KQL queries)              \u2502\n\u2502 \ud83d\udee1\ufe0f DefenderC2TIManager     \u2502 Threat Intelligence (Indicators)            \u2502\n\u2502 \ud83d\udea8 DefenderC2IncidentManager\u2502 Incident Management (Update, Comment)      \u2502\n\u2502 \u2699\ufe0f DefenderC2CDManager     \u2502 Custom Detection Rules                      \u2502\n\u2502 \ud83c\udfbb DefenderC2Orchestrator  \u2502 Live Response & Library Operations          \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256f\n```\n\n</div>\n\n### \ud83d\udccb Step-by-Step Execution\n\nExecute commands and track results through the following workflow:\n\n---"
+              "json": "## 🖥️ Interactive Console - Live Response Command Execution\n\n### 🎯 Shell-Like Interface with Async Execution\n\n<div style=\"background-color: #000000; color: #00ff00; border: 2px solid #00ff00; padding: 20px; font-family: 'Courier New', monospace; box-shadow: 0 0 20px #001100;\">\n\n```\n╔══════════════════════════════════════════════════════════════════════════════╗\n║                    DefenderC2 Interactive Live Response Shell                ║\n║                          Port of @msdirtbag/MDEAutomator                     ║\n╚══════════════════════════════════════════════════════════════════════════════╝\n\n SYSTEM STATUS: OPERATIONAL\n CONNECTION: ACTIVE\n AUTH: MULTI-TENANT APP REGISTRATION\n MODE: ASYNC EXECUTION WITH AUTO-POLLING\n\n╭─────────────────────────────────────────────────────────────────────────────╮\n│ FEATURES                                                                    │\n├─────────────────────────────────────────────────────────────────────────────┤\n│ ✅ Async Command Execution      │ Commands run in background via Function  │\n│ ✅ Auto-Polling Results         │ Automatic status checking (configurable) │\n│ ✅ JSON Response Parsing        │ Structured output display                │\n│ ✅ Multi-Action Support         │ Device actions, queries, API calls       │\n│ ✅ Execution History Tracking   │ Command audit trail                      │\n│ ✅ Library File Operations      │ Upload, deploy, download files           │\n╰─────────────────────────────────────────────────────────────────────────────╯\n\n╭─────────────────────────────────────────────────────────────────────────────╮\n│ AVAILABLE COMMAND TYPES                                                     │\n├─────────────────────────────────────────────────────────────────────────────┤\n│ 🎯 DefenderC2Dispatcher    │ Device actions (Isolate, Scan, Restrict)    │\n│ 🔍 DefenderC2HuntManager   │ Advanced Hunting (KQL queries)              │\n│ 🛡️ DefenderC2TIManager     │ Threat Intelligence (Indicators)            │\n│ 🚨 DefenderC2IncidentManager│ Incident Management (Update, Comment)      │\n│ ⚙️ DefenderC2CDManager     │ Custom Detection Rules                      │\n│ 🎻 DefenderC2Orchestrator  │ Live Response & Library Operations          │\n╰─────────────────────────────────────────────────────────────────────────────╯\n```\n\n</div>\n\n### 📋 Step-by-Step Execution\n\nExecute commands and track results through the following workflow:\n\n---"
             },
             "name": "text - console-header"
           },
@@ -2505,7 +2862,7 @@
                     "additionalResourceOptions": [],
                     "showDefault": false
                   },
-                  "jsonData": "[{\"value\":\"10000\",\"label\":\"\ud83d\udfe2 10 seconds\"},{\"value\":\"30000\",\"label\":\"\ud83d\udfe2 30 seconds\"},{\"value\":\"60000\",\"label\":\"\ud83d\udfe1 1 minute\"},{\"value\":\"300000\",\"label\":\"\ud83d\udd35 5 minutes\"},{\"value\":\"0\",\"label\":\"\ud83d\udd34 Manual Only\"}]",
+                  "jsonData": "[{\"value\":\"10000\",\"label\":\"🟢 10 seconds\"},{\"value\":\"30000\",\"label\":\"🟢 30 seconds\"},{\"value\":\"60000\",\"label\":\"🟡 1 minute\"},{\"value\":\"300000\",\"label\":\"🔵 5 minutes\"},{\"value\":\"0\",\"label\":\"🔴 Manual Only\"}]",
                   "defaultValue": "30000",
                   "timeContext": {
                     "durationMs": 86400000
@@ -2547,6 +2904,19 @@
                   }
                 },
                 {
+                  "id": "device-ids-console",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "DeviceIds",
+                  "label": "Target Device IDs (comma-separated)",
+                  "type": 1,
+                  "isRequired": false,
+                  "description": "Enter one or more device IDs separated by commas",
+                  "timeContext": {
+                    "durationMs": 86400000
+                  },
+                  "isGlobal": true
+                },
+                {
                   "id": "command-params-console",
                   "version": "KqlParameterItem/1.0",
                   "name": "CommandParams",
@@ -2574,7 +2944,7 @@
                   "id": "library-filename-upload",
                   "version": "KqlParameterItem/1.0",
                   "name": "LibraryFileNameUpload",
-                  "label": "\ud83d\udce4 Library File Name (Upload)",
+                  "label": "📤 Library File Name (Upload)",
                   "type": 1,
                   "description": "Name for the file in library (e.g., investigation.ps1)",
                   "typeSettings": {
@@ -2583,7 +2953,7 @@
                   "conditionalVisibility": {
                     "parameterName": "CommandType",
                     "comparison": "isEqualTo",
-                    "value": "\ud83d\udce4 Upload to Library"
+                    "value": "📤 Upload to Library"
                   },
                   "isGlobal": true
                 },
@@ -2591,7 +2961,7 @@
                   "id": "library-content-upload",
                   "version": "KqlParameterItem/1.0",
                   "name": "LibraryContentUpload",
-                  "label": "\ud83d\udce4 File Content (Base64 encoded)",
+                  "label": "📤 File Content (Base64 encoded)",
                   "type": 1,
                   "description": "Base64-encoded file content to upload to library",
                   "typeSettings": {
@@ -2601,7 +2971,7 @@
                   "conditionalVisibility": {
                     "parameterName": "CommandType",
                     "comparison": "isEqualTo",
-                    "value": "\ud83d\udce4 Upload to Library"
+                    "value": "📤 Upload to Library"
                   },
                   "isGlobal": true
                 },
@@ -2609,7 +2979,7 @@
                   "id": "library-filename-get",
                   "version": "KqlParameterItem/1.0",
                   "name": "LibraryFileNameGet",
-                  "label": "\ud83d\udce5 Library File Name (Get)",
+                  "label": "📥 Library File Name (Get)",
                   "type": 1,
                   "description": "Name of file to retrieve from library",
                   "typeSettings": {
@@ -2618,14 +2988,14 @@
                   "conditionalVisibility": {
                     "parameterName": "CommandType",
                     "comparison": "isEqualTo",
-                    "value": "\ud83d\udce5 Get Library File"
+                    "value": "📥 Get Library File"
                   }
                 },
                 {
                   "id": "library-deploy-filename",
                   "version": "KqlParameterItem/1.0",
                   "name": "LibraryDeployFileName",
-                  "label": "\ud83d\ude80 Library File Name (Deploy)",
+                  "label": "🚀 Library File Name (Deploy)",
                   "type": 1,
                   "description": "Name of file from library to deploy to device(s)",
                   "typeSettings": {
@@ -2634,7 +3004,7 @@
                   "conditionalVisibility": {
                     "parameterName": "CommandType",
                     "comparison": "isEqualTo",
-                    "value": "\ud83d\ude80 Deploy from Library"
+                    "value": "🚀 Deploy from Library"
                   },
                   "isGlobal": true
                 }
@@ -2648,7 +3018,7 @@
           {
             "type": 1,
             "content": {
-              "json": "---\n### \ud83d\ude80 Step 1: Execute Command\n\nClick the button below to execute the selected command. The Function App will process the request asynchronously."
+              "json": "---\n### 🚀 Step 1: Execute Command\n\nClick the button below to execute the selected command. The Function App will process the request asynchronously."
             },
             "name": "text - step1-header"
           },
@@ -2656,9 +3026,9 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.action\",\"columnid\":\"Action\"},{\"path\":\"$.status\",\"columnid\":\"Status\"},{\"path\":\"$.message\",\"columnid\":\"Message\"},{\"path\":\"$.timestamp\",\"columnid\":\"Timestamp\"},{\"path\":\"$.details\",\"columnid\":\"Details\"},{\"path\":\"$.actionIds\",\"columnid\":\"Action IDs\"}]}}],\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"action\",\"value\":\"{CommandType}\"},{\"key\":\"actionName\",\"value\":\"{ActionName}\"},{\"key\":\"deviceIds\",\"value\":\"{DeviceList}\"},{\"key\":\"params\",\"value\":\"{CommandParams}\"}]}",
+              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.action\",\"columnid\":\"Action\"},{\"path\":\"$.status\",\"columnid\":\"Status\"},{\"path\":\"$.message\",\"columnid\":\"Message\"},{\"path\":\"$.timestamp\",\"columnid\":\"Timestamp\"},{\"path\":\"$.details\",\"columnid\":\"Details\"},{\"path\":\"$.actionIds\",\"columnid\":\"Action IDs\"}]}}],\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"action\",\"value\":\"{CommandType}\"},{\"key\":\"actionName\",\"value\":\"{ActionName}\"},{\"key\":\"deviceIds\",\"value\":\"{DeviceIds}\"},{\"key\":\"params\",\"value\":\"{CommandParams}\"}]}",
               "size": 4,
-              "title": "\ud83c\udfaf Command Execution Status",
+              "title": "🎯 Command Execution Status",
               "noDataMessage": "Click 'Run Query' to execute command",
               "queryType": 10,
               "visualization": "table",
@@ -2682,7 +3052,7 @@
           {
             "type": 1,
             "content": {
-              "json": "---\n### \u23f3 Step 2: Poll for Results\n\nAutomatically polls for command completion. Refresh interval: **{RefreshInterval}ms**"
+              "json": "---\n### ⏳ Step 2: Poll for Results\n\nAutomatically polls for command completion. Refresh interval: **{RefreshInterval}ms**"
             },
             "name": "text - step2-header"
           },
@@ -2692,7 +3062,7 @@
               "version": "KqlItem/1.0",
               "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.action\",\"columnid\":\"Action\"},{\"path\":\"$.status\",\"columnid\":\"Status\"},{\"path\":\"$.message\",\"columnid\":\"Message\"},{\"path\":\"$.details\",\"columnid\":\"Details\"},{\"path\":\"$.actionStatus.status\",\"columnid\":\"Action Status\"},{\"path\":\"$.actionStatus.type\",\"columnid\":\"Type\"}]}}],\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"action\",\"value\":\"getstatus\"},{\"key\":\"actionId\",\"value\":\"{ActionId}\"}]}",
               "size": 0,
-              "title": "\ud83d\udcca Action Status (Auto-refresh)",
+              "title": "📊 Action Status (Auto-refresh)",
               "noDataMessage": "No active actions to poll. Execute a command first.",
               "queryType": 10,
               "visualization": "table",
@@ -2708,25 +3078,25 @@
                           "operator": "==",
                           "thresholdValue": "Succeeded",
                           "representation": "green",
-                          "text": "\u2705 {0}"
+                          "text": "✅ {0}"
                         },
                         {
                           "operator": "==",
                           "thresholdValue": "InProgress",
                           "representation": "orange",
-                          "text": "\u23f3 {0}"
+                          "text": "⏳ {0}"
                         },
                         {
                           "operator": "==",
                           "thresholdValue": "Pending",
                           "representation": "yellow",
-                          "text": "\u23f8\ufe0f {0}"
+                          "text": "⏸️ {0}"
                         },
                         {
                           "operator": "==",
                           "thresholdValue": "Failed",
                           "representation": "red",
-                          "text": "\u274c {0}"
+                          "text": "❌ {0}"
                         }
                       ]
                     }
@@ -2758,7 +3128,7 @@
           {
             "type": 1,
             "content": {
-              "json": "---\n### \ud83d\udce5 Step 3: View Results\n\nParsed JSON results from the command execution."
+              "json": "---\n### 📥 Step 3: View Results\n\nParsed JSON results from the command execution."
             },
             "name": "text - step3-header"
           },
@@ -2768,7 +3138,7 @@
               "version": "KqlItem/1.0",
               "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.action\",\"columnid\":\"Action\"},{\"path\":\"$.status\",\"columnid\":\"Status\"},{\"path\":\"$.message\",\"columnid\":\"Message\"},{\"path\":\"$.details\",\"columnid\":\"Details\"},{\"path\":\"$.results\",\"columnid\":\"Results\"}]}}],\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"action\",\"value\":\"getresults\"},{\"key\":\"actionId\",\"value\":\"{ActionId}\"}]}",
               "size": 0,
-              "title": "\ud83d\udccb Command Results",
+              "title": "📋 Command Results",
               "noDataMessage": "No results available yet. Command may still be executing.",
               "exportToExcelOptions": "all",
               "queryType": 10,
@@ -2798,7 +3168,7 @@
           {
             "type": 1,
             "content": {
-              "json": "---\n### \ud83d\udcda Command History\n\nRecent command executions and their status."
+              "json": "---\n### 📚 Command History\n\nRecent command executions and their status."
             },
             "name": "text - history-header"
           },
@@ -2808,7 +3178,7 @@
               "version": "KqlItem/1.0",
               "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.history[*]\",\"columns\":[{\"path\":\"$.action\",\"columnid\":\"Action\"},{\"path\":\"$.status\",\"columnid\":\"Status\"},{\"path\":\"$.timestamp\",\"columnid\":\"Timestamp\"},{\"path\":\"$.message\",\"columnid\":\"Message\"},{\"path\":\"$.details\",\"columnid\":\"Details\"}]}}],\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"action\",\"value\":\"history\"},{\"key\":\"limit\",\"value\":\"20\"}]}",
               "size": 4,
-              "title": "\ud83d\udcca Execution History (Last 20)",
+              "title": "📊 Execution History (Last 20)",
               "noDataMessage": "No command history available.",
               "queryType": 10,
               "visualization": "table",
@@ -2824,13 +3194,13 @@
                           "operator": "==",
                           "thresholdValue": "Succeeded",
                           "representation": "green",
-                          "text": "\u2705 {0}"
+                          "text": "✅ {0}"
                         },
                         {
                           "operator": "==",
                           "thresholdValue": "Failed",
                           "representation": "red",
-                          "text": "\u274c {0}"
+                          "text": "❌ {0}"
                         }
                       ]
                     }
@@ -2861,32 +3231,17 @@
           {
             "type": 1,
             "content": {
-              "json": "---\n### \ud83d\udd04 How It Works\n\n**Architecture:**\n1. **Execute** \u2192 Sends command to Function App with parameters\n2. **Function App** \u2192 Authenticates with MDE API using managed identity\n3. **Poll** \u2192 Automatically checks action status at configured interval\n4. **Parse** \u2192 Extracts and displays JSON results in table format\n5. **History** \u2192 Tracks all executions for audit and review\n\n**Key Features:**\n- \u2705 Async execution - commands run in background\n- \u2705 Auto-polling - no manual status checking needed\n- \u2705 JSON parsing - structured data display\n- \u2705 Multi-tenant - works across different tenants\n- \u2705 Audit trail - complete execution history\n\n**Supported Commands:**\n- Device actions (isolate, scan, collect packages)\n- Live Response operations (run scripts, get/put files)\n- Advanced Hunting queries\n- Threat Intelligence management\n- Incident and detection operations\n\n---\n\n> \ud83d\udca1 **Tip:** Set auto-refresh to 30 seconds for active monitoring, or disable for manual control."
+              "json": "---\n### 🔄 How It Works\n\n**Architecture:**\n1. **Execute** → Sends command to Function App with parameters\n2. **Function App** → Authenticates with MDE API using managed identity\n3. **Poll** → Automatically checks action status at configured interval\n4. **Parse** → Extracts and displays JSON results in table format\n5. **History** → Tracks all executions for audit and review\n\n**Key Features:**\n- ✅ Async execution - commands run in background\n- ✅ Auto-polling - no manual status checking needed\n- ✅ JSON parsing - structured data display\n- ✅ Multi-tenant - works across different tenants\n- ✅ Audit trail - complete execution history\n\n**Supported Commands:**\n- Device actions (isolate, scan, collect packages)\n- Live Response operations (run scripts, get/put files)\n- Advanced Hunting queries\n- Threat Intelligence management\n- Incident and detection operations\n\n---\n\n> 💡 **Tip:** Set auto-refresh to 30 seconds for active monitoring, or disable for manual control."
             },
             "name": "text - console-footer"
-          }
-        ]
-      },
-      "conditionalVisibility": {
-        "parameterName": "selectedTab",
-        "comparison": "isEqualTo",
-        "value": "console"
-      },
-      "name": "group - console"
-    },
-    {
-      "type": 12,
-      "content": {
-        "version": "NotebookGroup/1.0",
-        "groupType": "editable",
-        "items": [
+          },
           {
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
               "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Orchestrator\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.files[*]\",\"columns\":[{\"path\":\"$.fileName\",\"columnid\":\"File Name\"},{\"path\":\"$.size\",\"columnid\":\"Size (bytes)\"},{\"path\":\"$.lastModified\",\"columnid\":\"Last Modified\"},{\"path\":\"$.contentType\",\"columnid\":\"Content Type\"}]}}],\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"action\",\"value\":\"ListLibraryFiles\"}]}",
               "size": 0,
-              "title": "\ud83d\udcda Library Files",
+              "title": "📚 Library Files",
               "showRefreshButton": true,
               "showExportToExcel": true,
               "queryType": 10,
@@ -2923,7 +3278,7 @@
                   "id": "library-upload-action",
                   "cellValue": "libraryUploadResult",
                   "linkTarget": "ArmAction",
-                  "linkLabel": "\ud83d\udce4 Upload File to Library",
+                  "linkLabel": "📤 Upload File to Library",
                   "style": "primary",
                   "linkIsContextBlade": false,
                   "armActionContext": {
@@ -2982,7 +3337,7 @@
             "conditionalVisibility": {
               "parameterName": "CommandType",
               "comparison": "isEqualTo",
-              "value": "\ud83d\udce4 Upload to Library"
+              "value": "📤 Upload to Library"
             },
             "name": "library-upload-action"
           },
@@ -2992,7 +3347,7 @@
               "version": "KqlItem/1.0",
               "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Orchestrator\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.fileName\",\"columnid\":\"File Name\"},{\"path\":\"$.size\",\"columnid\":\"Size (bytes)\"},{\"path\":\"$.contentType\",\"columnid\":\"Content Type\"},{\"path\":\"$.lastModified\",\"columnid\":\"Last Modified\"},{\"path\":\"$.content\",\"columnid\":\"Content (Text)\"},{\"path\":\"$.contentBase64\",\"columnid\":\"Content (Base64)\"}]}}],\"urlParams\":[{\"key\":\"fileName\",\"value\":\"{LibraryFileNameGet}\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"action\",\"value\":\"GetLibraryFile\"}]}",
               "size": 0,
-              "title": "\ud83d\udce5 Library File Content",
+              "title": "📥 Library File Content",
               "showRefreshButton": true,
               "showExportToExcel": true,
               "queryType": 10,
@@ -3015,7 +3370,7 @@
             "conditionalVisibility": {
               "parameterName": "CommandType",
               "comparison": "isEqualTo",
-              "value": "\ud83d\udce5 Get Library File"
+              "value": "📥 Get Library File"
             },
             "name": "library-get-query"
           },
@@ -3029,7 +3384,7 @@
                   "id": "library-deploy-action",
                   "cellValue": "libraryDeployResult",
                   "linkTarget": "ArmAction",
-                  "linkLabel": "\ud83d\ude80 Deploy Library File to Device(s)",
+                  "linkLabel": "🚀 Deploy Library File to Device(s)",
                   "style": "primary",
                   "linkIsContextBlade": false,
                   "armActionContext": {
@@ -3046,7 +3401,7 @@
                       },
                       {
                         "key": "deviceIds",
-                        "value": "{DeviceList}"
+                        "value": "{DeviceIds}"
                       },
                       {
                         "key": "fileName",
@@ -3064,7 +3419,7 @@
                     "body": null,
                     "httpMethod": "POST",
                     "title": "Deploy from Library",
-                    "description": "Deploying {LibraryDeployFileName} from library to {DeviceList}",
+                    "description": "Deploying {LibraryDeployFileName} from library to {DeviceIds}",
                     "actionName": "Deploy",
                     "runLabel": "Deploy"
                   },
@@ -3079,7 +3434,7 @@
                     },
                     {
                       "criterionType": "param",
-                      "value": "{DeviceList}"
+                      "value": "{DeviceIds}"
                     },
                     {
                       "criterionType": "param",
@@ -3092,18 +3447,20 @@
             "conditionalVisibility": {
               "parameterName": "CommandType",
               "comparison": "isEqualTo",
-              "value": "\ud83d\ude80 Deploy from Library"
+              "value": "🚀 Deploy from Library"
             },
             "name": "library-deploy-action"
           }
         ]
       },
-      "conditionalVisibility": {
-        "parameterName": "selectedTab",
-        "comparison": "isEqualTo",
-        "value": "library"
-      },
-      "name": "group - library"
+      "name": "group - console"
     }
-  ]
+  ],
+  "defaultResourceIds": [
+    "/subscriptions/PLACEHOLDER"
+  ],
+  "fallbackResourceIds": [
+    "Azure Monitor"
+  ],
+  "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
 }
