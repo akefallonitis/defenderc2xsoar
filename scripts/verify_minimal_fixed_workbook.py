@@ -59,7 +59,9 @@ def verify_workbook():
         print(f"  ✓ URLParams: {len(query['urlParams'])} parameters")
     
     criteria_values = [c['value'] for c in device_list['criteriaData']]
-    if set(criteria_values) != {'{FunctionApp}', '{FunctionAppName}', '{TenantId}'}:
+    # Updated: Should only include directly used parameters (FunctionAppName, TenantId)
+    # Removed FunctionApp as it's redundant (FunctionAppName already depends on it)
+    if set(criteria_values) != {'{FunctionAppName}', '{TenantId}'}:
         errors.append(f"DeviceList criteriaData incorrect: {criteria_values}")
     else:
         print(f"  ✓ CriteriaData: {', '.join(criteria_values)}")
@@ -80,11 +82,17 @@ def verify_workbook():
         else:
             print(f"  ✓ {label}: Path uses {{FunctionApp}}")
         
-        # Check body is null
-        if action['armActionContext']['body'] is not None:
-            errors.append(f"{label}: Body should be null")
+        # Check body has JSON (changed: body should contain function parameters as JSON)
+        body = action['armActionContext']['body']
+        if not body or body == 'null':
+            errors.append(f"{label}: Body should contain JSON with function parameters")
         else:
-            print(f"    ✓ Body: null")
+            try:
+                body_obj = json.loads(body)
+                print(f"    ✓ Body: {len(body_obj)} parameters")
+            except:
+                errors.append(f"{label}: Body contains invalid JSON")
+                print(f"    ✗ Body: Invalid JSON")
         
         # Check params array
         params_list = action['armActionContext']['params']
@@ -127,7 +135,9 @@ def verify_workbook():
         print(f"  ✓ Body: null")
     
     criteria_values = [c['value'] for c in grid['criteriaData']]
-    if set(criteria_values) != {'{FunctionApp}', '{FunctionAppName}', '{TenantId}'}:
+    # Updated: Should only include directly used parameters (FunctionAppName, TenantId)
+    # Removed FunctionApp as it's redundant (FunctionAppName already depends on it)
+    if set(criteria_values) != {'{FunctionAppName}', '{TenantId}'}:
         errors.append(f"Device grid criteriaData incorrect: {criteria_values}")
     else:
         print(f"  ✓ CriteriaData: {', '.join(criteria_values)}")
@@ -150,6 +160,7 @@ def verify_workbook():
         print("\nAll checks completed successfully!")
         print("\nThe workbook is correctly configured with:")
         print("  • ARM action paths using {FunctionApp} directly")
+        print("  • ARM actions use POST body for function parameters (not query string)")
         print("  • Simplified criteriaData (only directly used parameters)")
         print("  • CustomEndpoint queries with urlParams (not body)")
         print("  • All parameters marked as global")

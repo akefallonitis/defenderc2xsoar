@@ -159,10 +159,6 @@
             "criteriaData": [
               {
                 "criterionType": "param",
-                "value": "{FunctionApp}"
-              },
-              {
-                "criterionType": "param",
                 "value": "{FunctionAppName}"
               },
               {
@@ -197,34 +193,19 @@
             "linkIsContextBlade": true,
             "armActionContext": {
               "path": "{FunctionApp}/functions/DefenderC2Dispatcher/invocations",
-              "headers": [],
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
               "params": [
                 {
                   "key": "api-version",
                   "value": "2022-03-01"
-                },
-                {
-                  "key": "action",
-                  "value": "Isolate Device"
-                },
-                {
-                  "key": "tenantId",
-                  "value": "{TenantId}"
-                },
-                {
-                  "key": "deviceIds",
-                  "value": "{DeviceList}"
-                },
-                {
-                  "key": "isolationType",
-                  "value": "Full"
-                },
-                {
-                  "key": "comment",
-                  "value": "Isolated via Workbook"
                 }
               ],
-              "body": null,
+              "body": "{\"action\": \"Isolate Device\", \"tenantId\": \"{TenantId}\", \"deviceIds\": \"{DeviceList}\", \"isolationType\": \"Full\", \"comment\": \"Isolated via Workbook\"}",
               "httpMethod": "POST",
               "title": "Isolate Devices",
               "description": "Initiating device isolation...",
@@ -255,30 +236,19 @@
             "linkIsContextBlade": true,
             "armActionContext": {
               "path": "{FunctionApp}/functions/DefenderC2Dispatcher/invocations",
-              "headers": [],
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
               "params": [
                 {
                   "key": "api-version",
                   "value": "2022-03-01"
-                },
-                {
-                  "key": "action",
-                  "value": "Unisolate Device"
-                },
-                {
-                  "key": "tenantId",
-                  "value": "{TenantId}"
-                },
-                {
-                  "key": "deviceIds",
-                  "value": "{DeviceList}"
-                },
-                {
-                  "key": "comment",
-                  "value": "Unisolated via Workbook"
                 }
               ],
-              "body": null,
+              "body": "{\"action\": \"Unisolate Device\", \"tenantId\": \"{TenantId}\", \"deviceIds\": \"{DeviceList}\", \"comment\": \"Unisolated via Workbook\"}",
               "httpMethod": "POST",
               "title": "Unisolate Devices",
               "description": "Removing device isolation...",
@@ -309,34 +279,19 @@
             "linkIsContextBlade": true,
             "armActionContext": {
               "path": "{FunctionApp}/functions/DefenderC2Dispatcher/invocations",
-              "headers": [],
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
               "params": [
                 {
                   "key": "api-version",
                   "value": "2022-03-01"
-                },
-                {
-                  "key": "action",
-                  "value": "Run Antivirus Scan"
-                },
-                {
-                  "key": "tenantId",
-                  "value": "{TenantId}"
-                },
-                {
-                  "key": "deviceIds",
-                  "value": "{DeviceList}"
-                },
-                {
-                  "key": "scanType",
-                  "value": "Quick"
-                },
-                {
-                  "key": "comment",
-                  "value": "Scan initiated via Workbook"
                 }
               ],
-              "body": null,
+              "body": "{\"action\": \"Run Antivirus Scan\", \"tenantId\": \"{TenantId}\", \"deviceIds\": \"{DeviceList}\", \"scanType\": \"Quick\", \"comment\": \"Scan initiated via Workbook\"}",
               "httpMethod": "POST",
               "title": "Run Antivirus Scan",
               "description": "Initiating antivirus scan...",
@@ -378,10 +333,6 @@
         "queryType": 10,
         "visualization": "table",
         "criteriaData": [
-          {
-            "criterionType": "param",
-            "value": "{FunctionApp}"
-          },
           {
             "criterionType": "param",
             "value": "{FunctionAppName}"
