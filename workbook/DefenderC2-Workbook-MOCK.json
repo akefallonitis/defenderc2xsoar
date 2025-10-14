@@ -1,0 +1,111 @@
+{
+  "version": "Notebook/1.0",
+  "items": [
+    {
+      "type": 9,
+      "content": {
+        "version": "KqlParameterItem/1.0",
+        "parameters": [
+          {
+            "id": "mock-subscription",
+            "version": "KqlParameterItem/1.0",
+            "name": "Subscription",
+            "type": 1,
+            "value": "8010e3c-3ec4-4567-b06d-7d47xxxxx",
+            "isHiddenWhenLocked": false
+          },
+          {
+            "id": "mock-rg",
+            "version": "KqlParameterItem/1.0",
+            "name": "ResourceGroup",
+            "type": 1,
+            "value": "alex-testing-rg",
+            "isHiddenWhenLocked": false
+          },
+          {
+            "id": "mock-functionname",
+            "version": "KqlParameterItem/1.0",
+            "name": "FunctionAppName",
+            "type": 1,
+            "value": "defenderc2",
+            "isHiddenWhenLocked": false
+          },
+          {
+            "id": "mock-tenantid",
+            "version": "KqlParameterItem/1.0",
+            "name": "TenantId",
+            "type": 1,
+            "value": "your-tenant-id-here",
+            "isHiddenWhenLocked": false
+          },
+          {
+            "id": "mock-devicelist",
+            "version": "KqlParameterItem/1.0",
+            "name": "DeviceList",
+            "type": 2,
+            "multiSelect": true,
+            "quote": "'",
+            "delimiter": ",",
+            "query": "datatable(value:string, label:string) [\n'device-001', 'DESKTOP-TEST01',\n'device-002', 'LAPTOP-TEST02',\n'device-003', 'SERVER-TEST03'\n]",
+            "queryType": 0,
+            "defaultValue": "value::1"
+          }
+        ],
+        "style": "pills",
+        "queryType": 0
+      }
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "## 🧪 MOCK DATA TEST WORKBOOK\n\nThis workbook uses **hardcoded mock data** to test if ARM actions work.\n\n**Parameters (Mock Data)**:\n- Subscription: `{Subscription}`\n- ResourceGroup: `{ResourceGroup}`\n- FunctionAppName: `{FunctionAppName}`\n- TenantId: `{TenantId}`\n\n**Instructions**:\n1. Edit the parameters above with your real values\n2. Select one or more mock devices\n3. Click an ARM action button below\n4. Check if the ARM action URL is correctly formed (should have NO `<unset>`)"
+      }
+    },
+    {
+      "type": 11,
+      "content": {
+        "version": "LinkItem/1.0",
+        "style": "list",
+        "links": [
+          {
+            "id": "isolate-mock",
+            "linkTarget": "ArmAction",
+            "linkLabel": "🔒 TEST: Isolate Devices (Mock)",
+            "style": "primary",
+            "armActionContext": {
+              "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Dispatcher/invocations",
+              "params": [
+                {"key": "api-version", "value": "2022-03-01"},
+                {"key": "action", "value": "Isolate Device"},
+                {"key": "tenantId", "value": "{TenantId}"},
+                {"key": "deviceIds", "value": "{DeviceList}"},
+                {"key": "isolationType", "value": "Full"},
+                {"key": "comment", "value": "MOCK TEST"}
+              ],
+              "httpMethod": "POST"
+            },
+            "criteriaData": [
+              {"criterionType": "param", "value": "{Subscription}"},
+              {"criterionType": "param", "value": "{ResourceGroup}"},
+              {"criterionType": "param", "value": "{FunctionAppName}"},
+              {"criterionType": "param", "value": "{TenantId}"},
+              {"criterionType": "param", "value": "{DeviceList}"}
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "datatable(Device:string, ID:string) [\n'DESKTOP-TEST01', 'device-001',\n'LAPTOP-TEST02', 'device-002',\n'SERVER-TEST03', 'device-003'\n]",
+        "size": 0,
+        "title": "Mock Devices",
+        "queryType": 0
+      }
+    }
+  ],
+  "fallbackResourceIds": ["Azure Monitor"],
+  "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
+}
