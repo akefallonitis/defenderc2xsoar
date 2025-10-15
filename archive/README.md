@@ -38,6 +38,7 @@ Technical implementation details and architecture documentation:
 
 For current documentation, see the root directory:
 - [README.md](../README.md) - Main project overview and getting started
+- **[FUNCTIONALITY_REFERENCE.md](../FUNCTIONALITY_REFERENCE.md)** - **⭐ Where is the functionality?** (feature-to-code mapping)
 - [DEPLOYMENT.md](../DEPLOYMENT.md) - Standard deployment guide
 - [QUICKSTART.md](../QUICKSTART.md) - Quick start guide
 - [CONTRIBUTING.md](../CONTRIBUTING.md) - Contributing guidelines
