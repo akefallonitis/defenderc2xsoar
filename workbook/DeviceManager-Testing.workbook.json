@@ -54,10 +54,28 @@
             "version": "KqlParameterItem/1.0",
             "name": "TenantId",
             "label": "Defender XDR Tenant ID",
-            "type": 1,
+            "type": 2,
             "isRequired": true,
             "isGlobal": true,
-            "description": "Enter your Microsoft Defender XDR Tenant ID"
+            "description": "Enter your Microsoft Defender XDR Tenant ID",
+            "multiSelect": false,
+            "query": "ResourceContainers | where type == \"microsoft.resources/subscriptions\" | project tenantId | distinct tenantId | project value = tenantId, label = strcat(\"🏢 Tenant: \", tenantId) | order by label asc",
+            "crossComponentResources": [
+              "value::all"
+            ],
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources",
+            "typeSettings": {
+              "additionalResourceOptions": [
+                "value::1"
+              ],
+              "selectFirstItem": true,
+              "showDefault": false
+            },
+            "defaultValue": "value::1",
+            "timeContext": {
+              "durationMs": 86400000
+            }
           },
           {
             "id": "device-list-dropdown",
@@ -78,7 +96,17 @@
               "durationMs": 86400000
             },
             "queryType": 10,
-            "description": "✅ Auto-populated from Defender XDR"
+            "description": "✅ Auto-populated from Defender XDR",
+            "criteriaData": [
+              {
+                "criterionType": "param",
+                "value": "{FunctionAppName}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{TenantId}"
+              }
+            ]
           },
           {
             "id": "action-selector",
@@ -267,7 +295,12 @@
                 }
               ]
             },
-            "name": "device-inventory-test"
+            "name": "device-inventory-test",
+            "conditionalVisibility": {
+              "parameterName": "TenantId",
+              "comparison": "isNotEqualTo",
+              "value": ""
+            }
           }
         ]
       },
@@ -374,7 +407,12 @@
               "comparison": "isNotEqualTo",
               "value": "none"
             },
-            "name": "running-actions-check"
+            "name": "running-actions-check",
+            "isAutoRefreshEnabled": true,
+            "autoRefreshSettings": {
+              "intervalInSeconds": 30,
+              "refreshCondition": "always"
+            }
           }
         ]
       },
@@ -1036,7 +1074,12 @@
               "comparison": "isNotEqualTo",
               "value": ""
             },
-            "name": "action-status-tracking"
+            "name": "action-status-tracking",
+            "isAutoRefreshEnabled": true,
+            "autoRefreshSettings": {
+              "intervalInSeconds": 30,
+              "refreshCondition": "always"
+            }
           }
         ]
       },
@@ -1103,7 +1146,12 @@
               "comparison": "isNotEqualTo",
               "value": ""
             },
-            "name": "cancel-action-test"
+            "name": "cancel-action-test",
+            "isAutoRefreshEnabled": true,
+            "autoRefreshSettings": {
+              "intervalInSeconds": 30,
+              "refreshCondition": "always"
+            }
           }
         ]
       },
