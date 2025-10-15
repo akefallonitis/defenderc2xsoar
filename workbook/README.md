@@ -33,6 +33,26 @@ Specialized workbook for file operations:
 - File deployment to devices
 - Live Response file operations
 
+### DeviceManager-Testing.workbook.json ⭐ NEW
+Comprehensive device functionality testing workbook:
+- **Complete device action testing** - All 6 device action types
+- **Auto-populated device lists** - Devices load automatically
+- **Real-time monitoring** - Auto-refresh status tracking (30s default)
+- **Conflict detection** - Checks for running actions before execution
+- **Action management** - Track and cancel actions
+- **Conditional visibility** - Smart UI shows only relevant sections
+- **Comprehensive documentation** - See [DEVICE_TESTING_GUIDE.md](../DEVICE_TESTING_GUIDE.md)
+
+**Device Actions Tested:**
+- 🔍 Antivirus Scan (Quick/Full)
+- 🔒 Device Isolation (Full/Selective)
+- 🔓 Device Unisolation
+- 📦 Investigation Package Collection
+- 🚫 App Execution Restriction
+- ✅ App Execution Unrestriction
+
+**Use Case:** Ideal for testing device functionality, validating API integration, and verifying action execution before production use.
+
 ## 🎯 Quick Start
 
 ### 1. Automatic Deployment
