@@ -162,9 +162,28 @@
             "version": "KqlParameterItem/1.0",
             "name": "CancelActionId",
             "label": "Action ID to Cancel",
-            "type": 1,
+            "type": 2,
             "isGlobal": true,
-            "value": ""
+            "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"urlParams\":[{\"key\":\"action\",\"value\":\"Get All Actions\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"}],\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.actions[?(@.status == 'Pending' || @.status == 'InProgress')]\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"value\"},{\"path\":\"$.type\",\"columnid\":\"label\"}]}}]}",
+            "crossComponentResources": [
+              "value::all"
+            ],
+            "typeSettings": {
+              "additionalResourceOptions": [],
+              "showDefault": false
+            },
+            "queryType": 10,
+            "description": "Select a pending or in-progress action to cancel.",
+            "criteriaData": [
+              {
+                "criterionType": "param",
+                "value": "{FunctionAppName}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{TenantId}"
+              }
+            ]
           },
           {
             "id": "auto-refresh",
@@ -1156,6 +1175,73 @@
         ]
       },
       "name": "cancel-test-group"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "📋 List and Cancel Machine Actions",
+        "expandable": true,
+        "expanded": true,
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "**Test Objective:** Verify that machine actions can be listed and canceled.\\n\\n**Instructions:** Select a pending or in-progress action from the dropdown and click 'Cancel Action'.\\n\\n**Expected Result:** The selected action is canceled and its status is updated to 'Cancelled'."
+            },
+            "name": "list-cancel-info"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"urlParams\":[{\"key\":\"action\",\"value\":\"Cancel Action\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"actionId\",\"value\":\"{CancelActionId}\"},{\"key\":\"comment\",\"value\":\"TEST: Action cancelled via DefenderC2 Workbook by akefallonitis at 2025-10-15 14:20:00\"}],\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"columns\":[{\"path\":\"$.message\",\"columnid\":\"Result\"},{\"path\":\"$.status\",\"columnid\":\"Status\"},{\"path\":\"$.result\",\"columnid\":\"Details\"}]}}]}",
+              "size": 0,
+              "title": "❌ Cancellation Result",
+              "noDataMessage": "Select an action to cancel.",
+              "noDataMessageStyle": 3,
+              "timeContext": {
+                "durationMs": 86400000
+              },
+              "showRefreshButton": true,
+              "queryType": 10,
+              "visualization": "table",
+              "gridSettings": {
+                "formatters": [
+                  {
+                    "columnMatch": "Status",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "colors",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "contains",
+                          "thresholdValue": "Cancelled",
+                          "representation": "gray",
+                          "text": "⚫ {0}"
+                        },
+                        {
+                          "operator": "Default",
+                          "representation": "blue",
+                          "text": "{0}"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            "conditionalVisibility": {
+              "parameterName": "CancelActionId",
+              "comparison": "isNotEqualTo",
+              "value": ""
+            },
+            "name": "cancel-action-result"
+          }
+        ]
+      },
+      "name": "list-cancel-group"
     },
     {
       "type": 1,
