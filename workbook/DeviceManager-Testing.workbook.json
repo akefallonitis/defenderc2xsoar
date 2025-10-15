@@ -312,6 +312,16 @@
                   "itemKey": "Risk Score",
                   "sortOrder": 2
                 }
+              ],
+              "criteriaData": [
+                {
+                  "criterionType": "param",
+                  "value": "{FunctionAppName}"
+                },
+                {
+                  "criterionType": "param",
+                  "value": "{TenantId}"
+                }
               ]
             },
             "name": "device-inventory-test",
@@ -418,6 +428,16 @@
                 {
                   "itemKey": "Started",
                   "sortOrder": 2
+                }
+              ],
+              "criteriaData": [
+                {
+                  "criterionType": "param",
+                  "value": "{FunctionAppName}"
+                },
+                {
+                  "criterionType": "param",
+                  "value": "{TenantId}"
                 }
               ]
             },
