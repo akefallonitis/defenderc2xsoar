@@ -247,7 +247,18 @@ For issues or questions:
 
 ## 📝 Version History
 
-### v2.1 - Auto-Populated Device Parameters (Current)
+### v2.2 - DeviceManager-Testing Workbook Fixes (2025-10-15) **LATEST**
+- **Fixed device list auto-population** - Resolved "< query failed >" issue (PR #93)
+- **Added error prevention** - Checks for conflicting actions before execution
+- **Auto-populated action IDs** - Click to track/cancel without manual entry
+- **Enhanced conditional visibility** - Sections show only when relevant
+- **Auto-refresh capability** - Configurable intervals (30s, 1min, 5min)
+- **Comprehensive documentation** - DEVICEMANAGER-FIXES.md and QUICKSTART guide
+- **Warning system** - Prevents 400 errors from duplicate actions
+- **Verified against function code** - All parameters match DefenderC2Dispatcher/run.ps1
+- See: [DEVICEMANAGER-FIXES.md](DEVICEMANAGER-FIXES.md) and [QUICKSTART-DEVICEMANAGER.md](QUICKSTART-DEVICEMANAGER.md)
+
+### v2.1 - Auto-Populated Device Parameters
 - **Device parameter auto-population** from Defender environment
 - **Multi-select dropdowns** for all device actions
 - **Auto-refresh** for action manager (30s interval)
@@ -267,3 +278,53 @@ For issues or questions:
 - Function key authentication
 - Manual resource entry
 - MDEAutomator branding
+
+## 🆕 Latest Updates (2025-10-15)
+
+### DeviceManager-Testing Workbook - Complete Overhaul
+
+**Problem**: The DeviceManager-Testing workbook had several critical issues:
+- Device list showing "< query failed >" instead of loading
+- 400 errors when same action already running on device
+- No warning system for conflicting actions
+- Manual entry required for action tracking
+- Sections showing when they shouldn't
+
+**Solution**: Comprehensive fixes addressing all issues:
+
+1. **Fixed Auto-Population**
+   - Added `criteriaData` to ensure parameters ready before query
+   - Correct CustomEndpoint configuration
+   - Proper dependency chain (FunctionApp → FunctionAppName → TenantId → DeviceList)
+
+2. **Error Prevention System**
+   - New "Running Actions Check" section
+   - Queries for pending/in-progress actions before execution
+   - Warning messages with clear instructions
+   - Cancel buttons for conflicting actions
+
+3. **Click-to-Populate**
+   - Action results include "📊 Track" links
+   - Running actions include "🛑 Cancel" buttons
+   - Both auto-populate relevant parameters
+   - No manual copy/paste needed
+
+4. **Smart Visibility**
+   - Sections appear only when relevant
+   - Multiple conditional checks per section
+   - Clean UI without clutter
+
+5. **Auto-Refresh**
+   - Global setting (Off, 30s, 1min, 5min)
+   - Applied to all live queries
+   - Default 30 seconds for optimal balance
+
+**Files**:
+- `DeviceManager-Testing.workbook.json` - Fixed production file
+- `DEVICEMANAGER-FIXES.md` - Technical documentation
+- `QUICKSTART-DEVICEMANAGER.md` - User guide
+- `DeviceManager-Testing.workbook.BACKUP.json` - Original backup
+
+**Testing**: Requires full end-to-end testing in Azure environment
+
+**Status**: ✅ Ready for deployment and testing
