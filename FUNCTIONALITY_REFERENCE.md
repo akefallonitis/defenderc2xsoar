@@ -1,6 +1,8 @@
 # DefenderC2 XSOAR - Functionality Reference
 
 > **Quick answer to "where is the functionality?"** - This guide maps all features to their implementation locations in the codebase.
+>
+> **⚡ Want an even faster lookup?** See [Quick Reference Card](docs/QUICK_REFERENCE.md) for ultra-fast table lookup.
 
 ## 📋 Table of Contents
 

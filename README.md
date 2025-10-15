@@ -294,6 +294,7 @@ The Azure Workbook version includes additional capabilities:
 ### 📘 Core Documentation
 - **[README.md](README.md)** - This file (overview and getting started)
 - **[FUNCTIONALITY_REFERENCE.md](FUNCTIONALITY_REFERENCE.md)** - **⭐ Feature-to-code mapping** (where is the functionality?)
+- **[docs/QUICK_REFERENCE.md](docs/QUICK_REFERENCE.md)** - **⚡ Quick reference card** (ultra-fast lookup)
 - **[DEPLOYMENT.md](DEPLOYMENT.md)** - Complete deployment guide for Azure version
 - **[QUICKSTART.md](QUICKSTART.md)** - Quick start guide
 - **[CONTRIBUTING.md](CONTRIBUTING.md)** - Contributing guidelines
