@@ -4,7 +4,7 @@
     {
       "type": 1,
       "content": {
-        "json": "# \ud83d\udda5\ufe0f DefenderC2 Device Manager - CustomEndpoint Version\n\n## Fully Automated Multi-Tenant Defender XDR Management\n\n### Features:\n- \u2705 **Auto-populated device selection** from Defender tenant\n- \u2705 **Auto-refreshing machine actions** to track execution status\n- \u2705 **Pending action detection** with warnings\n- \u2705 **Action ID auto-population** for easy tracking\n- \u2705 **Error handling** to prevent 400 errors from duplicate actions"
+        "json": "# \ud83d\udda5\ufe0f DefenderC2 Device Manager - CustomEndpoint Version\n\n## Fully Automated Multi-Tenant Defender XDR Management\n\n### Features:\n- \u2705 **Auto-populated device selection** from Defender tenant\n- \u2705 **Auto-refreshing machine actions** to track execution status\n- \u2705 **Pending action detection** with warnings to prevent 400 errors\n- \u2705 **Action ID auto-population** for easy tracking\n- \u2705 **Device inventory** with real-time status"
       },
       "name": "header"
     },
@@ -100,8 +100,18 @@
               "additionalResourceOptions": [],
               "showDefault": false
             },
-            "jsonData": "[{\"value\": \"none\", \"label\": \"-- Select an Action --\"}, {\"value\": \"scan\", \"label\": \"\\ud83d\\udd0d Run Antivirus Scan\"}, {\"value\": \"isolate\", \"label\": \"\\ud83d\\udd12 Isolate Device\"}, {\"value\": \"unisolate\", \"label\": \"\\ud83d\\udd13 Unisolate Device\"}, {\"value\": \"collect\", \"label\": \"\\ud83d\\udce6 Collect Investigation Package\"}, {\"value\": \"restrict\", \"label\": \"\\ud83d\\udeab Restrict App Execution\"}, {\"value\": \"unrestrict\", \"label\": \"\\u2705 Unrestrict App Execution\"}]",
+            "jsonData": "[{\"value\": \"none\", \"label\": \"-- Select an Action --\"}, {\"value\": \"scan\", \"label\": \"\\ud83d\\udd0d Run Antivirus Scan\"}, {\"value\": \"isolate\", \"label\": \"\\ud83d\\udd12 Isolate Device\"}, {\"value\": \"unisolate\", \"label\": \"\\ud83d\\udd13 Unisolate Device\"}, {\"value\": \"collect\", \"label\": \"\\ufffd\\ufffd Collect Investigation Package\"}, {\"value\": \"restrict\", \"label\": \"\\ud83d\\udeab Restrict App Execution\"}, {\"value\": \"unrestrict\", \"label\": \"\\u2705 Unrestrict App Execution\"}]",
             "value": "none"
+          },
+          {
+            "id": "last-action-id",
+            "version": "KqlParameterItem/1.0",
+            "name": "LastActionId",
+            "label": "\ud83d\udcdd Last Action ID (Auto-populated)",
+            "type": 1,
+            "isGlobal": true,
+            "value": "<unset>",
+            "description": "Auto-populated after action execution"
           },
           {
             "id": "cancel-action-id",
@@ -135,7 +145,12 @@
     {
       "type": 1,
       "content": {
-        "json": "## \u26a0\ufe0f Pending Actions Warning\n\n**Auto-Refresh:** Every 30 seconds\n\n\u26a0\ufe0f **Warning:** Attempting to run the same action on a device that already has the same action in progress will result in a 400 error."
+        "json": "## \u26a0\ufe0f Pending Actions Warning\n\n**Auto-Refresh:** Every 30 seconds\n\n\u26a0\ufe0f **CRITICAL:** Check the table below before executing. If your selected devices already have the same action pending/in-progress, you will get a **400 Bad Request error**."
+      },
+      "conditionalVisibility": {
+        "parameterName": "ActionToExecute",
+        "comparison": "isNotEqualTo",
+        "value": "none"
       },
       "name": "pending-header"
     },
@@ -145,8 +160,9 @@
         "version": "KqlItem/1.0",
         "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": null, \"urlParams\": [{\"key\": \"action\", \"value\": \"Get All Actions\"}, {\"key\": \"tenantId\", \"value\": \"{TenantId}\"}, {\"key\": \"filter\", \"value\": \"status eq 'InProgress' or status eq 'Pending'\"}], \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.actions[*]\", \"columns\": [{\"path\": \"$.machineId\", \"columnid\": \"Device ID\"}, {\"path\": \"$.computerDnsName\", \"columnid\": \"Device Name\"}, {\"path\": \"$.type\", \"columnid\": \"Running Action\"}, {\"path\": \"$.id\", \"columnid\": \"Action ID\"}, {\"path\": \"$.status\", \"columnid\": \"Status\"}, {\"path\": \"$.creationDateTimeUtc\", \"columnid\": \"Started\"}]}}]}",
         "size": 0,
-        "title": "\u2699\ufe0f Currently Running Actions",
-        "noDataMessage": "\u2705 No conflicting actions detected. It's safe to proceed.",
+        "title": "\u2699\ufe0f Currently Running Actions on Your Selected Devices",
+        "noDataMessage": "\u2705 No conflicting actions detected. Safe to proceed with execution.",
+        "noDataMessageStyle": 3,
         "showRefreshButton": true,
         "timeContext": {
           "durationMs": 0
@@ -156,6 +172,21 @@
         "visualization": "table",
         "gridSettings": {
           "formatters": [
+            {
+              "columnMatch": "Running Action",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "colors",
+                "thresholdsGrid": [
+                  {
+                    "operator": "Default",
+                    "thresholdValue": null,
+                    "representation": "orange",
+                    "text": "\u26a0\ufe0f {0}"
+                  }
+                ]
+              }
+            },
             {
               "columnMatch": "Status",
               "formatter": 18,
@@ -221,9 +252,47 @@
               "formatter": 7,
               "formatOptions": {
                 "linkTarget": "parameter",
-                "linkLabel": "\ud83d\udccb Copy to Cancel",
-                "parameterName": "CancelActionId",
+                "linkLabel": "\ud83d\udccb Track Action",
+                "parameterName": "LastActionId",
                 "parameterValue": "{0}"
+              }
+            },
+            {
+              "columnMatch": "Status",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "colors",
+                "thresholdsGrid": [
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "success",
+                    "representation": "green",
+                    "text": "\u2705 {0}"
+                  },
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "Initiated",
+                    "representation": "green",
+                    "text": "\u2705 {0}"
+                  },
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "error",
+                    "representation": "redBright",
+                    "text": "\u274c {0}"
+                  },
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "400",
+                    "representation": "redBright",
+                    "text": "\u274c {0}"
+                  },
+                  {
+                    "operator": "Default",
+                    "representation": "blue",
+                    "text": "{0}"
+                  }
+                ]
               }
             }
           ]
@@ -265,9 +334,47 @@
               "formatter": 7,
               "formatOptions": {
                 "linkTarget": "parameter",
-                "linkLabel": "\ud83d\udccb Copy to Cancel",
-                "parameterName": "CancelActionId",
+                "linkLabel": "\ud83d\udccb Track Action",
+                "parameterName": "LastActionId",
                 "parameterValue": "{0}"
+              }
+            },
+            {
+              "columnMatch": "Status",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "colors",
+                "thresholdsGrid": [
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "success",
+                    "representation": "green",
+                    "text": "\u2705 {0}"
+                  },
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "Initiated",
+                    "representation": "green",
+                    "text": "\u2705 {0}"
+                  },
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "error",
+                    "representation": "redBright",
+                    "text": "\u274c {0}"
+                  },
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "400",
+                    "representation": "redBright",
+                    "text": "\u274c {0}"
+                  },
+                  {
+                    "operator": "Default",
+                    "representation": "blue",
+                    "text": "{0}"
+                  }
+                ]
               }
             }
           ]
@@ -309,9 +416,47 @@
               "formatter": 7,
               "formatOptions": {
                 "linkTarget": "parameter",
-                "linkLabel": "\ud83d\udccb Copy to Cancel",
-                "parameterName": "CancelActionId",
+                "linkLabel": "\ud83d\udccb Track Action",
+                "parameterName": "LastActionId",
                 "parameterValue": "{0}"
+              }
+            },
+            {
+              "columnMatch": "Status",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "colors",
+                "thresholdsGrid": [
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "success",
+                    "representation": "green",
+                    "text": "\u2705 {0}"
+                  },
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "Initiated",
+                    "representation": "green",
+                    "text": "\u2705 {0}"
+                  },
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "error",
+                    "representation": "redBright",
+                    "text": "\u274c {0}"
+                  },
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "400",
+                    "representation": "redBright",
+                    "text": "\u274c {0}"
+                  },
+                  {
+                    "operator": "Default",
+                    "representation": "blue",
+                    "text": "{0}"
+                  }
+                ]
               }
             }
           ]
@@ -353,9 +498,47 @@
               "formatter": 7,
               "formatOptions": {
                 "linkTarget": "parameter",
-                "linkLabel": "\ud83d\udccb Copy to Cancel",
-                "parameterName": "CancelActionId",
+                "linkLabel": "\ud83d\udccb Track Action",
+                "parameterName": "LastActionId",
                 "parameterValue": "{0}"
+              }
+            },
+            {
+              "columnMatch": "Status",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "colors",
+                "thresholdsGrid": [
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "success",
+                    "representation": "green",
+                    "text": "\u2705 {0}"
+                  },
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "Initiated",
+                    "representation": "green",
+                    "text": "\u2705 {0}"
+                  },
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "error",
+                    "representation": "redBright",
+                    "text": "\u274c {0}"
+                  },
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "400",
+                    "representation": "redBright",
+                    "text": "\u274c {0}"
+                  },
+                  {
+                    "operator": "Default",
+                    "representation": "blue",
+                    "text": "{0}"
+                  }
+                ]
               }
             }
           ]
@@ -397,9 +580,47 @@
               "formatter": 7,
               "formatOptions": {
                 "linkTarget": "parameter",
-                "linkLabel": "\ud83d\udccb Copy to Cancel",
-                "parameterName": "CancelActionId",
+                "linkLabel": "\ud83d\udccb Track Action",
+                "parameterName": "LastActionId",
                 "parameterValue": "{0}"
+              }
+            },
+            {
+              "columnMatch": "Status",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "colors",
+                "thresholdsGrid": [
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "success",
+                    "representation": "green",
+                    "text": "\u2705 {0}"
+                  },
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "Initiated",
+                    "representation": "green",
+                    "text": "\u2705 {0}"
+                  },
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "error",
+                    "representation": "redBright",
+                    "text": "\u274c {0}"
+                  },
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "400",
+                    "representation": "redBright",
+                    "text": "\u274c {0}"
+                  },
+                  {
+                    "operator": "Default",
+                    "representation": "blue",
+                    "text": "{0}"
+                  }
+                ]
               }
             }
           ]
@@ -441,9 +662,47 @@
               "formatter": 7,
               "formatOptions": {
                 "linkTarget": "parameter",
-                "linkLabel": "\ud83d\udccb Copy to Cancel",
-                "parameterName": "CancelActionId",
+                "linkLabel": "\ud83d\udccb Track Action",
+                "parameterName": "LastActionId",
                 "parameterValue": "{0}"
+              }
+            },
+            {
+              "columnMatch": "Status",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "colors",
+                "thresholdsGrid": [
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "success",
+                    "representation": "green",
+                    "text": "\u2705 {0}"
+                  },
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "Initiated",
+                    "representation": "green",
+                    "text": "\u2705 {0}"
+                  },
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "error",
+                    "representation": "redBright",
+                    "text": "\u274c {0}"
+                  },
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "400",
+                    "representation": "redBright",
+                    "text": "\u274c {0}"
+                  },
+                  {
+                    "operator": "Default",
+                    "representation": "blue",
+                    "text": "{0}"
+                  }
+                ]
               }
             }
           ]
@@ -459,7 +718,7 @@
     {
       "type": 1,
       "content": {
-        "json": "---\n\n## \ud83d\udcca Action Status Tracking\n\n**Auto-Refresh:** Every 30 seconds\n\nTrack all machine actions across your Defender XDR environment."
+        "json": "---\n\n## \ud83d\udcca Action Status Tracking\n\n**Auto-Refresh:** Every 30 seconds\n\nTrack all machine actions across your Defender XDR environment. Click Action ID to auto-populate for tracking or cancellation."
       },
       "name": "status-header"
     },
@@ -484,8 +743,8 @@
               "formatter": 7,
               "formatOptions": {
                 "linkTarget": "parameter",
-                "linkLabel": "\u274c Cancel",
-                "parameterName": "CancelActionId",
+                "linkLabel": "\ud83d\udccb Track / \u274c Cancel",
+                "parameterName": "LastActionId",
                 "parameterValue": "{0}"
               }
             },
@@ -547,7 +806,125 @@
     {
       "type": 1,
       "content": {
-        "json": "---\n\n## \u274c Cancel Action\n\n**Action ID to Cancel:** {CancelActionId}\n\nClick an Action ID in the tables above to populate the field, then the query below will execute."
+        "json": "---\n\n## \ud83d\udcbb Device Inventory\n\n**Auto-Refresh:** Every 30 seconds\n\nReal-time inventory of all devices in your Defender XDR tenant with health status."
+      },
+      "name": "inventory-header"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": null, \"urlParams\": [{\"key\": \"action\", \"value\": \"Get Devices\"}, {\"key\": \"tenantId\", \"value\": \"{TenantId}\"}], \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.devices[*]\", \"columns\": [{\"path\": \"$.id\", \"columnid\": \"Device ID\"}, {\"path\": \"$.computerDnsName\", \"columnid\": \"Computer Name\"}, {\"path\": \"$.osPlatform\", \"columnid\": \"OS Platform\"}, {\"path\": \"$.osVersion\", \"columnid\": \"OS Version\"}, {\"path\": \"$.healthStatus\", \"columnid\": \"Health Status\"}, {\"path\": \"$.riskScore\", \"columnid\": \"Risk Score\"}, {\"path\": \"$.exposureLevel\", \"columnid\": \"Exposure Level\"}, {\"path\": \"$.lastSeen\", \"columnid\": \"Last Seen\"}]}}]}",
+        "size": 0,
+        "title": "\ufffd\ufffd\ufe0f All Devices",
+        "showRefreshButton": true,
+        "timeContext": {
+          "durationMs": 0
+        },
+        "timeContextFromParameter": "AutoRefresh",
+        "queryType": 10,
+        "visualization": "table",
+        "gridSettings": {
+          "formatters": [
+            {
+              "columnMatch": "Health Status",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "icons",
+                "thresholdsGrid": [
+                  {
+                    "operator": "==",
+                    "thresholdValue": "Active",
+                    "representation": "success",
+                    "text": "\u2705 {0}"
+                  },
+                  {
+                    "operator": "==",
+                    "thresholdValue": "Inactive",
+                    "representation": "warning",
+                    "text": "\u26a0\ufe0f {0}"
+                  },
+                  {
+                    "operator": "==",
+                    "thresholdValue": "ImpairedCommunication",
+                    "representation": "failed",
+                    "text": "\u274c {0}"
+                  },
+                  {
+                    "operator": "Default",
+                    "representation": "unknown",
+                    "text": "{0}"
+                  }
+                ]
+              }
+            },
+            {
+              "columnMatch": "Risk Score",
+              "formatter": 8,
+              "formatOptions": {
+                "palette": "redGreen",
+                "aggregation": "Min"
+              }
+            },
+            {
+              "columnMatch": "Exposure Level",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "colors",
+                "thresholdsGrid": [
+                  {
+                    "operator": "==",
+                    "thresholdValue": "High",
+                    "representation": "redBright",
+                    "text": "\ud83d\udd34 {0}"
+                  },
+                  {
+                    "operator": "==",
+                    "thresholdValue": "Medium",
+                    "representation": "orange",
+                    "text": "\ud83d\udfe0 {0}"
+                  },
+                  {
+                    "operator": "==",
+                    "thresholdValue": "Low",
+                    "representation": "green",
+                    "text": "\ud83d\udfe2 {0}"
+                  },
+                  {
+                    "operator": "Default",
+                    "representation": "blue",
+                    "text": "{0}"
+                  }
+                ]
+              }
+            }
+          ],
+          "filter": true,
+          "sortBy": [
+            {
+              "itemKey": "Last Seen",
+              "sortOrder": 2
+            }
+          ]
+        },
+        "sortBy": [
+          {
+            "itemKey": "Last Seen",
+            "sortOrder": 2
+          }
+        ]
+      },
+      "name": "device-inventory"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "---\n\n## \u274c Cancel Action\n\n**Action ID to Cancel:** {LastActionId}\n\nClick an Action ID in the tables above to auto-populate, then the query below will execute cancellation."
+      },
+      "conditionalVisibility": {
+        "parameterName": "LastActionId",
+        "comparison": "isNotEqualTo",
+        "value": "<unset>"
       },
       "name": "cancel-header"
     },
@@ -555,7 +932,7 @@
       "type": 3,
       "content": {
         "version": "KqlItem/1.0",
-        "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": null, \"urlParams\": [{\"key\": \"action\", \"value\": \"Cancel Action\"}, {\"key\": \"tenantId\", \"value\": \"{TenantId}\"}, {\"key\": \"actionId\", \"value\": \"{CancelActionId}\"}, {\"key\": \"comment\", \"value\": \"Cancelled via DefenderC2 Workbook\"}], \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"columns\": [{\"path\": \"$.message\", \"columnid\": \"Result\"}, {\"path\": \"$.status\", \"columnid\": \"Status\"}]}}]}",
+        "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": null, \"urlParams\": [{\"key\": \"action\", \"value\": \"Cancel Action\"}, {\"key\": \"tenantId\", \"value\": \"{TenantId}\"}, {\"key\": \"actionId\", \"value\": \"{LastActionId}\"}, {\"key\": \"comment\", \"value\": \"Cancelled via DefenderC2 Workbook\"}], \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"columns\": [{\"path\": \"$.message\", \"columnid\": \"Result\"}, {\"path\": \"$.status\", \"columnid\": \"Status\"}]}}]}",
         "size": 0,
         "title": "\u2705 Cancellation Result",
         "showRefreshButton": true,
@@ -593,7 +970,7 @@
         }
       },
       "conditionalVisibility": {
-        "parameterName": "CancelActionId",
+        "parameterName": "LastActionId",
         "comparison": "isNotEqualTo",
         "value": "<unset>"
       },
