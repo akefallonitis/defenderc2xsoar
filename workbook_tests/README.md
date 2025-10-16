@@ -1,7 +1,7 @@
 # DeviceManager Workbook Versions
 
 ## Overview
-This folder contains two versions of the DefenderC2 Device Manager workbook, each optimized for different use cases.
+This folder contains three versions of the DefenderC2 Device Manager workbook, each optimized for different use cases.
 
 ## Version 1: CustomEndpoint-Only
 **File:** `DeviceManager-CustomEndpoint-Only.workbook.json`
@@ -35,53 +35,114 @@ This folder contains two versions of the DefenderC2 Device Manager workbook, eac
 - **Easier debugging** - Standard HTTP requests
 - **Consistent behavior** - Works the same everywhere
 
-## Version 2: Hybrid (CustomEndpoint + ARM Actions)
+## Version 2: TRUE Hybrid (CustomEndpoint + ARMEndpoint) ⭐ NEW
 **File:** `DeviceManager-Hybrid.workbook.json`
 
 ### Features
-- ✅ **CustomEndpoints for queries** (device list, history, status)
-- ✅ **ARM Actions for execution** (better Azure integration)
-- ✅ **Enhanced UI** with action buttons
-- ✅ **Same auto-features** as CustomEndpoint version
-- ✅ **Better Azure RBAC integration**
+- ✅ **CustomEndpoint for monitoring** (device list, pending actions, status tracking, history, inventory)
+- ✅ **ARMEndpoint for execution** (Run Scan, Isolate, Unisolate, Collect, Restrict, Unrestrict, Cancel)
+- ✅ **Auto-refresh on monitoring sections** for real-time updates
+- ✅ **Manual trigger on execution sections** for controlled actions
+- ✅ **Action ID autopopulation** - Click to track or cancel
+- ✅ **Full Azure RBAC integration** via ARM invoke endpoints
+- ✅ **Clear section naming** - Monitoring vs Execution clearly labeled
 
 ### Best For
-- **Azure-native workflows** requiring ARM integration
+- **Production environments** requiring both monitoring AND control
+- **Azure-native workflows** with ARM integration
 - **RBAC-controlled environments** with strict permissions
-- **UI preference** for button-based actions
-- **Azure Policy compliance** requirements
+- **Audit trail requirements** - ARM logs all executions
+- **Enterprise compliance** - Proper ARM resource governance
 
 ### How It Works
-1-3. Same as CustomEndpoint version (discovery and selection)
-4. Pending Actions Check → CustomEndpoint query
-5. Execute Action → ARM Action with confirmation dialog
-6. Track Status → CustomEndpoint queries with auto-refresh
+1. Select Function App → Auto-populates connection parameters (CustomEndpoint)
+2. Select Tenant → Auto-populates from Azure Resource Graph
+3. Select Devices → Auto-populates from Defender XDR API (CustomEndpoint)
+4. Pending Actions Check → CustomEndpoint query with auto-refresh
+5. Execute Action → ARMEndpoint invocation with proper ARM path
+6. Track Status → CustomEndpoint query with auto-refresh
+7. Click Action ID Links → Auto-populate tracking/cancel parameters
 
 ### Key Advantages
-- **Azure RBAC integration** - Respects Azure permissions
-- **Audit trails** - Actions logged in Azure Activity Log
-- **Confirmation dialogs** - Built-in ARM action prompts
-- **Resource tagging** - Better Azure resource association
+- **Best of both worlds** - Auto-refresh monitoring + ARM execution control
+- **Azure RBAC integration** - Full Azure permissions on actions
+- **Audit trails** - All executions logged in Azure Activity Log
+- **Auto-refresh monitoring** - Real-time updates without manual actions
+- **Action ID autopopulation** - One-click tracking and cancellation
+- **Clear separation** - Monitoring (CustomEndpoint) vs Execution (ARMEndpoint)
+
+### ARMEndpoint Sections (Manual Trigger)
+- 🔍 Run Antivirus Scan
+- 🔒 Isolate Device
+- 🔓 Unisolate Device
+- 📦 Collect Investigation Package
+- 🚫 Restrict App Execution
+- ✅ Unrestrict App Execution
+- ❌ Cancel Action
+
+### CustomEndpoint Sections (Auto-Refresh)
+- 💻 Device List (parameter)
+- ⚠️ Pending Actions Check
+- 📊 Action Status Tracking
+- 📜 Machine Actions History
+- 💻 Device Inventory
+
+## Version 3: Hybrid-CustomEndpointOnly (Alternative)
+**File:** `DeviceManager-Hybrid-CustomEndpointOnly.workbook.json`
+
+### Features
+- ✅ **All CustomEndpoint queries** throughout
+- ✅ **Enhanced UI layout** similar to Hybrid
+- ✅ **Full auto-refresh support**
+- ✅ **No ARM dependencies**
+
+### Best For
+- **Simplified deployments** without ARM complexity
+- **Environments with ARM routing issues**
+- **Alternative UI preference** to CustomEndpoint-Only
+
+## Which Version Should You Use?
+
+### Choose CustomEndpoint-Only if:
+- ✅ You want **maximum simplicity** and stability
+- ✅ You don't need ARM audit trails
+- ✅ You want **consistent behavior** everywhere
+- ✅ You prefer **easier troubleshooting**
+- ✅ You want full auto-refresh on all sections
+
+### Choose TRUE Hybrid if:
+- ✅ You need **enterprise-grade governance** with ARM
+- ✅ You require **Azure Activity Log audit trails**
+- ✅ You have **strict RBAC requirements**
+- ✅ You want **monitoring auto-refresh** + **controlled execution**
+- ✅ You need compliance with Azure policies
+
+### Choose Hybrid-CustomEndpointOnly if:
+- ✅ You like the Hybrid UI layout
+- ✅ You don't need ARM complexity
+- ✅ You want an alternative to CustomEndpoint-Only
 
 ## Comparison Table
 
-| Feature | CustomEndpoint-Only | Hybrid Version |
-|---------|-------------------|----------------|
-| **Device Discovery** | ✅ CustomEndpoint | ✅ CustomEndpoint |
-| **Action Execution** | ✅ CustomEndpoint | ✅ ARM Actions |
-| **Status Tracking** | ✅ CustomEndpoint | ✅ CustomEndpoint |
-| **Machine History** | ✅ CustomEndpoint | ✅ CustomEndpoint |
-| **Cancel Actions** | ✅ CustomEndpoint | ✅ CustomEndpoint |
-| **Auto-refresh** | ✅ Full support | ✅ Full support |
-| **Error Handling** | ✅ Inline errors | ✅ ARM dialogs + inline |
-| **RBAC Integration** | ⚠️ Function App only | ✅ Full Azure RBAC |
-| **Audit Logging** | ⚠️ Function logs only | ✅ Azure Activity Log |
-| **Stability** | ✅✅ High | ✅ Good (ARM routing) |
-| **Troubleshooting** | ✅✅ Easy | ⚠️ ARM complexities |
+| Feature | CustomEndpoint-Only | TRUE Hybrid | Hybrid-CustomEndpointOnly |
+|---------|-------------------|-------------|---------------------------|
+| **Device Discovery** | ✅ CustomEndpoint | ✅ CustomEndpoint | ✅ CustomEndpoint |
+| **Action Execution** | ✅ CustomEndpoint | ⭐ ARMEndpoint | ✅ CustomEndpoint |
+| **Status Tracking** | ✅ CustomEndpoint | ✅ CustomEndpoint | ✅ CustomEndpoint |
+| **Machine History** | ✅ CustomEndpoint | ✅ CustomEndpoint | ✅ CustomEndpoint |
+| **Cancel Actions** | ✅ CustomEndpoint | ⭐ ARMEndpoint | ✅ CustomEndpoint |
+| **Auto-refresh** | ✅ Full support | ✅ Monitoring only | ✅ Full support |
+| **Action ID Autopopulation** | ✅ Yes | ✅ Yes | ✅ Yes |
+| **Error Handling** | ✅ Inline errors | ✅ ARM + inline | ✅ Inline errors |
+| **RBAC Integration** | ⚠️ Function App only | ✅✅ Full Azure RBAC | ⚠️ Function App only |
+| **Audit Logging** | ⚠️ Function logs only | ✅✅ Azure Activity Log | ⚠️ Function logs only |
+| **Stability** | ✅✅ High | ✅ Good | ✅✅ High |
+| **Troubleshooting** | ✅✅ Easy | ⚠️ ARM complexities | ✅✅ Easy |
+| **Best Use Case** | Simple monitoring | Enterprise governance | Alternative UI |
 
 ## Installation
 
-### For Both Versions
+### For All Versions
 1. Navigate to Azure Portal → Workbooks
 2. Click "New" or open existing workbook
 3. Click "Advanced Editor" (</> icon)
@@ -91,9 +152,16 @@ This folder contains two versions of the DefenderC2 Device Manager workbook, eac
 7. Save the workbook
 
 ### Required Permissions
+
+**For CustomEndpoint-Only and Hybrid-CustomEndpointOnly:**
 - **Reader** role on subscription (for Resource Graph queries)
 - **Function App permissions** for the DefenderC2 Function App
 - **Defender XDR permissions** (configured in Function App)
+
+**Additional for TRUE Hybrid (ARMEndpoint):**
+- **Microsoft.Web/sites/functions/invoke/action** permission on Function App
+- **Contributor** or custom role with invoke permissions
+- Properly configured **Subscription** and **ResourceGroup** parameters
 
 ## Configuration
 
@@ -129,9 +197,13 @@ Search for `akefallonitis` and replace with your username if desired.
 **Cause:** JSONPath transformer issue  
 **Solution:** Check that $.actionIds[*] path is correct in function response
 
-#### 4. ARM Action Not Executing (Hybrid Version Only)
+#### 4. ARM Action Not Executing (TRUE Hybrid Only)
 **Cause:** ARM routing issues or insufficient permissions  
-**Solution:** Verify RBAC permissions, check Function App invoke permissions
+**Solution:** 
+- Verify RBAC permissions on Function App
+- Check Microsoft.Web/sites/functions/invoke/action permission
+- Ensure Subscription and ResourceGroup parameters are correctly set
+- Verify FunctionAppName matches the actual function app name
 
 ### Debug Mode
 To enable detailed logging:
@@ -168,8 +240,8 @@ To enable detailed logging:
 
 ### Track Action Status
 1. **Execute an action** - Action IDs are returned automatically
-2. **Copy the Action ID** from the results table
-3. **Paste into "Last Action ID" parameter** at the top of the workbook
+2. **Click "📋 Track" link** next to the Action ID (or copy/paste manually)
+3. **LastActionId parameter auto-populates** at the top of the workbook
 4. **View real-time status** - "Track Action Status" section appears
 5. **Auto-refresh enabled** - Status updates every 30 seconds (configurable)
 
@@ -182,10 +254,10 @@ To enable detailed logging:
 
 ### Cancel Running Actions
 1. **Find the action** in "Currently Running Actions" or "Machine Actions History"
-2. **Copy the Action ID** you want to cancel
-3. **Paste into "Action ID to Cancel" parameter**
+2. **Click "❌ Cancel" link** next to the Action ID (or copy/paste manually)
+3. **CancelActionId parameter auto-populates**
 4. **Cancel section appears** with confirmation
-5. **Execute cancellation** - Result shown immediately
+5. **Execute cancellation** - Result shown immediately (ARMEndpoint in TRUE Hybrid, CustomEndpoint in others)
 6. **Verify** - Check status tracking to confirm cancellation
 
 **When to Cancel:**
@@ -220,10 +292,17 @@ Both versions support "Export to Excel" for machine actions and device inventory
 
 ## Version History
 
+### v1.1 - 2025-10-16 (Current)
+- ⭐ **TRUE Hybrid implementation** with CustomEndpoint + ARMEndpoint
+- ✅ Action ID autopopulation with clickable links
+- ✅ Clear separation of monitoring (CustomEndpoint) vs execution (ARMEndpoint)
+- ✅ Full ARM invoke endpoint integration
+- 📄 Comprehensive documentation in TRUE_HYBRID_IMPLEMENTATION.md
+
 ### v1.0 - 2025-10-16
 - Initial release
 - CustomEndpoint-Only version with full functionality
-- Hybrid version with ARM Actions integration
+- Hybrid version (now Hybrid-CustomEndpointOnly) with enhanced UI
 - Complete documentation and troubleshooting guide
 
 ## Support
