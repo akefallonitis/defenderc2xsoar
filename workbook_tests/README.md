@@ -164,6 +164,36 @@ To enable detailed logging:
 - `scanType` - "Quick" or "Full" (for scans)
 - `isolationType` - "Full" or "Selective" (for isolation)
 
+## Action Tracking and Cancellation
+
+### Track Action Status
+1. **Execute an action** - Action IDs are returned automatically
+2. **Copy the Action ID** from the results table
+3. **Paste into "Last Action ID" parameter** at the top of the workbook
+4. **View real-time status** - "Track Action Status" section appears
+5. **Auto-refresh enabled** - Status updates every 30 seconds (configurable)
+
+**What You'll See:**
+- Action ID and Type
+- Current Status (Pending, InProgress, Succeeded, Failed, Cancelled)
+- Device ID and Name
+- Requestor
+- Created and Last Updated timestamps
+
+### Cancel Running Actions
+1. **Find the action** in "Currently Running Actions" or "Machine Actions History"
+2. **Copy the Action ID** you want to cancel
+3. **Paste into "Action ID to Cancel" parameter**
+4. **Cancel section appears** with confirmation
+5. **Execute cancellation** - Result shown immediately
+6. **Verify** - Check status tracking to confirm cancellation
+
+**When to Cancel:**
+- Action stuck in "Pending" or "InProgress"
+- Wrong device selected
+- Action no longer needed
+- Need to retry with different parameters
+
 ## Best Practices
 
 ### 1. Always Check Pending Actions First
@@ -175,8 +205,8 @@ Before executing actions, review the "Pending Actions" section to avoid 400 erro
 - **1-5 minutes** - Background monitoring
 - **Off** - Manual control only
 
-### 3. Copy Action IDs Immediately
-After execution, copy Action IDs to track status or enable cancellation if needed.
+### 3. Track Important Actions
+After executing critical actions (isolation, restriction), immediately copy Action IDs to track status and enable cancellation if needed.
 
 ### 4. Filter Machine History
 Use the filter functionality to narrow down results by:

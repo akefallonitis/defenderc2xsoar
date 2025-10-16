@@ -326,7 +326,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"urlParams\":[{\"key\":\"action\",\"value\":\"{ActionToExecute}\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"deviceIds\",\"value\":\"{DeviceList}\"},{\"key\":\"scanType\",\"value\":\"{ScanType}\"},{\"key\":\"isolationType\",\"value\":\"{IsolationType}\"},{\"key\":\"comment\",\"value\":\"Executed via DefenderC2 Workbook by akefallonitis at 2025-10-16 00:00:00\"}],\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"columns\":[{\"path\":\"$.message\",\"columnid\":\"Result Message\"},{\"path\":\"$.actionIds[*]\",\"columnid\":\"Action IDs\"},{\"path\":\"$.status\",\"columnid\":\"Status\"},{\"path\":\"$.details\",\"columnid\":\"Details\"}]}}]}",
+              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"urlParams\":[{\"key\":\"action\",\"value\":\"{ActionToExecute}\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"deviceIds\",\"value\":\"{DeviceList}\"},{\"key\":\"scanType\",\"value\":\"{ScanType}\"},{\"key\":\"isolationType\",\"value\":\"{IsolationType}\"},{\"key\":\"comment\",\"value\":\"Executed via DefenderC2 Workbook by akefallonitis at 2025-10-16 00:00:00\"}],\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.message\",\"columnid\":\"Result Message\"},{\"path\":\"$.actionIds[*]\",\"columnid\":\"Action IDs\"},{\"path\":\"$.status\",\"columnid\":\"Status\"},{\"path\":\"$.details\",\"columnid\":\"Details\"}]}}]}",
               "size": 0,
               "title": "✅ Action Execution Result",
               "timeContext": {
@@ -339,12 +339,15 @@
                 "formatters": [
                   {
                     "columnMatch": "Action IDs",
-                    "formatter": 1,
+                    "formatter": 7,
                     "formatOptions": {
+                      "linkTarget": "parameter",
+                      "linkLabel": "📋 Track",
+                      "linkIsContextBlade": false,
                       "customColumnWidthSetting": "30%"
                     },
                     "tooltipFormat": {
-                      "tooltip": "Copy these Action IDs to track status or cancel"
+                      "tooltip": "Click to populate LastActionId for tracking"
                     }
                   },
                   {
@@ -587,7 +590,7 @@
           {
             "type": 1,
             "content": {
-              "json": "### 🕒 Recent Machine Actions\n\nShows all recent machine actions across all devices in your tenant. **Auto-refreshes every {AutoRefresh:label}**.\n\n💡 **Tip:** Click on any Action ID to copy it for tracking or cancellation."
+              "json": "### 🕒 Recent Machine Actions\n\nShows all recent machine actions across all devices in your tenant. **Auto-refreshes every {AutoRefresh:label}**.\n\n💡 **How to Track/Cancel Actions:**\n1. Find the action in the table below\n2. Copy the Action ID\n3. Paste it into \"Last Action ID\" parameter to track status\n4. Or paste it into \"Action ID to Cancel\" parameter to cancel it"
             },
             "name": "history-info"
           },
@@ -612,14 +615,21 @@
                 "formatters": [
                   {
                     "columnMatch": "Action ID",
-                    "formatter": 7,
+                    "formatter": 1,
                     "formatOptions": {
-                      "linkTarget": "CellDetails",
-                      "linkLabel": "📋 Copy",
-                      "linkIsContextBlade": false
+                      "customColumnWidthSetting": "30%"
                     },
                     "tooltipFormat": {
-                      "tooltip": "Click to copy Action ID"
+                      "tooltip": "Copy this Action ID to 'Last Action ID' to track or 'Action ID to Cancel' to cancel"
+                    }
+                  },
+                  {
+                    "columnMatch": "$gen_group",
+                    "formatter": 13,
+                    "formatOptions": {
+                      "linkTarget": null,
+                      "showIcon": true,
+                      "customColumnWidthSetting": "15%"
                     }
                   },
                   {
