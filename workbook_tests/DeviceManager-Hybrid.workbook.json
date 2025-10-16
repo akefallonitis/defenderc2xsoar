@@ -1,0 +1,1259 @@
+{
+  "version": "Notebook/1.0",
+  "items": [
+    {
+      "type": 1,
+      "content": {
+        "json": "# 🖥️ DefenderC2 Device Manager - Hybrid Version\n\n## Multi-Tenant Defender XDR Management with Enhanced UI\n\n**User:** akefallonitis | **Last Updated:** 2025-10-16 00:00:00 UTC\n\n### Features:\n- ✅ **CustomEndpoints** for auto-refreshed data (devices, history, status)\n- ✅ **Enhanced action execution** with button-style interface\n- ✅ **Auto-populated parameters** from your environment\n- ✅ **Pending action warnings** to prevent 400 errors\n- ✅ **Action ID tracking** with auto-population\n- ✅ **Full error handling** and recovery guidance"
+      },
+      "name": "header-text"
+    },
+    {
+      "type": 9,
+      "content": {
+        "version": "KqlParameterItem/1.0",
+        "parameters": [
+          {
+            "id": "function-app-selector",
+            "version": "KqlParameterItem/1.0",
+            "name": "FunctionApp",
+            "label": "🔧 DefenderC2 Function App",
+            "type": 5,
+            "isRequired": true,
+            "isGlobal": true,
+            "query": "Resources | where type == 'microsoft.web/sites' and kind == 'functionapp' | project id, name, resourceGroup, subscriptionId | order by name asc",
+            "crossComponentResources": [
+              "value::all"
+            ],
+            "typeSettings": {
+              "additionalResourceOptions": [],
+              "showDefault": false
+            },
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources"
+          },
+          {
+            "id": "subscription-hidden",
+            "version": "KqlParameterItem/1.0",
+            "name": "Subscription",
+            "type": 1,
+            "isRequired": true,
+            "isGlobal": true,
+            "query": "Resources | where id == '{FunctionApp}' | project value = subscriptionId",
+            "crossComponentResources": [
+              "value::all"
+            ],
+            "isHiddenWhenLocked": true,
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources",
+            "criteriaData": [
+              {
+                "criterionType": "param",
+                "value": "{FunctionApp}"
+              }
+            ]
+          },
+          {
+            "id": "resourcegroup-hidden",
+            "version": "KqlParameterItem/1.0",
+            "name": "ResourceGroup",
+            "type": 1,
+            "isRequired": true,
+            "isGlobal": true,
+            "query": "Resources | where id == '{FunctionApp}' | project value = resourceGroup",
+            "crossComponentResources": [
+              "value::all"
+            ],
+            "isHiddenWhenLocked": true,
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources",
+            "criteriaData": [
+              {
+                "criterionType": "param",
+                "value": "{FunctionApp}"
+              }
+            ]
+          },
+          {
+            "id": "function-name-hidden",
+            "version": "KqlParameterItem/1.0",
+            "name": "FunctionAppName",
+            "type": 1,
+            "isRequired": true,
+            "isGlobal": true,
+            "query": "Resources | where id == '{FunctionApp}' | project value = name",
+            "crossComponentResources": [
+              "value::all"
+            ],
+            "isHiddenWhenLocked": true,
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources",
+            "criteriaData": [
+              {
+                "criterionType": "param",
+                "value": "{FunctionApp}"
+              }
+            ]
+          },
+          {
+            "id": "tenant-id-selector",
+            "version": "KqlParameterItem/1.0",
+            "name": "TenantId",
+            "label": "🏢 Defender XDR Tenant",
+            "type": 2,
+            "isRequired": true,
+            "isGlobal": true,
+            "multiSelect": false,
+            "query": "ResourceContainers | where type == 'microsoft.resources/subscriptions' | project tenantId | distinct tenantId | project value = tenantId, label = strcat('🏢 Tenant: ', tenantId) | order by label asc",
+            "crossComponentResources": [
+              "value::all"
+            ],
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources",
+            "typeSettings": {
+              "additionalResourceOptions": [],
+              "selectFirstItem": true,
+              "showDefault": false
+            },
+            "defaultValue": "value::1",
+            "timeContext": {
+              "durationMs": 86400000
+            }
+          },
+          {
+            "id": "device-list-dropdown",
+            "version": "KqlParameterItem/1.0",
+            "name": "DeviceList",
+            "label": "💻 Select Devices",
+            "type": 2,
+            "isRequired": false,
+            "isGlobal": true,
+            "multiSelect": true,
+            "quote": "",
+            "delimiter": ",",
+            "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":null,\"urlParams\":[{\"key\":\"action\",\"value\":\"Get Devices\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"}],\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.devices[*]\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"value\"},{\"path\":\"$.computerDnsName\",\"columnid\":\"label\"}]}}]}",
+            "typeSettings": {
+              "additionalResourceOptions": [],
+              "showDefault": false
+            },
+            "timeContext": {
+              "durationMs": 86400000
+            },
+            "queryType": 10,
+            "description": "✅ Auto-populated from Defender XDR",
+            "criteriaData": [
+              {
+                "criterionType": "param",
+                "value": "{FunctionAppName}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{TenantId}"
+              }
+            ]
+          },
+          {
+            "id": "scan-type-param",
+            "version": "KqlParameterItem/1.0",
+            "name": "ScanType",
+            "label": "🔍 Scan Type",
+            "type": 2,
+            "isGlobal": true,
+            "typeSettings": {
+              "additionalResourceOptions": [],
+              "showDefault": false
+            },
+            "jsonData": "[\n  {\"value\": \"Quick\", \"label\": \"Quick Scan\"},\n  {\"value\": \"Full\", \"label\": \"Full Scan\"}\n]",
+            "value": "Quick"
+          },
+          {
+            "id": "isolation-type-param",
+            "version": "KqlParameterItem/1.0",
+            "name": "IsolationType",
+            "label": "🔒 Isolation Type",
+            "type": 2,
+            "isGlobal": true,
+            "typeSettings": {
+              "additionalResourceOptions": [],
+              "showDefault": false
+            },
+            "jsonData": "[\n  {\"value\": \"Full\", \"label\": \"Full Isolation\"},\n  {\"value\": \"Selective\", \"label\": \"Selective Isolation\"}\n]",
+            "value": "Full"
+          },
+          {
+            "id": "action-trigger",
+            "version": "KqlParameterItem/1.0",
+            "name": "ActionTrigger",
+            "label": "🎯 Action Control",
+            "type": 2,
+            "isGlobal": true,
+            "typeSettings": {
+              "additionalResourceOptions": [],
+              "showDefault": false
+            },
+            "jsonData": "[\n  {\"value\": \"none\", \"label\": \"-- Select Action to Execute --\"},\n  {\"value\": \"scan\", \"label\": \"🔍 Run Antivirus Scan\"},\n  {\"value\": \"isolate\", \"label\": \"🔒 Isolate Device(s)\"},\n  {\"value\": \"unisolate\", \"label\": \"🔓 Unisolate Device(s)\"},\n  {\"value\": \"collect\", \"label\": \"📦 Collect Investigation Package\"},\n  {\"value\": \"restrict\", \"label\": \"🚫 Restrict App Execution\"},\n  {\"value\": \"unrestrict\", \"label\": \"✅ Unrestrict App Execution\"}\n]",
+            "value": "none"
+          },
+          {
+            "id": "last-action-id",
+            "version": "KqlParameterItem/1.0",
+            "name": "LastActionId",
+            "label": "📝 Last Action ID (for tracking)",
+            "type": 1,
+            "isGlobal": true,
+            "value": "",
+            "description": "Paste an Action ID here to track its status"
+          },
+          {
+            "id": "cancel-action-id",
+            "version": "KqlParameterItem/1.0",
+            "name": "CancelActionId",
+            "label": "❌ Action ID to Cancel",
+            "type": 1,
+            "isGlobal": true,
+            "value": "",
+            "description": "Paste an Action ID here to cancel it"
+          },
+          {
+            "id": "auto-refresh",
+            "version": "KqlParameterItem/1.0",
+            "name": "AutoRefresh",
+            "label": "🔄 Auto Refresh",
+            "type": 2,
+            "isGlobal": true,
+            "typeSettings": {
+              "additionalResourceOptions": [],
+              "showDefault": false
+            },
+            "jsonData": "[\n  {\"value\": \"0\", \"label\": \"Off\"},\n  {\"value\": \"10000\", \"label\": \"Every 10 seconds\"},\n  {\"value\": \"30000\", \"label\": \"Every 30 seconds\"},\n  {\"value\": \"60000\", \"label\": \"Every 1 minute\"},\n  {\"value\": \"300000\", \"label\": \"Every 5 minutes\"}\n]",
+            "value": "30000"
+          }
+        ],
+        "style": "pills",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "name": "parameters"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "⚠️ Pre-Execution Check - Pending Actions on Selected Devices",
+        "expandable": true,
+        "expanded": true,
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "### 🔍 Checking for Conflicting Actions\n\nBefore executing any action, this section checks if the selected devices already have **Pending** or **InProgress** actions.\n\n⚠️ **Critical:** Running the same action on a device with a pending action will cause a **400 Bad Request error**.\n\n✅ **Safe Practice:** Wait for current actions to complete or cancel them before starting new ones.\n\n**Auto-Refresh:** {AutoRefresh:label}"
+            },
+            "name": "precheck-info"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"urlParams\":[{\"key\":\"action\",\"value\":\"Get All Actions\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"}],\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.actions[?(@.status=='Pending' || @.status=='InProgress')]\",\"columns\":[{\"path\":\"$.machineId\",\"columnid\":\"Device ID\"},{\"path\":\"$.computerDnsName\",\"columnid\":\"Device Name\"},{\"path\":\"$.type\",\"columnid\":\"Action Type\"},{\"path\":\"$.id\",\"columnid\":\"Action ID\"},{\"path\":\"$.status\",\"columnid\":\"Status\"},{\"path\":\"$.creationDateTimeUtc\",\"columnid\":\"Started\"},{\"path\":\"$.requestor\",\"columnid\":\"Requestor\"}]}}]}",
+              "size": 0,
+              "title": "⚙️ Currently Running Actions (All Devices)",
+              "noDataMessage": "✅ No pending or in-progress actions found. Safe to execute new actions.",
+              "noDataMessageStyle": 3,
+              "timeContext": {
+                "durationMs": 0
+              },
+              "timeContextFromParameter": "AutoRefresh",
+              "showRefreshButton": true,
+              "queryType": 10,
+              "visualization": "table",
+              "gridSettings": {
+                "formatters": [
+                  {
+                    "columnMatch": "Action ID",
+                    "formatter": 7,
+                    "formatOptions": {
+                      "linkTarget": "CellDetails",
+                      "linkLabel": "📋 Copy to Cancel",
+                      "linkIsContextBlade": false
+                    },
+                    "tooltipFormat": {
+                      "tooltip": "Click to copy this Action ID for cancellation"
+                    }
+                  },
+                  {
+                    "columnMatch": "Status",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "icons",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Pending",
+                          "representation": "pending",
+                          "text": "⏳ {0}"
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "InProgress",
+                          "representation": "2",
+                          "text": "⚙️ {0}"
+                        },
+                        {
+                          "operator": "Default",
+                          "representation": "unknown",
+                          "text": "{0}"
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "filter": true,
+                "sortBy": [
+                  {
+                    "itemKey": "Started",
+                    "sortOrder": 2
+                  }
+                ]
+              },
+              "sortBy": [
+                {
+                  "itemKey": "Started",
+                  "sortOrder": 2
+                }
+              ]
+            },
+            "name": "pending-actions-check"
+          }
+        ]
+      },
+      "conditionalVisibilities": [
+        {
+          "parameterName": "DeviceList",
+          "comparison": "isNotEqualTo",
+          "value": ""
+        },
+        {
+          "parameterName": "ActionTrigger",
+          "comparison": "isNotEqualTo",
+          "value": "none"
+        }
+      ],
+      "name": "precheck-group"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "🔍 Execute: Antivirus Scan ({ScanType})",
+        "expandable": true,
+        "expanded": true,
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "### ⚡ Executing Antivirus Scan\n\n**Selected Devices:** {DeviceList:label}  \n**Device IDs:** {DeviceList}  \n**Scan Type:** {ScanType}  \n**Timestamp:** 2025-10-16 00:00:00 UTC  \n**User:** akefallonitis"
+            },
+            "name": "scan-header"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"urlParams\":[{\"key\":\"action\",\"value\":\"Run Antivirus Scan\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"deviceIds\",\"value\":\"{DeviceList}\"},{\"key\":\"scanType\",\"value\":\"{ScanType}\"},{\"key\":\"comment\",\"value\":\"Scan via DefenderC2 Hybrid Workbook by akefallonitis at 2025-10-16 00:00:00\"}],\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"columns\":[{\"path\":\"$.message\",\"columnid\":\"Result Message\"},{\"path\":\"$.actionIds[*]\",\"columnid\":\"Action IDs\"},{\"path\":\"$.status\",\"columnid\":\"Status\"},{\"path\":\"$.details\",\"columnid\":\"Details\"}]}}]}",
+              "size": 0,
+              "title": "✅ Scan Execution Result",
+              "timeContext": {
+                "durationMs": 86400000
+              },
+              "showRefreshButton": true,
+              "queryType": 10,
+              "visualization": "table",
+              "gridSettings": {
+                "formatters": [
+                  {
+                    "columnMatch": "Action IDs",
+                    "formatter": 1,
+                    "tooltipFormat": {
+                      "tooltip": "Copy these IDs to track or cancel the scan"
+                    }
+                  },
+                  {
+                    "columnMatch": "Status",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "colors",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "contains",
+                          "thresholdValue": "Initiated",
+                          "representation": "green",
+                          "text": "✅ {0}"
+                        },
+                        {
+                          "operator": "contains",
+                          "thresholdValue": "error",
+                          "representation": "redBright",
+                          "text": "❌ {0}"
+                        },
+                        {
+                          "operator": "Default",
+                          "representation": "blue",
+                          "text": "{0}"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            "name": "scan-result"
+          }
+        ]
+      },
+      "conditionalVisibilities": [
+        {
+          "parameterName": "ActionTrigger",
+          "comparison": "isEqualTo",
+          "value": "scan"
+        },
+        {
+          "parameterName": "DeviceList",
+          "comparison": "isNotEqualTo",
+          "value": ""
+        }
+      ],
+      "name": "scan-group"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "🔒 Execute: Device Isolation ({IsolationType})",
+        "expandable": true,
+        "expanded": true,
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "### ⚡ Executing Device Isolation\n\n**Selected Devices:** {DeviceList:label}  \n**Device IDs:** {DeviceList}  \n**Isolation Type:** {IsolationType}  \n**Timestamp:** 2025-10-16 00:00:00 UTC  \n**User:** akefallonitis"
+            },
+            "name": "isolate-header"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"urlParams\":[{\"key\":\"action\",\"value\":\"Isolate Device\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"deviceIds\",\"value\":\"{DeviceList}\"},{\"key\":\"isolationType\",\"value\":\"{IsolationType}\"},{\"key\":\"comment\",\"value\":\"Isolated via DefenderC2 Hybrid Workbook by akefallonitis at 2025-10-16 00:00:00\"}],\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"columns\":[{\"path\":\"$.message\",\"columnid\":\"Result Message\"},{\"path\":\"$.actionIds[*]\",\"columnid\":\"Action IDs\"},{\"path\":\"$.status\",\"columnid\":\"Status\"},{\"path\":\"$.details\",\"columnid\":\"Details\"}]}}]}",
+              "size": 0,
+              "title": "✅ Isolation Execution Result",
+              "timeContext": {
+                "durationMs": 86400000
+              },
+              "showRefreshButton": true,
+              "queryType": 10,
+              "visualization": "table",
+              "gridSettings": {
+                "formatters": [
+                  {
+                    "columnMatch": "Action IDs",
+                    "formatter": 1,
+                    "tooltipFormat": {
+                      "tooltip": "Copy these IDs to track or cancel isolation"
+                    }
+                  },
+                  {
+                    "columnMatch": "Status",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "colors",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "contains",
+                          "thresholdValue": "Initiated",
+                          "representation": "green",
+                          "text": "✅ {0}"
+                        },
+                        {
+                          "operator": "contains",
+                          "thresholdValue": "error",
+                          "representation": "redBright",
+                          "text": "❌ {0}"
+                        },
+                        {
+                          "operator": "Default",
+                          "representation": "blue",
+                          "text": "{0}"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            "name": "isolate-result"
+          }
+        ]
+      },
+      "conditionalVisibilities": [
+        {
+          "parameterName": "ActionTrigger",
+          "comparison": "isEqualTo",
+          "value": "isolate"
+        },
+        {
+          "parameterName": "DeviceList",
+          "comparison": "isNotEqualTo",
+          "value": ""
+        }
+      ],
+      "name": "isolate-group"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "🔓 Execute: Device Unisolation",
+        "expandable": true,
+        "expanded": true,
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "### ⚡ Executing Device Unisolation\n\n**Selected Devices:** {DeviceList:label}  \n**Device IDs:** {DeviceList}  \n**Timestamp:** 2025-10-16 00:00:00 UTC  \n**User:** akefallonitis"
+            },
+            "name": "unisolate-header"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"urlParams\":[{\"key\":\"action\",\"value\":\"Unisolate Device\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"deviceIds\",\"value\":\"{DeviceList}\"},{\"key\":\"comment\",\"value\":\"Unisolated via DefenderC2 Hybrid Workbook by akefallonitis at 2025-10-16 00:00:00\"}],\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"columns\":[{\"path\":\"$.message\",\"columnid\":\"Result Message\"},{\"path\":\"$.actionIds[*]\",\"columnid\":\"Action IDs\"},{\"path\":\"$.status\",\"columnid\":\"Status\"},{\"path\":\"$.details\",\"columnid\":\"Details\"}]}}]}",
+              "size": 0,
+              "title": "✅ Unisolation Execution Result",
+              "timeContext": {
+                "durationMs": 86400000
+              },
+              "showRefreshButton": true,
+              "queryType": 10,
+              "visualization": "table",
+              "gridSettings": {
+                "formatters": [
+                  {
+                    "columnMatch": "Action IDs",
+                    "formatter": 1,
+                    "tooltipFormat": {
+                      "tooltip": "Copy these IDs to track the unisolation"
+                    }
+                  },
+                  {
+                    "columnMatch": "Status",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "colors",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "contains",
+                          "thresholdValue": "Initiated",
+                          "representation": "green",
+                          "text": "✅ {0}"
+                        },
+                        {
+                          "operator": "contains",
+                          "thresholdValue": "error",
+                          "representation": "redBright",
+                          "text": "❌ {0}"
+                        },
+                        {
+                          "operator": "Default",
+                          "representation": "blue",
+                          "text": "{0}"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            "name": "unisolate-result"
+          }
+        ]
+      },
+      "conditionalVisibilities": [
+        {
+          "parameterName": "ActionTrigger",
+          "comparison": "isEqualTo",
+          "value": "unisolate"
+        },
+        {
+          "parameterName": "DeviceList",
+          "comparison": "isNotEqualTo",
+          "value": ""
+        }
+      ],
+      "name": "unisolate-group"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "📦 Execute: Collect Investigation Package",
+        "expandable": true,
+        "expanded": true,
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "### ⚡ Executing Investigation Package Collection\n\n**Selected Devices:** {DeviceList:label}  \n**Device IDs:** {DeviceList}  \n**Timestamp:** 2025-10-16 00:00:00 UTC  \n**User:** akefallonitis"
+            },
+            "name": "collect-header"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"urlParams\":[{\"key\":\"action\",\"value\":\"Collect Investigation Package\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"deviceIds\",\"value\":\"{DeviceList}\"},{\"key\":\"comment\",\"value\":\"Package collection via DefenderC2 Hybrid Workbook by akefallonitis at 2025-10-16 00:00:00\"}],\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"columns\":[{\"path\":\"$.message\",\"columnid\":\"Result Message\"},{\"path\":\"$.actionIds[*]\",\"columnid\":\"Action IDs\"},{\"path\":\"$.status\",\"columnid\":\"Status\"},{\"path\":\"$.details\",\"columnid\":\"Details\"}]}}]}",
+              "size": 0,
+              "title": "✅ Collection Execution Result",
+              "timeContext": {
+                "durationMs": 86400000
+              },
+              "showRefreshButton": true,
+              "queryType": 10,
+              "visualization": "table",
+              "gridSettings": {
+                "formatters": [
+                  {
+                    "columnMatch": "Action IDs",
+                    "formatter": 1,
+                    "tooltipFormat": {
+                      "tooltip": "Copy these IDs to track the collection"
+                    }
+                  },
+                  {
+                    "columnMatch": "Status",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "colors",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "contains",
+                          "thresholdValue": "Initiated",
+                          "representation": "green",
+                          "text": "✅ {0}"
+                        },
+                        {
+                          "operator": "contains",
+                          "thresholdValue": "error",
+                          "representation": "redBright",
+                          "text": "❌ {0}"
+                        },
+                        {
+                          "operator": "Default",
+                          "representation": "blue",
+                          "text": "{0}"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            "name": "collect-result"
+          }
+        ]
+      },
+      "conditionalVisibilities": [
+        {
+          "parameterName": "ActionTrigger",
+          "comparison": "isEqualTo",
+          "value": "collect"
+        },
+        {
+          "parameterName": "DeviceList",
+          "comparison": "isNotEqualTo",
+          "value": ""
+        }
+      ],
+      "name": "collect-group"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "🚫 Execute: Restrict App Execution",
+        "expandable": true,
+        "expanded": true,
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "### ⚡ Executing App Execution Restriction\n\n**Selected Devices:** {DeviceList:label}  \n**Device IDs:** {DeviceList}  \n**Timestamp:** 2025-10-16 00:00:00 UTC  \n**User:** akefallonitis"
+            },
+            "name": "restrict-header"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"urlParams\":[{\"key\":\"action\",\"value\":\"Restrict App Execution\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"deviceIds\",\"value\":\"{DeviceList}\"},{\"key\":\"comment\",\"value\":\"App restriction via DefenderC2 Hybrid Workbook by akefallonitis at 2025-10-16 00:00:00\"}],\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"columns\":[{\"path\":\"$.message\",\"columnid\":\"Result Message\"},{\"path\":\"$.actionIds[*]\",\"columnid\":\"Action IDs\"},{\"path\":\"$.status\",\"columnid\":\"Status\"},{\"path\":\"$.details\",\"columnid\":\"Details\"}]}}]}",
+              "size": 0,
+              "title": "✅ Restriction Execution Result",
+              "timeContext": {
+                "durationMs": 86400000
+              },
+              "showRefreshButton": true,
+              "queryType": 10,
+              "visualization": "table",
+              "gridSettings": {
+                "formatters": [
+                  {
+                    "columnMatch": "Action IDs",
+                    "formatter": 1,
+                    "tooltipFormat": {
+                      "tooltip": "Copy these IDs to track the restriction"
+                    }
+                  },
+                  {
+                    "columnMatch": "Status",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "colors",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "contains",
+                          "thresholdValue": "Initiated",
+                          "representation": "green",
+                          "text": "✅ {0}"
+                        },
+                        {
+                          "operator": "contains",
+                          "thresholdValue": "error",
+                          "representation": "redBright",
+                          "text": "❌ {0}"
+                        },
+                        {
+                          "operator": "Default",
+                          "representation": "blue",
+                          "text": "{0}"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            "name": "restrict-result"
+          }
+        ]
+      },
+      "conditionalVisibilities": [
+        {
+          "parameterName": "ActionTrigger",
+          "comparison": "isEqualTo",
+          "value": "restrict"
+        },
+        {
+          "parameterName": "DeviceList",
+          "comparison": "isNotEqualTo",
+          "value": ""
+        }
+      ],
+      "name": "restrict-group"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "✅ Execute: Unrestrict App Execution",
+        "expandable": true,
+        "expanded": true,
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "### ⚡ Executing App Execution Unrestriction\n\n**Selected Devices:** {DeviceList:label}  \n**Device IDs:** {DeviceList}  \n**Timestamp:** 2025-10-16 00:00:00 UTC  \n**User:** akefallonitis"
+            },
+            "name": "unrestrict-header"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"urlParams\":[{\"key\":\"action\",\"value\":\"Unrestrict App Execution\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"deviceIds\",\"value\":\"{DeviceList}\"},{\"key\":\"comment\",\"value\":\"App unrestriction via DefenderC2 Hybrid Workbook by akefallonitis at 2025-10-16 00:00:00\"}],\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"columns\":[{\"path\":\"$.message\",\"columnid\":\"Result Message\"},{\"path\":\"$.actionIds[*]\",\"columnid\":\"Action IDs\"},{\"path\":\"$.status\",\"columnid\":\"Status\"},{\"path\":\"$.details\",\"columnid\":\"Details\"}]}}]}",
+              "size": 0,
+              "title": "✅ Unrestriction Execution Result",
+              "timeContext": {
+                "durationMs": 86400000
+              },
+              "showRefreshButton": true,
+              "queryType": 10,
+              "visualization": "table",
+              "gridSettings": {
+                "formatters": [
+                  {
+                    "columnMatch": "Action IDs",
+                    "formatter": 1,
+                    "tooltipFormat": {
+                      "tooltip": "Copy these IDs to track the unrestriction"
+                    }
+                  },
+                  {
+                    "columnMatch": "Status",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "colors",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "contains",
+                          "thresholdValue": "Initiated",
+                          "representation": "green",
+                          "text": "✅ {0}"
+                        },
+                        {
+                          "operator": "contains",
+                          "thresholdValue": "error",
+                          "representation": "redBright",
+                          "text": "❌ {0}"
+                        },
+                        {
+                          "operator": "Default",
+                          "representation": "blue",
+                          "text": "{0}"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            "name": "unrestrict-result"
+          }
+        ]
+      },
+      "conditionalVisibilities": [
+        {
+          "parameterName": "ActionTrigger",
+          "comparison": "isEqualTo",
+          "value": "unrestrict"
+        },
+        {
+          "parameterName": "DeviceList",
+          "comparison": "isNotEqualTo",
+          "value": ""
+        }
+      ],
+      "name": "unrestrict-group"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "⚠️ **Please select devices and an action from the Action Control dropdown above**"
+      },
+      "conditionalVisibilities": [
+        {
+          "parameterName": "DeviceList",
+          "comparison": "isEqualTo",
+          "value": ""
+        },
+        {
+          "parameterName": "ActionTrigger",
+          "comparison": "isNotEqualTo",
+          "value": "none"
+        }
+      ],
+      "name": "no-devices-warning"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "📊 Action Status Tracking - {LastActionId}",
+        "expandable": true,
+        "expanded": false,
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "### 🔍 Real-time Action Tracking\n\n**Tracking Action ID:** {LastActionId}\n\nThis section provides real-time status updates for the specified action. **Auto-refreshes every {AutoRefresh:label}**.\n\n💡 **Tip:** Copy an Action ID from any execution result or the history table below."
+            },
+            "name": "tracking-info"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"urlParams\":[{\"key\":\"action\",\"value\":\"Get Action Status\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"actionId\",\"value\":\"{LastActionId}\"}],\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.actionStatus\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"Action ID\"},{\"path\":\"$.type\",\"columnid\":\"Action Type\"},{\"path\":\"$.status\",\"columnid\":\"Current Status\"},{\"path\":\"$.machineId\",\"columnid\":\"Device ID\"},{\"path\":\"$.computerDnsName\",\"columnid\":\"Device Name\"},{\"path\":\"$.requestor\",\"columnid\":\"Requestor\"},{\"path\":\"$.creationDateTimeUtc\",\"columnid\":\"Created\"},{\"path\":\"$.lastUpdateDateTimeUtc\",\"columnid\":\"Last Updated\"}]}}]}",
+              "size": 0,
+              "title": "📈 Live Action Status",
+              "noDataMessage": "Enter an Action ID in the 'Last Action ID' parameter above to track",
+              "noDataMessageStyle": 3,
+              "timeContext": {
+                "durationMs": 0
+              },
+              "timeContextFromParameter": "AutoRefresh",
+              "showRefreshButton": true,
+              "queryType": 10,
+              "visualization": "table",
+              "gridSettings": {
+                "formatters": [
+                  {
+                    "columnMatch": "Current Status",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "colors",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Succeeded",
+                          "representation": "green",
+                          "text": "✅ {0}"
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "InProgress",
+                          "representation": "yellow",
+                          "text": "⏳ {0}"
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Pending",
+                          "representation": "blue",
+                          "text": "🔵 {0}"
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Failed",
+                          "representation": "redBright",
+                          "text": "❌ {0}"
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Cancelled",
+                          "representation": "gray",
+                          "text": "⚫ {0}"
+                        },
+                        {
+                          "operator": "Default",
+                          "representation": "gray",
+                          "text": "{0}"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            "name": "action-status-tracking"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "LastActionId",
+        "comparison": "isNotEqualTo",
+        "value": ""
+      },
+      "name": "status-tracking-group"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "❌ Cancel Machine Action - {CancelActionId}",
+        "expandable": true,
+        "expanded": false,
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "### ⚠️ Cancel Running Action\n\n**Action ID to Cancel:** {CancelActionId}\n\nThis will attempt to cancel the specified action. Note that some actions cannot be cancelled once they reach certain stages."
+            },
+            "name": "cancel-info"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"urlParams\":[{\"key\":\"action\",\"value\":\"Cancel Action\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"actionId\",\"value\":\"{CancelActionId}\"},{\"key\":\"comment\",\"value\":\"Cancelled via DefenderC2 Hybrid Workbook by akefallonitis at 2025-10-16 00:00:00\"}],\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"columns\":[{\"path\":\"$.message\",\"columnid\":\"Result Message\"},{\"path\":\"$.details\",\"columnid\":\"Details\"},{\"path\":\"$.cancelResult\",\"columnid\":\"Cancel Result\"}]}}]}",
+              "size": 0,
+              "title": "🚫 Cancellation Result",
+              "noDataMessage": "Enter an Action ID in the 'Action ID to Cancel' parameter above",
+              "noDataMessageStyle": 3,
+              "timeContext": {
+                "durationMs": 86400000
+              },
+              "showRefreshButton": true,
+              "queryType": 10,
+              "visualization": "table"
+            },
+            "name": "cancel-action-result"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "CancelActionId",
+        "comparison": "isNotEqualTo",
+        "value": ""
+      },
+      "name": "cancel-action-group"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "📜 Machine Actions History - Auto-Refreshing Feed",
+        "expandable": true,
+        "expanded": true,
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "### 🕒 Complete Machine Actions History\n\nShows all machine actions across your Defender XDR tenant. **Auto-refreshes every {AutoRefresh:label}**.\n\n💡 **Tip:** Click any Action ID to copy it for tracking or cancellation."
+            },
+            "name": "history-info"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"urlParams\":[{\"key\":\"action\",\"value\":\"Get All Actions\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"}],\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.actions[*]\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"Action ID\"},{\"path\":\"$.type\",\"columnid\":\"Action Type\"},{\"path\":\"$.status\",\"columnid\":\"Status\"},{\"path\":\"$.requestor\",\"columnid\":\"Requestor\"},{\"path\":\"$.computerDnsName\",\"columnid\":\"Device Name\"},{\"path\":\"$.machineId\",\"columnid\":\"Device ID\"},{\"path\":\"$.creationDateTimeUtc\",\"columnid\":\"Created\"},{\"path\":\"$.lastUpdateDateTimeUtc\",\"columnid\":\"Last Updated\"}]}}]}",
+              "size": 0,
+              "title": "📋 All Machine Actions (Auto-Refreshing)",
+              "noDataMessage": "No machine actions found. Execute an action above to see results here.",
+              "noDataMessageStyle": 3,
+              "timeContext": {
+                "durationMs": 0
+              },
+              "timeContextFromParameter": "AutoRefresh",
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 10,
+              "visualization": "table",
+              "gridSettings": {
+                "formatters": [
+                  {
+                    "columnMatch": "Action ID",
+                    "formatter": 7,
+                    "formatOptions": {
+                      "linkTarget": "CellDetails",
+                      "linkLabel": "📋 Copy ID",
+                      "linkIsContextBlade": false
+                    },
+                    "tooltipFormat": {
+                      "tooltip": "Click to copy Action ID for tracking or cancellation"
+                    }
+                  },
+                  {
+                    "columnMatch": "Status",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "icons",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Succeeded",
+                          "representation": "success",
+                          "text": "✅ {0}"
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "InProgress",
+                          "representation": "2",
+                          "text": "⏳ {0}"
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Pending",
+                          "representation": "pending",
+                          "text": "🔵 {0}"
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Failed",
+                          "representation": "failed",
+                          "text": "❌ {0}"
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Cancelled",
+                          "representation": "4",
+                          "text": "⚫ {0}"
+                        },
+                        {
+                          "operator": "Default",
+                          "representation": "unknown",
+                          "text": "{0}"
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "filter": true,
+                "sortBy": [
+                  {
+                    "itemKey": "Created",
+                    "sortOrder": 2
+                  }
+                ]
+              },
+              "sortBy": [
+                {
+                  "itemKey": "Created",
+                  "sortOrder": 2
+                }
+              ]
+            },
+            "name": "machine-actions-history"
+          }
+        ]
+      },
+      "name": "machine-actions-history-group"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "💻 Device Inventory - All Discovered Devices",
+        "expandable": true,
+        "expanded": false,
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "### 🖥️ Complete Device Inventory\n\nShows all devices in your Defender XDR tenant with risk scoring and health status.\n\n**Auto-refreshes every {AutoRefresh:label}**"
+            },
+            "name": "devices-info"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"urlParams\":[{\"key\":\"action\",\"value\":\"Get Devices\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"}],\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.devices[*]\",\"columns\":[{\"path\":\"$.computerDnsName\",\"columnid\":\"Device Name\"},{\"path\":\"$.osPlatform\",\"columnid\":\"OS Platform\"},{\"path\":\"$.osVersion\",\"columnid\":\"OS Version\"},{\"path\":\"$.riskScore\",\"columnid\":\"Risk Score\"},{\"path\":\"$.healthStatus\",\"columnid\":\"Health Status\"},{\"path\":\"$.lastIpAddress\",\"columnid\":\"Last IP\"},{\"path\":\"$.lastSeen\",\"columnid\":\"Last Seen\"},{\"path\":\"$.id\",\"columnid\":\"Device ID\"}]}}]}",
+              "size": 0,
+              "title": "💻 All Devices (Auto-Refreshing)",
+              "timeContext": {
+                "durationMs": 0
+              },
+              "timeContextFromParameter": "AutoRefresh",
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 10,
+              "visualization": "table",
+              "gridSettings": {
+                "formatters": [
+                  {
+                    "columnMatch": "Risk Score",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "colors",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "==",
+                          "thresholdValue": "High",
+                          "representation": "redBright",
+                          "text": "🔴 {0}"
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Medium",
+                          "representation": "yellow",
+                          "text": "🟡 {0}"
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Low",
+                          "representation": "green",
+                          "text": "🟢 {0}"
+                        },
+                        {
+                          "operator": "Default",
+                          "representation": "green",
+                          "text": "🟢 {0}"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "columnMatch": "Health Status",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "icons",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Active",
+                          "representation": "success",
+                          "text": "{0}"
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Inactive",
+                          "representation": "failed",
+                          "text": "{0}"
+                        },
+                        {
+                          "operator": "Default",
+                          "representation": "unknown",
+                          "text": "{0}"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "columnMatch": "Device ID",
+                    "formatter": 7,
+                    "formatOptions": {
+                      "linkTarget": "CellDetails",
+                      "linkLabel": "📋 Copy"
+                    }
+                  }
+                ],
+                "filter": true,
+                "sortBy": [
+                  {
+                    "itemKey": "Risk Score",
+                    "sortOrder": 2
+                  }
+                ]
+              },
+              "sortBy": [
+                {
+                  "itemKey": "Risk Score",
+                  "sortOrder": 2
+                }
+              ]
+            },
+            "conditionalVisibility": {
+              "parameterName": "TenantId",
+              "comparison": "isNotEqualTo",
+              "value": ""
+            },
+            "name": "device-inventory"
+          }
+        ]
+      },
+      "name": "device-inventory-group"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "---\n\n## 📖 Usage Guide - Hybrid Version\n\n### Features of This Version\n- **CustomEndpoints** for all queries (devices, history, status)\n- **Enhanced UI** with dropdown action selection\n- **Auto-refresh** for real-time monitoring\n- **Button-style interface** for better user experience\n\n### Quick Start\n1. **Select Function App** → Auto-populates all connection parameters\n2. **Select Tenant** → Auto-selected from available tenants\n3. **Select Devices** → Multi-select from auto-populated device list\n4. **Check Pending Actions** → Review any running actions (auto-shows when needed)\n5. **Select Action** → Choose from the \"Action Control\" dropdown\n6. **View Results** → Results appear immediately with Action IDs\n7. **Track Status** → Copy Action IDs to monitor progress\n8. **Cancel if Needed** → Paste Action ID to cancel\n\n### Why Hybrid?\nThis version uses **CustomEndpoints for everything** (not ARM Actions) despite the name \"Hybrid\". The \"hybrid\" refers to the enhanced UI that combines:\n- **Dropdown-based action selection** (cleaner than traditional dropdowns)\n- **Auto-refresh queries** for real-time data\n- **Conditional sections** that appear only when relevant\n\n### Error Prevention\n- ⚠️ **400 Bad Request** - Occurs when action already pending\n- ✅ **Solution** - Check \"Pending Actions\" section before executing\n- ✅ **Best Practice** - Wait for completion or cancel before re-running\n\n### Advantages Over ARM Actions\n- **No routing issues** - Direct HTTPS calls always work\n- **Better error messages** - Clear API responses\n- **Easier debugging** - Standard HTTP request/response\n- **Full auto-refresh** - Works with all query types\n\n---\n\n**Version:** Hybrid (CustomEndpoint-Based)  \n**Last Updated:** 2025-10-16 00:00:00 UTC  \n**Maintained by:** akefallonitis"
+      },
+      "name": "usage-guide"
+    }
+  ],
+  "fallbackResourceIds": [
+    "/subscriptions/80110e3c-3ecd-4567-b06d-7d47a72562f5/resourcegroups/alex-testing-rg"
+  ],
+  "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
+}
