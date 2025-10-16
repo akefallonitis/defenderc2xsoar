@@ -267,3 +267,61 @@ For issues or questions:
 - Function key authentication
 - Manual resource entry
 - MDEAutomator branding
+
+---
+
+## 🆕 Latest Release: DeviceManager Workbooks (2025-10-16)
+
+### Two New Production-Ready Versions
+
+#### 1. DeviceManager-CustomEndpoint.json ⭐ For Testing/Development
+**Pure CustomEndpoint implementation**
+- All operations use consistent CustomEndpoint pattern
+- Easier debugging with visible JSON responses
+- Perfect for development and testing environments
+
+#### 2. DeviceManager-Hybrid.json ⭐ For Production
+**Hybrid ARM Actions + CustomEndpoint**
+- ARM Actions for machine action execution (better RBAC)
+- CustomEndpoint for data queries and monitoring
+- Native Azure integration with confirmation dialogs
+
+### 🎯 Features Delivered (PR #93)
+- ✅ **Error Handling:** Prevents 400 errors with pending action detection
+- ✅ **Auto-Population:** Devices and Action IDs click-to-copy
+- ✅ **Warning System:** Visual warnings for conflicting actions
+- ✅ **List Actions:** View all pending/running machine actions
+- ✅ **Cancel Actions:** Cancel pending actions instantly
+- ✅ **Auto-Refresh:** Configurable (30s, 1m, 5m, or off)
+- ✅ **Conditional Visibility:** Smart UI sections
+- ✅ **All 6 Actions:** Scan, Isolate, Unisolate, Collect, Restrict, Unrestrict
+
+### 📚 Comprehensive Documentation
+- **[QUICKREF.md](QUICKREF.md)** - Quick start guide & common workflows
+- **[DEVICEMANAGER_README.md](DEVICEMANAGER_README.md)** - Full documentation
+- **[PR93_IMPLEMENTATION_SUMMARY.md](PR93_IMPLEMENTATION_SUMMARY.md)** - Technical details
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** - Architecture diagrams
+- **[DELIVERY_SUMMARY.md](DELIVERY_SUMMARY.md)** - Delivery summary
+
+### 🚀 Quick Deploy
+```bash
+# 1. Open Azure Portal → Monitor → Workbooks → New
+# 2. Click Advanced Editor (</> icon)
+# 3. Copy & Paste JSON from either:
+#    - DeviceManager-CustomEndpoint.json (for testing)
+#    - DeviceManager-Hybrid.json (for production)
+# 4. Click Apply → Configure → Save
+```
+
+### 💡 Which Version to Use?
+
+| Scenario | Recommended Version |
+|----------|---------------------|
+| Testing & Development | **DeviceManager-CustomEndpoint.json** |
+| Production Deployment | **DeviceManager-Hybrid.json** |
+| Debugging Issues | **DeviceManager-CustomEndpoint.json** |
+| Enterprise RBAC | **DeviceManager-Hybrid.json** |
+| Simple Architecture | **DeviceManager-CustomEndpoint.json** |
+| Native Azure Integration | **DeviceManager-Hybrid.json** |
+
+---
