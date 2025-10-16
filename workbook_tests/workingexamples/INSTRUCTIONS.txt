@@ -1,0 +1,11 @@
+
+
+use those as base for the 2 workbooks!
+
+handle list cancel machine actions functionality
+
+autopopulate arction ids!!
+
+1 only with customendpoints autorefresh autopopulation and machine action list get cancel run etc
+
+1 hybrid with both custom endpoints for autorefreshed sections action list get and arm actions for the manual input machine actions run cancel
