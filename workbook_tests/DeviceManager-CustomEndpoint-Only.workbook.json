@@ -233,12 +233,14 @@
                     "columnMatch": "Action ID",
                     "formatter": 7,
                     "formatOptions": {
-                      "linkTarget": "CellDetails",
-                      "linkLabel": "📋 Copy",
+                      "linkTarget": "parameter",
+                      "linkLabel": "❌ Cancel",
+                      "parameterName": "CancelActionId",
+                      "parameterValue": "{0}",
                       "linkIsContextBlade": false
                     },
                     "tooltipFormat": {
-                      "tooltip": "Click to copy Action ID for cancellation"
+                      "tooltip": "Click to auto-populate CancelActionId for cancellation"
                     }
                   },
                   {
@@ -343,11 +345,13 @@
                     "formatOptions": {
                       "linkTarget": "parameter",
                       "linkLabel": "📋 Track",
+                      "parameterName": "LastActionId",
+                      "parameterValue": "{0}",
                       "linkIsContextBlade": false,
                       "customColumnWidthSetting": "30%"
                     },
                     "tooltipFormat": {
-                      "tooltip": "Click to populate LastActionId for tracking"
+                      "tooltip": "Click to auto-populate LastActionId for tracking"
                     }
                   },
                   {
@@ -615,12 +619,17 @@
                 "formatters": [
                   {
                     "columnMatch": "Action ID",
-                    "formatter": 1,
+                    "formatter": 7,
                     "formatOptions": {
+                      "linkTarget": "parameter",
+                      "linkLabel": "📊 Track",
+                      "parameterName": "LastActionId",
+                      "parameterValue": "{0}",
+                      "linkIsContextBlade": false,
                       "customColumnWidthSetting": "30%"
                     },
                     "tooltipFormat": {
-                      "tooltip": "Copy this Action ID to 'Last Action ID' to track or 'Action ID to Cancel' to cancel"
+                      "tooltip": "Click to auto-populate LastActionId for status tracking"
                     }
                   },
                   {
