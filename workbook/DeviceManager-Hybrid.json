@@ -4,7 +4,7 @@
     {
       "type": 1,
       "content": {
-        "json": "# \ud83d\udda5\ufe0f DefenderC2 Device Manager - Hybrid Version\n\n## ARM Actions + CustomEndpoint Monitoring\n\n### Workflow:\n1. **Select Device** from inventory below\n2. **Check for conflicts** before ARM Action execution\n3. **Execute ARM Actions** with native confirmation dialogs\n4. **Monitor status** with auto-refresh tables"
+        "json": "# \ud83d\udda5\ufe0f DefenderC2 Device Manager - Hybrid\\n\\n## ARM Actions + Monitoring\\n\\n1. Select Device\\n2. Check Conflicts\\n3. Execute ARM Action"
       },
       "name": "header"
     },
@@ -14,10 +14,10 @@
         "version": "KqlParameterItem/1.0",
         "parameters": [
           {
-            "id": "subscription",
+            "id": "sub",
             "version": "KqlParameterItem/1.0",
             "name": "Subscription",
-            "label": "Azure Subscription",
+            "label": "Subscription",
             "type": 6,
             "isRequired": true,
             "isGlobal": true,
@@ -30,14 +30,14 @@
             }
           },
           {
-            "id": "resource-group",
+            "id": "rg",
             "version": "KqlParameterItem/1.0",
             "name": "ResourceGroup",
             "label": "Resource Group",
             "type": 2,
             "isRequired": true,
             "isGlobal": true,
-            "query": "ResourceContainers | where type == 'microsoft.resources/resourcegroups' | where subscriptionId == '{Subscription:id}' | project value = name, label = name | order by label asc",
+            "query": "ResourceContainers | where type == 'microsoft.resources/resourcegroups' and subscriptionId == '{Subscription:id}' | project value = name, label = name",
             "crossComponentResources": [
               "{Subscription}"
             ],
@@ -49,14 +49,14 @@
             "resourceType": "microsoft.resourcegraph/resources"
           },
           {
-            "id": "function-app",
+            "id": "fa",
             "version": "KqlParameterItem/1.0",
             "name": "FunctionApp",
-            "label": "DefenderC2 Function App",
+            "label": "Function App",
             "type": 5,
             "isRequired": true,
             "isGlobal": true,
-            "query": "Resources | where type == 'microsoft.web/sites' and kind == 'functionapp' and resourceGroup == '{ResourceGroup}' | project id, name, resourceGroup, subscriptionId",
+            "query": "Resources | where type == 'microsoft.web/sites' and kind == 'functionapp' and resourceGroup == '{ResourceGroup}' and subscriptionId == '{Subscription:id}' | project id, name",
             "crossComponentResources": [
               "{Subscription}"
             ],
@@ -73,7 +73,7 @@
             "resourceType": "microsoft.resourcegraph/resources"
           },
           {
-            "id": "function-name",
+            "id": "fn",
             "version": "KqlParameterItem/1.0",
             "name": "FunctionAppName",
             "type": 1,
@@ -88,56 +88,50 @@
             "resourceType": "microsoft.resourcegraph/resources"
           },
           {
-            "id": "tenant-id",
+            "id": "tid",
             "version": "KqlParameterItem/1.0",
             "name": "TenantId",
-            "label": "Defender XDR Tenant",
+            "label": "Defender Tenant",
             "type": 2,
             "isRequired": true,
             "isGlobal": true,
-            "query": "ResourceContainers | where type == 'microsoft.resources/subscriptions' | project tenantId | distinct tenantId | project value = tenantId, label = strcat('Tenant: ', tenantId) | order by label asc",
+            "query": "ResourceContainers | where type == 'microsoft.resources/subscriptions' | project tenantId | distinct tenantId | project value = tenantId, label = strcat('Tenant: ', tenantId)",
             "crossComponentResources": [
               "value::all"
             ],
             "typeSettings": {
               "additionalResourceOptions": [],
-              "selectFirstItem": true,
-              "showDefault": false
+              "selectFirstItem": true
             },
             "queryType": 1,
             "resourceType": "microsoft.resourcegraph/resources"
           },
           {
-            "id": "device-list",
+            "id": "dev",
             "version": "KqlParameterItem/1.0",
             "name": "DeviceList",
-            "label": "\u2705 Selected Device (click below)",
+            "label": "\ud83d\udda5\ufe0f Device ID",
             "type": 1,
-            "isRequired": false,
-            "isGlobal": true,
-            "value": ""
+            "value": "",
+            "isGlobal": true
           },
           {
-            "id": "last-action-id",
+            "id": "aid",
             "version": "KqlParameterItem/1.0",
             "name": "ActionIdToCancel",
-            "label": "Action ID (for cancellation)",
+            "label": "\ud83d\uddd1\ufe0f Action ID",
             "type": 1,
-            "isGlobal": true,
-            "value": ""
+            "value": "",
+            "isGlobal": true
           },
           {
-            "id": "auto-refresh",
+            "id": "ref",
             "version": "KqlParameterItem/1.0",
             "name": "AutoRefresh",
-            "label": "Auto Refresh",
+            "label": "\ud83d\udd04 Refresh",
             "type": 2,
             "isGlobal": true,
-            "typeSettings": {
-              "additionalResourceOptions": [],
-              "showDefault": false
-            },
-            "jsonData": "[{\"value\": \"0\", \"label\": \"Off\"}, {\"value\": \"30000\", \"label\": \"Every 30 seconds\"}, {\"value\": \"60000\", \"label\": \"Every 1 minute\"}]",
+            "jsonData": "[{\"value\": \"0\", \"label\": \"Off\"}, {\"value\": \"30000\", \"label\": \"30s\"}]",
             "value": "30000"
           }
         ],
@@ -145,23 +139,22 @@
         "queryType": 0,
         "resourceType": "microsoft.operationalinsights/workspaces"
       },
-      "name": "parameters"
+      "name": "params"
     },
     {
       "type": 1,
       "content": {
-        "json": "---\n\n## \ud83d\udcbb STEP 1: Device Inventory - Select Target Device\n\n**\ud83d\udc46 Click 'Select' to populate device parameter for ARM Actions**"
+        "json": "---\\n## \ud83d\udcbb Device Inventory"
       },
-      "name": "inventory-header"
+      "name": "inv-hdr"
     },
     {
       "type": 3,
       "content": {
         "version": "KqlItem/1.0",
-        "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": null, \"urlParams\": [{\"key\": \"action\", \"value\": \"Get Devices\"}, {\"key\": \"tenantId\", \"value\": \"{TenantId}\"}], \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.devices[*]\", \"columns\": [{\"path\": \"$.id\", \"columnid\": \"Device ID\"}, {\"path\": \"$.computerDnsName\", \"columnid\": \"Computer Name\"}, {\"path\": \"$.osPlatform\", \"columnid\": \"OS\"}, {\"path\": \"$.healthStatus\", \"columnid\": \"Health\"}, {\"path\": \"$.riskScore\", \"columnid\": \"Risk\"}, {\"path\": \"$.exposureLevel\", \"columnid\": \"Exposure\"}]}}]}",
+        "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": null, \"urlParams\": [{\"key\": \"action\", \"value\": \"Get Devices\"}, {\"key\": \"tenantId\", \"value\": \"{TenantId}\"}], \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.devices[*]\", \"columns\": [{\"path\": \"$.id\", \"columnid\": \"Device ID\"}, {\"path\": \"$.computerDnsName\", \"columnid\": \"Name\"}, {\"path\": \"$.healthStatus\", \"columnid\": \"Health\"}]}}]}",
         "size": 0,
-        "title": "\ud83d\udda5\ufe0f All Devices - Click to Select",
-        "showRefreshButton": true,
+        "title": "\ud83d\udda5\ufe0f Devices",
         "queryType": 10,
         "visualization": "table",
         "gridSettings": {
@@ -171,151 +164,63 @@
               "formatter": 7,
               "formatOptions": {
                 "linkTarget": "parameter",
-                "linkLabel": "\u2705 Select This Device",
+                "linkLabel": "\u2705",
                 "parameterName": "DeviceList",
                 "parameterValue": "{0}"
-              }
-            },
-            {
-              "columnMatch": "Health",
-              "formatter": 18,
-              "formatOptions": {
-                "thresholdsOptions": "icons",
-                "thresholdsGrid": [
-                  {
-                    "operator": "==",
-                    "thresholdValue": "Active",
-                    "representation": "success",
-                    "text": "\u2705 {0}"
-                  },
-                  {
-                    "operator": "Default",
-                    "representation": "unknown",
-                    "text": "{0}"
-                  }
-                ]
-              }
-            },
-            {
-              "columnMatch": "Risk",
-              "formatter": 8,
-              "formatOptions": {
-                "palette": "redGreen"
-              }
-            },
-            {
-              "columnMatch": "Exposure",
-              "formatter": 18,
-              "formatOptions": {
-                "thresholdsOptions": "colors",
-                "thresholdsGrid": [
-                  {
-                    "operator": "==",
-                    "thresholdValue": "High",
-                    "representation": "redBright",
-                    "text": "\ud83d\udd34 {0}"
-                  },
-                  {
-                    "operator": "==",
-                    "thresholdValue": "Medium",
-                    "representation": "orange",
-                    "text": "\ud83d\udfe0 {0}"
-                  },
-                  {
-                    "operator": "==",
-                    "thresholdValue": "Low",
-                    "representation": "green",
-                    "text": "\ud83d\udfe2 {0}"
-                  },
-                  {
-                    "operator": "Default",
-                    "representation": "blue",
-                    "text": "{0}"
-                  }
-                ]
               }
             }
           ],
           "filter": true
         }
       },
-      "name": "device-inventory"
+      "name": "inv-table"
     },
     {
       "type": 1,
       "content": {
-        "json": "---\n\n## \u26a0\ufe0f STEP 2: Check for Conflicts\n\n**Selected Device:** {DeviceList}\n\n\u26a0\ufe0f **BEFORE clicking ARM Actions below**, check if this device has pending actions. Executing same action twice will cause 400 error."
+        "json": "---\\n## \u26a0\ufe0f Conflicts\\n**Device:** {DeviceList}"
       },
       "conditionalVisibility": {
         "parameterName": "DeviceList",
         "comparison": "isNotEqualTo",
         "value": ""
       },
-      "name": "pending-header"
+      "name": "conf-hdr"
     },
     {
       "type": 3,
       "content": {
         "version": "KqlItem/1.0",
-        "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": null, \"urlParams\": [{\"key\": \"action\", \"value\": \"Get All Actions\"}, {\"key\": \"tenantId\", \"value\": \"{TenantId}\"}], \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.actions[?(@.machineId == '{DeviceList}' && (@.status == 'Pending' || @.status == 'InProgress'))]\", \"columns\": [{\"path\": \"$.type\", \"columnid\": \"Running Action\"}, {\"path\": \"$.status\", \"columnid\": \"Status\"}, {\"path\": \"$.id\", \"columnid\": \"Action ID\"}, {\"path\": \"$.creationDateTimeUtc\", \"columnid\": \"Started\"}]}}]}",
+        "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": null, \"urlParams\": [{\"key\": \"action\", \"value\": \"Get All Actions\"}, {\"key\": \"tenantId\", \"value\": \"{TenantId}\"}], \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.actions[?(@.machineId == '{DeviceList}' && (@.status == 'Pending' || @.status == 'InProgress'))]\", \"columns\": [{\"path\": \"$.type\", \"columnid\": \"Action\"}, {\"path\": \"$.status\", \"columnid\": \"Status\"}]}}]}",
         "size": 0,
-        "title": "\u2699\ufe0f Currently Running Actions on Selected Device",
-        "noDataMessage": "\u2705 No conflicts. Safe to execute ARM Actions below.",
+        "title": "\u2699\ufe0f Running",
+        "noDataMessage": "\u2705 No conflicts",
         "noDataMessageStyle": 3,
-        "showRefreshButton": true,
         "timeContext": {
           "durationMs": 0
         },
         "timeContextFromParameter": "AutoRefresh",
         "queryType": 10,
-        "visualization": "table",
-        "gridSettings": {
-          "formatters": [
-            {
-              "columnMatch": "Running Action",
-              "formatter": 18,
-              "formatOptions": {
-                "thresholdsOptions": "colors",
-                "thresholdsGrid": [
-                  {
-                    "operator": "Default",
-                    "representation": "orange",
-                    "text": "\u26a0\ufe0f {0}"
-                  }
-                ]
-              }
-            },
-            {
-              "columnMatch": "Action ID",
-              "formatter": 7,
-              "formatOptions": {
-                "linkTarget": "parameter",
-                "linkLabel": "\u274c Cancel This First",
-                "parameterName": "ActionIdToCancel",
-                "parameterValue": "{0}"
-              }
-            }
-          ]
-        }
+        "visualization": "table"
       },
       "conditionalVisibility": {
         "parameterName": "DeviceList",
         "comparison": "isNotEqualTo",
         "value": ""
       },
-      "name": "pending-check"
+      "name": "conf-table"
     },
     {
       "type": 1,
       "content": {
-        "json": "---\n\n## \u26a1 STEP 3: Execute ARM Actions\n\n**Selected Device:** {DeviceList}\n\n**IMPORTANT:** If the table above shows running actions, do NOT execute the same action type. Cancel it first or wait for completion."
+        "json": "---\\n## \u26a1 ARM Actions\\n**Device:** {DeviceList}"
       },
       "conditionalVisibility": {
         "parameterName": "DeviceList",
         "comparison": "isNotEqualTo",
         "value": ""
       },
-      "name": "arm-header"
+      "name": "arm-hdr"
     },
     {
       "type": 11,
@@ -326,7 +231,7 @@
           {
             "id": "arm-scan",
             "linkTarget": "ArmAction",
-            "linkLabel": "\ud83d\udd0d Run Antivirus Scan",
+            "linkLabel": "Run Antivirus Scan",
             "style": "primary",
             "linkIsContextBlade": false,
             "armActionContext": {
@@ -346,27 +251,23 @@
                   "value": "{DeviceList}"
                 },
                 {
-                  "name": "scanType",
-                  "value": "Quick"
-                },
-                {
                   "name": "comment",
-                  "value": "Scan via DefenderC2 Workbook"
+                  "value": "Run Antivirus Scan via Workbook"
                 }
               ],
               "body": null,
               "httpMethod": "POST",
-              "title": "\ud83d\udd0d Run Antivirus Scan",
-              "description": "Execute \ud83d\udd0d Run Antivirus Scan on device {DeviceList}",
+              "title": "Run Antivirus Scan",
+              "description": "Execute on {DeviceList}",
               "runLabel": "Execute",
-              "successMessage": "\u2705 \ud83d\udd0d Run Antivirus Scan initiated! Check status below.",
+              "successMessage": "\u2705 Run Antivirus Scan initiated!",
               "actionName": "arm-scan"
             }
           },
           {
             "id": "arm-isolate",
             "linkTarget": "ArmAction",
-            "linkLabel": "\ud83d\udd12 Isolate Device",
+            "linkLabel": "Isolate",
             "style": "secondary",
             "linkIsContextBlade": false,
             "armActionContext": {
@@ -386,27 +287,23 @@
                   "value": "{DeviceList}"
                 },
                 {
-                  "name": "isolationType",
-                  "value": "Full"
-                },
-                {
                   "name": "comment",
-                  "value": "Isolation via DefenderC2 Workbook"
+                  "value": "Isolate via Workbook"
                 }
               ],
               "body": null,
               "httpMethod": "POST",
-              "title": "\ud83d\udd12 Isolate Device",
-              "description": "Execute \ud83d\udd12 Isolate Device on device {DeviceList}",
+              "title": "Isolate",
+              "description": "Execute on {DeviceList}",
               "runLabel": "Execute",
-              "successMessage": "\u2705 \ud83d\udd12 Isolate Device initiated! Check status below.",
+              "successMessage": "\u2705 Isolate initiated!",
               "actionName": "arm-isolate"
             }
           },
           {
             "id": "arm-unisolate",
             "linkTarget": "ArmAction",
-            "linkLabel": "\ud83d\udd13 Unisolate Device",
+            "linkLabel": "Unisolate",
             "style": "secondary",
             "linkIsContextBlade": false,
             "armActionContext": {
@@ -427,22 +324,22 @@
                 },
                 {
                   "name": "comment",
-                  "value": "Unisolation via DefenderC2 Workbook"
+                  "value": "Unisolate via Workbook"
                 }
               ],
               "body": null,
               "httpMethod": "POST",
-              "title": "\ud83d\udd13 Unisolate Device",
-              "description": "Execute \ud83d\udd13 Unisolate Device on device {DeviceList}",
+              "title": "Unisolate",
+              "description": "Execute on {DeviceList}",
               "runLabel": "Execute",
-              "successMessage": "\u2705 \ud83d\udd13 Unisolate Device initiated! Check status below.",
+              "successMessage": "\u2705 Unisolate initiated!",
               "actionName": "arm-unisolate"
             }
           },
           {
             "id": "arm-collect",
             "linkTarget": "ArmAction",
-            "linkLabel": "\ud83d\udce6 Collect Investigation Package",
+            "linkLabel": "Collect Investigation Package",
             "style": "primary",
             "linkIsContextBlade": false,
             "armActionContext": {
@@ -463,22 +360,22 @@
                 },
                 {
                   "name": "comment",
-                  "value": "Package collection via DefenderC2 Workbook"
+                  "value": "Collect Investigation Package via Workbook"
                 }
               ],
               "body": null,
               "httpMethod": "POST",
-              "title": "\ud83d\udce6 Collect Investigation Package",
-              "description": "Execute \ud83d\udce6 Collect Investigation Package on device {DeviceList}",
+              "title": "Collect Investigation Package",
+              "description": "Execute on {DeviceList}",
               "runLabel": "Execute",
-              "successMessage": "\u2705 \ud83d\udce6 Collect Investigation Package initiated! Check status below.",
+              "successMessage": "\u2705 Collect Investigation Package initiated!",
               "actionName": "arm-collect"
             }
           },
           {
             "id": "arm-restrict",
             "linkTarget": "ArmAction",
-            "linkLabel": "\ud83d\udeab Restrict App Execution",
+            "linkLabel": "Restrict",
             "style": "secondary",
             "linkIsContextBlade": false,
             "armActionContext": {
@@ -499,22 +396,22 @@
                 },
                 {
                   "name": "comment",
-                  "value": "Restriction via DefenderC2 Workbook"
+                  "value": "Restrict via Workbook"
                 }
               ],
               "body": null,
               "httpMethod": "POST",
-              "title": "\ud83d\udeab Restrict App Execution",
-              "description": "Execute \ud83d\udeab Restrict App Execution on device {DeviceList}",
+              "title": "Restrict",
+              "description": "Execute on {DeviceList}",
               "runLabel": "Execute",
-              "successMessage": "\u2705 \ud83d\udeab Restrict App Execution initiated! Check status below.",
+              "successMessage": "\u2705 Restrict initiated!",
               "actionName": "arm-restrict"
             }
           },
           {
             "id": "arm-unrestrict",
             "linkTarget": "ArmAction",
-            "linkLabel": "\u2705 Unrestrict App Execution",
+            "linkLabel": "Unrestrict",
             "style": "secondary",
             "linkIsContextBlade": false,
             "armActionContext": {
@@ -535,15 +432,15 @@
                 },
                 {
                   "name": "comment",
-                  "value": "Unrestriction via DefenderC2 Workbook"
+                  "value": "Unrestrict via Workbook"
                 }
               ],
               "body": null,
               "httpMethod": "POST",
-              "title": "\u2705 Unrestrict App Execution",
-              "description": "Execute \u2705 Unrestrict App Execution on device {DeviceList}",
+              "title": "Unrestrict",
+              "description": "Execute on {DeviceList}",
               "runLabel": "Execute",
-              "successMessage": "\u2705 \u2705 Unrestrict App Execution initiated! Check status below.",
+              "successMessage": "\u2705 Unrestrict initiated!",
               "actionName": "arm-unrestrict"
             }
           }
@@ -559,18 +456,17 @@
     {
       "type": 1,
       "content": {
-        "json": "---\n\n## \ud83d\udcca Action Status Tracking\n\n**Auto-Refresh:** Every 30 seconds"
+        "json": "---\\n## \ud83d\udcca Status"
       },
-      "name": "status-header"
+      "name": "status-hdr"
     },
     {
       "type": 3,
       "content": {
         "version": "KqlItem/1.0",
-        "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": null, \"urlParams\": [{\"key\": \"action\", \"value\": \"Get All Actions\"}, {\"key\": \"tenantId\", \"value\": \"{TenantId}\"}], \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.actions[*]\", \"columns\": [{\"path\": \"$.machineId\", \"columnid\": \"Device ID\"}, {\"path\": \"$.computerDnsName\", \"columnid\": \"Device\"}, {\"path\": \"$.type\", \"columnid\": \"Action\"}, {\"path\": \"$.id\", \"columnid\": \"Action ID\"}, {\"path\": \"$.status\", \"columnid\": \"Status\"}, {\"path\": \"$.creationDateTimeUtc\", \"columnid\": \"Started\"}]}}]}",
+        "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": null, \"urlParams\": [{\"key\": \"action\", \"value\": \"Get All Actions\"}, {\"key\": \"tenantId\", \"value\": \"{TenantId}\"}], \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.actions[*]\", \"columns\": [{\"path\": \"$.computerDnsName\", \"columnid\": \"Device\"}, {\"path\": \"$.type\", \"columnid\": \"Action\"}, {\"path\": \"$.id\", \"columnid\": \"ID\"}, {\"path\": \"$.status\", \"columnid\": \"Status\"}]}}]}",
         "size": 0,
-        "title": "\u2699\ufe0f All Machine Actions",
-        "showRefreshButton": true,
+        "title": "\u2699\ufe0f Actions",
         "timeContext": {
           "durationMs": 0
         },
@@ -580,11 +476,11 @@
         "gridSettings": {
           "formatters": [
             {
-              "columnMatch": "Action ID",
+              "columnMatch": "ID",
               "formatter": 7,
               "formatOptions": {
                 "linkTarget": "parameter",
-                "linkLabel": "\u274c Cancel",
+                "linkLabel": "\u274c",
                 "parameterName": "ActionIdToCancel",
                 "parameterValue": "{0}"
               }
@@ -597,18 +493,6 @@
                 "thresholdsGrid": [
                   {
                     "operator": "==",
-                    "thresholdValue": "Pending",
-                    "representation": "pending",
-                    "text": "\u23f3 {0}"
-                  },
-                  {
-                    "operator": "==",
-                    "thresholdValue": "InProgress",
-                    "representation": "2",
-                    "text": "\u2699\ufe0f {0}"
-                  },
-                  {
-                    "operator": "==",
                     "thresholdValue": "Succeeded",
                     "representation": "success",
                     "text": "\u2705 {0}"
@@ -618,84 +502,36 @@
                     "thresholdValue": "Failed",
                     "representation": "failed",
                     "text": "\u274c {0}"
-                  },
-                  {
-                    "operator": "Default",
-                    "representation": "unknown",
-                    "text": "{0}"
-                  }
-                ]
-              }
-            }
-          ],
-          "sortBy": [
-            {
-              "itemKey": "Started",
-              "sortOrder": 2
-            }
-          ]
-        },
-        "sortBy": [
-          {
-            "itemKey": "Started",
-            "sortOrder": 2
-          }
-        ]
-      },
-      "name": "all-actions"
-    },
-    {
-      "type": 1,
-      "content": {
-        "json": "---\n\n## \u274c Cancel Machine Action\n\n**Action ID:** {ActionIdToCancel}"
-      },
-      "conditionalVisibility": {
-        "parameterName": "ActionIdToCancel",
-        "comparison": "isNotEqualTo",
-        "value": ""
-      },
-      "name": "cancel-header"
-    },
-    {
-      "type": 3,
-      "content": {
-        "version": "KqlItem/1.0",
-        "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": null, \"urlParams\": [{\"key\": \"action\", \"value\": \"Cancel Action\"}, {\"key\": \"tenantId\", \"value\": \"{TenantId}\"}, {\"key\": \"actionId\", \"value\": \"{ActionIdToCancel}\"}, {\"key\": \"comment\", \"value\": \"Cancelled via DefenderC2 Workbook\"}], \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"columns\": [{\"path\": \"$.message\", \"columnid\": \"Result\"}, {\"path\": \"$.status\", \"columnid\": \"Status\"}]}}]}",
-        "size": 0,
-        "title": "\u2705 Cancellation Result",
-        "showRefreshButton": true,
-        "queryType": 10,
-        "visualization": "table",
-        "gridSettings": {
-          "formatters": [
-            {
-              "columnMatch": "Status",
-              "formatter": 18,
-              "formatOptions": {
-                "thresholdsOptions": "colors",
-                "thresholdsGrid": [
-                  {
-                    "operator": "contains",
-                    "thresholdValue": "success",
-                    "representation": "green",
-                    "text": "\u2705 {0}"
-                  },
-                  {
-                    "operator": "contains",
-                    "thresholdValue": "error",
-                    "representation": "redBright",
-                    "text": "\u274c {0}"
-                  },
-                  {
-                    "operator": "Default",
-                    "representation": "blue",
-                    "text": "{0}"
                   }
                 ]
               }
             }
           ]
         }
+      },
+      "name": "status-table"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "---\\n## \u274c Cancel\\n**ID:** {ActionIdToCancel}"
+      },
+      "conditionalVisibility": {
+        "parameterName": "ActionIdToCancel",
+        "comparison": "isNotEqualTo",
+        "value": ""
+      },
+      "name": "cancel-hdr"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": null, \"urlParams\": [{\"key\": \"action\", \"value\": \"Cancel Action\"}, {\"key\": \"tenantId\", \"value\": \"{TenantId}\"}, {\"key\": \"actionId\", \"value\": \"{ActionIdToCancel}\"}, {\"key\": \"comment\", \"value\": \"Cancelled\"}], \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"columns\": [{\"path\": \"$.message\", \"columnid\": \"Result\"}, {\"path\": \"$.status\", \"columnid\": \"Status\"}]}}]}",
+        "size": 0,
+        "title": "\u2705 Result",
+        "queryType": 10,
+        "visualization": "table"
       },
       "conditionalVisibility": {
         "parameterName": "ActionIdToCancel",
