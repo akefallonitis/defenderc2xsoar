@@ -4,7 +4,7 @@
     {
       "type": 1,
       "content": {
-        "json": "# \ud83d\udda5\ufe0f DefenderC2 Device Manager - CustomEndpoint\\n\\n## \ud83d\ude80 Complete Device Management Suite\\n\\n### \ud83c\udfaf Features:\\n- \u2705 **11 Actions**: All DefenderC2 capabilities\\n- \ud83d\udd0c **Direct API**: CustomEndpoint execution\\n- \ud83d\udcbb **Device Management**: View, select, execute\\n- \ud83d\udcca **Live Monitoring**: Auto-refresh status tracking\\n- \u26a0\ufe0f **Conflict Detection**: Prevents duplicate actions\\n- \ud83d\udd12 **Confirmation**: Type 'EXECUTE' for safety\\n- \u274c **Action Control**: Cancel pending/running actions\\n\\n### \ud83d\udd10 Security:\\n- Requires typing 'EXECUTE' for destructive actions\\n- Conflict detection before execution\\n- Full error display"
+        "json": "# \ud83d\udda5\ufe0f DefenderC2 Device Manager - CustomEndpoint\\n\\n## \ud83d\ude80 Direct API with Smart Filtering\\n\\n### \u2728 Features:\\n- \u2705 **Direct API Calls** - Fast execution\\n- \ud83c\udfaf **Smart Filtering** - Shows only actions for selected devices\\n- \ud83d\udcbb **Device Management** - Click to select, auto-filter results\\n- \ud83d\udcca **Live Monitoring** - Auto-refresh status\\n- \u26a0\ufe0f **Conflict Detection** - Prevents duplicate actions\\n- \ud83d\udd12 **Safety** - Type 'EXECUTE' to confirm\\n- \u274c **One-Click Cancel** - Cancel any action\\n\\n### \ud83d\ude80 Workflow:\\n1. Select devices \u2192 Device list populates\\n2. Conflict check auto-filters by selected devices\\n3. Choose action + type 'EXECUTE'\\n4. Status tracking auto-filters by selected devices\\n5. Cancel actions with one click"
       },
       "name": "header"
     },
@@ -80,7 +80,7 @@
             "type": 1,
             "isGlobal": true,
             "value": "",
-            "description": "Comma-separated device IDs"
+            "description": "Click devices below to select (auto-filters results)"
           },
           {
             "id": "act",
@@ -104,8 +104,7 @@
             "label": "\ud83e\udda0 File Hash (SHA1)",
             "type": 1,
             "isGlobal": true,
-            "value": "",
-            "description": "For Stop & Quarantine File action"
+            "value": ""
           },
           {
             "id": "conf",
@@ -150,7 +149,7 @@
     {
       "type": 1,
       "content": {
-        "json": "---\\n\\n## \ud83d\udcbb STEP 1: Device Inventory\\n\\n**Click '\u2705 Select' to add devices**"
+        "json": "---\\n\\n## \ud83d\udcbb STEP 1: Device Inventory\\n\\n**Click '\u2705 Select' to add devices** | **Selected:** {DeviceList}"
       },
       "name": "inv-header"
     },
@@ -158,7 +157,7 @@
       "type": 3,
       "content": {
         "version": "KqlItem/1.0",
-        "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": null, \"urlParams\": [{\"key\": \"action\", \"value\": \"Get Devices\"}, {\"key\": \"tenantId\", \"value\": \"{TenantId}\"}], \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.devices[*]\", \"columns\": [{\"path\": \"$.id\", \"columnid\": \"Device ID\"}, {\"path\": \"$.computerDnsName\", \"columnid\": \"Computer Name\"}, {\"path\": \"$.osPlatform\", \"columnid\": \"OS\"}, {\"path\": \"$.osVersion\", \"columnid\": \"Version\"}, {\"path\": \"$.healthStatus\", \"columnid\": \"Health\"}, {\"path\": \"$.riskScore\", \"columnid\": \"Risk\"}, {\"path\": \"$.exposureLevel\", \"columnid\": \"Exposure\"}]}}]}",
+        "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": null, \"urlParams\": [{\"key\": \"action\", \"value\": \"Get Devices\"}, {\"key\": \"tenantId\", \"value\": \"{TenantId}\"}], \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.devices[*]\", \"columns\": [{\"path\": \"$.id\", \"columnid\": \"DeviceID\"}, {\"path\": \"$.computerDnsName\", \"columnid\": \"ComputerName\"}, {\"path\": \"$.osPlatform\", \"columnid\": \"OS\"}, {\"path\": \"$.healthStatus\", \"columnid\": \"Health\"}, {\"path\": \"$.riskScore\", \"columnid\": \"Risk\"}, {\"path\": \"$.exposureLevel\", \"columnid\": \"Exposure\"}]}}]}",
         "size": 0,
         "title": "\ud83d\udda5\ufe0f All Devices",
         "showRefreshButton": true,
@@ -167,7 +166,7 @@
         "gridSettings": {
           "formatters": [
             {
-              "columnMatch": "Device ID",
+              "columnMatch": "DeviceID",
               "formatter": 7,
               "formatOptions": {
                 "linkTarget": "parameter",
@@ -239,14 +238,14 @@
           "filter": true,
           "sortBy": [
             {
-              "itemKey": "Computer Name",
+              "itemKey": "ComputerName",
               "sortOrder": 1
             }
           ]
         },
         "sortBy": [
           {
-            "itemKey": "Computer Name",
+            "itemKey": "ComputerName",
             "sortOrder": 1
           }
         ]
@@ -256,7 +255,7 @@
     {
       "type": 1,
       "content": {
-        "json": "---\\n\\n## \u26a0\ufe0f STEP 2: Conflict Detection\\n\\n**Devices:** {DeviceList} | **Action:** {ActionToExecute}"
+        "json": "---\\n\\n## \u26a0\ufe0f STEP 2: Conflict Detection\\n\\n**\ud83c\udfaf Smart Filter:** Showing only actions for selected devices\\n\\n**Devices:** {DeviceList} | **Action:** {ActionToExecute}"
       },
       "conditionalVisibilities": [
         {
@@ -276,7 +275,7 @@
       "type": 3,
       "content": {
         "version": "KqlItem/1.0",
-        "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": null, \"urlParams\": [{\"key\": \"action\", \"value\": \"Get All Actions\"}, {\"key\": \"tenantId\", \"value\": \"{TenantId}\"}], \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.actions[*]\", \"columns\": [{\"path\": \"$.machineId\", \"columnid\": \"Device ID\"}, {\"path\": \"$.computerDnsName\", \"columnid\": \"Device\"}, {\"path\": \"$.type\", \"columnid\": \"Running Action\"}, {\"path\": \"$.id\", \"columnid\": \"Action ID\"}, {\"path\": \"$.status\", \"columnid\": \"Status\"}]}}]}",
+        "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": null, \"urlParams\": [{\"key\": \"action\", \"value\": \"Get All Actions\"}, {\"key\": \"tenantId\", \"value\": \"{TenantId}\"}], \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.actions[*]\", \"columns\": [{\"path\": \"$.machineId\", \"columnid\": \"DeviceID\"}, {\"path\": \"$.computerDnsName\", \"columnid\": \"Device\"}, {\"path\": \"$.type\", \"columnid\": \"RunningAction\"}, {\"path\": \"$.id\", \"columnid\": \"ActionID\"}, {\"path\": \"$.status\", \"columnid\": \"Status\"}]}}]}",
         "size": 0,
         "title": "\u2699\ufe0f Running Actions",
         "noDataMessage": "\u2705 NO CONFLICTS - Safe to execute",
@@ -291,7 +290,7 @@
         "gridSettings": {
           "formatters": [
             {
-              "columnMatch": "Running Action",
+              "columnMatch": "RunningAction",
               "formatter": 18,
               "formatOptions": {
                 "thresholdsOptions": "colors",
@@ -311,17 +310,26 @@
               }
             },
             {
-              "columnMatch": "Action ID",
+              "columnMatch": "ActionID",
               "formatter": 7,
               "formatOptions": {
                 "linkTarget": "parameter",
-                "linkLabel": "\u274c Cancel This",
+                "linkLabel": "\u274c Cancel",
                 "parameterName": "ActionIdToCancel",
                 "parameterValue": "{0}"
               }
             }
           ],
-          "filter": true
+          "filter": true,
+          "filterSettings": {
+            "defaultFilters": [
+              {
+                "columnId": "DeviceID",
+                "operator": "in",
+                "value": "{DeviceList}"
+              }
+            ]
+          }
         }
       },
       "conditionalVisibilities": [
@@ -341,7 +349,7 @@
     {
       "type": 1,
       "content": {
-        "json": "---\\n\\n## \u26a1 STEP 3: Execute Action\\n\\n**Devices:** {DeviceList}  \\n**Action:** {ActionToExecute}  \\n**Confirmation:** {ConfirmExecution}\\n\\n### \u2705 Checklist:\\n- \u2713 Devices selected\\n- \u2713 Action chosen\\n- \u2713 No conflicts detected\\n- \u26a0\ufe0f **Type 'EXECUTE' above**"
+        "json": "---\\n\\n## \u26a1 STEP 3: Execute Action\\n\\n**Devices:** {DeviceList} | **Action:** {ActionToExecute} | **Confirmation:** {ConfirmExecution}\\n\\n### \u2705 Checklist:\\n- \u2713 Devices selected\\n- \u2713 Action chosen\\n- \u2713 No conflicts above\\n- \u26a0\ufe0f **Type 'EXECUTE'**"
       },
       "conditionalVisibilities": [
         {
@@ -355,13 +363,13 @@
           "value": "none"
         }
       ],
-      "name": "exec-instructions"
+      "name": "exec-header"
     },
     {
       "type": 3,
       "content": {
         "version": "KqlItem/1.0",
-        "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": null, \"urlParams\": [{\"key\": \"action\", \"value\": \"{ActionToExecute}\"}, {\"key\": \"tenantId\", \"value\": \"{TenantId}\"}, {\"key\": \"deviceIds\", \"value\": \"{DeviceList}\"}, {\"key\": \"comment\", \"value\": \"{ActionToExecute} via Workbook\"}], \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"columns\": [{\"path\": \"$.message\", \"columnid\": \"\\u2705 Result\"}, {\"path\": \"$.status\", \"columnid\": \"Status\"}, {\"path\": \"$.details\", \"columnid\": \"Details\"}, {\"path\": \"$.actionIds\", \"columnid\": \"Action IDs\"}, {\"path\": \"$.error\", \"columnid\": \"\\u274c Error\"}]}}]}",
+        "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": null, \"urlParams\": [{\"key\": \"action\", \"value\": \"{ActionToExecute}\"}, {\"key\": \"tenantId\", \"value\": \"{TenantId}\"}, {\"key\": \"deviceIds\", \"value\": \"{DeviceList}\"}, {\"key\": \"comment\", \"value\": \"{ActionToExecute} via Workbook\"}], \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"columns\": [{\"path\": \"$.message\", \"columnid\": \"Result\"}, {\"path\": \"$.status\", \"columnid\": \"Status\"}, {\"path\": \"$.details\", \"columnid\": \"Details\"}, {\"path\": \"$.actionIds\", \"columnid\": \"ActionIDs\"}, {\"path\": \"$.error\", \"columnid\": \"Error\"}]}}]}",
         "size": 0,
         "title": "\ud83d\ude80 Execution Result",
         "showRefreshButton": true,
@@ -435,25 +443,25 @@
           "value": "EXECUTE"
         }
       ],
-      "name": "execution-result"
+      "name": "exec-result"
     },
     {
       "type": 1,
       "content": {
-        "json": "---\\n\\n## \ud83e\udda0 File Quarantine\\n\\n**File Hash:** {FileHash}  \\n**Confirmation:** {ConfirmExecution}\\n\\nStop and quarantine file across all devices by SHA1 hash."
+        "json": "---\\n\\n## \ud83e\udda0 File Quarantine\\n\\n**Hash:** {FileHash} | **Confirmation:** {ConfirmExecution}"
       },
       "conditionalVisibility": {
         "parameterName": "FileHash",
         "comparison": "isNotEqualTo",
         "value": ""
       },
-      "name": "file-quarantine-header"
+      "name": "file-header"
     },
     {
       "type": 3,
       "content": {
         "version": "KqlItem/1.0",
-        "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": null, \"urlParams\": [{\"key\": \"action\", \"value\": \"Stop & Quarantine File\"}, {\"key\": \"tenantId\", \"value\": \"{TenantId}\"}, {\"key\": \"fileHash\", \"value\": \"{FileHash}\"}, {\"key\": \"comment\", \"value\": \"Quarantined via Workbook\"}], \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"columns\": [{\"path\": \"$.message\", \"columnid\": \"\\u2705 Result\"}, {\"path\": \"$.status\", \"columnid\": \"Status\"}, {\"path\": \"$.details\", \"columnid\": \"Details\"}, {\"path\": \"$.actionId\", \"columnid\": \"Action ID\"}, {\"path\": \"$.error\", \"columnid\": \"\\u274c Error\"}]}}]}",
+        "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": null, \"urlParams\": [{\"key\": \"action\", \"value\": \"Stop & Quarantine File\"}, {\"key\": \"tenantId\", \"value\": \"{TenantId}\"}, {\"key\": \"fileHash\", \"value\": \"{FileHash}\"}, {\"key\": \"comment\", \"value\": \"Quarantined via Workbook\"}], \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"columns\": [{\"path\": \"$.message\", \"columnid\": \"Result\"}, {\"path\": \"$.status\", \"columnid\": \"Status\"}, {\"path\": \"$.actionId\", \"columnid\": \"ActionID\"}, {\"path\": \"$.error\", \"columnid\": \"Error\"}]}}]}",
         "size": 0,
         "title": "\ud83e\udda0 Quarantine Result",
         "showRefreshButton": true,
@@ -472,12 +480,12 @@
           "value": "EXECUTE"
         }
       ],
-      "name": "file-quarantine-result"
+      "name": "file-result"
     },
     {
       "type": 1,
       "content": {
-        "json": "---\\n\\n## \ud83d\udcca STEP 4: Status Tracking"
+        "json": "---\\n\\n## \ud83d\udcca STEP 4: Status Tracking\\n\\n**\ud83c\udfaf Smart Filter:** {DeviceList:nonempty:Showing all actions|Showing only actions for selected devices}"
       },
       "name": "status-header"
     },
@@ -485,9 +493,9 @@
       "type": 3,
       "content": {
         "version": "KqlItem/1.0",
-        "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": null, \"urlParams\": [{\"key\": \"action\", \"value\": \"Get All Actions\"}, {\"key\": \"tenantId\", \"value\": \"{TenantId}\"}], \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.actions[*]\", \"columns\": [{\"path\": \"$.machineId\", \"columnid\": \"Device ID\"}, {\"path\": \"$.computerDnsName\", \"columnid\": \"Device\"}, {\"path\": \"$.type\", \"columnid\": \"Action\"}, {\"path\": \"$.id\", \"columnid\": \"Action ID\"}, {\"path\": \"$.status\", \"columnid\": \"Status\"}, {\"path\": \"$.creationDateTimeUtc\", \"columnid\": \"Started\"}, {\"path\": \"$.lastUpdateDateTimeUtc\", \"columnid\": \"Last Update\"}]}}]}",
+        "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": null, \"urlParams\": [{\"key\": \"action\", \"value\": \"Get All Actions\"}, {\"key\": \"tenantId\", \"value\": \"{TenantId}\"}], \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.actions[*]\", \"columns\": [{\"path\": \"$.machineId\", \"columnid\": \"DeviceID\"}, {\"path\": \"$.computerDnsName\", \"columnid\": \"Device\"}, {\"path\": \"$.type\", \"columnid\": \"Action\"}, {\"path\": \"$.id\", \"columnid\": \"ActionID\"}, {\"path\": \"$.status\", \"columnid\": \"Status\"}, {\"path\": \"$.creationDateTimeUtc\", \"columnid\": \"Started\"}]}}]}",
         "size": 0,
-        "title": "\u2699\ufe0f All Machine Actions",
+        "title": "\u2699\ufe0f Machine Actions",
         "showRefreshButton": true,
         "timeContext": {
           "durationMs": 0
@@ -498,7 +506,7 @@
         "gridSettings": {
           "formatters": [
             {
-              "columnMatch": "Action ID",
+              "columnMatch": "ActionID",
               "formatter": 7,
               "formatOptions": {
                 "linkTarget": "parameter",
@@ -553,6 +561,15 @@
             }
           ],
           "filter": true,
+          "filterSettings": {
+            "defaultFilters": [
+              {
+                "columnId": "DeviceID",
+                "operator": "in",
+                "value": "{DeviceList}"
+              }
+            ]
+          },
           "sortBy": [
             {
               "itemKey": "Started",
@@ -585,7 +602,7 @@
       "type": 3,
       "content": {
         "version": "KqlItem/1.0",
-        "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": null, \"urlParams\": [{\"key\": \"action\", \"value\": \"Cancel Action\"}, {\"key\": \"tenantId\", \"value\": \"{TenantId}\"}, {\"key\": \"actionId\", \"value\": \"{ActionIdToCancel}\"}, {\"key\": \"comment\", \"value\": \"Cancelled via Workbook\"}], \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"columns\": [{\"path\": \"$.message\", \"columnid\": \"\\u2705 Result\"}, {\"path\": \"$.status\", \"columnid\": \"Status\"}, {\"path\": \"$.details\", \"columnid\": \"Details\"}, {\"path\": \"$.error\", \"columnid\": \"\\u274c Error\"}]}}]}",
+        "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": null, \"urlParams\": [{\"key\": \"action\", \"value\": \"Cancel Action\"}, {\"key\": \"tenantId\", \"value\": \"{TenantId}\"}, {\"key\": \"actionId\", \"value\": \"{ActionIdToCancel}\"}, {\"key\": \"comment\", \"value\": \"Cancelled via Workbook\"}], \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"columns\": [{\"path\": \"$.message\", \"columnid\": \"Result\"}, {\"path\": \"$.status\", \"columnid\": \"Status\"}, {\"path\": \"$.error\", \"columnid\": \"Error\"}]}}]}",
         "size": 0,
         "title": "\u2705 Cancellation Result",
         "showRefreshButton": true,
@@ -602,12 +619,6 @@
                   {
                     "operator": "contains",
                     "thresholdValue": "success",
-                    "representation": "green",
-                    "text": "\u2705 {0}"
-                  },
-                  {
-                    "operator": "contains",
-                    "thresholdValue": "Initiated",
                     "representation": "green",
                     "text": "\u2705 {0}"
                   },
