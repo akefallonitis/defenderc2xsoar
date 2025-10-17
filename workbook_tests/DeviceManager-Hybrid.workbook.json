@@ -360,6 +360,86 @@
             "name": "scan-header"
           },
           {
+            "type": 11,
+            "content": {
+              "version": "LinkItem/1.0",
+              "style": "list",
+              "links": [
+                {
+                  "id": "scan-action",
+                  "cellValue": "unused",
+                  "linkTarget": "ArmAction",
+                  "linkLabel": "\ud83d\udd0d Run Antivirus Scan",
+                  "style": "primary",
+                  "linkIsContextBlade": true,
+                  "armActionContext": {
+                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Dispatcher/invocations",
+                    "headers": [],
+                    "params": [
+                      {
+                        "key": "api-version",
+                        "value": "2022-03-01"
+                      },
+                      {
+                        "key": "action",
+                        "value": "Run Antivirus Scan"
+                      },
+                      {
+                        "key": "tenantId",
+                        "value": "{TenantId}"
+                      },
+                      {
+                        "key": "deviceIds",
+                        "value": "{DeviceList}"
+                      },
+                      {
+                        "key": "scanType",
+                        "value": "{ScanType}"
+                      },
+                      {
+                        "key": "comment",
+                        "value": "Scan initiated via DefenderC2 Workbook"
+                      }
+                    ],
+                    "body": null,
+                    "httpMethod": "POST",
+                    "title": "\ud83d\udd0d Run Antivirus Scan",
+                    "description": "Executing Scan...",
+                    "actionName": "Scan",
+                    "runLabel": "\ud83d\udd0d Run Antivirus Scan"
+                  },
+                  "criteriaData": [
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionApp}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{TenantId}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{DeviceList}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{Subscription}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{ResourceGroup}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionAppName}"
+                    }
+                  ]
+                }
+              ]
+            },
+            "name": "links - scan-action"
+          },
+          {
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
@@ -450,6 +530,86 @@
               "json": "### \u26a1 Executing Device Isolation\n\n**Selected Devices:** {DeviceList:label}  \n**Device IDs:** {DeviceList}  \n**Isolation Type:** {IsolationType}  \n**Timestamp:** 2025-10-16 00:00:00 UTC  \n**User:** akefallonitis"
             },
             "name": "isolate-header"
+          },
+          {
+            "type": 11,
+            "content": {
+              "version": "LinkItem/1.0",
+              "style": "list",
+              "links": [
+                {
+                  "id": "isolate-action",
+                  "cellValue": "unused",
+                  "linkTarget": "ArmAction",
+                  "linkLabel": "\ud83d\udd12 Isolate Devices",
+                  "style": "primary",
+                  "linkIsContextBlade": true,
+                  "armActionContext": {
+                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Dispatcher/invocations",
+                    "headers": [],
+                    "params": [
+                      {
+                        "key": "api-version",
+                        "value": "2022-03-01"
+                      },
+                      {
+                        "key": "action",
+                        "value": "Isolate Device"
+                      },
+                      {
+                        "key": "tenantId",
+                        "value": "{TenantId}"
+                      },
+                      {
+                        "key": "deviceIds",
+                        "value": "{DeviceList}"
+                      },
+                      {
+                        "key": "isolationType",
+                        "value": "{IsolationType}"
+                      },
+                      {
+                        "key": "comment",
+                        "value": "Isolated via DefenderC2 Workbook"
+                      }
+                    ],
+                    "body": null,
+                    "httpMethod": "POST",
+                    "title": "\ud83d\udd12 Isolate Devices",
+                    "description": "Executing Isolate...",
+                    "actionName": "Isolate",
+                    "runLabel": "\ud83d\udd12 Isolate Devices"
+                  },
+                  "criteriaData": [
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionApp}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{TenantId}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{DeviceList}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{Subscription}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{ResourceGroup}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionAppName}"
+                    }
+                  ]
+                }
+              ]
+            },
+            "name": "links - isolate-action"
           },
           {
             "type": 3,
@@ -544,6 +704,82 @@
             "name": "unisolate-header"
           },
           {
+            "type": 11,
+            "content": {
+              "version": "LinkItem/1.0",
+              "style": "list",
+              "links": [
+                {
+                  "id": "unisolate-action",
+                  "cellValue": "unused",
+                  "linkTarget": "ArmAction",
+                  "linkLabel": "\ud83d\udd13 Unisolate Devices",
+                  "style": "primary",
+                  "linkIsContextBlade": true,
+                  "armActionContext": {
+                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Dispatcher/invocations",
+                    "headers": [],
+                    "params": [
+                      {
+                        "key": "api-version",
+                        "value": "2022-03-01"
+                      },
+                      {
+                        "key": "action",
+                        "value": "Unisolate Device"
+                      },
+                      {
+                        "key": "tenantId",
+                        "value": "{TenantId}"
+                      },
+                      {
+                        "key": "deviceIds",
+                        "value": "{DeviceList}"
+                      },
+                      {
+                        "key": "comment",
+                        "value": "Unisolated via DefenderC2 Workbook"
+                      }
+                    ],
+                    "body": null,
+                    "httpMethod": "POST",
+                    "title": "\ud83d\udd13 Unisolate Devices",
+                    "description": "Executing Unisolate...",
+                    "actionName": "Unisolate",
+                    "runLabel": "\ud83d\udd13 Unisolate Devices"
+                  },
+                  "criteriaData": [
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionApp}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{TenantId}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{DeviceList}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{Subscription}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{ResourceGroup}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionAppName}"
+                    }
+                  ]
+                }
+              ]
+            },
+            "name": "links - unisolate-action"
+          },
+          {
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
@@ -634,6 +870,82 @@
               "json": "### \u26a1 Executing Investigation Package Collection\n\n**Selected Devices:** {DeviceList:label}  \n**Device IDs:** {DeviceList}  \n**Timestamp:** 2025-10-16 00:00:00 UTC  \n**User:** akefallonitis"
             },
             "name": "collect-header"
+          },
+          {
+            "type": 11,
+            "content": {
+              "version": "LinkItem/1.0",
+              "style": "list",
+              "links": [
+                {
+                  "id": "collect-action",
+                  "cellValue": "unused",
+                  "linkTarget": "ArmAction",
+                  "linkLabel": "\ud83d\udce6 Collect Investigation Package",
+                  "style": "primary",
+                  "linkIsContextBlade": true,
+                  "armActionContext": {
+                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Dispatcher/invocations",
+                    "headers": [],
+                    "params": [
+                      {
+                        "key": "api-version",
+                        "value": "2022-03-01"
+                      },
+                      {
+                        "key": "action",
+                        "value": "Collect Investigation Package"
+                      },
+                      {
+                        "key": "tenantId",
+                        "value": "{TenantId}"
+                      },
+                      {
+                        "key": "deviceIds",
+                        "value": "{DeviceList}"
+                      },
+                      {
+                        "key": "comment",
+                        "value": "Collection initiated via DefenderC2 Workbook"
+                      }
+                    ],
+                    "body": null,
+                    "httpMethod": "POST",
+                    "title": "\ud83d\udce6 Collect Investigation Package",
+                    "description": "Executing Collect...",
+                    "actionName": "Collect",
+                    "runLabel": "\ud83d\udce6 Collect Investigation Package"
+                  },
+                  "criteriaData": [
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionApp}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{TenantId}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{DeviceList}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{Subscription}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{ResourceGroup}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionAppName}"
+                    }
+                  ]
+                }
+              ]
+            },
+            "name": "links - collect-action"
           },
           {
             "type": 3,
@@ -728,6 +1040,82 @@
             "name": "restrict-header"
           },
           {
+            "type": 11,
+            "content": {
+              "version": "LinkItem/1.0",
+              "style": "list",
+              "links": [
+                {
+                  "id": "restrict-action",
+                  "cellValue": "unused",
+                  "linkTarget": "ArmAction",
+                  "linkLabel": "\ud83d\udeab Restrict App Execution",
+                  "style": "primary",
+                  "linkIsContextBlade": true,
+                  "armActionContext": {
+                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Dispatcher/invocations",
+                    "headers": [],
+                    "params": [
+                      {
+                        "key": "api-version",
+                        "value": "2022-03-01"
+                      },
+                      {
+                        "key": "action",
+                        "value": "Restrict App Execution"
+                      },
+                      {
+                        "key": "tenantId",
+                        "value": "{TenantId}"
+                      },
+                      {
+                        "key": "deviceIds",
+                        "value": "{DeviceList}"
+                      },
+                      {
+                        "key": "comment",
+                        "value": "App execution restricted via DefenderC2 Workbook"
+                      }
+                    ],
+                    "body": null,
+                    "httpMethod": "POST",
+                    "title": "\ud83d\udeab Restrict App Execution",
+                    "description": "Executing Restrict...",
+                    "actionName": "Restrict",
+                    "runLabel": "\ud83d\udeab Restrict App Execution"
+                  },
+                  "criteriaData": [
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionApp}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{TenantId}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{DeviceList}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{Subscription}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{ResourceGroup}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionAppName}"
+                    }
+                  ]
+                }
+              ]
+            },
+            "name": "links - restrict-action"
+          },
+          {
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
@@ -818,6 +1206,82 @@
               "json": "### \u26a1 Executing App Execution Unrestriction\n\n**Selected Devices:** {DeviceList:label}  \n**Device IDs:** {DeviceList}  \n**Timestamp:** 2025-10-16 00:00:00 UTC  \n**User:** akefallonitis"
             },
             "name": "unrestrict-header"
+          },
+          {
+            "type": 11,
+            "content": {
+              "version": "LinkItem/1.0",
+              "style": "list",
+              "links": [
+                {
+                  "id": "unrestrict-action",
+                  "cellValue": "unused",
+                  "linkTarget": "ArmAction",
+                  "linkLabel": "\u2705 Unrestrict App Execution",
+                  "style": "primary",
+                  "linkIsContextBlade": true,
+                  "armActionContext": {
+                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Dispatcher/invocations",
+                    "headers": [],
+                    "params": [
+                      {
+                        "key": "api-version",
+                        "value": "2022-03-01"
+                      },
+                      {
+                        "key": "action",
+                        "value": "Unrestrict App Execution"
+                      },
+                      {
+                        "key": "tenantId",
+                        "value": "{TenantId}"
+                      },
+                      {
+                        "key": "deviceIds",
+                        "value": "{DeviceList}"
+                      },
+                      {
+                        "key": "comment",
+                        "value": "App execution unrestricted via DefenderC2 Workbook"
+                      }
+                    ],
+                    "body": null,
+                    "httpMethod": "POST",
+                    "title": "\u2705 Unrestrict App Execution",
+                    "description": "Executing Unrestrict...",
+                    "actionName": "Unrestrict",
+                    "runLabel": "\u2705 Unrestrict App Execution"
+                  },
+                  "criteriaData": [
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionApp}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{TenantId}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{DeviceList}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{Subscription}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{ResourceGroup}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionAppName}"
+                    }
+                  ]
+                }
+              ]
+            },
+            "name": "links - unrestrict-action"
           },
           {
             "type": 3,
@@ -1021,6 +1485,86 @@
               "json": "### \u26a0\ufe0f Cancel Running Action\n\n**Action ID to Cancel:** {CancelActionId}\n\nThis will attempt to cancel the specified action. Note that some actions cannot be cancelled once they reach certain stages."
             },
             "name": "cancel-info"
+          },
+          {
+            "type": 11,
+            "content": {
+              "version": "LinkItem/1.0",
+              "style": "list",
+              "links": [
+                {
+                  "id": "cancel-action",
+                  "cellValue": "unused",
+                  "linkTarget": "ArmAction",
+                  "linkLabel": "\u274c Cancel Action",
+                  "style": "primary",
+                  "linkIsContextBlade": true,
+                  "armActionContext": {
+                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Dispatcher/invocations",
+                    "headers": [],
+                    "params": [
+                      {
+                        "key": "api-version",
+                        "value": "2022-03-01"
+                      },
+                      {
+                        "key": "action",
+                        "value": "Cancel Action"
+                      },
+                      {
+                        "key": "tenantId",
+                        "value": "{TenantId}"
+                      },
+                      {
+                        "key": "deviceIds",
+                        "value": "{DeviceList}"
+                      },
+                      {
+                        "key": "actionId",
+                        "value": "{CancelActionId}"
+                      },
+                      {
+                        "key": "comment",
+                        "value": "Action cancelled via DefenderC2 Workbook"
+                      }
+                    ],
+                    "body": null,
+                    "httpMethod": "POST",
+                    "title": "\u274c Cancel Action",
+                    "description": "Executing Cancel...",
+                    "actionName": "Cancel",
+                    "runLabel": "\u274c Cancel Action"
+                  },
+                  "criteriaData": [
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionApp}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{TenantId}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{DeviceList}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{Subscription}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{ResourceGroup}"
+                    },
+                    {
+                      "criterionType": "param",
+                      "value": "{FunctionAppName}"
+                    }
+                  ]
+                }
+              ]
+            },
+            "name": "links - cancel-action"
           },
           {
             "type": 3,
