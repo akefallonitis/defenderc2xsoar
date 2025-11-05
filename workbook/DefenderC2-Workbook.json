@@ -517,9 +517,19 @@
                   "criterionType": "param",
                   "value": "{TenantId}"
                 }
-              ]
+              ],
+              "gridSettings": {
+                "formatters": []
+              }
             },
-            "name": "query - isolate-result"
+            "name": "query - isolate-result",
+            "conditionalVisibilities": [
+              {
+                "parameterName": "DeviceList",
+                "comparison": "isNotEqualTo",
+                "value": ""
+              }
+            ]
           },
           {
             "type": 1,
@@ -860,9 +870,86 @@
                   "criterionType": "param",
                   "value": "{TenantId}"
                 }
-              ]
+              ],
+              "gridSettings": {
+                "formatters": [
+                  {
+                    "columnMatch": "id",
+                    "formatter": 7,
+                    "formatOptions": {
+                      "linkTarget": "parameter",
+                      "linkLabel": "\u2705 Select",
+                      "parameterName": "DeviceList",
+                      "parameterValue": "{DeviceList},{0}"
+                    }
+                  },
+                  {
+                    "columnMatch": "healthStatus",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "colors",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Active",
+                          "representation": "green",
+                          "text": "\ud83d\udfe2 {0}"
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Inactive",
+                          "representation": "red",
+                          "text": "\ud83d\udd34 {0}"
+                        },
+                        {
+                          "operator": "Default",
+                          "representation": "blue",
+                          "text": "{0}"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "columnMatch": "riskScore",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "colors",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "==",
+                          "thresholdValue": "High",
+                          "representation": "redBright",
+                          "text": "\ud83d\udd34 {0}"
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Medium",
+                          "representation": "orange",
+                          "text": "\ud83d\udfe0 {0}"
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Low",
+                          "representation": "green",
+                          "text": "\ud83d\udfe2 {0}"
+                        },
+                        {
+                          "operator": "Default",
+                          "representation": "blue",
+                          "text": "{0}"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
             },
-            "name": "query - get-devices"
+            "name": "query - get-devices",
+            "isAutoRefreshEnabled": true,
+            "autoRefreshSettings": {
+              "intervalInSeconds": 30,
+              "refreshCondition": "always"
+            }
           }
         ]
       },
@@ -1418,9 +1505,17 @@
                   "criterionType": "param",
                   "value": "{TenantId}"
                 }
-              ]
+              ],
+              "gridSettings": {
+                "formatters": []
+              }
             },
-            "name": "query - list-indicators"
+            "name": "query - list-indicators",
+            "isAutoRefreshEnabled": true,
+            "autoRefreshSettings": {
+              "intervalInSeconds": 30,
+              "refreshCondition": "always"
+            }
           }
         ]
       },
@@ -1539,6 +1634,54 @@
                         }
                       ]
                     }
+                  },
+                  {
+                    "columnMatch": "status",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "colors",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Succeeded",
+                          "representation": "green",
+                          "text": "\ud83d\udfe2 {0}"
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Pending",
+                          "representation": "yellow",
+                          "text": "\ud83d\udfe1 {0}"
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "InProgress",
+                          "representation": "blue",
+                          "text": "\ud83d\udd35 {0}"
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Failed",
+                          "representation": "red",
+                          "text": "\ud83d\udd34 {0}"
+                        },
+                        {
+                          "operator": "Default",
+                          "representation": "gray",
+                          "text": "{0}"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "columnMatch": "id",
+                    "formatter": 7,
+                    "formatOptions": {
+                      "linkTarget": "parameter",
+                      "linkLabel": "\u274c Cancel",
+                      "parameterName": "ActionId",
+                      "parameterValue": "{0}"
+                    }
                   }
                 ],
                 "filter": true
@@ -1623,14 +1766,57 @@
                   "criterionType": "param",
                   "value": "{TenantId}"
                 }
-              ]
+              ],
+              "gridSettings": {
+                "formatters": [
+                  {
+                    "columnMatch": "status",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "colors",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Succeeded",
+                          "representation": "green",
+                          "text": "\ud83d\udfe2 {0}"
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Pending",
+                          "representation": "yellow",
+                          "text": "\ud83d\udfe1 {0}"
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "InProgress",
+                          "representation": "blue",
+                          "text": "\ud83d\udd35 {0}"
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Failed",
+                          "representation": "red",
+                          "text": "\ud83d\udd34 {0}"
+                        },
+                        {
+                          "operator": "Default",
+                          "representation": "gray",
+                          "text": "{0}"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
             },
             "conditionalVisibility": {
               "parameterName": "ActionId",
               "comparison": "isNotEqualTo",
               "value": ""
             },
-            "name": "query - action-status"
+            "name": "query - action-status",
+            "conditionalVisibilities": []
           },
           {
             "type": 1,
@@ -1873,14 +2059,18 @@
                   "criterionType": "param",
                   "value": "{TenantId}"
                 }
-              ]
+              ],
+              "gridSettings": {
+                "formatters": []
+              }
             },
             "conditionalVisibility": {
               "parameterName": "HuntQuery",
               "comparison": "isNotEqualTo",
               "value": ""
             },
-            "name": "query - hunt-results"
+            "name": "query - hunt-results",
+            "conditionalVisibilities": []
           },
           {
             "type": 1,
@@ -1916,7 +2106,49 @@
                   "criterionType": "param",
                   "value": "{TenantId}"
                 }
-              ]
+              ],
+              "gridSettings": {
+                "formatters": [
+                  {
+                    "columnMatch": "status",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "colors",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Succeeded",
+                          "representation": "green",
+                          "text": "\ud83d\udfe2 {0}"
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Pending",
+                          "representation": "yellow",
+                          "text": "\ud83d\udfe1 {0}"
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "InProgress",
+                          "representation": "blue",
+                          "text": "\ud83d\udd35 {0}"
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Failed",
+                          "representation": "red",
+                          "text": "\ud83d\udd34 {0}"
+                        },
+                        {
+                          "operator": "Default",
+                          "representation": "gray",
+                          "text": "{0}"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
             },
             "conditionalVisibility": {
               "parameterName": "HuntQuery",
@@ -1928,7 +2160,8 @@
             "autoRefreshSettings": {
               "intervalInSeconds": 30,
               "refreshCondition": "always"
-            }
+            },
+            "conditionalVisibilities": []
           }
         ]
       },
@@ -2087,7 +2320,12 @@
                 }
               ]
             },
-            "name": "query - incidents"
+            "name": "query - incidents",
+            "isAutoRefreshEnabled": true,
+            "autoRefreshSettings": {
+              "intervalInSeconds": 30,
+              "refreshCondition": "always"
+            }
           },
           {
             "type": 1,
@@ -2402,9 +2640,17 @@
                   "criterionType": "param",
                   "value": "{TenantId}"
                 }
-              ]
+              ],
+              "gridSettings": {
+                "formatters": []
+              }
             },
-            "name": "query - list-detections"
+            "name": "query - list-detections",
+            "isAutoRefreshEnabled": true,
+            "autoRefreshSettings": {
+              "intervalInSeconds": 30,
+              "refreshCondition": "always"
+            }
           },
           {
             "type": 1,
@@ -2836,7 +3082,10 @@
                   "criterionType": "param",
                   "value": "{TenantId}"
                 }
-              ]
+              ],
+              "gridSettings": {
+                "formatters": []
+              }
             },
             "name": "query - backup-detections"
           }
@@ -3062,7 +3311,10 @@
                   "criterionType": "param",
                   "value": "{TenantId}"
                 }
-              ]
+              ],
+              "gridSettings": {
+                "formatters": []
+              }
             },
             "name": "query - execute-command"
           },
@@ -3140,7 +3392,8 @@
               "comparison": "isNotEqualTo",
               "value": ""
             },
-            "name": "query - poll-status"
+            "name": "query - poll-status",
+            "conditionalVisibilities": []
           },
           {
             "type": 1,
@@ -3173,14 +3426,18 @@
                   "criterionType": "param",
                   "value": "{TenantId}"
                 }
-              ]
+              ],
+              "gridSettings": {
+                "formatters": []
+              }
             },
             "conditionalVisibility": {
               "parameterName": "ActionId",
               "comparison": "isNotEqualTo",
               "value": ""
             },
-            "name": "query - results"
+            "name": "query - results",
+            "conditionalVisibilities": []
           },
           {
             "type": 1,
@@ -3276,14 +3533,22 @@
                   "criterionType": "param",
                   "value": "{TenantId}"
                 }
-              ]
+              ],
+              "gridSettings": {
+                "formatters": []
+              }
             },
             "conditionalVisibility": {
               "parameterName": "selectedTab",
               "comparison": "isEqualTo",
               "value": "console"
             },
-            "name": "query - library-list"
+            "name": "query - library-list",
+            "isAutoRefreshEnabled": true,
+            "autoRefreshSettings": {
+              "intervalInSeconds": 30,
+              "refreshCondition": "always"
+            }
           },
           {
             "type": 11,
@@ -3394,7 +3659,10 @@
                   "criterionType": "param",
                   "value": "{TenantId}"
                 }
-              ]
+              ],
+              "gridSettings": {
+                "formatters": []
+              }
             },
             "conditionalVisibility": {
               "parameterName": "CommandType",
