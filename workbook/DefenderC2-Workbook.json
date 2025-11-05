@@ -1507,7 +1507,18 @@
                 }
               ],
               "gridSettings": {
-                "formatters": []
+                "formatters": [
+                  {
+                    "columnMatch": "id",
+                    "formatter": 7,
+                    "formatOptions": {
+                      "linkTarget": "parameter",
+                      "linkLabel": "\ud83c\udfaf Select",
+                      "parameterName": "IndicatorId",
+                      "parameterValue": "{0}"
+                    }
+                  }
+                ]
               }
             },
             "name": "query - list-indicators",
@@ -1805,6 +1816,16 @@
                           "text": "{0}"
                         }
                       ]
+                    }
+                  },
+                  {
+                    "columnMatch": "id",
+                    "formatter": 7,
+                    "formatOptions": {
+                      "linkTarget": "parameter",
+                      "linkLabel": "\ud83d\udd0d Track",
+                      "parameterName": "ActionId",
+                      "parameterValue": "{0}"
                     }
                   }
                 ]
@@ -2300,6 +2321,16 @@
                           "text": "\u23f3 {0}"
                         }
                       ]
+                    }
+                  },
+                  {
+                    "columnMatch": "incidentId",
+                    "formatter": 7,
+                    "formatOptions": {
+                      "linkTarget": "parameter",
+                      "linkLabel": "\ud83d\udd0d View",
+                      "parameterName": "IncidentId",
+                      "parameterValue": "{0}"
                     }
                   }
                 ],
@@ -3669,7 +3700,12 @@
               "comparison": "isEqualTo",
               "value": "\ud83d\udce5 Get Library File"
             },
-            "name": "library-get-query"
+            "name": "library-get-query",
+            "isAutoRefreshEnabled": true,
+            "autoRefreshSettings": {
+              "intervalInSeconds": 30,
+              "refreshCondition": "always"
+            }
           },
           {
             "type": 11,
