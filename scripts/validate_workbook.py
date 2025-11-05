@@ -17,8 +17,12 @@ def validate_json(filepath):
         return True, data, None
     except json.JSONDecodeError as e:
         return False, None, f"Invalid JSON: {e}"
+    except FileNotFoundError:
+        return False, None, f"File not found: {filepath}"
+    except PermissionError:
+        return False, None, f"Permission denied: {filepath}"
     except Exception as e:
-        return False, None, f"Error reading file: {e}"
+        return False, None, f"Unexpected error reading file: {e}"
 
 def check_version(wb):
     """Check workbook version"""
@@ -257,9 +261,10 @@ def main():
     
     # File info
     wb_json = json.dumps(wb)
+    wb_json_formatted = json.dumps(wb, indent=2)
     print(f"📊 Workbook Statistics:")
     print(f"   Size: {len(wb_json):,} bytes")
-    print(f"   Lines: ~{len(json.dumps(wb, indent=2).split(chr(10))):,}")
+    print(f"   Lines: ~{len(wb_json_formatted.split(chr(10))):,}")
     print(f"   Top-level items: {len(wb.get('items', []))}")
     print()
     
