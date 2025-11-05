@@ -153,6 +153,16 @@
             "isGlobal": true,
             "value": "",
             "description": "Click scripts in Library Files to select"
+          },
+          {
+            "id": "file-path-download",
+            "version": "KqlParameterItem/1.0",
+            "name": "FilePathToDownload",
+            "label": "\ud83d\udcc2 File Path",
+            "type": 1,
+            "isGlobal": true,
+            "value": "C:\\\\Temp\\\\file.txt",
+            "description": "Path to file on device"
           }
         ],
         "style": "pills",
@@ -1072,6 +1082,200 @@
               ]
             },
             "name": "ti-file-actions"
+          },
+          {
+            "type": 11,
+            "content": {
+              "version": "LinkItem/1.0",
+              "style": "list",
+              "links": [
+                {
+                  "id": "ti-add-url",
+                  "linkTarget": "ArmAction",
+                  "linkLabel": "\u2795 Add URL/Domain Indicators",
+                  "style": "primary",
+                  "armActionContext": {
+                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2TIManager/invocations",
+                    "headers": [],
+                    "params": [
+                      {
+                        "key": "api-version",
+                        "value": "2022-03-01"
+                      },
+                      {
+                        "key": "action",
+                        "value": "Add URL/Domain Indicators"
+                      },
+                      {
+                        "key": "tenantId",
+                        "value": "{TenantId}"
+                      },
+                      {
+                        "key": "indicators",
+                        "value": "{URLs}"
+                      },
+                      {
+                        "key": "recommendedAction",
+                        "value": "{URLAction}"
+                      },
+                      {
+                        "key": "severity",
+                        "value": "{URLSeverity}"
+                      },
+                      {
+                        "key": "title",
+                        "value": "URL/Domain Indicator added via DefenderC2"
+                      }
+                    ],
+                    "httpMethod": "POST",
+                    "title": "Add URL/Domain Indicators",
+                    "description": "Adding URL/Domain indicators...",
+                    "runLabel": "Add Indicators"
+                  }
+                }
+              ]
+            },
+            "name": "ti-url-actions"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---\n\n### \ud83c\udf10 IP Address Indicators\n\nAdd or remove IP address indicators (IPv4/IPv6)."
+            },
+            "name": "ti-ip-header"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "ip-addresses",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "IPAddresses",
+                  "label": "IP Addresses (comma-separated)",
+                  "type": 1,
+                  "value": ""
+                },
+                {
+                  "id": "ip-action",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "IPAction",
+                  "label": "Action",
+                  "type": 2,
+                  "jsonData": "[\"Alert\", \"Block\", \"Allow\"]",
+                  "value": "Alert"
+                },
+                {
+                  "id": "ip-severity",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "IPSeverity",
+                  "label": "Severity",
+                  "type": 2,
+                  "jsonData": "[\"Low\", \"Medium\", \"High\"]",
+                  "value": "Medium"
+                }
+              ],
+              "style": "pills"
+            },
+            "name": "ti-ip-params"
+          },
+          {
+            "type": 11,
+            "content": {
+              "version": "LinkItem/1.0",
+              "style": "list",
+              "links": [
+                {
+                  "id": "ti-add-ip",
+                  "linkTarget": "ArmAction",
+                  "linkLabel": "\u2795 Add IP Indicators",
+                  "style": "primary",
+                  "armActionContext": {
+                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2TIManager/invocations",
+                    "headers": [],
+                    "params": [
+                      {
+                        "key": "api-version",
+                        "value": "2022-03-01"
+                      },
+                      {
+                        "key": "action",
+                        "value": "Add IP Indicators"
+                      },
+                      {
+                        "key": "tenantId",
+                        "value": "{TenantId}"
+                      },
+                      {
+                        "key": "indicators",
+                        "value": "{IPAddresses}"
+                      },
+                      {
+                        "key": "recommendedAction",
+                        "value": "{IPAction}"
+                      },
+                      {
+                        "key": "severity",
+                        "value": "{IPSeverity}"
+                      },
+                      {
+                        "key": "title",
+                        "value": "IP Indicator added via DefenderC2"
+                      }
+                    ],
+                    "httpMethod": "POST",
+                    "title": "Add IP Indicators",
+                    "description": "Adding IP indicators...",
+                    "runLabel": "Add Indicators"
+                  }
+                }
+              ]
+            },
+            "name": "ti-ip-actions"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---\n\n### \ud83c\udf0d URL/Domain Indicators\n\nAdd or remove URL and domain indicators."
+            },
+            "name": "ti-url-header"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "urls",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "URLs",
+                  "label": "URLs/Domains (comma-separated)",
+                  "type": 1,
+                  "value": ""
+                },
+                {
+                  "id": "url-action",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "URLAction",
+                  "label": "Action",
+                  "type": 2,
+                  "jsonData": "[\"Alert\", \"Block\", \"Allow\"]",
+                  "value": "Alert"
+                },
+                {
+                  "id": "url-severity",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "URLSeverity",
+                  "label": "Severity",
+                  "type": 2,
+                  "jsonData": "[\"Low\", \"Medium\", \"High\"]",
+                  "value": "Medium"
+                }
+              ],
+              "style": "pills"
+            },
+            "name": "ti-url-params"
           }
         ]
       },
@@ -1238,7 +1442,7 @@
           {
             "type": 1,
             "content": {
-              "json": "## \ud83d\udd0d Advanced Hunting Manager\n\nExecute KQL queries against Microsoft Defender XDR Advanced Hunting.\n\n### Quick Start:\n1. Enter your KQL query below\n2. Click **Execute Hunt** to run\n3. Results will appear in the table below"
+              "json": "## \ud83d\udd0d Advanced Hunting Manager\n\n**Execute KQL queries against Microsoft Defender XDR Advanced Hunting**\n\n### Console-like Query Interface\n\nSimulates the Defender XDR Advanced Hunting experience with:\n- \ud83d\udcdd Multi-line query editor\n- \ud83c\udfaf Quick-start example queries\n- \ud83d\udcca Real-time results\n- \ud83d\udcbe Query history (via parameters)\n\n---"
             },
             "name": "hunt-header"
           },
@@ -1251,18 +1455,22 @@
                   "id": "hunt-query",
                   "version": "KqlParameterItem/1.0",
                   "name": "HuntQuery",
-                  "label": "KQL Query",
+                  "label": "\ud83c\udfaf KQL Query",
                   "type": 1,
                   "multiLine": true,
-                  "value": "DeviceInfo\\n| take 10"
+                  "description": "Enter your KQL query here (Kusto Query Language)",
+                  "value": "DeviceInfo\\n| where Timestamp > ago(7d)\\n| summarize DeviceCount = dcount(DeviceId) by OsPlatform\\n| order by DeviceCount desc",
+                  "isGlobal": true
                 },
                 {
                   "id": "hunt-name",
                   "version": "KqlParameterItem/1.0",
                   "name": "HuntName",
-                  "label": "Hunt Name",
+                  "label": "\ud83d\udccb Hunt Name",
                   "type": 1,
-                  "value": "Custom Hunt Query"
+                  "description": "Give your hunt a descriptive name",
+                  "value": "Device Inventory by OS",
+                  "isGlobal": true
                 }
               ],
               "style": "pills"
@@ -1278,7 +1486,7 @@
                 {
                   "id": "execute-hunt",
                   "linkTarget": "ArmAction",
-                  "linkLabel": "\ud83d\udd0d Execute Hunt",
+                  "linkLabel": "\ud83d\udd0d Execute Hunt Query",
                   "style": "primary",
                   "armActionContext": {
                     "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2HuntManager/invocations",
@@ -1303,8 +1511,10 @@
                     ],
                     "httpMethod": "POST",
                     "title": "Execute Advanced Hunt",
-                    "description": "Executing advanced hunting query...",
-                    "runLabel": "Execute Hunt"
+                    "description": "Executing advanced hunting query against Defender XDR...",
+                    "actionName": "Execute Hunt",
+                    "runLabel": "\u25b6\ufe0f Run Query",
+                    "successMessage": "\u2705 Hunt query executed! Check response for results."
                   }
                 }
               ]
@@ -1314,9 +1524,90 @@
           {
             "type": 1,
             "content": {
-              "json": "### \ud83d\udcdd Example Queries\n\n**Recent Alerts:**\n```kql\nAlertInfo\n| where Timestamp > ago(7d)\n| take 100\n```\n\n**Device Logons:**\n```kql\nDeviceLogonEvents\n| where Timestamp > ago(24h)\n| take 100\n```\n\n**File Events:**\n```kql\nDeviceFileEvents\n| where Timestamp > ago(24h)\n| take 100\n```"
+              "json": "---\n\n## \ud83d\udcda Example Queries Library\n\n**Click an example to load it into the query editor above**"
             },
-            "name": "hunt-examples"
+            "name": "examples-header"
+          },
+          {
+            "type": 11,
+            "content": {
+              "version": "LinkItem/1.0",
+              "style": "tabs",
+              "links": [
+                {
+                  "id": "query-devices",
+                  "linkTarget": "parameter",
+                  "linkLabel": "\ud83d\udcbb Devices",
+                  "parameterName": "HuntQuery",
+                  "parameterValue": "DeviceInfo\\n| where Timestamp > ago(7d)\\n| summarize LastSeen = max(Timestamp) by DeviceId, DeviceName, OsPlatform\\n| order by LastSeen desc\\n| take 100",
+                  "style": "link"
+                },
+                {
+                  "id": "query-alerts",
+                  "linkTarget": "parameter",
+                  "linkLabel": "\ud83d\udea8 Alerts",
+                  "parameterName": "HuntQuery",
+                  "parameterValue": "AlertInfo\\n| where Timestamp > ago(7d)\\n| summarize AlertCount = count() by Severity, Title\\n| order by AlertCount desc\\n| take 20",
+                  "style": "link"
+                },
+                {
+                  "id": "query-logons",
+                  "linkTarget": "parameter",
+                  "linkLabel": "\ud83d\udd10 Logons",
+                  "parameterName": "HuntQuery",
+                  "parameterValue": "DeviceLogonEvents\\n| where Timestamp > ago(24h)\\n| where LogonType == 'Network'\\n| summarize LogonCount = count() by AccountName, DeviceName\\n| order by LogonCount desc\\n| take 50",
+                  "style": "link"
+                },
+                {
+                  "id": "query-processes",
+                  "linkTarget": "parameter",
+                  "linkLabel": "\u2699\ufe0f Processes",
+                  "parameterName": "HuntQuery",
+                  "parameterValue": "DeviceProcessEvents\\n| where Timestamp > ago(1h)\\n| where ProcessCommandLine has_any ('powershell', 'cmd')\\n| summarize ProcessCount = count() by FileName, InitiatingProcessFileName\\n| order by ProcessCount desc\\n| take 30",
+                  "style": "link"
+                },
+                {
+                  "id": "query-network",
+                  "linkTarget": "parameter",
+                  "linkLabel": "\ud83c\udf10 Network",
+                  "parameterName": "HuntQuery",
+                  "parameterValue": "DeviceNetworkEvents\\n| where Timestamp > ago(1h)\\n| where RemoteIPType == 'Public'\\n| summarize ConnectionCount = count() by RemoteIP, RemoteUrl\\n| order by ConnectionCount desc\\n| take 50",
+                  "style": "link"
+                },
+                {
+                  "id": "query-files",
+                  "linkTarget": "parameter",
+                  "linkLabel": "\ud83d\udcc1 Files",
+                  "parameterName": "HuntQuery",
+                  "parameterValue": "DeviceFileEvents\\n| where Timestamp > ago(24h)\\n| where ActionType in ('FileCreated', 'FileModified')\\n| summarize FileCount = count() by FolderPath, SHA256\\n| order by FileCount desc\\n| take 100",
+                  "style": "link"
+                },
+                {
+                  "id": "query-registry",
+                  "linkTarget": "parameter",
+                  "linkLabel": "\ud83d\uddc4\ufe0f Registry",
+                  "parameterName": "HuntQuery",
+                  "parameterValue": "DeviceRegistryEvents\\n| where Timestamp > ago(24h)\\n| where RegistryKey has 'Run'\\n| summarize ChangeCount = count() by RegistryKey, RegistryValueName\\n| order by ChangeCount desc\\n| take 50",
+                  "style": "link"
+                },
+                {
+                  "id": "query-threats",
+                  "linkTarget": "parameter",
+                  "linkLabel": "\u2620\ufe0f Threats",
+                  "parameterName": "HuntQuery",
+                  "parameterValue": "AlertEvidence\\n| where Timestamp > ago(7d)\\n| where ThreatFamily != ''\\n| summarize ThreatCount = count() by ThreatFamily, FileName\\n| order by ThreatCount desc\\n| take 20",
+                  "style": "link"
+                }
+              ]
+            },
+            "name": "query-examples"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---\n\n## \ud83d\udcd6 KQL Query Reference\n\n### Available Tables\n\n**Device Tables:**\n- `DeviceInfo` - Device inventory and properties\n- `DeviceProcessEvents` - Process execution events\n- `DeviceNetworkEvents` - Network connections\n- `DeviceFileEvents` - File operations\n- `DeviceRegistryEvents` - Registry changes\n- `DeviceLogonEvents` - Logon activities\n- `DeviceImageLoadEvents` - DLL/driver loads\n\n**Alert & Threat Tables:**\n- `AlertInfo` - Alert metadata\n- `AlertEvidence` - Evidence related to alerts\n- `ThreatIntelligenceIndicator` - Threat intel indicators\n\n**Email Tables:**\n- `EmailEvents` - Email messages\n- `EmailAttachmentInfo` - Email attachments\n- `EmailUrlInfo` - URLs in emails\n\n### Common Operators\n\n```kql\n| where Timestamp > ago(7d)        // Time filter\n| where Column == \"value\"          // Exact match\n| where Column contains \"text\"     // Partial match\n| where Column has_any (\"a\", \"b\") // Any match\n| summarize count() by Column      // Aggregation\n| order by Column desc             // Sorting\n| take 100                         // Limit results\n| extend NewCol = Column1 + Column2 // Calculated column\n| project Column1, Column2         // Select columns\n| join kind=inner Table2 on Key   // Join tables\n```\n\n### Tips\n\n1. **Performance:** Always include time filters (`ago(7d)`)\n2. **Limits:** Use `take` to limit result sets\n3. **Testing:** Start with small time windows\n4. **Aggregation:** Use `summarize` for statistics\n5. **Troubleshooting:** Check column names and data types\n\n### Documentation\n\n- [KQL Quick Reference](https://docs.microsoft.com/kusto/query/)\n- [Advanced Hunting Schema](https://docs.microsoft.com/defender-endpoint/advanced-hunting-schema-tables)\n- [Query Best Practices](https://docs.microsoft.com/defender-endpoint/advanced-hunting-best-practices)"
+            },
+            "name": "hunt-reference"
           }
         ]
       },
@@ -1449,7 +1740,7 @@
           {
             "type": 1,
             "content": {
-              "json": "## \ud83d\udda5\ufe0f Live Response Console\n\n**Interactive command execution on devices**\n\n### Features:\n- \ud83c\udfaf Native commands (dir, cd, type, etc.)\n- \ud83d\udcdc Library script execution\n- \ud83d\udcc1 File upload/download\n- \ud83d\udcca Session management\n\n### Workflow:\n1. Select a device from Device Manager tab\n2. Choose an action below\n3. Monitor session status"
+              "json": "## \ud83d\udda5\ufe0f Live Response Console\n\n**Interactive command execution and file operations on devices**\n\n### Features:\n- \ud83c\udfaf **Native Commands** - Execute dir, cd, type, reg query, etc.\n- \ud83d\udcdc **Library Scripts** - Run PowerShell and batch scripts\n- \ud83d\udcc1 **File Operations** - Upload, download, and manage files\n- \ud83d\udcca **Session Management** - Monitor active sessions\n\n### Quick Start:\n1. **Select devices** from the Device Manager tab\n2. **Choose an operation** below\n3. **Monitor execution** in real-time\n\n---"
             },
             "name": "console-header"
           },
@@ -1463,24 +1754,27 @@
               "showRefreshButton": true,
               "timeContextFromParameter": "AutoRefresh",
               "queryType": 10,
-              "visualization": "table"
+              "visualization": "table",
+              "gridSettings": {
+                "filter": true
+              }
             },
             "name": "console-sessions"
           },
           {
             "type": 1,
             "content": {
-              "json": "---\n\n### \ud83d\udcdc Library Scripts\n\nExecute scripts from the Live Response library."
+              "json": "---\n\n## \ud83d\udcda Live Response Library\n\n**Scripts and files available for deployment**"
             },
-            "name": "console-library-header"
+            "name": "library-header"
           },
           {
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Orchestrator\", \"body\": null, \"urlParams\": [{\"key\": \"Function\", \"value\": \"ListLibraryFiles\"}, {\"key\": \"tenantId\", \"value\": \"{TenantId}\"}], \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.files[*]\", \"columns\": [{\"path\": \"$.fileName\", \"columnid\": \"FileName\"}, {\"path\": \"$.fileSize\", \"columnid\": \"Size\"}, {\"path\": \"$.createdTime\", \"columnid\": \"Created\"}]}}]}",
+              "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Orchestrator\", \"body\": null, \"urlParams\": [{\"key\": \"Function\", \"value\": \"ListLibraryFiles\"}, {\"key\": \"tenantId\", \"value\": \"{TenantId}\"}], \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.files[*]\", \"columns\": [{\"path\": \"$.fileName\", \"columnid\": \"FileName\"}, {\"path\": \"$.fileSize\", \"columnid\": \"Size\"}, {\"path\": \"$.createdTime\", \"columnid\": \"Created\"}, {\"path\": \"$.description\", \"columnid\": \"Description\"}]}}]}",
               "size": 0,
-              "title": "\ud83d\udcda Library Files",
+              "title": "\ud83d\udcda Library Files & Scripts",
               "showRefreshButton": true,
               "queryType": 10,
               "visualization": "table",
@@ -1491,27 +1785,35 @@
                     "formatter": 7,
                     "formatOptions": {
                       "linkTarget": "parameter",
-                      "linkLabel": "\u25b6\ufe0f Run",
+                      "linkLabel": "\u25b6\ufe0f Select",
                       "parameterName": "ScriptName",
                       "parameterValue": "{0}"
                     }
+                  },
+                  {
+                    "columnMatch": "Size",
+                    "formatter": 3,
+                    "formatOptions": {
+                      "aggregation": "Sum"
+                    }
                   }
-                ]
+                ],
+                "filter": true
               }
             },
-            "name": "console-library-list"
+            "name": "library-files-list"
           },
           {
             "type": 1,
             "content": {
-              "json": "---\n\n### \u25b6\ufe0f Execute Script\n\n**Selected Device:** `{DeviceList}`  \n**Selected Script:** `{ScriptName}`"
+              "json": "---\n\n## \u25b6\ufe0f Execute Library Script\n\n**Selected Device(s):** `{DeviceList}`  \n**Selected Script:** `{ScriptName}`\n\nExecute a script from the library on selected devices."
             },
             "conditionalVisibility": {
               "parameterName": "ScriptName",
               "comparison": "isNotEqualTo",
               "value": ""
             },
-            "name": "console-execute-header"
+            "name": "execute-script-header"
           },
           {
             "type": 9,
@@ -1522,8 +1824,9 @@
                   "id": "script-args",
                   "version": "KqlParameterItem/1.0",
                   "name": "ScriptArguments",
-                  "label": "Script Arguments (optional)",
+                  "label": "\ud83d\udcdd Script Arguments (optional)",
                   "type": 1,
+                  "description": "Enter arguments for the script (space-separated)",
                   "value": ""
                 }
               ],
@@ -1534,7 +1837,7 @@
               "comparison": "isNotEqualTo",
               "value": ""
             },
-            "name": "console-execute-params"
+            "name": "script-args-param"
           },
           {
             "type": 11,
@@ -1543,9 +1846,9 @@
               "style": "list",
               "links": [
                 {
-                  "id": "execute-script",
+                  "id": "execute-script-action",
                   "linkTarget": "ArmAction",
-                  "linkLabel": "\u25b6\ufe0f Execute Script",
+                  "linkLabel": "\u25b6\ufe0f Execute Script on Device(s)",
                   "style": "primary",
                   "armActionContext": {
                     "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Orchestrator/invocations",
@@ -1578,8 +1881,10 @@
                     ],
                     "httpMethod": "POST",
                     "title": "Execute Live Response Script",
-                    "description": "Executing script on device...",
-                    "runLabel": "Execute"
+                    "description": "Executing script on selected device(s)...",
+                    "actionName": "Execute Script",
+                    "runLabel": "Execute",
+                    "successMessage": "\u2705 Script execution initiated successfully!"
                   }
                 }
               ]
@@ -1589,12 +1894,151 @@
               "comparison": "isNotEqualTo",
               "value": ""
             },
-            "name": "console-execute-button"
+            "name": "execute-script-button"
           },
           {
             "type": 1,
             "content": {
-              "json": "---\n\n### \ud83d\udca1 Console Tips\n\n**Native Commands:** Use ARM actions to execute native commands like `dir`, `cd`, `type`, etc.\n\n**Library Scripts:** Scripts are uploaded to the Live Response library and can be executed on any device.\n\n**File Operations:** Upload files to library first, then deploy to devices using PutLiveResponseFileFromLibrary.\n\n**Monitoring:** Use the sessions table above to track active Live Response sessions."
+              "json": "---\n\n## \ud83d\udce4 Deploy Library File to Device\n\n**Workaround for file operations:**\n\n### Upload Workflow:\n1. **Upload files to library** via Azure Portal or PowerShell\n2. **Select a library file** from the table above\n3. **Deploy to device** using the button below\n\n**Alternative:** Use Azure Storage Explorer to manage library files directly.\n\n**Selected Device(s):** `{DeviceList}`  \n**Library File:** `{ScriptName}`"
+            },
+            "conditionalVisibility": {
+              "parameterName": "ScriptName",
+              "comparison": "isNotEqualTo",
+              "value": ""
+            },
+            "name": "deploy-file-header"
+          },
+          {
+            "type": 11,
+            "content": {
+              "version": "LinkItem/1.0",
+              "style": "list",
+              "links": [
+                {
+                  "id": "deploy-file-action",
+                  "linkTarget": "ArmAction",
+                  "linkLabel": "\ud83d\udce4 Deploy Library File to Device",
+                  "style": "primary",
+                  "armActionContext": {
+                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Orchestrator/invocations",
+                    "headers": [],
+                    "params": [
+                      {
+                        "key": "api-version",
+                        "value": "2022-03-01"
+                      },
+                      {
+                        "key": "Function",
+                        "value": "PutLiveResponseFileFromLibrary"
+                      },
+                      {
+                        "key": "tenantId",
+                        "value": "{TenantId}"
+                      },
+                      {
+                        "key": "DeviceIds",
+                        "value": "{DeviceList}"
+                      },
+                      {
+                        "key": "fileName",
+                        "value": "{ScriptName}"
+                      }
+                    ],
+                    "httpMethod": "POST",
+                    "title": "Deploy Library File",
+                    "description": "Deploying file from library to device...",
+                    "actionName": "Deploy File",
+                    "runLabel": "Deploy",
+                    "successMessage": "\u2705 File deployment initiated!"
+                  }
+                }
+              ]
+            },
+            "conditionalVisibility": {
+              "parameterName": "ScriptName",
+              "comparison": "isNotEqualTo",
+              "value": ""
+            },
+            "name": "deploy-file-button"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---\n\n## \ud83d\udce5 Download File from Device\n\n**Retrieve a file from a device to the library**\n\n**Selected Device(s):** `{DeviceList}`"
+            },
+            "name": "download-file-header"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "file-path-param",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "FilePathToDownload",
+                  "label": "\ud83d\udcc2 File Path on Device",
+                  "type": 1,
+                  "description": "Enter full path (e.g., C:\\\\Temp\\\\suspicious.exe)",
+                  "value": "C:\\\\Temp\\\\file.txt"
+                }
+              ],
+              "style": "pills"
+            },
+            "name": "download-file-param"
+          },
+          {
+            "type": 11,
+            "content": {
+              "version": "LinkItem/1.0",
+              "style": "list",
+              "links": [
+                {
+                  "id": "download-file-action",
+                  "linkTarget": "ArmAction",
+                  "linkLabel": "\ud83d\udce5 Download File from Device",
+                  "style": "primary",
+                  "armActionContext": {
+                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/functions/DefenderC2Orchestrator/invocations",
+                    "headers": [],
+                    "params": [
+                      {
+                        "key": "api-version",
+                        "value": "2022-03-01"
+                      },
+                      {
+                        "key": "Function",
+                        "value": "GetLiveResponseFile"
+                      },
+                      {
+                        "key": "tenantId",
+                        "value": "{TenantId}"
+                      },
+                      {
+                        "key": "DeviceIds",
+                        "value": "{DeviceList}"
+                      },
+                      {
+                        "key": "filePath",
+                        "value": "{FilePathToDownload}"
+                      }
+                    ],
+                    "httpMethod": "POST",
+                    "title": "Download File from Device",
+                    "description": "Downloading file from device...",
+                    "actionName": "Download File",
+                    "runLabel": "Download",
+                    "successMessage": "\u2705 File download initiated! Check response for download link."
+                  }
+                }
+              ]
+            },
+            "name": "download-file-button"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---\n\n## \ud83d\udca1 Live Response Console Tips\n\n### Native Commands\nExecute standard commands directly on devices:\n- `dir` - List directory contents\n- `cd` - Change directory\n- `type` - Display file contents\n- `reg query` - Query registry\n- `netstat` - Network statistics\n\n### Library Management\n**Upload to Library:**\n1. Use Azure Portal \u2192 Storage Account \u2192 Containers \u2192 \"library\"\n2. Or use PowerShell: `Add-AzStorageBlob -Container library -File <path>`\n3. Or use Azure Storage Explorer (GUI)\n\n**Best Practices:**\n- Test scripts locally before uploading\n- Use descriptive file names\n- Document script parameters\n- Monitor session status regularly\n\n### File Operations\n**Download:** Files are retrieved as Base64 and can be accessed via the response\n\n**Upload:** Files must be in the library first, then deployed to devices\n\n**Direct Access:** For bulk operations, use Azure Storage Explorer or PowerShell\n\n### Troubleshooting\n- Ensure devices are online and connected\n- Check Live Response is enabled in Defender settings\n- Verify adequate permissions (Security Administrator or higher)\n- Allow 30-60 seconds for session initialization\n\n---\n\n### \ud83d\udcd6 Documentation Links\n\n- [Live Response Documentation](https://docs.microsoft.com/defender-endpoint/live-response)\n- [Live Response Commands Reference](https://docs.microsoft.com/defender-endpoint/live-response-command-examples)\n- [Azure Storage Explorer](https://azure.microsoft.com/features/storage-explorer/)"
             },
             "name": "console-tips"
           }
