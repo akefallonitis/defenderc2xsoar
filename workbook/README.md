@@ -1,4 +1,22 @@
-# DefenderC2 Workbook - Zero-Configuration Deployment
+# DefenderC2 Workbooks
+
+## ⭐ Latest Release: Enhanced DefenderC2-Workbook.json (2025-11-05)
+
+### Production-Ready, Full-Featured Console
+
+The **DefenderC2-Workbook.json** provides a complete, enterprise-grade command and control interface with **all 9 success criteria met**:
+
+✅ **16 ARM Actions** + **9 Custom Endpoints** - Proper action segregation  
+✅ **7 Functional Tabs** - Device Manager, Threat Intel, Actions, Hunting, Incidents, Detections, Live Response  
+✅ **11 Auto-discoverable Parameters** - Zero configuration required  
+✅ **Console-like Interfaces** - Advanced Hunting with KQL editor, Live Response shell  
+✅ **File Operations** - Complete workarounds for library management  
+✅ **Retro Terminal Theme** - Matrix green phosphor CRT aesthetic  
+✅ **Comprehensive Documentation** - See [WORKBOOK_ENHANCED_GUIDE.md](../WORKBOOK_ENHANCED_GUIDE.md)
+
+**Quick Deploy:** Azure Portal → Monitor → Workbooks → New → Advanced Editor → Paste JSON → Apply → Save
+
+---
 
 ## Overview
 
