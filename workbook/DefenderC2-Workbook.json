@@ -335,7 +335,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [{\"name\": \"Content-Type\", \"value\": \"application/json\"}], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": \"{\\\"action\\\": \\\"Get Devices\\\", \\\"tenantId\\\": \\\"{TenantId}\\\"}\", \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.devices[*]\", \"columns\": [{\"path\": \"$.id\", \"columnid\": \"DeviceID\"}, {\"path\": \"$.computerDnsName\", \"columnid\": \"ComputerName\"}, {\"path\": \"$.osPlatform\", \"columnid\": \"OS\"}, {\"path\": \"$.healthStatus\", \"columnid\": \"Health\"}, {\"path\": \"$.riskScore\", \"columnid\": \"Risk\"}, {\"path\": \"$.isolationState\", \"columnid\": \"IsolationState\"}]}}]}",
+              "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [{\"name\": \"Content-Type\", \"value\": \"application/json\"}], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": null, \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.devices[*]\", \"columns\": [{\"path\": \"$.id\", \"columnid\": \"DeviceID\"}, {\"path\": \"$.computerDnsName\", \"columnid\": \"ComputerName\"}, {\"path\": \"$.osPlatform\", \"columnid\": \"OS\"}, {\"path\": \"$.healthStatus\", \"columnid\": \"Health\"}, {\"path\": \"$.riskScore\", \"columnid\": \"Risk\"}, {\"path\": \"$.isolationState\", \"columnid\": \"IsolationState\"}]}}], \"urlParams\": [{\"key\": \"action\", \"value\": \"Get Devices\"}, {\"key\": \"tenantId\", \"value\": \"{TenantId}\"}]}",
               "size": 0,
               "title": "\ud83d\udcbb All Devices (Click to Select)",
               "queryType": 10,
@@ -439,7 +439,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [{\"name\": \"Content-Type\", \"value\": \"application/json\"}], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": \"{\\\"action\\\": \\\"Get All Actions\\\", \\\"tenantId\\\": \\\"{TenantId}\\\"}\", \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.actions[*]\", \"columns\": [{\"path\": \"$.machineId\", \"columnid\": \"DeviceID\"}, {\"path\": \"$.computerDnsName\", \"columnid\": \"Device\"}, {\"path\": \"$.type\", \"columnid\": \"Action\"}, {\"path\": \"$.id\", \"columnid\": \"ActionID\"}, {\"path\": \"$.status\", \"columnid\": \"Status\"}]}}]}",
+              "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [{\"name\": \"Content-Type\", \"value\": \"application/json\"}], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": null, \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.actions[*]\", \"columns\": [{\"path\": \"$.machineId\", \"columnid\": \"DeviceID\"}, {\"path\": \"$.computerDnsName\", \"columnid\": \"Device\"}, {\"path\": \"$.type\", \"columnid\": \"Action\"}, {\"path\": \"$.id\", \"columnid\": \"ActionID\"}, {\"path\": \"$.status\", \"columnid\": \"Status\"}]}}], \"urlParams\": [{\"key\": \"action\", \"value\": \"Get All Actions\"}, {\"key\": \"tenantId\", \"value\": \"{TenantId}\"}]}",
               "size": 0,
               "title": "\u2699\ufe0f Pending/Running Actions",
               "queryType": 10,
@@ -545,7 +545,8 @@
                     "showDefault": false
                   },
                   "jsonData": "[{\"value\": \"none\", \"label\": \"-- Select Action --\"}, {\"value\": \"Run Antivirus Scan\", \"label\": \"\\ud83d\\udd0d Run Antivirus Scan\"}, {\"value\": \"Isolate Device\", \"label\": \"\\ud83d\\udd12 Isolate Device (DESTRUCTIVE)\"}, {\"value\": \"Unisolate Device\", \"label\": \"\\ud83d\\udd13 Unisolate Device\"}, {\"value\": \"Collect Investigation Package\", \"label\": \"\\ud83d\\udce6 Collect Investigation Package\"}, {\"value\": \"Restrict App Execution\", \"label\": \"\\ud83d\\udeab Restrict App Execution (DESTRUCTIVE)\"}, {\"value\": \"Unrestrict App Execution\", \"label\": \"\\u2705 Unrestrict App Execution\"}]",
-                  "value": "none"
+                  "value": "none",
+                  "isGlobal": true
                 }
               ],
               "style": "pills",
@@ -584,8 +585,7 @@
           }
         ]
       },
-      "name": "group - device-manager",
-      "conditionalVisibilities": []
+      "name": "group - device-manager"
     },
     {
       "type": 12,
@@ -604,7 +604,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [{\"name\": \"Content-Type\", \"value\": \"application/json\"}], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": \"{\\\"action\\\": \\\"List Indicators\\\", \\\"tenantId\\\": \\\"{TenantId}\\\"}\", \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.indicators[*]\", \"columns\": [{\"path\": \"$.id\", \"columnid\": \"IndicatorID\"}, {\"path\": \"$.indicatorValue\", \"columnid\": \"Value\"}, {\"path\": \"$.indicatorType\", \"columnid\": \"Type\"}, {\"path\": \"$.action\", \"columnid\": \"Action\"}, {\"path\": \"$.severity\", \"columnid\": \"Severity\"}, {\"path\": \"$.title\", \"columnid\": \"Title\"}]}}]}",
+              "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [{\"name\": \"Content-Type\", \"value\": \"application/json\"}], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": null, \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.indicators[*]\", \"columns\": [{\"path\": \"$.id\", \"columnid\": \"IndicatorID\"}, {\"path\": \"$.indicatorValue\", \"columnid\": \"Value\"}, {\"path\": \"$.indicatorType\", \"columnid\": \"Type\"}, {\"path\": \"$.action\", \"columnid\": \"Action\"}, {\"path\": \"$.severity\", \"columnid\": \"Severity\"}, {\"path\": \"$.title\", \"columnid\": \"Title\"}]}}], \"urlParams\": [{\"key\": \"action\", \"value\": \"List Indicators\"}, {\"key\": \"tenantId\", \"value\": \"{TenantId}\"}]}",
               "size": 0,
               "title": "\ud83d\udccb All Threat Indicators",
               "queryType": 10,
@@ -640,7 +640,8 @@
                   "label": "File Hash (SHA1/SHA256/MD5)",
                   "type": 1,
                   "isRequired": true,
-                  "description": "Enter file hash"
+                  "description": "Enter file hash",
+                  "isGlobal": true
                 },
                 {
                   "id": "file-action",
@@ -653,7 +654,8 @@
                     "additionalResourceOptions": []
                   },
                   "jsonData": "[{\"value\": \"Alert\", \"label\": \"Alert Only\"}, {\"value\": \"Block\", \"label\": \"Block\"}, {\"value\": \"Warn\", \"label\": \"Warn\"}]",
-                  "value": "Alert"
+                  "value": "Alert",
+                  "isGlobal": true
                 },
                 {
                   "id": "file-title",
@@ -662,7 +664,8 @@
                   "label": "Title/Description",
                   "type": 1,
                   "isRequired": true,
-                  "description": "Brief description of the indicator"
+                  "description": "Brief description of the indicator",
+                  "isGlobal": true
                 }
               ],
               "style": "pills",
@@ -701,8 +704,7 @@
           }
         ]
       },
-      "name": "group - threat-intel",
-      "conditionalVisibilities": []
+      "name": "group - threat-intel"
     },
     {
       "type": 12,
@@ -721,7 +723,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [{\"name\": \"Content-Type\", \"value\": \"application/json\"}], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": \"{\\\"action\\\": \\\"Get All Actions\\\", \\\"tenantId\\\": \\\"{TenantId}\\\"}\", \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.actions[*]\", \"columns\": [{\"path\": \"$.id\", \"columnid\": \"ActionID\"}, {\"path\": \"$.type\", \"columnid\": \"ActionType\"}, {\"path\": \"$.machineId\", \"columnid\": \"DeviceID\"}, {\"path\": \"$.computerDnsName\", \"columnid\": \"Device\"}, {\"path\": \"$.status\", \"columnid\": \"Status\"}, {\"path\": \"$.requestor\", \"columnid\": \"Requestor\"}, {\"path\": \"$.creationDateTimeUtc\", \"columnid\": \"Created\"}]}}]}",
+              "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [{\"name\": \"Content-Type\", \"value\": \"application/json\"}], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": null, \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.actions[*]\", \"columns\": [{\"path\": \"$.id\", \"columnid\": \"ActionID\"}, {\"path\": \"$.type\", \"columnid\": \"ActionType\"}, {\"path\": \"$.machineId\", \"columnid\": \"DeviceID\"}, {\"path\": \"$.computerDnsName\", \"columnid\": \"Device\"}, {\"path\": \"$.status\", \"columnid\": \"Status\"}, {\"path\": \"$.requestor\", \"columnid\": \"Requestor\"}, {\"path\": \"$.creationDateTimeUtc\", \"columnid\": \"Created\"}]}}], \"urlParams\": [{\"key\": \"action\", \"value\": \"Get All Actions\"}, {\"key\": \"tenantId\", \"value\": \"{TenantId}\"}]}",
               "size": 0,
               "title": "\ud83d\udcca All Machine Actions",
               "queryType": 10,
@@ -776,7 +778,8 @@
                   "label": "Action ID",
                   "type": 1,
                   "isRequired": true,
-                  "description": "Enter action ID to cancel"
+                  "description": "Enter action ID to cancel",
+                  "isGlobal": true
                 }
               ],
               "style": "pills",
@@ -815,8 +818,7 @@
           }
         ]
       },
-      "name": "group - action-manager",
-      "conditionalVisibilities": []
+      "name": "group - action-manager"
     },
     {
       "type": 12,
@@ -845,7 +847,8 @@
                   "typeSettings": {
                     "additionalResourceOptions": []
                   },
-                  "jsonData": "[{\"value\": \"\", \"label\": \"-- Select a sample query --\"}, {\"value\": \"DeviceInfo | take 10\", \"label\": \"Device Inventory (10 rows)\"}, {\"value\": \"DeviceInfo | where RiskScore >= 'High'\", \"label\": \"High Risk Devices\"}, {\"value\": \"DeviceNetworkEvents | where Timestamp > ago(24h) | take 100\", \"label\": \"Recent Network Activity\"}, {\"value\": \"DeviceProcessEvents | where Timestamp > ago(24h) | take 100\", \"label\": \"Recent Process Events\"}, {\"value\": \"DeviceFileEvents | where Timestamp > ago(24h) | take 100\", \"label\": \"Recent File Events\"}]"
+                  "jsonData": "[{\"value\": \"\", \"label\": \"-- Select a sample query --\"}, {\"value\": \"DeviceInfo | take 10\", \"label\": \"Device Inventory (10 rows)\"}, {\"value\": \"DeviceInfo | where RiskScore >= 'High'\", \"label\": \"High Risk Devices\"}, {\"value\": \"DeviceNetworkEvents | where Timestamp > ago(24h) | take 100\", \"label\": \"Recent Network Activity\"}, {\"value\": \"DeviceProcessEvents | where Timestamp > ago(24h) | take 100\", \"label\": \"Recent Process Events\"}, {\"value\": \"DeviceFileEvents | where Timestamp > ago(24h) | take 100\", \"label\": \"Recent File Events\"}]",
+                  "isGlobal": true
                 },
                 {
                   "id": "kql-query",
@@ -855,7 +858,8 @@
                   "type": 1,
                   "isRequired": true,
                   "value": "DeviceInfo | take 10",
-                  "description": "Enter your KQL query here"
+                  "description": "Enter your KQL query here",
+                  "isGlobal": true
                 }
               ],
               "style": "pills",
@@ -903,7 +907,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [{\"name\": \"Content-Type\", \"value\": \"application/json\"}], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": \"{\\\"action\\\": \\\"Get Hunt Results\\\", \\\"tenantId\\\": \\\"{TenantId}\\\"}\", \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.results[*]\", \"columns\": [{\"path\": \"$.*\", \"columnid\": \"Result\"}]}}]}",
+              "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [{\"name\": \"Content-Type\", \"value\": \"application/json\"}], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": null, \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.results[*]\", \"columns\": [{\"path\": \"$.*\", \"columnid\": \"Result\"}]}}], \"urlParams\": [{\"key\": \"action\", \"value\": \"Get Hunt Results\"}, {\"key\": \"tenantId\", \"value\": \"{TenantId}\"}]}",
               "size": 0,
               "title": "\ud83d\udd0d Query Results",
               "queryType": 10,
@@ -917,8 +921,7 @@
           }
         ]
       },
-      "name": "group - advanced-hunting",
-      "conditionalVisibilities": []
+      "name": "group - advanced-hunting"
     },
     {
       "type": 12,
@@ -937,7 +940,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [{\"name\": \"Content-Type\", \"value\": \"application/json\"}], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": \"{\\\"action\\\": \\\"Get Incidents\\\", \\\"tenantId\\\": \\\"{TenantId}\\\"}\", \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.incidents[*]\", \"columns\": [{\"path\": \"$.incidentId\", \"columnid\": \"IncidentID\"}, {\"path\": \"$.incidentName\", \"columnid\": \"Name\"}, {\"path\": \"$.severity\", \"columnid\": \"Severity\"}, {\"path\": \"$.status\", \"columnid\": \"Status\"}, {\"path\": \"$.assignedTo\", \"columnid\": \"AssignedTo\"}, {\"path\": \"$.classification\", \"columnid\": \"Classification\"}, {\"path\": \"$.createdTime\", \"columnid\": \"Created\"}]}}]}",
+              "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [{\"name\": \"Content-Type\", \"value\": \"application/json\"}], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": null, \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.incidents[*]\", \"columns\": [{\"path\": \"$.incidentId\", \"columnid\": \"IncidentID\"}, {\"path\": \"$.incidentName\", \"columnid\": \"Name\"}, {\"path\": \"$.severity\", \"columnid\": \"Severity\"}, {\"path\": \"$.status\", \"columnid\": \"Status\"}, {\"path\": \"$.assignedTo\", \"columnid\": \"AssignedTo\"}, {\"path\": \"$.classification\", \"columnid\": \"Classification\"}, {\"path\": \"$.createdTime\", \"columnid\": \"Created\"}]}}], \"urlParams\": [{\"key\": \"action\", \"value\": \"Get Incidents\"}, {\"key\": \"tenantId\", \"value\": \"{TenantId}\"}]}",
               "size": 0,
               "title": "\ud83d\udea8 All Incidents",
               "queryType": 10,
@@ -973,7 +976,8 @@
                   "label": "Incident ID",
                   "type": 1,
                   "isRequired": true,
-                  "description": "Enter incident ID"
+                  "description": "Enter incident ID",
+                  "isGlobal": true
                 },
                 {
                   "id": "incident-status",
@@ -985,7 +989,8 @@
                   "typeSettings": {
                     "additionalResourceOptions": []
                   },
-                  "jsonData": "[{\"value\": \"Active\", \"label\": \"\\ud83d\\udd34 Active\"}, {\"value\": \"InProgress\", \"label\": \"\\ud83d\\udfe1 InProgress\"}, {\"value\": \"Resolved\", \"label\": \"\\ud83d\\udfe2 Resolved\"}, {\"value\": \"Redirected\", \"label\": \"\\u26aa Redirected\"}]"
+                  "jsonData": "[{\"value\": \"Active\", \"label\": \"\\ud83d\\udd34 Active\"}, {\"value\": \"InProgress\", \"label\": \"\\ud83d\\udfe1 InProgress\"}, {\"value\": \"Resolved\", \"label\": \"\\ud83d\\udfe2 Resolved\"}, {\"value\": \"Redirected\", \"label\": \"\\u26aa Redirected\"}]",
+                  "isGlobal": true
                 },
                 {
                   "id": "incident-comment",
@@ -993,7 +998,8 @@
                   "name": "IncidentComment",
                   "label": "Comment",
                   "type": 1,
-                  "description": "Add investigation notes"
+                  "description": "Add investigation notes",
+                  "isGlobal": true
                 }
               ],
               "style": "pills",
@@ -1032,8 +1038,7 @@
           }
         ]
       },
-      "name": "group - incident-manager",
-      "conditionalVisibilities": []
+      "name": "group - incident-manager"
     },
     {
       "type": 12,
@@ -1052,7 +1057,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [{\"name\": \"Content-Type\", \"value\": \"application/json\"}], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": \"{\\\"action\\\": \\\"List Custom Detection Rules\\\", \\\"tenantId\\\": \\\"{TenantId}\\\"}\", \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.rules[*]\", \"columns\": [{\"path\": \"$.id\", \"columnid\": \"RuleID\"}, {\"path\": \"$.displayName\", \"columnid\": \"Name\"}, {\"path\": \"$.severity\", \"columnid\": \"Severity\"}, {\"path\": \"$.enabled\", \"columnid\": \"Enabled\"}, {\"path\": \"$.createdBy\", \"columnid\": \"CreatedBy\"}, {\"path\": \"$.creationTime\", \"columnid\": \"Created\"}]}}]}",
+              "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [{\"name\": \"Content-Type\", \"value\": \"application/json\"}], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": null, \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.rules[*]\", \"columns\": [{\"path\": \"$.id\", \"columnid\": \"RuleID\"}, {\"path\": \"$.displayName\", \"columnid\": \"Name\"}, {\"path\": \"$.severity\", \"columnid\": \"Severity\"}, {\"path\": \"$.enabled\", \"columnid\": \"Enabled\"}, {\"path\": \"$.createdBy\", \"columnid\": \"CreatedBy\"}, {\"path\": \"$.creationTime\", \"columnid\": \"Created\"}]}}], \"urlParams\": [{\"key\": \"action\", \"value\": \"List Custom Detection Rules\"}, {\"key\": \"tenantId\", \"value\": \"{TenantId}\"}]}",
               "size": 0,
               "title": "\u2699\ufe0f All Detection Rules",
               "queryType": 10,
@@ -1088,7 +1093,8 @@
                   "label": "Rule Name",
                   "type": 1,
                   "isRequired": true,
-                  "description": "Descriptive name for the detection rule"
+                  "description": "Descriptive name for the detection rule",
+                  "isGlobal": true
                 },
                 {
                   "id": "detection-query",
@@ -1097,7 +1103,8 @@
                   "label": "KQL Query",
                   "type": 1,
                   "isRequired": true,
-                  "description": "KQL query for detection logic"
+                  "description": "KQL query for detection logic",
+                  "isGlobal": true
                 },
                 {
                   "id": "detection-severity",
@@ -1109,7 +1116,8 @@
                   "typeSettings": {
                     "additionalResourceOptions": []
                   },
-                  "jsonData": "[{\"value\": \"Informational\", \"label\": \"\\u2139\\ufe0f Informational\"}, {\"value\": \"Low\", \"label\": \"\\ud83d\\udfe2 Low\"}, {\"value\": \"Medium\", \"label\": \"\\ud83d\\udfe1 Medium\"}, {\"value\": \"High\", \"label\": \"\\ud83d\\udfe0 High\"}]"
+                  "jsonData": "[{\"value\": \"Informational\", \"label\": \"\\u2139\\ufe0f Informational\"}, {\"value\": \"Low\", \"label\": \"\\ud83d\\udfe2 Low\"}, {\"value\": \"Medium\", \"label\": \"\\ud83d\\udfe1 Medium\"}, {\"value\": \"High\", \"label\": \"\\ud83d\\udfe0 High\"}]",
+                  "isGlobal": true
                 }
               ],
               "style": "pills",
@@ -1148,8 +1156,7 @@
           }
         ]
       },
-      "name": "group - custom-detection",
-      "conditionalVisibilities": []
+      "name": "group - custom-detection"
     },
     {
       "type": 12,
@@ -1175,7 +1182,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [{\"name\": \"Content-Type\", \"value\": \"application/json\"}], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": \"{\\\"action\\\": \\\"GetLiveResponseSessions\\\", \\\"tenantId\\\": \\\"{TenantId}\\\"}\", \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.sessions[*]\", \"columns\": [{\"path\": \"$.id\", \"columnid\": \"SessionID\"}, {\"path\": \"$.machineId\", \"columnid\": \"DeviceID\"}, {\"path\": \"$.computerDnsName\", \"columnid\": \"Device\"}, {\"path\": \"$.status\", \"columnid\": \"Status\"}, {\"path\": \"$.createdDateTimeUtc\", \"columnid\": \"Created\"}]}}]}",
+              "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [{\"name\": \"Content-Type\", \"value\": \"application/json\"}], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": null, \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.sessions[*]\", \"columns\": [{\"path\": \"$.id\", \"columnid\": \"SessionID\"}, {\"path\": \"$.machineId\", \"columnid\": \"DeviceID\"}, {\"path\": \"$.computerDnsName\", \"columnid\": \"Device\"}, {\"path\": \"$.status\", \"columnid\": \"Status\"}, {\"path\": \"$.createdDateTimeUtc\", \"columnid\": \"Created\"}]}}], \"urlParams\": [{\"key\": \"action\", \"value\": \"GetLiveResponseSessions\"}, {\"key\": \"tenantId\", \"value\": \"{TenantId}\"}]}",
               "size": 0,
               "title": "\ud83d\udd0c Active Sessions",
               "queryType": 10,
@@ -1212,7 +1219,8 @@
                   "type": 1,
                   "isRequired": true,
                   "description": "Enter device ID for live response",
-                  "value": "{DeviceList}"
+                  "value": "{DeviceList}",
+                  "isGlobal": true
                 },
                 {
                   "id": "lr-command-type",
@@ -1224,7 +1232,8 @@
                   "typeSettings": {
                     "additionalResourceOptions": []
                   },
-                  "jsonData": "[{\"value\": \"RunScript\", \"label\": \"\\ud83d\\udcdc Run Script from Library\"}, {\"value\": \"RunCommand\", \"label\": \"\\u26a1 Run Native Command\"}, {\"value\": \"GetFile\", \"label\": \"\\ud83d\\udce5 Download File\"}, {\"value\": \"PutFile\", \"label\": \"\\ud83d\\udce4 Upload File\"}]"
+                  "jsonData": "[{\"value\": \"RunScript\", \"label\": \"\\ud83d\\udcdc Run Script from Library\"}, {\"value\": \"RunCommand\", \"label\": \"\\u26a1 Run Native Command\"}, {\"value\": \"GetFile\", \"label\": \"\\ud83d\\udce5 Download File\"}, {\"value\": \"PutFile\", \"label\": \"\\ud83d\\udce4 Upload File\"}]",
+                  "isGlobal": true
                 },
                 {
                   "id": "lr-command",
@@ -1234,7 +1243,8 @@
                   "type": 1,
                   "isRequired": true,
                   "description": "Enter command, script name, or file path",
-                  "value": "dir c:\\"
+                  "value": "dir c:\\",
+                  "isGlobal": true
                 },
                 {
                   "id": "lr-arguments",
@@ -1242,7 +1252,8 @@
                   "name": "LRArguments",
                   "label": "Arguments (Optional)",
                   "type": 1,
-                  "description": "Command arguments or script parameters"
+                  "description": "Command arguments or script parameters",
+                  "isGlobal": true
                 }
               ],
               "style": "pills",
@@ -1290,7 +1301,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [{\"name\": \"Content-Type\", \"value\": \"application/json\"}], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": \"{\\\"action\\\": \\\"GetLibraryScripts\\\", \\\"tenantId\\\": \\\"{TenantId}\\\"}\", \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.scripts[*]\", \"columns\": [{\"path\": \"$.scriptName\", \"columnid\": \"Name\"}, {\"path\": \"$.description\", \"columnid\": \"Description\"}, {\"path\": \"$.scriptContent\", \"columnid\": \"Content\"}, {\"path\": \"$.createdBy\", \"columnid\": \"CreatedBy\"}]}}]}",
+              "query": "{\"version\": \"CustomEndpoint/1.0\", \"data\": null, \"headers\": [{\"name\": \"Content-Type\", \"value\": \"application/json\"}], \"method\": \"POST\", \"url\": \"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\", \"body\": null, \"transformers\": [{\"type\": \"jsonpath\", \"settings\": {\"tablePath\": \"$.scripts[*]\", \"columns\": [{\"path\": \"$.scriptName\", \"columnid\": \"Name\"}, {\"path\": \"$.description\", \"columnid\": \"Description\"}, {\"path\": \"$.scriptContent\", \"columnid\": \"Content\"}, {\"path\": \"$.createdBy\", \"columnid\": \"CreatedBy\"}]}}], \"urlParams\": [{\"key\": \"action\", \"value\": \"GetLibraryScripts\"}, {\"key\": \"tenantId\", \"value\": \"{TenantId}\"}]}",
               "size": 0,
               "title": "\ud83d\udcda Library Items",
               "queryType": 10,
@@ -1311,8 +1322,7 @@
           }
         ]
       },
-      "name": "group - live-response",
-      "conditionalVisibilities": []
+      "name": "group - live-response"
     }
   ],
   "defaultResourceIds": [],
