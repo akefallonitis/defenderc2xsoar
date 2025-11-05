@@ -233,6 +233,16 @@
             "value": "device-manager",
             "isGlobal": true,
             "isHiddenWhenLocked": true
+          },
+          {
+            "id": "action-id-cancel-param",
+            "version": "KqlParameterItem/1.0",
+            "name": "ActionIdToCancel",
+            "label": "Action ID to Cancel",
+            "type": 1,
+            "isGlobal": true,
+            "value": "",
+            "description": "Click Cancel button in tables to populate"
           }
         ],
         "style": "pills",
@@ -331,7 +341,76 @@
               "queryType": 10,
               "visualization": "table",
               "gridSettings": {
-                "formatters": [],
+                "formatters": [
+                  {
+                    "columnMatch": "DeviceID",
+                    "formatter": 7,
+                    "formatOptions": {
+                      "linkTarget": "parameter",
+                      "linkLabel": "\u2705 Select",
+                      "parameterName": "DeviceList",
+                      "parameterValue": "{0}"
+                    }
+                  },
+                  {
+                    "columnMatch": "Health",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "colors",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Active",
+                          "representation": "green",
+                          "text": "\ud83d\udfe2 {0}"
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Inactive",
+                          "representation": "red",
+                          "text": "\ud83d\udd34 {0}"
+                        },
+                        {
+                          "operator": "Default",
+                          "representation": "blue",
+                          "text": "{0}"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "columnMatch": "Risk",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "colors",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "==",
+                          "thresholdValue": "High",
+                          "representation": "redBright",
+                          "text": "\ud83d\udd34 {0}"
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Medium",
+                          "representation": "orange",
+                          "text": "\ud83d\udfe0 {0}"
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Low",
+                          "representation": "green",
+                          "text": "\ud83d\udfe2 {0}"
+                        },
+                        {
+                          "operator": "Default",
+                          "representation": "blue",
+                          "text": "{0}"
+                        }
+                      ]
+                    }
+                  }
+                ],
                 "filter": true
               }
             },
@@ -366,8 +445,66 @@
               "queryType": 10,
               "visualization": "table",
               "gridSettings": {
-                "formatters": [],
-                "filter": true
+                "formatters": [
+                  {
+                    "columnMatch": "ActionID",
+                    "formatter": 7,
+                    "formatOptions": {
+                      "linkTarget": "parameter",
+                      "linkLabel": "\u274c Cancel",
+                      "parameterName": "ActionIdToCancel",
+                      "parameterValue": "{0}"
+                    }
+                  },
+                  {
+                    "columnMatch": "Status",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "colors",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Pending",
+                          "representation": "yellow",
+                          "text": "\ud83d\udfe1 {0}"
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "InProgress",
+                          "representation": "blue",
+                          "text": "\ud83d\udd35 {0}"
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Succeeded",
+                          "representation": "green",
+                          "text": "\ud83d\udfe2 {0}"
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Failed",
+                          "representation": "red",
+                          "text": "\ud83d\udd34 {0}"
+                        },
+                        {
+                          "operator": "Default",
+                          "representation": "gray",
+                          "text": "{0}"
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "filter": true,
+                "filterSettings": {
+                  "defaultFilters": [
+                    {
+                      "columnId": "DeviceID",
+                      "operator": "in",
+                      "value": "{DeviceList}"
+                    }
+                  ]
+                }
               }
             },
             "name": "pending-actions",
@@ -375,7 +512,14 @@
             "autoRefreshSettings": {
               "intervalInSeconds": 30,
               "refreshCondition": "always"
-            }
+            },
+            "conditionalVisibilities": [
+              {
+                "parameterName": "DeviceList",
+                "comparison": "isNotEqualTo",
+                "value": ""
+              }
+            ]
           },
           {
             "type": 1,
@@ -583,7 +727,26 @@
               "queryType": 10,
               "visualization": "table",
               "gridSettings": {
-                "formatters": [],
+                "formatters": [
+                  {
+                    "columnMatch": "ActionID",
+                    "formatter": 7,
+                    "formatOptions": {
+                      "linkTarget": "parameter",
+                      "linkLabel": "\u274c Cancel",
+                      "parameterName": "ActionIdToCancel",
+                      "parameterValue": "{0}"
+                    }
+                  },
+                  {
+                    "columnMatch": "ActionID",
+                    "formatter": 5,
+                    "formatOptions": {
+                      "linkTarget": "CellDetails",
+                      "linkLabel": "\ud83d\udcca Details"
+                    }
+                  }
+                ],
                 "filter": true
               }
             },
