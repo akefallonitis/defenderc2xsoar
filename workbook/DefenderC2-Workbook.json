@@ -523,13 +523,11 @@
               }
             },
             "name": "query - isolate-result",
-            "conditionalVisibilities": [
-              {
-                "parameterName": "DeviceList",
-                "comparison": "isNotEqualTo",
-                "value": ""
-              }
-            ]
+            "conditionalVisibility": {
+              "parameterName": "DeviceList",
+              "comparison": "isNotEqualTo",
+              "value": ""
+            }
           },
           {
             "type": 1,
@@ -1725,13 +1723,11 @@
               "json": "---\n## \ud83d\udd0d Get Action Status\n\nRetrieve status of a specific action."
             },
             "name": "text - action-status",
-            "conditionalVisibilities": [
-              {
-                "parameterName": "ActionId",
-                "comparison": "isNotEqualTo",
-                "value": ""
-              }
-            ]
+            "conditionalVisibility": {
+              "parameterName": "ActionId",
+              "comparison": "isNotEqualTo",
+              "value": ""
+            }
           },
           {
             "type": 9,
@@ -1843,14 +1839,7 @@
               "comparison": "isNotEqualTo",
               "value": ""
             },
-            "name": "query - action-status",
-            "conditionalVisibilities": [
-              {
-                "parameterName": "ActionId",
-                "comparison": "isNotEqualTo",
-                "value": ""
-              }
-            ]
+            "name": "query - action-status"
           },
           {
             "type": 1,
@@ -2103,14 +2092,7 @@
               "comparison": "isNotEqualTo",
               "value": ""
             },
-            "name": "query - hunt-results",
-            "conditionalVisibilities": [
-              {
-                "parameterName": "HuntQuery",
-                "comparison": "isNotEqualTo",
-                "value": ""
-              }
-            ]
+            "name": "query - hunt-results"
           },
           {
             "type": 1,
@@ -2118,13 +2100,11 @@
               "json": "---\n## \ud83d\udcca Hunt Status\n\nMonitor the status of your hunt query execution."
             },
             "name": "text - hunt-status",
-            "conditionalVisibilities": [
-              {
-                "parameterName": "HuntQuery",
-                "comparison": "isNotEqualTo",
-                "value": ""
-              }
-            ]
+            "conditionalVisibility": {
+              "parameterName": "HuntQuery",
+              "comparison": "isNotEqualTo",
+              "value": ""
+            }
           },
           {
             "type": 3,
@@ -2207,14 +2187,7 @@
             "autoRefreshSettings": {
               "intervalInSeconds": 30,
               "refreshCondition": "always"
-            },
-            "conditionalVisibilities": [
-              {
-                "parameterName": "HuntQuery",
-                "comparison": "isNotEqualTo",
-                "value": ""
-              }
-            ]
+            }
           }
         ]
       },
@@ -3455,14 +3428,7 @@
               "comparison": "isNotEqualTo",
               "value": ""
             },
-            "name": "query - poll-status",
-            "conditionalVisibilities": [
-              {
-                "parameterName": "ActionId",
-                "comparison": "isNotEqualTo",
-                "value": ""
-              }
-            ]
+            "name": "query - poll-status"
           },
           {
             "type": 1,
@@ -3505,14 +3471,7 @@
               "comparison": "isNotEqualTo",
               "value": ""
             },
-            "name": "query - results",
-            "conditionalVisibilities": [
-              {
-                "parameterName": "ActionId",
-                "comparison": "isNotEqualTo",
-                "value": ""
-              }
-            ]
+            "name": "query - results"
           },
           {
             "type": 1,
