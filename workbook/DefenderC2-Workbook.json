@@ -472,35 +472,33 @@
           },
           {
             "type": 3,
-            "content": {
-              "version": "KqlItem/1.0",
-              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.actionId\",\"columnid\":\"actionId\"},{\"path\":\"$.status\",\"columnid\":\"status\"},{\"path\":\"$.message\",\"columnid\":\"message\"},{\"path\":\"$.tenantId\",\"columnid\":\"tenantId\"}]}}],\"urlParams\":[{\"key\":\"action\",\"value\":\"Isolate Device\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"deviceIds\",\"value\":\"{IsolateDeviceIds}\"}]}",
-              "size": 0,
-              "title": "Isolation Result",
-              "queryType": 10,
-              "criteriaData": [
-                {
-                  "criterionType": "param",
-                  "value": "{FunctionApp}"
-                },
-                {
-                  "criterionType": "param",
-                  "value": "{FunctionAppName}"
-                },
-                {
-                  "criterionType": "param",
-                  "value": "{TenantId}"
-                }
-              ],
-              "gridSettings": {
-                "formatters": []
-              }
-            },
             "name": "query - isolate-result",
             "conditionalVisibility": {
               "parameterName": "DeviceList",
               "comparison": "isNotEqualTo",
               "value": ""
+            },
+            "version": "KqlItem/1.0",
+            "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.actionId\",\"columnid\":\"actionId\"},{\"path\":\"$.status\",\"columnid\":\"status\"},{\"path\":\"$.message\",\"columnid\":\"message\"},{\"path\":\"$.tenantId\",\"columnid\":\"tenantId\"}]}}],\"urlParams\":[{\"key\":\"action\",\"value\":\"Isolate Device\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"deviceIds\",\"value\":\"{IsolateDeviceIds}\"}]}",
+            "size": 0,
+            "title": "Isolation Result",
+            "queryType": 10,
+            "criteriaData": [
+              {
+                "criterionType": "param",
+                "value": "{FunctionApp}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{FunctionAppName}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{TenantId}"
+              }
+            ],
+            "gridSettings": {
+              "formatters": []
             }
           },
           {
@@ -821,106 +819,104 @@
           },
           {
             "type": 3,
-            "content": {
-              "version": "KqlItem/1.0",
-              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.devices[*]\",\"columns\":[{\"path\":\"$.deviceName\",\"columnid\":\"Device Name\"},{\"path\":\"$.riskScore\",\"columnid\":\"Risk Score\"},{\"path\":\"$.healthStatus\",\"columnid\":\"Health Status\"},{\"path\":\"$.lastIpAddress\",\"columnid\":\"Last IP\"},{\"path\":\"$.lastSeen\",\"columnid\":\"Last Seen\"},{\"path\":\"$.id\",\"columnid\":\"Device ID\"}]}}],\"body\":null,\"urlParams\":[{\"key\":\"action\",\"value\":\"Get Devices\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"}]}",
-              "size": 0,
-              "title": "\ud83d\udcbb Device List",
-              "showExportToExcel": true,
-              "queryType": 10,
-              "visualization": "table",
-              "criteriaData": [
-                {
-                  "criterionType": "param",
-                  "value": "{FunctionApp}"
-                },
-                {
-                  "criterionType": "param",
-                  "value": "{FunctionAppName}"
-                },
-                {
-                  "criterionType": "param",
-                  "value": "{TenantId}"
-                }
-              ],
-              "gridSettings": {
-                "formatters": [
-                  {
-                    "columnMatch": "id",
-                    "formatter": 7,
-                    "formatOptions": {
-                      "linkTarget": "parameter",
-                      "linkLabel": "\u2705 Select",
-                      "parameterName": "DeviceList",
-                      "parameterValue": "{DeviceList},{0}"
-                    }
-                  },
-                  {
-                    "columnMatch": "healthStatus",
-                    "formatter": 18,
-                    "formatOptions": {
-                      "thresholdsOptions": "colors",
-                      "thresholdsGrid": [
-                        {
-                          "operator": "==",
-                          "thresholdValue": "Active",
-                          "representation": "green",
-                          "text": "\ud83d\udfe2 {0}"
-                        },
-                        {
-                          "operator": "==",
-                          "thresholdValue": "Inactive",
-                          "representation": "red",
-                          "text": "\ud83d\udd34 {0}"
-                        },
-                        {
-                          "operator": "Default",
-                          "representation": "blue",
-                          "text": "{0}"
-                        }
-                      ]
-                    }
-                  },
-                  {
-                    "columnMatch": "riskScore",
-                    "formatter": 18,
-                    "formatOptions": {
-                      "thresholdsOptions": "colors",
-                      "thresholdsGrid": [
-                        {
-                          "operator": "==",
-                          "thresholdValue": "High",
-                          "representation": "redBright",
-                          "text": "\ud83d\udd34 {0}"
-                        },
-                        {
-                          "operator": "==",
-                          "thresholdValue": "Medium",
-                          "representation": "orange",
-                          "text": "\ud83d\udfe0 {0}"
-                        },
-                        {
-                          "operator": "==",
-                          "thresholdValue": "Low",
-                          "representation": "green",
-                          "text": "\ud83d\udfe2 {0}"
-                        },
-                        {
-                          "operator": "Default",
-                          "representation": "blue",
-                          "text": "{0}"
-                        }
-                      ]
-                    }
-                  }
-                ]
-              }
-            },
             "name": "query - get-devices",
             "isAutoRefreshEnabled": true,
             "autoRefreshSettings": {
               "intervalInSeconds": 30,
               "refreshCondition": "always"
+            },
+            "version": "KqlItem/1.0",
+            "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.devices[*]\",\"columns\":[{\"path\":\"$.deviceName\",\"columnid\":\"Device Name\"},{\"path\":\"$.riskScore\",\"columnid\":\"Risk Score\"},{\"path\":\"$.healthStatus\",\"columnid\":\"Health Status\"},{\"path\":\"$.lastIpAddress\",\"columnid\":\"Last IP\"},{\"path\":\"$.lastSeen\",\"columnid\":\"Last Seen\"},{\"path\":\"$.id\",\"columnid\":\"Device ID\"}]}}],\"body\":null,\"urlParams\":[{\"key\":\"action\",\"value\":\"Get Devices\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"}]}",
+            "size": 0,
+            "title": "\ud83d\udcbb Device List",
+            "showExportToExcel": true,
+            "queryType": 10,
+            "visualization": "table",
+            "criteriaData": [
+              {
+                "criterionType": "param",
+                "value": "{FunctionApp}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{FunctionAppName}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{TenantId}"
+              }
+            ],
+            "gridSettings": {
+              "formatters": [
+                {
+                  "columnMatch": "id",
+                  "formatter": 7,
+                  "formatOptions": {
+                    "linkTarget": "parameter",
+                    "linkLabel": "\u2705 Select",
+                    "parameterName": "DeviceList",
+                    "parameterValue": "{DeviceList},{0}"
+                  }
+                },
+                {
+                  "columnMatch": "healthStatus",
+                  "formatter": 18,
+                  "formatOptions": {
+                    "thresholdsOptions": "colors",
+                    "thresholdsGrid": [
+                      {
+                        "operator": "==",
+                        "thresholdValue": "Active",
+                        "representation": "green",
+                        "text": "\ud83d\udfe2 {0}"
+                      },
+                      {
+                        "operator": "==",
+                        "thresholdValue": "Inactive",
+                        "representation": "red",
+                        "text": "\ud83d\udd34 {0}"
+                      },
+                      {
+                        "operator": "Default",
+                        "representation": "blue",
+                        "text": "{0}"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "columnMatch": "riskScore",
+                  "formatter": 18,
+                  "formatOptions": {
+                    "thresholdsOptions": "colors",
+                    "thresholdsGrid": [
+                      {
+                        "operator": "==",
+                        "thresholdValue": "High",
+                        "representation": "redBright",
+                        "text": "\ud83d\udd34 {0}"
+                      },
+                      {
+                        "operator": "==",
+                        "thresholdValue": "Medium",
+                        "representation": "orange",
+                        "text": "\ud83d\udfe0 {0}"
+                      },
+                      {
+                        "operator": "==",
+                        "thresholdValue": "Low",
+                        "representation": "green",
+                        "text": "\ud83d\udfe2 {0}"
+                      },
+                      {
+                        "operator": "Default",
+                        "representation": "blue",
+                        "text": "{0}"
+                      }
+                    ]
+                  }
+                }
+              ]
             }
           }
         ]
@@ -1456,48 +1452,46 @@
           },
           {
             "type": 3,
-            "content": {
-              "version": "KqlItem/1.0",
-              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2TIManager\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.indicators[*]\",\"columns\":[{\"path\":\"$.indicatorValue\",\"columnid\":\"Indicator\"},{\"path\":\"$.indicatorType\",\"columnid\":\"Type\"},{\"path\":\"$.action\",\"columnid\":\"Action\"},{\"path\":\"$.severity\",\"columnid\":\"Severity\"},{\"path\":\"$.title\",\"columnid\":\"Title\"},{\"path\":\"$.createdBy\",\"columnid\":\"Created By\"},{\"path\":\"$.creationDateTime\",\"columnid\":\"Created\"}]}}],\"urlParams\":[{\"key\":\"action\",\"value\":\"List Indicators\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"}]}",
-              "size": 0,
-              "title": "\ud83d\udccd Active Threat Indicators",
-              "showExportToExcel": true,
-              "queryType": 10,
-              "visualization": "table",
-              "criteriaData": [
-                {
-                  "criterionType": "param",
-                  "value": "{FunctionApp}"
-                },
-                {
-                  "criterionType": "param",
-                  "value": "{FunctionAppName}"
-                },
-                {
-                  "criterionType": "param",
-                  "value": "{TenantId}"
-                }
-              ],
-              "gridSettings": {
-                "formatters": [
-                  {
-                    "columnMatch": "id",
-                    "formatter": 7,
-                    "formatOptions": {
-                      "linkTarget": "parameter",
-                      "linkLabel": "\ud83c\udfaf Select",
-                      "parameterName": "IndicatorId",
-                      "parameterValue": "{0}"
-                    }
-                  }
-                ]
-              }
-            },
             "name": "query - list-indicators",
             "isAutoRefreshEnabled": true,
             "autoRefreshSettings": {
               "intervalInSeconds": 30,
               "refreshCondition": "always"
+            },
+            "version": "KqlItem/1.0",
+            "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2TIManager\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.indicators[*]\",\"columns\":[{\"path\":\"$.indicatorValue\",\"columnid\":\"Indicator\"},{\"path\":\"$.indicatorType\",\"columnid\":\"Type\"},{\"path\":\"$.action\",\"columnid\":\"Action\"},{\"path\":\"$.severity\",\"columnid\":\"Severity\"},{\"path\":\"$.title\",\"columnid\":\"Title\"},{\"path\":\"$.createdBy\",\"columnid\":\"Created By\"},{\"path\":\"$.creationDateTime\",\"columnid\":\"Created\"}]}}],\"urlParams\":[{\"key\":\"action\",\"value\":\"List Indicators\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"}]}",
+            "size": 0,
+            "title": "\ud83d\udccd Active Threat Indicators",
+            "showExportToExcel": true,
+            "queryType": 10,
+            "visualization": "table",
+            "criteriaData": [
+              {
+                "criterionType": "param",
+                "value": "{FunctionApp}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{FunctionAppName}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{TenantId}"
+              }
+            ],
+            "gridSettings": {
+              "formatters": [
+                {
+                  "columnMatch": "id",
+                  "formatter": 7,
+                  "formatOptions": {
+                    "linkTarget": "parameter",
+                    "linkLabel": "\ud83c\udfaf Select",
+                    "parameterName": "IndicatorId",
+                    "parameterValue": "{0}"
+                  }
+                }
+              ]
             }
           }
         ]
@@ -1575,121 +1569,119 @@
           },
           {
             "type": 3,
-            "content": {
-              "version": "KqlItem/1.0",
-              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.actions[*]\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"Action ID\"},{\"path\":\"$.type\",\"columnid\":\"Type\"},{\"path\":\"$.status\",\"columnid\":\"Status\"},{\"path\":\"$.requestor\",\"columnid\":\"Requestor\"},{\"path\":\"$.creationDateTimeUtc\",\"columnid\":\"Created\"},{\"path\":\"$.machineId\",\"columnid\":\"Device ID\"}]}}],\"urlParams\":[{\"key\":\"action\",\"value\":\"Get Actions\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"}]}",
-              "size": 0,
-              "title": "\ud83d\udcca Machine Actions (Auto-refreshing every {RefreshInterval}s)",
-              "showExportToExcel": true,
-              "queryType": 10,
-              "visualization": "table",
-              "gridSettings": {
-                "formatters": [
-                  {
-                    "columnMatch": "Status",
-                    "formatter": 18,
-                    "formatOptions": {
-                      "thresholdsOptions": "colors",
-                      "thresholdsGrid": [
-                        {
-                          "operator": "==",
-                          "thresholdValue": "Succeeded",
-                          "representation": "green",
-                          "text": "\u2705 {0}"
-                        },
-                        {
-                          "operator": "==",
-                          "thresholdValue": "InProgress",
-                          "representation": "orange",
-                          "text": "\u23f3 {0}"
-                        },
-                        {
-                          "operator": "==",
-                          "thresholdValue": "Pending",
-                          "representation": "yellow",
-                          "text": "\u23f8\ufe0f {0}"
-                        },
-                        {
-                          "operator": "==",
-                          "thresholdValue": "Failed",
-                          "representation": "red",
-                          "text": "\u274c {0}"
-                        }
-                      ]
-                    }
-                  },
-                  {
-                    "columnMatch": "status",
-                    "formatter": 18,
-                    "formatOptions": {
-                      "thresholdsOptions": "colors",
-                      "thresholdsGrid": [
-                        {
-                          "operator": "==",
-                          "thresholdValue": "Succeeded",
-                          "representation": "green",
-                          "text": "\ud83d\udfe2 {0}"
-                        },
-                        {
-                          "operator": "==",
-                          "thresholdValue": "Pending",
-                          "representation": "yellow",
-                          "text": "\ud83d\udfe1 {0}"
-                        },
-                        {
-                          "operator": "==",
-                          "thresholdValue": "InProgress",
-                          "representation": "blue",
-                          "text": "\ud83d\udd35 {0}"
-                        },
-                        {
-                          "operator": "==",
-                          "thresholdValue": "Failed",
-                          "representation": "red",
-                          "text": "\ud83d\udd34 {0}"
-                        },
-                        {
-                          "operator": "Default",
-                          "representation": "gray",
-                          "text": "{0}"
-                        }
-                      ]
-                    }
-                  },
-                  {
-                    "columnMatch": "id",
-                    "formatter": 7,
-                    "formatOptions": {
-                      "linkTarget": "parameter",
-                      "linkLabel": "\u274c Cancel",
-                      "parameterName": "ActionId",
-                      "parameterValue": "{0}"
-                    }
-                  }
-                ],
-                "filter": true
-              },
-              "criteriaData": [
-                {
-                  "criterionType": "param",
-                  "value": "{FunctionApp}"
-                },
-                {
-                  "criterionType": "param",
-                  "value": "{FunctionAppName}"
-                },
-                {
-                  "criterionType": "param",
-                  "value": "{TenantId}"
-                }
-              ]
-            },
             "name": "query - actions-list",
             "isAutoRefreshEnabled": true,
             "autoRefreshSettings": {
               "intervalInSeconds": 30,
               "refreshCondition": "always"
-            }
+            },
+            "version": "KqlItem/1.0",
+            "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.actions[*]\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"Action ID\"},{\"path\":\"$.type\",\"columnid\":\"Type\"},{\"path\":\"$.status\",\"columnid\":\"Status\"},{\"path\":\"$.requestor\",\"columnid\":\"Requestor\"},{\"path\":\"$.creationDateTimeUtc\",\"columnid\":\"Created\"},{\"path\":\"$.machineId\",\"columnid\":\"Device ID\"}]}}],\"urlParams\":[{\"key\":\"action\",\"value\":\"Get Actions\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"}]}",
+            "size": 0,
+            "title": "\ud83d\udcca Machine Actions (Auto-refreshing every {RefreshInterval}s)",
+            "showExportToExcel": true,
+            "queryType": 10,
+            "visualization": "table",
+            "gridSettings": {
+              "formatters": [
+                {
+                  "columnMatch": "Status",
+                  "formatter": 18,
+                  "formatOptions": {
+                    "thresholdsOptions": "colors",
+                    "thresholdsGrid": [
+                      {
+                        "operator": "==",
+                        "thresholdValue": "Succeeded",
+                        "representation": "green",
+                        "text": "\u2705 {0}"
+                      },
+                      {
+                        "operator": "==",
+                        "thresholdValue": "InProgress",
+                        "representation": "orange",
+                        "text": "\u23f3 {0}"
+                      },
+                      {
+                        "operator": "==",
+                        "thresholdValue": "Pending",
+                        "representation": "yellow",
+                        "text": "\u23f8\ufe0f {0}"
+                      },
+                      {
+                        "operator": "==",
+                        "thresholdValue": "Failed",
+                        "representation": "red",
+                        "text": "\u274c {0}"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "columnMatch": "status",
+                  "formatter": 18,
+                  "formatOptions": {
+                    "thresholdsOptions": "colors",
+                    "thresholdsGrid": [
+                      {
+                        "operator": "==",
+                        "thresholdValue": "Succeeded",
+                        "representation": "green",
+                        "text": "\ud83d\udfe2 {0}"
+                      },
+                      {
+                        "operator": "==",
+                        "thresholdValue": "Pending",
+                        "representation": "yellow",
+                        "text": "\ud83d\udfe1 {0}"
+                      },
+                      {
+                        "operator": "==",
+                        "thresholdValue": "InProgress",
+                        "representation": "blue",
+                        "text": "\ud83d\udd35 {0}"
+                      },
+                      {
+                        "operator": "==",
+                        "thresholdValue": "Failed",
+                        "representation": "red",
+                        "text": "\ud83d\udd34 {0}"
+                      },
+                      {
+                        "operator": "Default",
+                        "representation": "gray",
+                        "text": "{0}"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "columnMatch": "id",
+                  "formatter": 7,
+                  "formatOptions": {
+                    "linkTarget": "parameter",
+                    "linkLabel": "\u274c Cancel",
+                    "parameterName": "ActionId",
+                    "parameterValue": "{0}"
+                  }
+                }
+              ],
+              "filter": true
+            },
+            "criteriaData": [
+              {
+                "criterionType": "param",
+                "value": "{FunctionApp}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{FunctionAppName}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{TenantId}"
+              }
+            ]
           },
           {
             "type": 1,
@@ -1730,90 +1722,88 @@
           },
           {
             "type": 3,
-            "content": {
-              "version": "KqlItem/1.0",
-              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"Action ID\"},{\"path\":\"$.type\",\"columnid\":\"Type\"},{\"path\":\"$.status\",\"columnid\":\"Status\"},{\"path\":\"$.requestor\",\"columnid\":\"Requestor\"},{\"path\":\"$.creationDateTimeUtc\",\"columnid\":\"Created\"},{\"path\":\"$.lastUpdateDateTimeUtc\",\"columnid\":\"Last Updated\"},{\"path\":\"$.error\",\"columnid\":\"Error\"}]}}],\"urlParams\":[{\"key\":\"action\",\"value\":\"Get Action Status\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"actionId\",\"value\":\"{ActionId}\"}]}",
-              "size": 0,
-              "title": "Action Details",
-              "queryType": 10,
-              "isAutoRefreshEnabled": true,
-              "autoRefreshSettings": {
-                "intervalInSeconds": 30,
-                "runOnLoad": true
-              },
-              "criteriaData": [
-                {
-                  "criterionType": "param",
-                  "value": "{FunctionApp}"
-                },
-                {
-                  "criterionType": "param",
-                  "value": "{FunctionAppName}"
-                },
-                {
-                  "criterionType": "param",
-                  "value": "{TenantId}"
-                }
-              ],
-              "gridSettings": {
-                "formatters": [
-                  {
-                    "columnMatch": "status",
-                    "formatter": 18,
-                    "formatOptions": {
-                      "thresholdsOptions": "colors",
-                      "thresholdsGrid": [
-                        {
-                          "operator": "==",
-                          "thresholdValue": "Succeeded",
-                          "representation": "green",
-                          "text": "\ud83d\udfe2 {0}"
-                        },
-                        {
-                          "operator": "==",
-                          "thresholdValue": "Pending",
-                          "representation": "yellow",
-                          "text": "\ud83d\udfe1 {0}"
-                        },
-                        {
-                          "operator": "==",
-                          "thresholdValue": "InProgress",
-                          "representation": "blue",
-                          "text": "\ud83d\udd35 {0}"
-                        },
-                        {
-                          "operator": "==",
-                          "thresholdValue": "Failed",
-                          "representation": "red",
-                          "text": "\ud83d\udd34 {0}"
-                        },
-                        {
-                          "operator": "Default",
-                          "representation": "gray",
-                          "text": "{0}"
-                        }
-                      ]
-                    }
-                  },
-                  {
-                    "columnMatch": "id",
-                    "formatter": 7,
-                    "formatOptions": {
-                      "linkTarget": "parameter",
-                      "linkLabel": "\ud83d\udd0d Track",
-                      "parameterName": "ActionId",
-                      "parameterValue": "{0}"
-                    }
-                  }
-                ]
-              }
-            },
             "conditionalVisibility": {
               "parameterName": "ActionId",
               "comparison": "isNotEqualTo",
               "value": ""
             },
-            "name": "query - action-status"
+            "name": "query - action-status",
+            "version": "KqlItem/1.0",
+            "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"Action ID\"},{\"path\":\"$.type\",\"columnid\":\"Type\"},{\"path\":\"$.status\",\"columnid\":\"Status\"},{\"path\":\"$.requestor\",\"columnid\":\"Requestor\"},{\"path\":\"$.creationDateTimeUtc\",\"columnid\":\"Created\"},{\"path\":\"$.lastUpdateDateTimeUtc\",\"columnid\":\"Last Updated\"},{\"path\":\"$.error\",\"columnid\":\"Error\"}]}}],\"urlParams\":[{\"key\":\"action\",\"value\":\"Get Action Status\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"actionId\",\"value\":\"{ActionId}\"}]}",
+            "size": 0,
+            "title": "Action Details",
+            "queryType": 10,
+            "isAutoRefreshEnabled": true,
+            "autoRefreshSettings": {
+              "intervalInSeconds": 30,
+              "runOnLoad": true
+            },
+            "criteriaData": [
+              {
+                "criterionType": "param",
+                "value": "{FunctionApp}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{FunctionAppName}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{TenantId}"
+              }
+            ],
+            "gridSettings": {
+              "formatters": [
+                {
+                  "columnMatch": "status",
+                  "formatter": 18,
+                  "formatOptions": {
+                    "thresholdsOptions": "colors",
+                    "thresholdsGrid": [
+                      {
+                        "operator": "==",
+                        "thresholdValue": "Succeeded",
+                        "representation": "green",
+                        "text": "\ud83d\udfe2 {0}"
+                      },
+                      {
+                        "operator": "==",
+                        "thresholdValue": "Pending",
+                        "representation": "yellow",
+                        "text": "\ud83d\udfe1 {0}"
+                      },
+                      {
+                        "operator": "==",
+                        "thresholdValue": "InProgress",
+                        "representation": "blue",
+                        "text": "\ud83d\udd35 {0}"
+                      },
+                      {
+                        "operator": "==",
+                        "thresholdValue": "Failed",
+                        "representation": "red",
+                        "text": "\ud83d\udd34 {0}"
+                      },
+                      {
+                        "operator": "Default",
+                        "representation": "gray",
+                        "text": "{0}"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "columnMatch": "id",
+                  "formatter": 7,
+                  "formatOptions": {
+                    "linkTarget": "parameter",
+                    "linkLabel": "\ud83d\udd0d Track",
+                    "parameterName": "ActionId",
+                    "parameterValue": "{0}"
+                  }
+                }
+              ]
+            }
           },
           {
             "type": 1,
@@ -2035,38 +2025,36 @@
           },
           {
             "type": 3,
-            "content": {
-              "version": "KqlItem/1.0",
-              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2HuntManager\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.results[*]\",\"columns\":[{\"path\":\"$.DeviceName\",\"columnid\":\"Device Name\"},{\"path\":\"$.Timestamp\",\"columnid\":\"Timestamp\"},{\"path\":\"$.ActionType\",\"columnid\":\"Action Type\"},{\"path\":\"$.FileName\",\"columnid\":\"File Name\"},{\"path\":\"$.ProcessCommandLine\",\"columnid\":\"Command Line\"},{\"path\":\"$.AccountName\",\"columnid\":\"Account\"}]}}],\"urlParams\":[{\"key\":\"action\",\"value\":\"Execute Hunt\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"huntQuery\",\"value\":\"{HuntQuery}\"}]}",
-              "size": 0,
-              "title": "\ud83d\udd0d Hunt Results (Auto-refreshing every {HuntRefreshInterval}s until complete)",
-              "showExportToExcel": true,
-              "queryType": 10,
-              "visualization": "table",
-              "criteriaData": [
-                {
-                  "criterionType": "param",
-                  "value": "{FunctionApp}"
-                },
-                {
-                  "criterionType": "param",
-                  "value": "{FunctionAppName}"
-                },
-                {
-                  "criterionType": "param",
-                  "value": "{TenantId}"
-                }
-              ],
-              "gridSettings": {
-                "formatters": []
-              }
-            },
             "conditionalVisibility": {
               "parameterName": "HuntQuery",
               "comparison": "isNotEqualTo",
               "value": ""
             },
-            "name": "query - hunt-results"
+            "name": "query - hunt-results",
+            "version": "KqlItem/1.0",
+            "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2HuntManager\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.results[*]\",\"columns\":[{\"path\":\"$.DeviceName\",\"columnid\":\"Device Name\"},{\"path\":\"$.Timestamp\",\"columnid\":\"Timestamp\"},{\"path\":\"$.ActionType\",\"columnid\":\"Action Type\"},{\"path\":\"$.FileName\",\"columnid\":\"File Name\"},{\"path\":\"$.ProcessCommandLine\",\"columnid\":\"Command Line\"},{\"path\":\"$.AccountName\",\"columnid\":\"Account\"}]}}],\"urlParams\":[{\"key\":\"action\",\"value\":\"Execute Hunt\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"huntQuery\",\"value\":\"{HuntQuery}\"}]}",
+            "size": 0,
+            "title": "\ud83d\udd0d Hunt Results (Auto-refreshing every {HuntRefreshInterval}s until complete)",
+            "showExportToExcel": true,
+            "queryType": 10,
+            "visualization": "table",
+            "criteriaData": [
+              {
+                "criterionType": "param",
+                "value": "{FunctionApp}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{FunctionAppName}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{TenantId}"
+              }
+            ],
+            "gridSettings": {
+              "formatters": []
+            }
           },
           {
             "type": 1,
@@ -2082,75 +2070,6 @@
           },
           {
             "type": 3,
-            "content": {
-              "version": "KqlItem/1.0",
-              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2HuntManager\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.status\",\"columnid\":\"Status\"},{\"path\":\"$.rowCount\",\"columnid\":\"Rows\"},{\"path\":\"$.executionTime\",\"columnid\":\"Execution Time\"},{\"path\":\"$.message\",\"columnid\":\"Message\"}]}}],\"urlParams\":[{\"key\":\"action\",\"value\":\"Get Hunt Status\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"}]}",
-              "size": 0,
-              "title": "Hunt Execution Status",
-              "queryType": 10,
-              "isAutoRefreshEnabled": true,
-              "autoRefreshSettings": {
-                "intervalInSeconds": 30,
-                "runOnLoad": true,
-                "refreshCondition": "$.status != 'Completed'"
-              },
-              "criteriaData": [
-                {
-                  "criterionType": "param",
-                  "value": "{FunctionApp}"
-                },
-                {
-                  "criterionType": "param",
-                  "value": "{FunctionAppName}"
-                },
-                {
-                  "criterionType": "param",
-                  "value": "{TenantId}"
-                }
-              ],
-              "gridSettings": {
-                "formatters": [
-                  {
-                    "columnMatch": "status",
-                    "formatter": 18,
-                    "formatOptions": {
-                      "thresholdsOptions": "colors",
-                      "thresholdsGrid": [
-                        {
-                          "operator": "==",
-                          "thresholdValue": "Succeeded",
-                          "representation": "green",
-                          "text": "\ud83d\udfe2 {0}"
-                        },
-                        {
-                          "operator": "==",
-                          "thresholdValue": "Pending",
-                          "representation": "yellow",
-                          "text": "\ud83d\udfe1 {0}"
-                        },
-                        {
-                          "operator": "==",
-                          "thresholdValue": "InProgress",
-                          "representation": "blue",
-                          "text": "\ud83d\udd35 {0}"
-                        },
-                        {
-                          "operator": "==",
-                          "thresholdValue": "Failed",
-                          "representation": "red",
-                          "text": "\ud83d\udd34 {0}"
-                        },
-                        {
-                          "operator": "Default",
-                          "representation": "gray",
-                          "text": "{0}"
-                        }
-                      ]
-                    }
-                  }
-                ]
-              }
-            },
             "conditionalVisibility": {
               "parameterName": "HuntQuery",
               "comparison": "isNotEqualTo",
@@ -2161,6 +2080,67 @@
             "autoRefreshSettings": {
               "intervalInSeconds": 30,
               "refreshCondition": "always"
+            },
+            "version": "KqlItem/1.0",
+            "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2HuntManager\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.status\",\"columnid\":\"Status\"},{\"path\":\"$.rowCount\",\"columnid\":\"Rows\"},{\"path\":\"$.executionTime\",\"columnid\":\"Execution Time\"},{\"path\":\"$.message\",\"columnid\":\"Message\"}]}}],\"urlParams\":[{\"key\":\"action\",\"value\":\"Get Hunt Status\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"}]}",
+            "size": 0,
+            "title": "Hunt Execution Status",
+            "queryType": 10,
+            "criteriaData": [
+              {
+                "criterionType": "param",
+                "value": "{FunctionApp}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{FunctionAppName}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{TenantId}"
+              }
+            ],
+            "gridSettings": {
+              "formatters": [
+                {
+                  "columnMatch": "status",
+                  "formatter": 18,
+                  "formatOptions": {
+                    "thresholdsOptions": "colors",
+                    "thresholdsGrid": [
+                      {
+                        "operator": "==",
+                        "thresholdValue": "Succeeded",
+                        "representation": "green",
+                        "text": "\ud83d\udfe2 {0}"
+                      },
+                      {
+                        "operator": "==",
+                        "thresholdValue": "Pending",
+                        "representation": "yellow",
+                        "text": "\ud83d\udfe1 {0}"
+                      },
+                      {
+                        "operator": "==",
+                        "thresholdValue": "InProgress",
+                        "representation": "blue",
+                        "text": "\ud83d\udd35 {0}"
+                      },
+                      {
+                        "operator": "==",
+                        "thresholdValue": "Failed",
+                        "representation": "red",
+                        "text": "\ud83d\udd34 {0}"
+                      },
+                      {
+                        "operator": "Default",
+                        "representation": "gray",
+                        "text": "{0}"
+                      }
+                    ]
+                  }
+                }
+              ]
             }
           }
         ]
@@ -2238,104 +2218,102 @@
           },
           {
             "type": 3,
-            "content": {
-              "version": "KqlItem/1.0",
-              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2IncidentManager\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.incidents[*]\",\"columns\":[{\"path\":\"$.incidentId\",\"columnid\":\"Incident ID\"},{\"path\":\"$.incidentName\",\"columnid\":\"Name\"},{\"path\":\"$.severity\",\"columnid\":\"Severity\"},{\"path\":\"$.status\",\"columnid\":\"Status\"},{\"path\":\"$.assignedTo\",\"columnid\":\"Assigned To\"},{\"path\":\"$.createdTime\",\"columnid\":\"Created\"},{\"path\":\"$.lastUpdateTime\",\"columnid\":\"Updated\"}]}}],\"urlParams\":[{\"key\":\"action\",\"value\":\"Get Incidents\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"severity\",\"value\":\"{IncidentSeverity}\"},{\"key\":\"status\",\"value\":\"{IncidentStatus}\"}]}",
-              "size": 0,
-              "title": "\ud83d\udea8 Security Incidents",
-              "showExportToExcel": true,
-              "queryType": 10,
-              "visualization": "table",
-              "gridSettings": {
-                "formatters": [
-                  {
-                    "columnMatch": "Severity",
-                    "formatter": 18,
-                    "formatOptions": {
-                      "thresholdsOptions": "colors",
-                      "thresholdsGrid": [
-                        {
-                          "operator": "==",
-                          "thresholdValue": "High",
-                          "representation": "red",
-                          "text": "\ud83d\udd34 {0}"
-                        },
-                        {
-                          "operator": "==",
-                          "thresholdValue": "Medium",
-                          "representation": "orange",
-                          "text": "\u26a0\ufe0f {0}"
-                        },
-                        {
-                          "operator": "==",
-                          "thresholdValue": "Low",
-                          "representation": "green",
-                          "text": "\u2139\ufe0f {0}"
-                        }
-                      ]
-                    }
-                  },
-                  {
-                    "columnMatch": "Status",
-                    "formatter": 18,
-                    "formatOptions": {
-                      "thresholdsOptions": "colors",
-                      "thresholdsGrid": [
-                        {
-                          "operator": "==",
-                          "thresholdValue": "Active",
-                          "representation": "red",
-                          "text": "\ud83d\udd34 {0}"
-                        },
-                        {
-                          "operator": "==",
-                          "thresholdValue": "Resolved",
-                          "representation": "green",
-                          "text": "\u2705 {0}"
-                        },
-                        {
-                          "operator": "==",
-                          "thresholdValue": "InProgress",
-                          "representation": "orange",
-                          "text": "\u23f3 {0}"
-                        }
-                      ]
-                    }
-                  },
-                  {
-                    "columnMatch": "incidentId",
-                    "formatter": 7,
-                    "formatOptions": {
-                      "linkTarget": "parameter",
-                      "linkLabel": "\ud83d\udd0d View",
-                      "parameterName": "IncidentId",
-                      "parameterValue": "{0}"
-                    }
-                  }
-                ],
-                "filter": true
-              },
-              "criteriaData": [
-                {
-                  "criterionType": "param",
-                  "value": "{FunctionApp}"
-                },
-                {
-                  "criterionType": "param",
-                  "value": "{FunctionAppName}"
-                },
-                {
-                  "criterionType": "param",
-                  "value": "{TenantId}"
-                }
-              ]
-            },
             "name": "query - incidents",
             "isAutoRefreshEnabled": true,
             "autoRefreshSettings": {
               "intervalInSeconds": 30,
               "refreshCondition": "always"
-            }
+            },
+            "version": "KqlItem/1.0",
+            "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2IncidentManager\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.incidents[*]\",\"columns\":[{\"path\":\"$.incidentId\",\"columnid\":\"Incident ID\"},{\"path\":\"$.incidentName\",\"columnid\":\"Name\"},{\"path\":\"$.severity\",\"columnid\":\"Severity\"},{\"path\":\"$.status\",\"columnid\":\"Status\"},{\"path\":\"$.assignedTo\",\"columnid\":\"Assigned To\"},{\"path\":\"$.createdTime\",\"columnid\":\"Created\"},{\"path\":\"$.lastUpdateTime\",\"columnid\":\"Updated\"}]}}],\"urlParams\":[{\"key\":\"action\",\"value\":\"Get Incidents\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"severity\",\"value\":\"{IncidentSeverity}\"},{\"key\":\"status\",\"value\":\"{IncidentStatus}\"}]}",
+            "size": 0,
+            "title": "\ud83d\udea8 Security Incidents",
+            "showExportToExcel": true,
+            "queryType": 10,
+            "visualization": "table",
+            "gridSettings": {
+              "formatters": [
+                {
+                  "columnMatch": "Severity",
+                  "formatter": 18,
+                  "formatOptions": {
+                    "thresholdsOptions": "colors",
+                    "thresholdsGrid": [
+                      {
+                        "operator": "==",
+                        "thresholdValue": "High",
+                        "representation": "red",
+                        "text": "\ud83d\udd34 {0}"
+                      },
+                      {
+                        "operator": "==",
+                        "thresholdValue": "Medium",
+                        "representation": "orange",
+                        "text": "\u26a0\ufe0f {0}"
+                      },
+                      {
+                        "operator": "==",
+                        "thresholdValue": "Low",
+                        "representation": "green",
+                        "text": "\u2139\ufe0f {0}"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "columnMatch": "Status",
+                  "formatter": 18,
+                  "formatOptions": {
+                    "thresholdsOptions": "colors",
+                    "thresholdsGrid": [
+                      {
+                        "operator": "==",
+                        "thresholdValue": "Active",
+                        "representation": "red",
+                        "text": "\ud83d\udd34 {0}"
+                      },
+                      {
+                        "operator": "==",
+                        "thresholdValue": "Resolved",
+                        "representation": "green",
+                        "text": "\u2705 {0}"
+                      },
+                      {
+                        "operator": "==",
+                        "thresholdValue": "InProgress",
+                        "representation": "orange",
+                        "text": "\u23f3 {0}"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "columnMatch": "incidentId",
+                  "formatter": 7,
+                  "formatOptions": {
+                    "linkTarget": "parameter",
+                    "linkLabel": "\ud83d\udd0d View",
+                    "parameterName": "IncidentId",
+                    "parameterValue": "{0}"
+                  }
+                }
+              ],
+              "filter": true
+            },
+            "criteriaData": [
+              {
+                "criterionType": "param",
+                "value": "{FunctionApp}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{FunctionAppName}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{TenantId}"
+              }
+            ]
           },
           {
             "type": 1,
@@ -2629,37 +2607,35 @@
           },
           {
             "type": 3,
-            "content": {
-              "version": "KqlItem/1.0",
-              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2CDManager\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.detections[*]\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"ID\"},{\"path\":\"$.displayName\",\"columnid\":\"Name\"},{\"path\":\"$.severity\",\"columnid\":\"Severity\"},{\"path\":\"$.enabled\",\"columnid\":\"Enabled\"},{\"path\":\"$.createdBy\",\"columnid\":\"Created By\"},{\"path\":\"$.lastModified\",\"columnid\":\"Modified\"}]}}],\"urlParams\":[{\"key\":\"action\",\"value\":\"List Detections\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"}]}",
-              "size": 0,
-              "title": "\ud83d\udee1\ufe0f Custom Detection Rules",
-              "showExportToExcel": true,
-              "queryType": 10,
-              "visualization": "table",
-              "criteriaData": [
-                {
-                  "criterionType": "param",
-                  "value": "{FunctionApp}"
-                },
-                {
-                  "criterionType": "param",
-                  "value": "{FunctionAppName}"
-                },
-                {
-                  "criterionType": "param",
-                  "value": "{TenantId}"
-                }
-              ],
-              "gridSettings": {
-                "formatters": []
-              }
-            },
             "name": "query - list-detections",
             "isAutoRefreshEnabled": true,
             "autoRefreshSettings": {
               "intervalInSeconds": 30,
               "refreshCondition": "always"
+            },
+            "version": "KqlItem/1.0",
+            "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2CDManager\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.detections[*]\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"ID\"},{\"path\":\"$.displayName\",\"columnid\":\"Name\"},{\"path\":\"$.severity\",\"columnid\":\"Severity\"},{\"path\":\"$.enabled\",\"columnid\":\"Enabled\"},{\"path\":\"$.createdBy\",\"columnid\":\"Created By\"},{\"path\":\"$.lastModified\",\"columnid\":\"Modified\"}]}}],\"urlParams\":[{\"key\":\"action\",\"value\":\"List Detections\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"}]}",
+            "size": 0,
+            "title": "\ud83d\udee1\ufe0f Custom Detection Rules",
+            "showExportToExcel": true,
+            "queryType": 10,
+            "visualization": "table",
+            "criteriaData": [
+              {
+                "criterionType": "param",
+                "value": "{FunctionApp}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{FunctionAppName}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{TenantId}"
+              }
+            ],
+            "gridSettings": {
+              "formatters": []
             }
           },
           {
@@ -3071,33 +3047,31 @@
           },
           {
             "type": 3,
-            "content": {
-              "version": "KqlItem/1.0",
-              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2CDManager\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.backup[*]\",\"columns\":[{\"path\":\"$.displayName\",\"columnid\":\"Name\"},{\"path\":\"$.query\",\"columnid\":\"Query\"},{\"path\":\"$.severity\",\"columnid\":\"Severity\"}]}}],\"urlParams\":[{\"key\":\"action\",\"value\":\"Backup Detections\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"}]}",
-              "size": 0,
-              "title": "\ud83d\udcbe Detection Backup",
-              "showExportToExcel": true,
-              "queryType": 10,
-              "visualization": "table",
-              "criteriaData": [
-                {
-                  "criterionType": "param",
-                  "value": "{FunctionApp}"
-                },
-                {
-                  "criterionType": "param",
-                  "value": "{FunctionAppName}"
-                },
-                {
-                  "criterionType": "param",
-                  "value": "{TenantId}"
-                }
-              ],
-              "gridSettings": {
-                "formatters": []
+            "name": "query - backup-detections",
+            "version": "KqlItem/1.0",
+            "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2CDManager\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.backup[*]\",\"columns\":[{\"path\":\"$.displayName\",\"columnid\":\"Name\"},{\"path\":\"$.query\",\"columnid\":\"Query\"},{\"path\":\"$.severity\",\"columnid\":\"Severity\"}]}}],\"urlParams\":[{\"key\":\"action\",\"value\":\"Backup Detections\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"}]}",
+            "size": 0,
+            "title": "\ud83d\udcbe Detection Backup",
+            "showExportToExcel": true,
+            "queryType": 10,
+            "visualization": "table",
+            "criteriaData": [
+              {
+                "criterionType": "param",
+                "value": "{FunctionApp}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{FunctionAppName}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{TenantId}"
               }
-            },
-            "name": "query - backup-detections"
+            ],
+            "gridSettings": {
+              "formatters": []
+            }
           }
         ]
       },
@@ -3300,33 +3274,31 @@
           },
           {
             "type": 3,
-            "content": {
-              "version": "KqlItem/1.0",
-              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.action\",\"columnid\":\"Action\"},{\"path\":\"$.status\",\"columnid\":\"Status\"},{\"path\":\"$.message\",\"columnid\":\"Message\"},{\"path\":\"$.timestamp\",\"columnid\":\"Timestamp\"},{\"path\":\"$.details\",\"columnid\":\"Details\"},{\"path\":\"$.actionIds\",\"columnid\":\"Action IDs\"}]}}],\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"action\",\"value\":\"{CommandType}\"},{\"key\":\"actionName\",\"value\":\"{ActionName}\"},{\"key\":\"deviceIds\",\"value\":\"{DeviceIds}\"},{\"key\":\"params\",\"value\":\"{CommandParams}\"}]}",
-              "size": 4,
-              "title": "\ud83c\udfaf Command Execution Status",
-              "noDataMessage": "Click 'Run Query' to execute command",
-              "queryType": 10,
-              "visualization": "table",
-              "criteriaData": [
-                {
-                  "criterionType": "param",
-                  "value": "{FunctionApp}"
-                },
-                {
-                  "criterionType": "param",
-                  "value": "{FunctionAppName}"
-                },
-                {
-                  "criterionType": "param",
-                  "value": "{TenantId}"
-                }
-              ],
-              "gridSettings": {
-                "formatters": []
+            "name": "query - execute-command",
+            "version": "KqlItem/1.0",
+            "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.action\",\"columnid\":\"Action\"},{\"path\":\"$.status\",\"columnid\":\"Status\"},{\"path\":\"$.message\",\"columnid\":\"Message\"},{\"path\":\"$.timestamp\",\"columnid\":\"Timestamp\"},{\"path\":\"$.details\",\"columnid\":\"Details\"},{\"path\":\"$.actionIds\",\"columnid\":\"Action IDs\"}]}}],\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"action\",\"value\":\"{CommandType}\"},{\"key\":\"actionName\",\"value\":\"{ActionName}\"},{\"key\":\"deviceIds\",\"value\":\"{DeviceIds}\"},{\"key\":\"params\",\"value\":\"{CommandParams}\"}]}",
+            "size": 4,
+            "title": "\ud83c\udfaf Command Execution Status",
+            "noDataMessage": "Click 'Run Query' to execute command",
+            "queryType": 10,
+            "visualization": "table",
+            "criteriaData": [
+              {
+                "criterionType": "param",
+                "value": "{FunctionApp}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{FunctionAppName}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{TenantId}"
               }
-            },
-            "name": "query - execute-command"
+            ],
+            "gridSettings": {
+              "formatters": []
+            }
           },
           {
             "type": 1,
@@ -3337,72 +3309,70 @@
           },
           {
             "type": 3,
-            "content": {
-              "version": "KqlItem/1.0",
-              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.action\",\"columnid\":\"Action\"},{\"path\":\"$.status\",\"columnid\":\"Status\"},{\"path\":\"$.message\",\"columnid\":\"Message\"},{\"path\":\"$.details\",\"columnid\":\"Details\"},{\"path\":\"$.actionStatus.status\",\"columnid\":\"Action Status\"},{\"path\":\"$.actionStatus.type\",\"columnid\":\"Type\"}]}}],\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"action\",\"value\":\"getstatus\"},{\"key\":\"actionId\",\"value\":\"{ActionId}\"}]}",
-              "size": 0,
-              "title": "\ud83d\udcca Action Status (Auto-refresh)",
-              "noDataMessage": "No active actions to poll. Execute a command first.",
-              "queryType": 10,
-              "visualization": "table",
-              "gridSettings": {
-                "formatters": [
-                  {
-                    "columnMatch": "status",
-                    "formatter": 18,
-                    "formatOptions": {
-                      "thresholdsOptions": "colors",
-                      "thresholdsGrid": [
-                        {
-                          "operator": "==",
-                          "thresholdValue": "Succeeded",
-                          "representation": "green",
-                          "text": "\u2705 {0}"
-                        },
-                        {
-                          "operator": "==",
-                          "thresholdValue": "InProgress",
-                          "representation": "orange",
-                          "text": "\u23f3 {0}"
-                        },
-                        {
-                          "operator": "==",
-                          "thresholdValue": "Pending",
-                          "representation": "yellow",
-                          "text": "\u23f8\ufe0f {0}"
-                        },
-                        {
-                          "operator": "==",
-                          "thresholdValue": "Failed",
-                          "representation": "red",
-                          "text": "\u274c {0}"
-                        }
-                      ]
-                    }
-                  }
-                ]
-              },
-              "criteriaData": [
-                {
-                  "criterionType": "param",
-                  "value": "{FunctionApp}"
-                },
-                {
-                  "criterionType": "param",
-                  "value": "{FunctionAppName}"
-                },
-                {
-                  "criterionType": "param",
-                  "value": "{TenantId}"
-                }
-              ]
-            },
             "conditionalVisibility": {
               "parameterName": "ActionId",
               "comparison": "isNotEqualTo",
               "value": ""
             },
-            "name": "query - poll-status"
+            "name": "query - poll-status",
+            "version": "KqlItem/1.0",
+            "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.action\",\"columnid\":\"Action\"},{\"path\":\"$.status\",\"columnid\":\"Status\"},{\"path\":\"$.message\",\"columnid\":\"Message\"},{\"path\":\"$.details\",\"columnid\":\"Details\"},{\"path\":\"$.actionStatus.status\",\"columnid\":\"Action Status\"},{\"path\":\"$.actionStatus.type\",\"columnid\":\"Type\"}]}}],\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"action\",\"value\":\"getstatus\"},{\"key\":\"actionId\",\"value\":\"{ActionId}\"}]}",
+            "size": 0,
+            "title": "\ud83d\udcca Action Status (Auto-refresh)",
+            "noDataMessage": "No active actions to poll. Execute a command first.",
+            "queryType": 10,
+            "visualization": "table",
+            "gridSettings": {
+              "formatters": [
+                {
+                  "columnMatch": "status",
+                  "formatter": 18,
+                  "formatOptions": {
+                    "thresholdsOptions": "colors",
+                    "thresholdsGrid": [
+                      {
+                        "operator": "==",
+                        "thresholdValue": "Succeeded",
+                        "representation": "green",
+                        "text": "\u2705 {0}"
+                      },
+                      {
+                        "operator": "==",
+                        "thresholdValue": "InProgress",
+                        "representation": "orange",
+                        "text": "\u23f3 {0}"
+                      },
+                      {
+                        "operator": "==",
+                        "thresholdValue": "Pending",
+                        "representation": "yellow",
+                        "text": "\u23f8\ufe0f {0}"
+                      },
+                      {
+                        "operator": "==",
+                        "thresholdValue": "Failed",
+                        "representation": "red",
+                        "text": "\u274c {0}"
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "criteriaData": [
+              {
+                "criterionType": "param",
+                "value": "{FunctionApp}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{FunctionAppName}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{TenantId}"
+              }
+            ]
           },
           {
             "type": 1,
@@ -3413,39 +3383,37 @@
           },
           {
             "type": 3,
-            "content": {
-              "version": "KqlItem/1.0",
-              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.action\",\"columnid\":\"Action\"},{\"path\":\"$.status\",\"columnid\":\"Status\"},{\"path\":\"$.message\",\"columnid\":\"Message\"},{\"path\":\"$.details\",\"columnid\":\"Details\"},{\"path\":\"$.results\",\"columnid\":\"Results\"}]}}],\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"action\",\"value\":\"getresults\"},{\"key\":\"actionId\",\"value\":\"{ActionId}\"}]}",
-              "size": 0,
-              "title": "\ud83d\udccb Command Results",
-              "noDataMessage": "No results available yet. Command may still be executing.",
-              "exportToExcelOptions": "all",
-              "queryType": 10,
-              "visualization": "table",
-              "criteriaData": [
-                {
-                  "criterionType": "param",
-                  "value": "{FunctionApp}"
-                },
-                {
-                  "criterionType": "param",
-                  "value": "{FunctionAppName}"
-                },
-                {
-                  "criterionType": "param",
-                  "value": "{TenantId}"
-                }
-              ],
-              "gridSettings": {
-                "formatters": []
-              }
-            },
             "conditionalVisibility": {
               "parameterName": "ActionId",
               "comparison": "isNotEqualTo",
               "value": ""
             },
-            "name": "query - results"
+            "name": "query - results",
+            "version": "KqlItem/1.0",
+            "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.action\",\"columnid\":\"Action\"},{\"path\":\"$.status\",\"columnid\":\"Status\"},{\"path\":\"$.message\",\"columnid\":\"Message\"},{\"path\":\"$.details\",\"columnid\":\"Details\"},{\"path\":\"$.results\",\"columnid\":\"Results\"}]}}],\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"action\",\"value\":\"getresults\"},{\"key\":\"actionId\",\"value\":\"{ActionId}\"}]}",
+            "size": 0,
+            "title": "\ud83d\udccb Command Results",
+            "noDataMessage": "No results available yet. Command may still be executing.",
+            "exportToExcelOptions": "all",
+            "queryType": 10,
+            "visualization": "table",
+            "criteriaData": [
+              {
+                "criterionType": "param",
+                "value": "{FunctionApp}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{FunctionAppName}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{TenantId}"
+              }
+            ],
+            "gridSettings": {
+              "formatters": []
+            }
           },
           {
             "type": 1,
@@ -3456,59 +3424,57 @@
           },
           {
             "type": 3,
-            "content": {
-              "version": "KqlItem/1.0",
-              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.history[*]\",\"columns\":[{\"path\":\"$.action\",\"columnid\":\"Action\"},{\"path\":\"$.status\",\"columnid\":\"Status\"},{\"path\":\"$.timestamp\",\"columnid\":\"Timestamp\"},{\"path\":\"$.message\",\"columnid\":\"Message\"},{\"path\":\"$.details\",\"columnid\":\"Details\"}]}}],\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"action\",\"value\":\"history\"},{\"key\":\"limit\",\"value\":\"20\"}]}",
-              "size": 4,
-              "title": "\ud83d\udcca Execution History (Last 20)",
-              "noDataMessage": "No command history available.",
-              "queryType": 10,
-              "visualization": "table",
-              "gridSettings": {
-                "formatters": [
-                  {
-                    "columnMatch": "status",
-                    "formatter": 18,
-                    "formatOptions": {
-                      "thresholdsOptions": "colors",
-                      "thresholdsGrid": [
-                        {
-                          "operator": "==",
-                          "thresholdValue": "Succeeded",
-                          "representation": "green",
-                          "text": "\u2705 {0}"
-                        },
-                        {
-                          "operator": "==",
-                          "thresholdValue": "Failed",
-                          "representation": "red",
-                          "text": "\u274c {0}"
-                        }
-                      ]
-                    }
-                  },
-                  {
-                    "columnMatch": "timestamp",
-                    "formatter": 6
+            "name": "query - history",
+            "version": "KqlItem/1.0",
+            "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.history[*]\",\"columns\":[{\"path\":\"$.action\",\"columnid\":\"Action\"},{\"path\":\"$.status\",\"columnid\":\"Status\"},{\"path\":\"$.timestamp\",\"columnid\":\"Timestamp\"},{\"path\":\"$.message\",\"columnid\":\"Message\"},{\"path\":\"$.details\",\"columnid\":\"Details\"}]}}],\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"action\",\"value\":\"history\"},{\"key\":\"limit\",\"value\":\"20\"}]}",
+            "size": 4,
+            "title": "\ud83d\udcca Execution History (Last 20)",
+            "noDataMessage": "No command history available.",
+            "queryType": 10,
+            "visualization": "table",
+            "gridSettings": {
+              "formatters": [
+                {
+                  "columnMatch": "status",
+                  "formatter": 18,
+                  "formatOptions": {
+                    "thresholdsOptions": "colors",
+                    "thresholdsGrid": [
+                      {
+                        "operator": "==",
+                        "thresholdValue": "Succeeded",
+                        "representation": "green",
+                        "text": "\u2705 {0}"
+                      },
+                      {
+                        "operator": "==",
+                        "thresholdValue": "Failed",
+                        "representation": "red",
+                        "text": "\u274c {0}"
+                      }
+                    ]
                   }
-                ]
-              },
-              "criteriaData": [
-                {
-                  "criterionType": "param",
-                  "value": "{FunctionApp}"
                 },
                 {
-                  "criterionType": "param",
-                  "value": "{FunctionAppName}"
-                },
-                {
-                  "criterionType": "param",
-                  "value": "{TenantId}"
+                  "columnMatch": "timestamp",
+                  "formatter": 6
                 }
               ]
             },
-            "name": "query - history"
+            "criteriaData": [
+              {
+                "criterionType": "param",
+                "value": "{FunctionApp}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{FunctionAppName}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{TenantId}"
+              }
+            ]
           },
           {
             "type": 1,
@@ -3519,33 +3485,6 @@
           },
           {
             "type": 3,
-            "content": {
-              "version": "KqlItem/1.0",
-              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Orchestrator\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.files[*]\",\"columns\":[{\"path\":\"$.fileName\",\"columnid\":\"File Name\"},{\"path\":\"$.size\",\"columnid\":\"Size (bytes)\"},{\"path\":\"$.lastModified\",\"columnid\":\"Last Modified\"},{\"path\":\"$.contentType\",\"columnid\":\"Content Type\"}]}}],\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"action\",\"value\":\"ListLibraryFiles\"}]}",
-              "size": 0,
-              "title": "\ud83d\udcda Library Files",
-              "showRefreshButton": true,
-              "showExportToExcel": true,
-              "queryType": 10,
-              "visualization": "table",
-              "criteriaData": [
-                {
-                  "criterionType": "param",
-                  "value": "{FunctionApp}"
-                },
-                {
-                  "criterionType": "param",
-                  "value": "{FunctionAppName}"
-                },
-                {
-                  "criterionType": "param",
-                  "value": "{TenantId}"
-                }
-              ],
-              "gridSettings": {
-                "formatters": []
-              }
-            },
             "conditionalVisibility": {
               "parameterName": "selectedTab",
               "comparison": "isEqualTo",
@@ -3556,6 +3495,31 @@
             "autoRefreshSettings": {
               "intervalInSeconds": 30,
               "refreshCondition": "always"
+            },
+            "version": "KqlItem/1.0",
+            "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Orchestrator\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.files[*]\",\"columns\":[{\"path\":\"$.fileName\",\"columnid\":\"File Name\"},{\"path\":\"$.size\",\"columnid\":\"Size (bytes)\"},{\"path\":\"$.lastModified\",\"columnid\":\"Last Modified\"},{\"path\":\"$.contentType\",\"columnid\":\"Content Type\"}]}}],\"urlParams\":[{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"action\",\"value\":\"ListLibraryFiles\"}]}",
+            "size": 0,
+            "title": "\ud83d\udcda Library Files",
+            "showRefreshButton": true,
+            "showExportToExcel": true,
+            "queryType": 10,
+            "visualization": "table",
+            "criteriaData": [
+              {
+                "criterionType": "param",
+                "value": "{FunctionApp}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{FunctionAppName}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{TenantId}"
+              }
+            ],
+            "gridSettings": {
+              "formatters": []
             }
           },
           {
@@ -3645,33 +3609,6 @@
           },
           {
             "type": 3,
-            "content": {
-              "version": "KqlItem/1.0",
-              "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Orchestrator\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.fileName\",\"columnid\":\"File Name\"},{\"path\":\"$.size\",\"columnid\":\"Size (bytes)\"},{\"path\":\"$.contentType\",\"columnid\":\"Content Type\"},{\"path\":\"$.lastModified\",\"columnid\":\"Last Modified\"},{\"path\":\"$.content\",\"columnid\":\"Content (Text)\"},{\"path\":\"$.contentBase64\",\"columnid\":\"Content (Base64)\"}]}}],\"urlParams\":[{\"key\":\"fileName\",\"value\":\"{LibraryFileNameGet}\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"action\",\"value\":\"GetLibraryFile\"}]}",
-              "size": 0,
-              "title": "\ud83d\udce5 Library File Content",
-              "showRefreshButton": true,
-              "showExportToExcel": true,
-              "queryType": 10,
-              "visualization": "table",
-              "criteriaData": [
-                {
-                  "criterionType": "param",
-                  "value": "{FunctionApp}"
-                },
-                {
-                  "criterionType": "param",
-                  "value": "{FunctionAppName}"
-                },
-                {
-                  "criterionType": "param",
-                  "value": "{TenantId}"
-                }
-              ],
-              "gridSettings": {
-                "formatters": []
-              }
-            },
             "conditionalVisibility": {
               "parameterName": "CommandType",
               "comparison": "isEqualTo",
@@ -3682,6 +3619,31 @@
             "autoRefreshSettings": {
               "intervalInSeconds": 30,
               "refreshCondition": "always"
+            },
+            "version": "KqlItem/1.0",
+            "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Orchestrator\",\"body\":null,\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.fileName\",\"columnid\":\"File Name\"},{\"path\":\"$.size\",\"columnid\":\"Size (bytes)\"},{\"path\":\"$.contentType\",\"columnid\":\"Content Type\"},{\"path\":\"$.lastModified\",\"columnid\":\"Last Modified\"},{\"path\":\"$.content\",\"columnid\":\"Content (Text)\"},{\"path\":\"$.contentBase64\",\"columnid\":\"Content (Base64)\"}]}}],\"urlParams\":[{\"key\":\"fileName\",\"value\":\"{LibraryFileNameGet}\"},{\"key\":\"tenantId\",\"value\":\"{TenantId}\"},{\"key\":\"action\",\"value\":\"GetLibraryFile\"}]}",
+            "size": 0,
+            "title": "\ud83d\udce5 Library File Content",
+            "showRefreshButton": true,
+            "showExportToExcel": true,
+            "queryType": 10,
+            "visualization": "table",
+            "criteriaData": [
+              {
+                "criterionType": "param",
+                "value": "{FunctionApp}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{FunctionAppName}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{TenantId}"
+              }
+            ],
+            "gridSettings": {
+              "formatters": []
             }
           },
           {
