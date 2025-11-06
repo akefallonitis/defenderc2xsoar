@@ -149,11 +149,15 @@
             "version": "KqlParameterItem/1.0",
             "name": "FunctionKey",
             "label": "🔑 Function Key (Auto-retrieved)",
-            "type": 1,
+            "type": 2,
             "description": "Automatically retrieved from selected Function App",
             "isRequired": true,
             "isGlobal": true,
-            "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"path\":\"/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/host/default/listKeys\",\"urlParams\":[{\"key\":\"api-version\",\"value\":\"2025-03-01\"}],\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.functionKeys.default\",\"columnid\":\"value\"}]}}]}",
+            "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"path\":\"/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/host/default/listKeys\",\"urlParams\":[{\"key\":\"api-version\",\"value\":\"2025-03-01\"}],\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.functionKeys.default\",\"columnid\":\"value\"},{\"path\":\"$.functionKeys.default\",\"columnid\":\"label\"}]}}]}",
+            "typeSettings": {
+              "additionalResourceOptions": [],
+              "showDefault": false
+            },
             "queryType": 12,
             "criteriaData": [
               {
