@@ -148,13 +148,12 @@
             "id": "funckey",
             "version": "KqlParameterItem/1.0",
             "name": "FunctionKey",
-            "label": "🔑 Function Key (Auto-retrieved)",
+            "label": "🔑 Function Key",
             "type": 1,
-            "description": "Automatically retrieved from selected Function App via Azure Management API",
+            "description": "Paste the function key retrieved from the button below",
             "isRequired": true,
             "isGlobal": true,
-            "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://management.azure.com/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/host/default/listKeys?api-version=2025-03-01\",\"body\":null,\"urlParams\":[],\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.functionKeys.default\",\"columnid\":\"value\"}]}}]}",
-            "queryType": 10
+            "value": ""
           }
         ],
         "style": "pills",
@@ -172,9 +171,49 @@
           {
             "type": 1,
             "content": {
-              "json": "### ✅ Function Key Auto-Retrieved!\n\n**The function key is automatically retrieved from your selected Function App using Azure Management API.**\n\nNo manual steps needed - just select your Function App above and the key populates automatically! 🎉"
+              "json": "### 🔑 STEP 1: Retrieve Function Key\n\n**Click the button below to retrieve your function key from the selected Function App:**"
             },
             "name": "retrieve-key-header"
+          },
+          {
+            "type": 11,
+            "content": {
+              "version": "LinkItem/1.0",
+              "style": "list",
+              "links": [
+                {
+                  "id": "arm-get-function-key",
+                  "cellValue": "unused",
+                  "linkTarget": "ArmAction",
+                  "linkLabel": "🔑 Retrieve Function Key",
+                  "style": "primary",
+                  "armActionContext": {
+                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/host/default/listKeys",
+                    "headers": [],
+                    "params": [
+                      {
+                        "key": "api-version",
+                        "value": "2025-03-01"
+                      }
+                    ],
+                    "httpMethod": "POST",
+                    "title": "✅ Function Keys Retrieved",
+                    "description": "Copy the 'default' key from functionKeys below",
+                    "actionName": "Get Function Keys",
+                    "runLabel": "Retrieve Keys",
+                    "successMessage": "✅ Success! Find 'functionKeys' → 'default' in the JSON response below. Copy that value and paste it into the 🔑 Function Key parameter at the top."
+                  }
+                }
+              ]
+            },
+            "name": "arm-get-function-key-link"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---\n\n### 📋 STEP 2: Copy the Key\n\n**After clicking the button above**, the ARM Action will show a JSON response. Look for:\n\n```json\n{\n  \"functionKeys\": {\n    \"default\": \"YOUR-KEY-HERE\"\n  }\n}\n```\n\n**Copy the value** from `functionKeys` → `default` and **paste it** into the **🔑 Function Key** parameter at the very top of this workbook."
+            },
+            "name": "retrieve-key-instructions"
           }
         ]
       },
