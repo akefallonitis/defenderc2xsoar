@@ -148,26 +148,12 @@
             "id": "funckey",
             "version": "KqlParameterItem/1.0",
             "name": "FunctionKey",
-            "label": "🔑 Function Key (Auto-retrieved)",
-            "type": 2,
-            "description": "Automatically retrieved from selected Function App",
+            "label": "🔑 Function Key",
+            "type": 1,
+            "description": "Enter function key or retrieve using button below",
             "isRequired": true,
             "isGlobal": true,
-            "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"path\":\"/host/default/listKeys\",\"urlParams\":[{\"key\":\"api-version\",\"value\":\"2025-03-01\"}],\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.functionKeys.default\",\"columnid\":\"value\"},{\"path\":\"$.functionKeys.default\",\"columnid\":\"label\"}]}}]}",
-            "typeSettings": {
-              "additionalResourceOptions": [],
-              "showDefault": false
-            },
-            "queryType": 12,
-            "resourceIds": [
-              "{FunctionApp}"
-            ],
-            "criteriaData": [
-              {
-                "criterionType": "param",
-                "value": "{FunctionApp}"
-              }
-            ]
+            "value": ""
           }
         ],
         "style": "pills",
@@ -175,6 +161,56 @@
         "resourceType": "microsoft.operationalinsights/workspaces"
       },
       "name": "global-parameters"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "### 🔑 Retrieve Function Key\n\n**Click the button below to automatically retrieve the function key from your selected Function App.**\n\nThe key will be displayed in the response. Copy it and paste it into the Function Key parameter above."
+            },
+            "name": "retrieve-key-header"
+          },
+          {
+            "type": 11,
+            "content": {
+              "version": "LinkItem/1.0",
+              "style": "list",
+              "links": [
+                {
+                  "id": "arm-get-function-key",
+                  "cellValue": "unused",
+                  "linkTarget": "ArmAction",
+                  "linkLabel": "🔑 Retrieve Function Key",
+                  "style": "primary",
+                  "armActionContext": {
+                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/host/default/listKeys",
+                    "headers": [],
+                    "params": [
+                      {
+                        "key": "api-version",
+                        "value": "2025-03-01"
+                      }
+                    ],
+                    "httpMethod": "POST",
+                    "title": "✅ Function Keys Retrieved",
+                    "description": "Function keys retrieved successfully. Copy the 'default' key from functionKeys below.",
+                    "actionName": "Get Function Keys",
+                    "runLabel": "Retrieve Keys",
+                    "successMessage": "✅ Function keys retrieved! Copy the functionKeys.default value and paste into the Function Key parameter above."
+                  }
+                }
+              ]
+            },
+            "name": "arm-get-function-key-link"
+          }
+        ]
+      },
+      "name": "function-key-retrieval-group"
     },
     {
       "type": 12,
