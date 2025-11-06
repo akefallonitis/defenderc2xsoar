@@ -148,15 +148,22 @@
             "id": "funckey",
             "version": "KqlParameterItem/1.0",
             "name": "FunctionKey",
-            "label": "🔑 Function Key",
+            "label": "🔑 Function Key (Auto-retrieved)",
             "type": 1,
-            "description": "Auto-populated from Azure Function App keys",
-            "isRequired": false,
+            "description": "Automatically retrieved from selected Function App",
+            "isRequired": true,
             "isGlobal": true,
             "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"path\":\"/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/host/default/listKeys\",\"urlParams\":[{\"key\":\"api-version\",\"value\":\"2025-03-01\"}],\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.functionKeys.default\",\"columnid\":\"value\"}]}}]}",
-            "isHiddenWhenLocked": true,
             "queryType": 12,
             "criteriaData": [
+              {
+                "criterionType": "param",
+                "value": "{Subscription}"
+              },
+              {
+                "criterionType": "param",
+                "value": "{ResourceGroup}"
+              },
               {
                 "criterionType": "param",
                 "value": "{FunctionAppName}"
