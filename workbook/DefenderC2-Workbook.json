@@ -148,12 +148,13 @@
             "id": "funckey",
             "version": "KqlParameterItem/1.0",
             "name": "FunctionKey",
-            "label": "🔑 Function Key",
+            "label": "🔑 Function Key (Auto-retrieved)",
             "type": 1,
-            "description": "Enter function key or retrieve using button below",
+            "description": "Automatically retrieved from selected Function App via Azure Management API",
             "isRequired": true,
             "isGlobal": true,
-            "value": ""
+            "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"url\":\"https://management.azure.com/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/host/default/listKeys?api-version=2025-03-01\",\"body\":null,\"urlParams\":[],\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.functionKeys.default\",\"columnid\":\"value\"}]}}]}",
+            "queryType": 10
           }
         ],
         "style": "pills",
@@ -171,53 +172,13 @@
           {
             "type": 1,
             "content": {
-              "json": "### 🔑 Function Key Required\n\n**After deploying via 'Deploy to Azure' button:**\n\n1. ✅ **In Azure Portal**, go to your **Resource Group**\n2. 📋 Click on **Deployments** (left sidebar)\n3. 🔍 Click on the most recent deployment (usually named `azuredeploy`)\n4. 📤 Click the **Outputs** tab\n5. 📝 Find **functionKey** and click the **Copy** icon\n6. 📌 Paste the key into the **🔑 Function Key** parameter at the top of this workbook\n\n**OR** use the button below to retrieve it directly:"
+              "json": "### ✅ Function Key Auto-Retrieved!\n\n**The function key is automatically retrieved from your selected Function App using Azure Management API.**\n\nNo manual steps needed - just select your Function App above and the key populates automatically! 🎉"
             },
             "name": "retrieve-key-header"
-          },
-          {
-            "type": 11,
-            "content": {
-              "version": "LinkItem/1.0",
-              "style": "list",
-              "links": [
-                {
-                  "id": "arm-get-function-key",
-                  "cellValue": "unused",
-                  "linkTarget": "ArmAction",
-                  "linkLabel": "🔑 Retrieve Function Key",
-                  "style": "primary",
-                  "armActionContext": {
-                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/host/default/listKeys",
-                    "headers": [],
-                    "params": [
-                      {
-                        "key": "api-version",
-                        "value": "2025-03-01"
-                      }
-                    ],
-                    "httpMethod": "POST",
-                    "title": "✅ Function Keys Retrieved",
-                    "description": "Copy the functionKeys -> default value from the JSON response below and paste it into the 🔑 Function Key parameter at the top of the workbook.",
-                    "actionName": "Get Function Keys",
-                    "runLabel": "Retrieve Keys",
-                    "successMessage": "✅ Function keys retrieved! Look for 'functionKeys' → 'default' in the response JSON below. Copy that value and paste it into the Function Key parameter above."
-                  }
-                }
-              ]
-            },
-            "name": "arm-get-function-key-link"
-          },
-          {
-            "type": 1,
-            "content": {
-              "json": "---\n\n**💡 Tip:** After clicking the button above, look for the JSON response. Find `\"functionKeys\"` → `\"default\"` and copy the value (it looks like: `h0D4dAE2I-ECr05pg5J8...`). Paste it into the **🔑 Function Key** parameter at the very top of this workbook."
-            },
-            "name": "retrieve-key-instructions"
           }
         ]
       },
-      "name": "function-key-retrieval-group"
+      "name": "function-key-info-group"
     },
     {
       "type": 12,
