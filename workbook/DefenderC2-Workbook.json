@@ -148,12 +148,12 @@
             "id": "funckey",
             "version": "KqlParameterItem/1.0",
             "name": "FunctionKey",
-            "label": "🔑 Function Key",
+            "label": "🔑 Function Key (Auto-retrieved)",
             "type": 1,
-            "description": "Auto-populated from Azure Function App keys",
+            "description": "Auto-populated from Azure Function App keys - select Function App above",
             "isRequired": false,
             "isGlobal": true,
-            "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"path\":\"/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/host/default/listKeys\",\"urlParams\":[{\"key\":\"api-version\",\"value\":\"2022-03-01\"}],\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"columns\":[{\"path\":\"$.functionKeys.default\",\"columnid\":\"key\"}]}}]}",
+            "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"path\":\"{FunctionApp}/host/default/listKeys\",\"urlParams\":[{\"key\":\"api-version\",\"value\":\"2022-03-01\"}],\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"columns\":[{\"path\":\"$.functionKeys.default\",\"columnid\":\"key\"}]}}]}",
             "queryType": 12,
             "criteriaData": [
               {
