@@ -189,13 +189,7 @@
                   "style": "primary",
                   "armActionContext": {
                     "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/host/default/listKeys",
-                    "headers": [],
-                    "params": [
-                      {
-                        "key": "api-version",
-                        "value": "2025-03-01"
-                      }
-                    ],
+                    "headers": [{"name": "Content-Type", "value": "application/json"}],
                     "httpMethod": "POST",
                     "title": "✅ Function Keys Retrieved",
                     "description": "Copy the 'default' key from functionKeys below",
@@ -688,7 +682,7 @@
                     "params": [
                       {
                         "key": "api-version",
-                        "value": "2023-12-01"
+                        "value": "2022-03-01"
                       }
                     ],
                     "httpMethod": "POST",
@@ -727,7 +721,7 @@
                     "params": [
                       {
                         "key": "api-version",
-                        "value": "2023-12-01"
+                        "value": "2022-03-01"
                       }
                     ],
                     "httpMethod": "POST",
@@ -766,7 +760,7 @@
                     "params": [
                       {
                         "key": "api-version",
-                        "value": "2023-12-01"
+                        "value": "2022-03-01"
                       }
                     ],
                     "httpMethod": "POST",
@@ -805,7 +799,7 @@
                     "params": [
                       {
                         "key": "api-version",
-                        "value": "2023-12-01"
+                        "value": "2022-03-01"
                       }
                     ],
                     "httpMethod": "POST",
@@ -844,7 +838,7 @@
                     "params": [
                       {
                         "key": "api-version",
-                        "value": "2023-12-01"
+                        "value": "2022-03-01"
                       }
                     ],
                     "httpMethod": "POST",
@@ -883,7 +877,7 @@
                     "params": [
                       {
                         "key": "api-version",
-                        "value": "2023-12-01"
+                        "value": "2022-03-01"
                       }
                     ],
                     "httpMethod": "POST",
@@ -922,7 +916,7 @@
                     "params": [
                       {
                         "key": "api-version",
-                        "value": "2023-12-01"
+                        "value": "2022-03-01"
                       }
                     ],
                     "httpMethod": "POST",
@@ -1219,7 +1213,7 @@
                     "params": [
                       {
                         "key": "api-version",
-                        "value": "2023-12-01"
+                        "value": "2022-03-01"
                       }
                     ],
                     "httpMethod": "POST",
@@ -1258,7 +1252,7 @@
                     "params": [
                       {
                         "key": "api-version",
-                        "value": "2023-12-01"
+                        "value": "2022-03-01"
                       }
                     ],
                     "httpMethod": "POST",
@@ -1429,7 +1423,7 @@
                     "params": [
                       {
                         "key": "api-version",
-                        "value": "2023-12-01"
+                        "value": "2022-03-01"
                       }
                     ],
                     "httpMethod": "POST",
@@ -1468,7 +1462,7 @@
                     "params": [
                       {
                         "key": "api-version",
-                        "value": "2023-12-01"
+                        "value": "2022-03-01"
                       }
                     ],
                     "httpMethod": "POST",
@@ -1575,7 +1569,7 @@
                     "params": [
                       {
                         "key": "api-version",
-                        "value": "2023-12-01"
+                        "value": "2022-03-01"
                       }
                     ],
                     "httpMethod": "POST",
@@ -1807,7 +1801,7 @@
                     "params": [
                       {
                         "key": "api-version",
-                        "value": "2023-12-01"
+                        "value": "2022-03-01"
                       }
                     ],
                     "httpMethod": "POST",
@@ -1846,7 +1840,7 @@
                     "params": [
                       {
                         "key": "api-version",
-                        "value": "2023-12-01"
+                        "value": "2022-03-01"
                       }
                     ],
                     "httpMethod": "POST",
@@ -1885,7 +1879,7 @@
                     "params": [
                       {
                         "key": "api-version",
-                        "value": "2023-12-01"
+                        "value": "2022-03-01"
                       }
                     ],
                     "httpMethod": "POST",
@@ -2326,7 +2320,7 @@
                     "params": [
                       {
                         "key": "api-version",
-                        "value": "2023-12-01"
+                        "value": "2022-03-01"
                       }
                     ],
                     "httpMethod": "POST",
