@@ -153,13 +153,13 @@
             "description": "Auto-populated from Azure Function App keys",
             "isRequired": false,
             "isGlobal": true,
-            "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"path\":\"{FunctionApp}/host/default/listKeys\",\"urlParams\":[{\"key\":\"api-version\",\"value\":\"2025-03-01\"}],\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.functionKeys.default\",\"columnid\":\"value\"}]}}]}",
+            "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"path\":\"/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/host/default/listKeys\",\"urlParams\":[{\"key\":\"api-version\",\"value\":\"2025-03-01\"}],\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.functionKeys.default\",\"columnid\":\"value\"}]}}]}",
             "isHiddenWhenLocked": true,
             "queryType": 12,
             "criteriaData": [
               {
                 "criterionType": "param",
-                "value": "{FunctionApp}"
+                "value": "{FunctionAppName}"
               }
             ]
           }
