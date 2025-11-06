@@ -171,7 +171,7 @@
           {
             "type": 1,
             "content": {
-              "json": "### 🔑 Retrieve Function Key\n\n**Click the button below to automatically retrieve the function key from your selected Function App.**\n\nThe key will be displayed in the response. Copy it and paste it into the Function Key parameter above."
+              "json": "### 🔑 Retrieve Function Key\n\n**Click the button below to automatically retrieve the function key. The key will be displayed and you can copy it to the parameter above.**"
             },
             "name": "retrieve-key-header"
           },
@@ -198,15 +198,22 @@
                     ],
                     "httpMethod": "POST",
                     "title": "✅ Function Keys Retrieved",
-                    "description": "Function keys retrieved successfully. Copy the 'default' key from functionKeys below.",
+                    "description": "Copy the functionKeys -> default value from the JSON response below and paste it into the 🔑 Function Key parameter at the top of the workbook.",
                     "actionName": "Get Function Keys",
                     "runLabel": "Retrieve Keys",
-                    "successMessage": "✅ Function keys retrieved! Copy the functionKeys.default value and paste into the Function Key parameter above."
+                    "successMessage": "✅ Function keys retrieved! Look for 'functionKeys' → 'default' in the response JSON below. Copy that value and paste it into the Function Key parameter above."
                   }
                 }
               ]
             },
             "name": "arm-get-function-key-link"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---\n\n**💡 Tip:** After clicking the button above, look for the JSON response. Find `\"functionKeys\"` → `\"default\"` and copy the value (it looks like: `h0D4dAE2I-ECr05pg5J8...`). Paste it into the **🔑 Function Key** parameter at the very top of this workbook."
+            },
+            "name": "retrieve-key-instructions"
           }
         ]
       },
