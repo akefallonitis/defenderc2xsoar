@@ -159,6 +159,9 @@
               "showDefault": false
             },
             "queryType": 12,
+            "resourceIds": [
+              "{FunctionApp}"
+            ],
             "criteriaData": [
               {
                 "criterionType": "param",
