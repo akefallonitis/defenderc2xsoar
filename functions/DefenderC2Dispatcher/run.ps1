@@ -14,15 +14,23 @@ $deviceIds = $Request.Query.deviceIds
 $scriptName = $Request.Query.scriptName
 $filePath = $Request.Query.filePath
 $fileHash = $Request.Query.fileHash
+$scanType = $Request.Query.scanType
+$isolationType = $Request.Query.isolationType
+$comment = $Request.Query.comment
+$actionId = $Request.Query.actionId
 
 if ($Request.Body) {
-    $action = $Request.Body.action ?? $action
-    $tenantId = $Request.Body.tenantId ?? $tenantId
-    $deviceFilter = $Request.Body.deviceFilter ?? $deviceFilter
-    $deviceIds = $Request.Body.deviceIds ?? $deviceIds
-    $scriptName = $Request.Body.scriptName ?? $scriptName
-    $filePath = $Request.Body.filePath ?? $filePath
-    $fileHash = $Request.Body.fileHash ?? $fileHash
+    if ($Request.Body.action) { $action = $Request.Body.action }
+    if ($Request.Body.tenantId) { $tenantId = $Request.Body.tenantId }
+    if ($Request.Body.deviceFilter) { $deviceFilter = $Request.Body.deviceFilter }
+    if ($Request.Body.deviceIds) { $deviceIds = $Request.Body.deviceIds }
+    if ($Request.Body.scriptName) { $scriptName = $Request.Body.scriptName }
+    if ($Request.Body.filePath) { $filePath = $Request.Body.filePath }
+    if ($Request.Body.fileHash) { $fileHash = $Request.Body.fileHash }
+    if ($Request.Body.scanType) { $scanType = $Request.Body.scanType }
+    if ($Request.Body.isolationType) { $isolationType = $Request.Body.isolationType }
+    if ($Request.Body.comment) { $comment = $Request.Body.comment }
+    if ($Request.Body.actionId) { $actionId = $Request.Body.actionId }
 }
 
 # Get app credentials from environment variables
@@ -72,15 +80,18 @@ try {
             if ($deviceIdList.Count -eq 0) {
                 throw "Device IDs required for isolation"
             }
-            $response = Invoke-DeviceIsolation -Token $token -DeviceIds $deviceIdList -Comment "Isolated via Azure Function" -IsolationType "Full"
-            $result.details = "Device isolation initiated for $($deviceIdList.Count) device(s)"
+            $isoType = if ($isolationType) { $isolationType } else { "Full" }
+            $commentText = if ($comment) { $comment } else { "Isolated via Azure Function" }
+            $response = Invoke-DeviceIsolation -Token $token -DeviceIds $deviceIdList -Comment $commentText -IsolationType $isoType
+            $result.details = "Device isolation ($isoType) initiated for $($deviceIdList.Count) device(s)"
             $result.actionIds = $response | ForEach-Object { $_.id }
         }
         "Unisolate Device" {
             if ($deviceIdList.Count -eq 0) {
                 throw "Device IDs required for unisolation"
             }
-            $response = Invoke-DeviceUnisolation -Token $token -DeviceIds $deviceIdList -Comment "Unisolated via Azure Function"
+            $commentText = if ($comment) { $comment } else { "Unisolated via Azure Function" }
+            $response = Invoke-DeviceUnisolation -Token $token -DeviceIds $deviceIdList -Comment $commentText
             $result.details = "Device unisolation initiated for $($deviceIdList.Count) device(s)"
             $result.actionIds = $response | ForEach-Object { $_.id }
         }
@@ -88,7 +99,8 @@ try {
             if ($deviceIdList.Count -eq 0) {
                 throw "Device IDs required for app restriction"
             }
-            $response = Invoke-RestrictAppExecution -Token $token -DeviceIds $deviceIdList -Comment "Restricted via Azure Function"
+            $commentText = if ($comment) { $comment } else { "Restricted via Azure Function" }
+            $response = Invoke-RestrictAppExecution -Token $token -DeviceIds $deviceIdList -Comment $commentText
             $result.details = "App execution restriction initiated for $($deviceIdList.Count) device(s)"
             $result.actionIds = $response | ForEach-Object { $_.id }
         }
@@ -96,7 +108,8 @@ try {
             if ($deviceIdList.Count -eq 0) {
                 throw "Device IDs required for app unrestriction"
             }
-            $response = Invoke-UnrestrictAppExecution -Token $token -DeviceIds $deviceIdList -Comment "Unrestricted via Azure Function"
+            $commentText = if ($comment) { $comment } else { "Unrestricted via Azure Function" }
+            $response = Invoke-UnrestrictAppExecution -Token $token -DeviceIds $deviceIdList -Comment $commentText
             $result.details = "App execution unrestriction initiated for $($deviceIdList.Count) device(s)"
             $result.actionIds = $response | ForEach-Object { $_.id }
         }
@@ -104,7 +117,8 @@ try {
             if ($deviceIdList.Count -eq 0) {
                 throw "Device IDs required for investigation package collection"
             }
-            $response = Invoke-CollectInvestigationPackage -Token $token -DeviceIds $deviceIdList -Comment "Collected via Azure Function"
+            $commentText = if ($comment) { $comment } else { "Collected via Azure Function" }
+            $response = Invoke-CollectInvestigationPackage -Token $token -DeviceIds $deviceIdList -Comment $commentText
             $result.details = "Investigation package collection initiated for $($deviceIdList.Count) device(s)"
             $result.actionIds = $response | ForEach-Object { $_.id }
         }
@@ -112,15 +126,18 @@ try {
             if ($deviceIdList.Count -eq 0) {
                 throw "Device IDs required for antivirus scan"
             }
-            $response = Invoke-AntivirusScan -Token $token -DeviceIds $deviceIdList -ScanType "Full" -Comment "Scan via Azure Function"
-            $result.details = "Antivirus scan initiated for $($deviceIdList.Count) device(s)"
+            $scanTypeValue = if ($scanType) { $scanType } else { "Quick" }
+            $commentText = if ($comment) { $comment } else { "Scan via Azure Function" }
+            $response = Invoke-AntivirusScan -Token $token -DeviceIds $deviceIdList -ScanType $scanTypeValue -Comment $commentText
+            $result.details = "Antivirus scan ($scanTypeValue) initiated for $($deviceIdList.Count) device(s)"
             $result.actionIds = $response | ForEach-Object { $_.id }
         }
         "Stop & Quarantine File" {
             if (-not $fileHash) {
                 throw "File hash required for stop and quarantine"
             }
-            $response = Invoke-StopAndQuarantineFile -Token $token -Sha1 $fileHash -Comment "Quarantined via Azure Function"
+            $commentText = if ($comment) { $comment } else { "Quarantined via Azure Function" }
+            $response = Invoke-StopAndQuarantineFile -Token $token -Sha1 $fileHash -Comment $commentText
             $result.details = "Stop and quarantine initiated for file hash $fileHash"
             $result.actionId = $response.id
         }
@@ -138,7 +155,6 @@ try {
             $result.device = $deviceInfo
         }
         "Get Action Status" {
-            $actionId = $Request.Query.actionId ?? $Request.Body.actionId
             if (-not $actionId) {
                 throw "Action ID required for status check"
             }
@@ -147,17 +163,18 @@ try {
             $result.actionStatus = $actionStatus
         }
         "Get All Actions" {
-            $filter = $Request.Query.filter ?? $Request.Body.filter
+            $filter = $Request.Query.filter
+            if ($Request.Body.filter) { $filter = $Request.Body.filter }
             $actions = Get-AllMachineActions -Token $token -Filter $filter
             $result.details = "Retrieved $($actions.Count) machine actions"
             $result.actions = $actions | Select-Object -First 100
         }
         "Cancel Action" {
-            $actionId = $Request.Query.actionId ?? $Request.Body.actionId
             if (-not $actionId) {
                 throw "Action ID required for cancellation"
             }
-            $cancelResult = Stop-MachineAction -Token $token -ActionId $actionId -Comment "Cancelled via Azure Function"
+            $commentText = if ($comment) { $comment } else { "Cancelled via Azure Function" }
+            $cancelResult = Stop-MachineAction -Token $token -ActionId $actionId -Comment $commentText
             $result.details = "Cancelled action $actionId"
             $result.cancelResult = $cancelResult
         }
