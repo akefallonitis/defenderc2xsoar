@@ -171,7 +171,7 @@
           {
             "type": 1,
             "content": {
-              "json": "### 🔑 Retrieve Function Key\n\n**Option 1 (Recommended):** If you just deployed via ARM template, check the deployment outputs - the function key is displayed there automatically!\n\n**Option 2:** Click the button below to retrieve the key via ARM Action."
+              "json": "### 🔑 Function Key Required\n\n**After deploying via 'Deploy to Azure' button:**\n\n1. ✅ **In Azure Portal**, go to your **Resource Group**\n2. 📋 Click on **Deployments** (left sidebar)\n3. 🔍 Click on the most recent deployment (usually named `azuredeploy`)\n4. 📤 Click the **Outputs** tab\n5. 📝 Find **functionKey** and click the **Copy** icon\n6. 📌 Paste the key into the **🔑 Function Key** parameter at the top of this workbook\n\n**OR** use the button below to retrieve it directly:"
             },
             "name": "retrieve-key-header"
           },
