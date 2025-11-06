@@ -171,7 +171,7 @@
           {
             "type": 1,
             "content": {
-              "json": "### 🔑 Retrieve Function Key\n\n**Click the button below to automatically retrieve the function key. The key will be displayed and you can copy it to the parameter above.**"
+              "json": "### 🔑 Retrieve Function Key\n\n**Option 1 (Recommended):** If you just deployed via ARM template, check the deployment outputs - the function key is displayed there automatically!\n\n**Option 2:** Click the button below to retrieve the key via ARM Action."
             },
             "name": "retrieve-key-header"
           },
