@@ -153,7 +153,7 @@
             "description": "Automatically retrieved from selected Function App",
             "isRequired": true,
             "isGlobal": true,
-            "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"path\":\"/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/host/default/listKeys\",\"urlParams\":[{\"key\":\"api-version\",\"value\":\"2025-03-01\"}],\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.functionKeys.default\",\"columnid\":\"value\"},{\"path\":\"$.functionKeys.default\",\"columnid\":\"label\"}]}}]}",
+            "query": "{\"version\":\"ARMEndpoint/1.0\",\"data\":null,\"headers\":[],\"method\":\"POST\",\"path\":\"/host/default/listKeys\",\"urlParams\":[{\"key\":\"api-version\",\"value\":\"2025-03-01\"}],\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$\",\"columns\":[{\"path\":\"$.functionKeys.default\",\"columnid\":\"value\"},{\"path\":\"$.functionKeys.default\",\"columnid\":\"label\"}]}}]}",
             "typeSettings": {
               "additionalResourceOptions": [],
               "showDefault": false
@@ -165,15 +165,7 @@
             "criteriaData": [
               {
                 "criterionType": "param",
-                "value": "{Subscription}"
-              },
-              {
-                "criterionType": "param",
-                "value": "{ResourceGroup}"
-              },
-              {
-                "criterionType": "param",
-                "value": "{FunctionAppName}"
+                "value": "{FunctionApp}"
               }
             ]
           }
