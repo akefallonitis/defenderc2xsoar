@@ -1,0 +1,919 @@
+# DefenderXDR - Microsoft Security Orchestration Platform
+
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fakefallonitis%2Fdefenderc2xsoar%2Fmain%2Fdeployment%2Fazuredeploy.json)
+
+**Version:** 2.3.0 | **Status:** Production Ready
+
+Enterprise-grade security orchestration platform for Microsoft security products. Deploy 50+ automated security actions across Microsoft Defender, Entra ID, Intune, and Azure with a single click.
+
+---
+
+---
+
+## 🎯 Overview
+
+## � Overview
+
+**Specialized worker functions** for each Microsoft security product, enabling automated incident response through Azure Functions, Azure Workbook, and XSOAR integration.
+
+DefenderXDR provides specialized worker functions for each Microsoft security product, enabling automated response actions through:
+
+### Supported Products
+
+- **Azure Functions** - Serverless, auto-scaling execution
+
+| Product | Worker | Actions | Examples |- **Azure Workbook** - Interactive command & control console  
+
+|---------|--------|---------|----------|- **XSOAR Integration** - Playbook-driven automation
+
+| **Defender for Office 365** | MDOWorker | 4 | Email remediation, phishing response |- **Multi-Tenant Support** - Single deployment, manage multiple tenants
+
+| **Defender for Cloud** | MDCWorker | 6 | Alert triage, compliance monitoring |
+
+| **Defender for Identity** | MDIWorker | 11 | Lateral movement detection, credential exposure |### Supported Products
+
+| **Entra ID** | EntraIDWorker | 13 | Account lockout, session revocation, MFA enforcement |
+
+| **Intune** | IntuneWorker | 8 | Remote device lock/wipe, compliance enforcement || Product | Worker | Actions | Use Cases |
+
+| **Azure** | AzureWorker | 8 | Network isolation, VM control, storage security ||---------|--------|---------|-----------|
+
+| **Defender for Office 365** | MDOWorker | 4 | Email remediation, threat submission |
+
+**Total: 50 automated security actions** | [View All Actions →](WORKER_ACTIONS_QUICKREF.md)| **Defender for Cloud** | MDCWorker | 6 | Alert management, compliance |
+
+| **Defender for Identity** | MDIWorker | 11 | Lateral movement, credential exposure |
+
+---| **Entra ID** | EntraIDWorker | 13 | Account compromise, access control |
+
+| **Intune** | IntuneWorker | 8 | Device management, compliance |
+
+## 🚀 Quick Start| **Azure** | AzureWorker | 8 | Infrastructure security, isolation |
+
+
+
+### 1. Prerequisites**Total: 50 automated security actions**
+
+- ✅ DefenderXDRC2XSOAR Complete Workbook with ARM actions
+
+Create **Multi-Tenant App Registration** with API permissions:- ✅ Storage Account and App Service Plan
+
+- Microsoft Graph (Security, User, Device)- ✅ Managed Identity configuration
+
+- Windows Defender ATP (Machine, Alert, Incident)
+
+- Azure Service Management> **Note**: You'll need to provide your multi-tenant App Registration credentials with appropriate permissions during deployment. See [PERMISSIONS.md](PERMISSIONS.md) for complete permission requirements.
+
+- Office 365 Exchange
+
+---
+
+[Complete Permissions List →](PERMISSIONS.md)
+
+## 📋 Table of Contents
+
+### 2. Deploy
+
+- [Overview](#overview)
+
+Click button above or use Azure CLI:- [Deployment Options](#deployment-options)
+
+- [Features](#features)
+
+```bash- [Quick Start](#quick-start)
+
+az deployment group create \- [Documentation](#documentation)
+
+  --resource-group <your-rg> \- [Architecture](#architecture)
+
+  --template-file deployment/azuredeploy.json \- [Security](#security)
+
+  --parameters \- [Contributing](#contributing)
+
+    functionAppName=<unique-name> \- [License](#license)
+
+    spnId=<app-id> \
+
+    spnSecret=<secret>---
+
+```
+
+## Overview
+
+**Deploys:** Function App + Application Insights + Storage + Workbook
+
+
+
+### 3. Test---
+
+
+
+```powershell## Azure Workbook: Custom Endpoint & ARM Action Implementation Guide
+
+$response = Invoke-RestMethod `
+
+  -Uri "https://<your-app>.azurewebsites.net/api/EntraIDWorker" `This section provides step-by-step reference for implementing fully functional Custom Endpoint auto-refresh queries and ARM Actions in Azure Workbooks for DefenderC2 Function Apps. It includes:
+
+  -Method Post `- Copy-paste JSON code samples for Custom Endpoint and ARM Action items
+
+  -Headers @{"x-functions-key"="<key>"} `- Autodiscovery of parameters (including TenantId)
+
+  -Body (@{- Optional Function Key support (parameterized, not required for anonymous access)
+
+    action="GetUser"- Tab-by-tab instructions
+
+    tenantId="xxx"- Troubleshooting and validation
+
+    userId="user@domain.com"
+
+  }|ConvertTo-Json) `### 1. Parameter Autodiscovery & Optional Function Key
+
+  -ContentType "application/json"- **FunctionAppName**: required parameter
+
+```- **TenantId**: auto-discovered from the selected Log Analytics Workspace
+
+- **FunctionKey**: optional parameter, only used if Function App requires a key
+
+---
+
+**Sample parameters section:**
+
+## 📖 Documentation```json
+
+{
+
+| Guide | Description |   "parameters": [
+
+|-------|-------------|      { "name": "FunctionAppName", "type": 1, "isRequired": true },
+
+| **[Deployment Guide](deployment/V2.3.0_DEPLOYMENT_GUIDE.md)** | Complete deployment walkthrough |      { "name": "TenantId", "type": 1, "isRequired": true, "query": "Resources | where type =~ 'microsoft.operationalinsights/workspaces' | where id == '{Workspace}' | extend TenantId = tostring(properties.customerId) | project value = TenantId, label = TenantId" },
+
+| **[API Reference](WORKER_ACTIONS_QUICKREF.md)** | All 50 actions with examples |      { "name": "FunctionKey", "type": 1, "isRequired": false, "description": "Optional. Only needed if Function App is not anonymous."}
+
+| **[Architecture](WORKER_PATTERN_ARCHITECTURE.md)** | Design patterns & scaling |   ]
+
+| **[Permissions](PERMISSIONS.md)** | Required API permissions |}
+
+| **[Updates](deployment/PACKAGE_UPDATE_PROCESS.md)** | Update deployed functions |```
+
+| **[Migration](MIGRATION_GUIDE.md)** | Upgrade from v2.x |
+
+### 2. Custom Endpoint (Auto-Refresh, With/Without Function Key)
+
+---**How to write in Advanced Editor:**
+
+- `queryType`: 10
+
+## 🏗️ Architecture- `query`: JSON string for CustomEndpoint/1.0
+
+- POST method, correct Function App URL, auto-refresh enabled
+
+```- Add `?code={FunctionKey}` to URL only if needed
+
+Client → Worker Functions → Shared Modules → Microsoft APIs
+
+         (MDO, MDC, MDI,    (Auth, Validation,**Sample JSON (No Function Key):**
+
+          EntraID, Intune,   Logging)```json
+
+          Azure){
+
+```   "type": 3,
+
+   "content": {
+
+**Key Features:**      "version": "KqlItem/1.0",
+
+- ✅ Direct HTTP responses (workbook compatible)      "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher\",\"body\":\"{\\\"action\\\":\\\"Get Devices\\\",\\\"tenantId\\\":\\\"{TenantId}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.devices[*]\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"id\"},{\"path\":\"$.computerDnsName\",\"columnid\":\"computerDnsName\"},{\"path\":\"$.isolationState\",\"columnid\":\"isolationState\"},{\"path\":\"$.healthStatus\",\"columnid\":\"healthStatus\"},{\"path\":\"$.riskScore\",\"columnid\":\"riskScore\"}]}}]}",
+
+- ✅ Independent scaling per product      "size": 0,
+
+- ✅ Centralized authentication with token caching      "title": "Device List (Custom Endpoint Auto-Refresh)",
+
+- ✅ Multi-tenant support      "queryType": 10,
+
+- ✅ Auto-update via WEBSITE_RUN_FROM_PACKAGE      "visualization": "table"
+
+   },
+
+---   "name": "devices-table"
+
+}
+
+## 💡 Usage Examples```
+
+
+
+### Email Remediation**Sample JSON (With Optional Function Key):**
+
+```json```json
+
+POST /api/MDOWorker{
+
+{   "type": 3,
+
+  "action": "RemediateEmail",   "content": {
+
+  "tenantId": "xxx",      "version": "KqlItem/1.0",
+
+  "messageId": "AAMkAGI2...",      "query": "{\"version\":\"CustomEndpoint/1.0\",\"data\":null,\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher?code={FunctionKey}\",\"body\":\"{\\\"action\\\":\\\"Get Devices\\\",\\\"tenantId\\\":\\\"{TenantId}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.devices[*]\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"id\"},{\"path\":\"$.computerDnsName\",\"columnid\":\"computerDnsName\"},{\"path\":\"$.isolationState\",\"columnid\":\"isolationState\"},{\"path\":\"$.healthStatus\",\"columnid\":\"healthStatus\"},{\"path\":\"$.riskScore\",\"columnid\":\"riskScore\"}]}}]}",
+
+  "remediationType": "SoftDelete"      "size": 0,
+
+}      "title": "Device List (Custom Endpoint Auto-Refresh)",
+
+```      "queryType": 10,
+
+      "visualization": "table"
+
+### Account Compromise Response   },
+
+```json   "name": "devices-table"
+
+POST /api/EntraIDWorker}
+
+{```
+
+  "action": "RevokeSessions",
+
+  "tenantId": "xxx",### 3. ARM Actions (Manual Button, With/Without Function Key)
+
+  "userId": "compromised@domain.com"**Use direct POST to Function App.**
+
+}Add `?code={FunctionKey}` to URL only if needed.
+
+```
+
+**Sample JSON (No Function Key):**
+
+### Cloud Alert Management```json
+
+```json{
+
+POST /api/MDCWorker   "type": 11,
+
+{   "content": {
+
+  "action": "GetSecurityAlerts",      "version": "LinkItem/1.0",
+
+  "tenantId": "xxx",      "links": [{
+
+  "subscriptionId": "sub-id",         "linkTarget": "ArmAction",
+
+  "filter": "properties/severity eq 'High'"         "linkLabel": "🚨 Isolate Devices",
+
+}         "armActionContext": {
+
+```            "path": "https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher",
+
+            "headers": [{"name": "Content-Type", "value": "application/json"}],
+
+[All 50 Actions →](WORKER_ACTIONS_QUICKREF.md)            "body": "{\"action\":\"Isolate Device\",\"tenantId\":\"{TenantId}\",\"deviceIds\":\"{DeviceIds}\"}",
+
+            "httpMethod": "POST"
+
+---         }
+
+      }]
+
+## 🔐 Security   }
+
+}
+
+- **Service Principal Auth** - Least privilege permissions```
+
+- **Function Keys** - Per-function authentication
+
+- **Token Caching** - Secure in-memory with tenant isolation**Sample JSON (With Optional Function Key):**
+
+- **Managed Identity** - Optional for Azure resources```json
+
+- **Network Restrictions** - Production environment recommended{
+
+   "type": 11,
+
+[Security Best Practices →](deployment/V2.3.0_DEPLOYMENT_GUIDE.md#security-best-practices)   "content": {
+
+      "version": "LinkItem/1.0",
+
+---      "links": [{
+
+         "linkTarget": "ArmAction",
+
+## 📊 Monitoring         "linkLabel": "🚨 Isolate Devices",
+
+         "armActionContext": {
+
+### Application Insights            "path": "https://{FunctionAppName}.azurewebsites.net/api/DefenderC2Dispatcher?code={FunctionKey}",
+
+            "headers": [{"name": "Content-Type", "value": "application/json"}],
+
+```kql            "body": "{\"action\":\"Isolate Device\",\"tenantId\":\"{TenantId}\",\"deviceIds\":\"{DeviceIds}\"}",
+
+// Worker performance            "httpMethod": "POST"
+
+requests         }
+
+| where name endswith "Worker"      }]
+
+| summarize Count=count(), AvgDuration=avg(duration) by name   }
+
+}
+
+// Error tracking```
+
+exceptions
+
+| where cloud_RoleName contains "Worker"### 4. Tab-by-Tab Functionality Examples
+
+| summarize Count=count() by type, outerMessage- **Device Manager**: Get Devices (Custom Endpoint), Isolate Device (ARM Action), Unisolate Device, Restrict App Execution, Run Antivirus Scan
+
+```- **Threat Intel**: List Indicators (Custom Endpoint), Add Indicator (ARM Action)
+
+- **Action Manager**: Get All Actions (Custom Endpoint)
+
+---- **Hunt Manager**: Get Hunt Status (Custom Endpoint)
+
+- **Incident Manager**: Get Incidents (Custom Endpoint)
+
+## 🔄 Updates- **Detection Manager**: List Detections (Custom Endpoint)
+
+- **Console**: Get Command History (Custom Endpoint)
+
+### Update Function Code
+
+### 5. Troubleshooting & Validation
+
+1. Edit code in `functions/` directory- If workbook queries fail, check Function App authentication (Anonymous/Function)
+
+2. Create package: `deployment\create-package.ps1`- If FunctionKey is blank, URL must not contain ?code=
+
+3. Commit: `git add deployment/function-package.zip && git commit && git push`- Ensure parameters are passed in body and URL as needed
+
+4. Auto-deploy: Function apps update in 5-10 minutes- Use JSONPath transformers for parsing
+
+- See ![Custom Endpoint JSON in workbook editor](https://github.com/user-attachments/assets/a68ad801-3dfa-40cb-8be4-79f345b74045)
+
+[Update Process →](deployment/PACKAGE_UPDATE_PROCESS.md)
+
+### 6. How to Use
+
+---1. Import workbook into Azure Portal
+
+2. Configure parameters (FunctionAppName, TenantId auto-discovered, FunctionKey optional)
+
+## 📁 Repository Structure3. For each query, use queryType: 10 and the CustomEndpoint JSON as above
+
+4. For ARM Actions, use direct Function App POST as above
+
+```5. Test each tab for correct data/actions
+
+defenderc2xsoar/
+
+├── functions/               # Worker functions### References
+
+│   ├── MDOWorker/          # Email security- ![Custom Endpoint JSON in workbook editor](https://github.com/user-attachments/assets/a68ad801-3dfa-40cb-8be4-79f345b74045)
+
+│   ├── MDCWorker/          # Cloud security- Previous issues for sample code and gotchas
+
+│   ├── MDIWorker/          # Identity threats- [Azure Functions authentication docs](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-http-webhook?tabs=csharp#authorization-keys)
+
+│   ├── EntraIDWorker/      # IAM
+
+│   ├── IntuneWorker/       # Device management---
+
+│   ├── AzureWorker/        # Infrastructure
+
+│   └── DefenderXDRC2XSOAR/ # Shared modules### 🌐 Azure Workbook Version (Cloud-Based)
+
+├── deployment/              # ARM templates & package**Best for**: Multi-tenant MSPs, enterprises with Azure infrastructure
+
+├── workbook/               # Azure Workbook definitions- Interactive Azure Monitor Workbooks UI
+
+└── docs/                   # Documentation- Azure Functions backend for processing
+
+```- Multi-tenant support out of the box
+
+- Managed identity authentication
+
+---- Centralized file library with Azure Storage
+
+- Team collaboration features
+
+## 🐛 Troubleshooting
+
+**Cost**: ~$50/month | **Setup**: ~1 hour | **[Deployment Guide →](DEPLOYMENT.md)**
+
+| Issue | Solution |
+
+|-------|----------|### 💻 Standalone PowerShell Version (Local)
+
+| Function not appearing | Check Application Insights logs, verify function.json |**Best for**: Individual analysts, small teams, quick deployments
+
+| Auth errors | Verify API permissions granted, check app settings |- Menu-driven PowerShell interface
+
+| Package not updating | Restart function app, verify GitHub URL accessible |- Runs entirely on your local machine
+
+- Zero cloud infrastructure required
+
+[Full Troubleshooting Guide →](deployment/V2.3.0_DEPLOYMENT_GUIDE.md#troubleshooting)- Secure credential storage (DPAPI)
+
+- Portable and easy to distribute
+
+---
+
+**Cost**: Free | **Setup**: ~10 minutes | **[Documentation →](standalone/README.md)**
+
+## 🤝 Contributing
+
+---
+
+1. Fork repository
+
+2. Create feature branch## Features
+
+3. Make changes with tests
+
+4. Submit pull request### 🎯 Full Microsoft Defender XDR Capabilities
+
+
+
+**Guidelines:**DefenderXDRC2XSOAR provides **40+ security actions** across the entire Microsoft security stack:
+
+- PowerShell best practices
+
+- Error handling for external calls#### 1. **📧 Email Remediation (MDO - Microsoft Defender for Office 365)** - 8 Actions
+
+- Update documentation   - **Soft/Hard Delete Email** - Remove malicious emails from mailboxes
+
+- Application Insights logging   - **Move to Junk/Inbox** - Quarantine or restore emails
+
+   - **Submit Email Threats** - Report phishing to Microsoft
+
+---   - **Submit URL Threats** - Report malicious URLs
+
+   - **Block URLs** - Add time-of-click URL blocking
+
+## 📜 License   - **Remove Mail Forwarding** - Disable external forwarding rules
+
+
+
+MIT License - See LICENSE file#### 2. **👤 Identity & Access Management (Entra ID & Identity Protection)** - 6 Actions
+
+   - **Disable/Enable Users** - Control user account access
+
+---   - **Reset Passwords** - Force password resets with next sign-in requirement
+
+   - **Confirm User Compromised** - Mark users as compromised for automated response
+
+## 🆘 Support   - **Dismiss User Risk** - Clear false positive risk detections
+
+   - **Revoke Sessions** - Force sign-out across all devices
+
+- **Documentation:** [Full Index](DOCUMENTATION_INDEX.md)   - **Query Risk Detections** - Investigate identity risks
+
+- **Issues:** [GitHub Issues](https://github.com/akefallonitis/defenderc2xsoar/issues)
+
+- **Discussions:** [GitHub Discussions](https://github.com/akefallonitis/defenderc2xsoar/discussions)#### 3. **🖥️ Endpoint Security (MDE - Microsoft Defender for Endpoint)** - 11 Actions
+
+   - **Isolate/Unisolate Devices** - Full or selective network isolation
+
+---   - **Restrict/Unrestrict App Execution** - Control code execution
+
+   - **Run Antivirus Scans** - Quick or full scans
+
+## 🎯 Roadmap   - **Collect Investigation Package** - Gather forensic data
+
+   - **Stop & Quarantine Files** - Block malicious files
+
+### v2.3.x (Current)   - **Offboard Machines** - Remove devices from MDE
+
+- ✅ 6 specialized workers   - **Start Automated Investigation** - Trigger AIR investigations
+
+- ✅ 50 security actions   - **Live Response Operations** - Run scripts, get/put files
+
+- ✅ One-click deployment   - **View Device Status** - Query device information
+
+- ✅ Auto-update mechanism   - **Manage Actions** - Track and cancel actions
+
+
+
+### v2.4.0 (Planned)#### 4. **🔐 Conditional Access & Policies (Entra ID P1+)** - 6 Actions
+
+- Microsoft Purview integration   - **Create Named Locations** - Define trusted/blocked IP ranges
+
+- Sentinel native connector   - **Update Named Locations** - Modify IP-based policies
+
+- Enhanced workbook dashboards   - **Create CA Policies** - Build conditional access rules
+
+- Rate limiting per tenant   - **Sign-In Risk Policies** - Respond to risky sign-ins
+
+   - **User Risk Policies** - Handle compromised accounts
+
+### v3.0.0 (Future)   - **Query Locations** - Review location policies
+
+- GraphQL API
+
+- Custom action framework#### 5. **📱 Device Management (Intune)** - 6 Actions
+
+- Workflow orchestration   - **Remote Lock** - Lock devices remotely
+
+- Multi-cloud support   - **Wipe Device** - Full or selective wipe
+
+   - **Retire Device** - Remove company data only
+
+---   - **Sync Device** - Force policy sync
+
+   - **Run Defender Scan** - Initiate Windows Defender scan
+
+## 📊 Statistics   - **Query Managed Devices** - Get device inventory
+
+
+
+- **50 Actions** across 6 Microsoft products#### 6. **☁️ Azure Infrastructure Security** - 5 Actions
+
+- **6 Workers** for product-specific operations   - **Add NSG Deny Rules** - Block IPs/ports at network level
+
+- **19 Service Modules** for API integrations   - **Stop Azure VMs** - Shut down compromised VMs
+
+- **Multi-Tenant** with token caching   - **Disable Storage Public Access** - Secure storage accounts
+
+- **Auto-Scaling** per worker   - **Remove VM Public IPs** - Eliminate internet exposure
+
+- **Production Ready** with error handling   - **Query Azure VMs** - Get VM inventory
+
+
+
+---#### 7. **🔍 Threat Intelligence & Hunting**
+
+   - File indicators (SHA1/SHA256 hashes)
+
+**Built for security teams who automate. Deploy in minutes, respond in seconds.** 🚀   - Network indicators (IPs, URLs, domains)
+
+   - Certificate indicators
+   - Advanced KQL hunting queries
+   - Custom detection rules
+   - Bulk IOC operations
+
+#### 8. **🎯 Incident Management**
+   - View and filter security incidents
+   - Update incident status and classification
+   - Investigation comments and notes
+   - Incident summaries and reports
+   - Backup and restore detections
+   - Rule management and versioning
+
+### 🌟 Workbook-Specific Features
+
+The Azure Workbook version includes additional capabilities:
+
+#### 7. **🖥️ Interactive Console**
+   - Shell-like interface for command execution
+   - Async execution with auto-polling
+   - Automatic JSON parsing and display
+   - Configurable refresh intervals
+   - Command history and audit trail
+   - Real-time status monitoring
+
+#### 8. **📦 File Library Management**
+   - Centralized Azure Storage library
+   - Upload files once, deploy many times
+   - No manual Base64 encoding required
+   - One-click deployment to devices
+   - Automatic file downloads
+   - Team collaboration features
+   - See [archive/feature-guides/FILE_OPERATIONS_GUIDE.md](archive/feature-guides/FILE_OPERATIONS_GUIDE.md) for details
+
+---
+
+## Quick Start
+
+### Azure Workbook Version
+
+1. **Create App Registration** with MDE API permissions
+2. **Deploy ARM template** to Azure (automated via button or CLI)
+3. **Configure federated identity** for managed identity
+4. **Access workbook** in Azure Monitor
+5. **Start automating** MDE operations
+
+**[→ Full Deployment Guide](DEPLOYMENT.md)** | **[→ Quick Start](QUICKSTART.md)**
+
+### Standalone PowerShell Version
+
+1. **Download** the standalone framework
+2. **Run setup script** with your tenant details
+3. **Launch menu** and start automating
+
+**[→ Standalone Documentation](standalone/README.md)**
+
+---
+
+## Documentation
+
+### 📘 Core Documentation
+- **[README.md](README.md)** - This file (overview and getting started)
+- **[DEPLOYMENT.md](DEPLOYMENT.md)** - Complete deployment guide for Azure version
+- **[QUICKSTART.md](QUICKSTART.md)** - Quick start guide
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** - Contributing guidelines
+
+### 📚 Additional Resources
+
+#### Deployment Documentation
+- **[CUSTOMENDPOINT_GUIDE.md](deployment/CUSTOMENDPOINT_GUIDE.md)** - Complete guide for CustomEndpoint and ARM Actions with optional Function Key support
+- **[WORKBOOK_PARAMETERS_GUIDE.md](deployment/WORKBOOK_PARAMETERS_GUIDE.md)** - Parameter configuration reference
+- **[DYNAMIC_FUNCTION_APP_NAME.md](deployment/DYNAMIC_FUNCTION_APP_NAME.md)** - Dynamic function app naming patterns
+
+#### Examples
+- **[examples/customendpoint-example.json](examples/customendpoint-example.json)** - Example workbook demonstrating CustomEndpoint pattern (queryType: 10)
+- **[examples/README.md](examples/README.md)** - Examples documentation and pattern comparison
+- **[examples/sample-config.md](examples/sample-config.md)** - Sample configuration values
+
+#### Archive
+The `/archive` directory contains supplementary documentation:
+- **Deployment Guides** - Advanced deployment scenarios and troubleshooting
+- **Feature Guides** - Detailed feature documentation and usage examples
+- **Technical Docs** - Architecture, implementation details, and API references
+
+**[→ Browse Archive Documentation](archive/README.md)**
+
+---
+
+## Architecture
+
+### Azure Workbook Version
+
+```
+┌─────────────────────┐
+│  Azure Workbook     │
+│  (User Interface)   │
+└──────────┬──────────┘
+           │
+           │ Parameters: tenantId
+           ▼
+┌─────────────────────┐
+│  Azure Function App │
+│  (PowerShell)       │
+│  Env: APPID,        │
+│       SECRETID      │
+└──────────┬──────────┘
+           │
+           │ Client Credentials Auth
+           ▼
+┌─────────────────────┐
+│  Multi-tenant       │
+│  App Registration   │
+└──────────┬──────────┘
+           │
+           │ API Calls
+           ▼
+┌─────────────────────┐
+│  Microsoft Defender │
+│  for Endpoint       │
+└─────────────────────┘
+```
+
+### Standalone PowerShell Version
+
+```
+┌─────────────────────┐
+│  PowerShell Menu UI │
+│  (Local Workstation)│
+└──────────┬──────────┘
+           │
+           │ Direct API Calls
+           ▼
+┌─────────────────────┐
+│  App Registration   │
+│  (Client Credentials)│
+└──────────┬──────────┘
+           │
+           │ MDE API
+           ▼
+┌─────────────────────┐
+│  Microsoft Defender │
+│  for Endpoint       │
+└─────────────────────┘
+```
+
+**Key Components:**
+- **6 Azure Functions** - Consolidated operations (workbook version)
+- **DefenderC2Orchestrator** - Unified interface for Live Response and Library operations
+- **Azure Storage** - File library for Live Response (workbook version)
+- **Managed Identity** - Secure authentication (workbook version)
+
+**[→ Detailed Architecture Documentation](archive/technical-docs/ARCHITECTURE.md)**
+
+---
+
+## Deployment Options Comparison
+
+| Feature | Azure Workbook | Standalone PowerShell | Original MDEAutomator |
+|---------|----------------|----------------------|----------------------|
+| **User Interface** | Azure Workbook (web) | PowerShell Menu (CLI) | Flask Web App |
+| **Authentication** | Managed Identity + Federated | App Registration + Secret | Key Vault |
+| **Deployment Complexity** | ARM template (simple) | Copy & run (simplest) | Complex IaC + VNet |
+| **Multi-tenancy** | ✅ Built-in | ❌ Single tenant | ✅ Supported |
+| **Infrastructure** | Azure Functions + Storage | None (local only) | Azure + OpenAI |
+| **Cost** | ~$50/month | **$0** (no Azure) | ~$220/month |
+| **Setup Time** | ~1 hour | **~10 minutes** | ~2 hours |
+| **File Library** | ✅ Azure Storage (shared) | ❌ Not applicable | ❌ Not included |
+| **Team Collaboration** | ✅ Centralized | ❌ Individual | ✅ Centralized |
+| **Best For** | Multi-tenant MSPs, teams | Individual analysts, SOC | Large enterprises |
+| **Internet Required** | Yes (Azure Portal) | Yes (MDE API) | Yes (Web UI) |
+
+---
+
+## Deployment
+
+The deployment process varies based on your chosen version:
+
+### Azure Workbook Version
+
+**Prerequisites:**
+- Azure subscription with permissions to create resources
+- Azure AD tenant with permissions to create app registrations
+- Global Administrator or Security Administrator role in target MDE tenant
+
+**High-Level Steps:**
+1. Create Azure AD App Registration with MDE API permissions
+2. Deploy ARM template (Azure Functions + Storage + Workbook)
+3. Configure federated identity credential for managed identity
+4. Access and configure workbook parameters
+
+**[→ Complete Deployment Guide (DEPLOYMENT.md)](DEPLOYMENT.md)**
+**[→ Quick Start (QUICKSTART.md)](QUICKSTART.md)**
+
+### Standalone PowerShell Version
+
+**Prerequisites:**
+- Windows PowerShell 5.1+ or PowerShell 7+
+- Azure AD App Registration with MDE API permissions
+
+**High-Level Steps:**
+1. Download the standalone framework
+2. Run the setup script with your credentials
+3. Launch the menu and start automating
+
+**[→ Standalone Documentation](standalone/README.md)**
+
+---
+
+## Archived Example Workbooks
+
+This repository includes several archived example workbooks (located in `archive/old-workbooks/`) that demonstrate advanced patterns and features from previous versions:
+
+- **Advanced Workbook Concepts.json** - Comprehensive feature showcase
+- **DefenderC2 Advanced Console.json** - Streamlined C2 interface
+- **Investigation Insights.json** - Security investigation workflows
+- **Sentinel360 XDR Investigation-Remediation Console Enhanced.json** - XDR console
+- **Sentinel360-MDR-Console.json** - MDR analyst interface
+- **Sentinel360-XDR-Auditing.json** - Audit and compliance reporting
+
+These examples showcase advanced parameter handling, complex visualizations, multi-step workflows, and investigation consoles. They have been superseded by the current **DefenderC2-Workbook.json** which consolidates and enhances all functionality.
+
+**Current Working Workbooks:**
+- **[workbook/DefenderC2-Workbook.json](workbook/DefenderC2-Workbook.json)** - Main operational workbook with auto-discovery
+- **[workbook/FileOperations.workbook](workbook/FileOperations.workbook)** - File operations and library management
+
+**[→ Learn More About Example Workbooks](archive/feature-guides/WORKBOOK_EXAMPLES.md)**
+
+---
+
+## Using the Azure Workbook
+
+### Primary Workbook
+
+The main operational workbook is located at `/workbook/DefenderC2-Workbook.json` and includes:
+
+#### Core Tabs:
+1. **MDEAutomator (Device Actions)** - Isolate, scan, restrict devices
+2. **Threat Intelligence Manager** - Manage file/network/certificate indicators
+3. **Action Manager** - View and manage device actions
+4. **Hunt Manager** - Execute KQL hunting queries
+5. **Incident Manager** - Manage security incidents  
+6. **Custom Detection Manager** - Manage detection rules
+
+#### Advanced Features:
+7. **🖥️ Interactive Console** - Shell-like command interface with async execution
+8. **📦 File Operations** - Library management and Live Response file operations
+
+### Interactive Console Usage Example
+
+1. Go to **🖥️ Interactive Console** tab
+2. **Configure Settings:**
+   - **Auto Refresh Interval**: Select `30 seconds` (recommended)
+   - **Command Type**: Choose operation category (e.g., `Device Actions`)
+   - **Action/Command**: Select specific action (e.g., `Isolate Device`)
+   - **Target Device IDs**: Enter comma-separated device IDs
+   - **Additional Parameters**: Add JSON parameters if needed
+
+3. **Execute Command:**
+   - Click **Run Query** in the "Execute Command" section
+   - Command execution status displays immediately
+
+4. **Monitor Progress:**
+   - Status auto-refreshes based on your interval
+   - Status indicators: ✅ Succeeded, ⏳ InProgress, ⏸️ Pending, ❌ Failed
+   - No manual polling needed
+
+5. **View Results:**
+   - Results display in parsed JSON format
+   - Export to Excel available
+   - Execution history tracked automatically
+
+## Security
+
+### Security Best Practices
+
+#### Azure Workbook Version
+1. **Workbook Access Control** - Restrict access using Azure RBAC
+2. **Function App Authentication** - Enable Azure AD authentication
+3. **Managed Identity** - Always use managed identity instead of secrets
+4. **Audit Logging** - Enable diagnostic logs on function app
+5. **Network Security** - Consider private endpoints for function app
+6. **Script Signing** - Sign all PowerShell scripts before Live Response deployment
+
+#### Standalone Version
+1. **Credential Storage** - Uses Windows DPAPI for encryption
+2. **Minimal Permissions** - Follow principle of least privilege
+3. **Audit Logging** - Log all operations for compliance
+4. **Script Review** - Review all scripts before execution
+5. **Access Control** - Restrict file system access to framework
+
+## Troubleshooting
+
+### Common Issues
+
+#### Azure Workbook Version
+- **Function App Not Responding** - Check function app status in Azure Portal
+- **Authentication Errors** - Verify API permissions and federated credentials
+- **Workbook Not Loading Data** - Confirm Log Analytics workspace access
+- **Library Operations Failing** - Verify Azure Storage connection string
+
+**[→ Detailed Troubleshooting Guide](archive/deployment-guides/DEPLOYMENT_TROUBLESHOOTING.md)**
+
+#### Standalone Version
+- **API Authentication Failures** - Verify app registration credentials
+- **Permission Errors** - Check API permissions and admin consent
+- **Module Not Found** - Run setup script to install dependencies
+
+---
+
+## Contributing
+
+We welcome contributions! Here's how you can help:
+
+1. **Report Issues** - Open GitHub issues for bugs or feature requests
+2. **Submit Pull Requests** - Follow our coding standards and guidelines
+3. **Improve Documentation** - Help us keep docs up-to-date
+4. **Share Examples** - Contribute example workbooks or scripts
+
+**[→ Contributing Guidelines (CONTRIBUTING.md)](CONTRIBUTING.md)**
+
+---
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## Acknowledgments
+
+- **Original Project**: [MDEAutomator](https://github.com/msdirtbag/MDEAutomator) by msdirtbag
+- **Inspiration**: Azure Sentinel community and security operations teams
+- **Contributors**: See GitHub contributors list
+
+---
+
+## Support
+
+### Documentation
+- **Core Docs**: README.md, DEPLOYMENT.md, QUICKSTART.md, CONTRIBUTING.md
+- **Archive**: `/archive` directory contains detailed feature guides and technical docs
+
+### Community Support
+- **GitHub Issues**: Report bugs and request features
+- **GitHub Discussions**: Ask questions and share experiences
+
+### Related Projects
+- **[MDEAutomator](https://github.com/msdirtbag/MDEAutomator)** - Original Python/Flask implementation
+- **Microsoft Defender for Endpoint** - Official documentation
+
+---
+
+## Roadmap
+
+Future enhancements being considered:
+
+- ✅ **Consolidated Library Functions** - Already implemented in DefenderC2Orchestrator
+- ✅ **File Operations UI** - Interactive workbook tab for file management
+- ✅ **Interactive Console** - Shell-like interface with async execution
+- 🔄 **Enhanced Multi-tenancy** - Simplified tenant switching
+- 🔄 **Scheduled Operations** - Automated recurring tasks
+- 🔄 **Advanced Reporting** - Custom dashboards and exports
+- 🔄 **Integration Hub** - SOAR platform connectors
+
+---
+
+**Made with ❤️ for the security community**
