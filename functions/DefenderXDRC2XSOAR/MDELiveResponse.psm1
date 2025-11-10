@@ -1,7 +1,7 @@
 <#
 .SYNOPSIS
-    Live Response module for MDE Automator Local
-    
+    Live Response module for DefenderXDR C2 XSOAR
+
 .DESCRIPTION
     Handles Live Response operations in Microsoft Defender for Endpoint including
     interactive shell, command execution, file upload/download, and session management

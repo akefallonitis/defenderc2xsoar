@@ -1,7 +1,7 @@
 <#
 .SYNOPSIS
-    Device actions module for MDE Automator Local
-    
+    Device actions module for DefenderXDR C2 XSOAR
+
 .DESCRIPTION
     Handles device-related operations in Microsoft Defender for Endpoint
 #>

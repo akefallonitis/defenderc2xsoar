@@ -1,7 +1,7 @@
 <#
 .SYNOPSIS
-    Threat Intelligence module for MDE Automator Local
-    
+    Threat Intelligence module for DefenderXDR C2 XSOAR
+
 .DESCRIPTION
     Handles threat indicator management in Microsoft Defender for Endpoint
 #>

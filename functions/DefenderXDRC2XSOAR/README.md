@@ -1,281 +1,560 @@
-# MDEAutomator PowerShell Module
+# DefenderXDRC2XSOAR PowerShell Module# MDEAutomator PowerShell Module
 
-This module provides comprehensive automation capabilities for Microsoft Defender for Endpoint (MDE) operations within Azure Functions.
 
-## Overview
 
-The MDEAutomator module is a collection of PowerShell modules that enable:
+**Enterprise Microsoft Security Orchestration**This module provides comprehensive automation capabilities for Microsoft Defender for Endpoint (MDE) operations within Azure Functions.
+
+
+
+---## Overview
+
+
+
+## OverviewThe MDEAutomator module is a collection of PowerShell modules that enable:
+
 - Multi-tenant authentication to MDE
-- Device management operations
+
+The DefenderXDRC2XSOAR module is a collection of PowerShell modules that enable:- Device management operations
+
 - Threat intelligence management
-- Advanced hunting queries
-- Security incident management
-- Custom detection rule management
-- Live Response operations
 
-## Module Structure
+- Authentication across Microsoft security services- Advanced hunting queries
 
-```
-MDEAutomator/
-├── MDEAutomator.psd1       # Module manifest
-├── MDEAuth.psm1            # Authentication module
-├── MDEDevice.psm1          # Device operations
-├── MDEThreatIntel.psm1     # Threat intelligence operations
+- Device management and response actions- Security incident management
+
+- Threat intelligence operations- Custom detection rule management
+
+- Advanced hunting queries- Live Response operations
+
+- Incident management
+
+- Custom detection rules## Module Structure
+
+- Live response capabilities
+
+- Email security operations (MDO)```
+
+- Cloud security (MDC)MDEAutomator/
+
+- Identity protection (MDI)├── MDEAutomator.psd1       # Module manifest
+
+- Entra ID management├── MDEAuth.psm1            # Authentication module
+
+- Intune device management├── MDEDevice.psm1          # Device operations
+
+- Azure infrastructure security├── MDEThreatIntel.psm1     # Threat intelligence operations
+
 ├── MDEHunting.psm1         # Advanced hunting
-├── MDEIncident.psm1        # Incident management
+
+---├── MDEIncident.psm1        # Incident management
+
 ├── MDEDetection.psm1       # Custom detection management
-├── MDELiveResponse.psm1    # Live Response operations
+
+## Module Structure├── MDELiveResponse.psm1    # Live Response operations
+
 └── MDEConfig.psm1          # Configuration management
-```
 
-## Installation
+``````
 
-The module is automatically loaded by the Azure Functions runtime via `profile.ps1`.
+DefenderXDRC2XSOAR/
 
-## Authentication
+├── DefenderXDRC2XSOAR.psd1    # Module manifest## Installation
 
-### Connect-MDE
+├── AuthManager.psm1            # Centralized authentication with token caching
 
-Authenticates to the Microsoft Defender for Endpoint API using client credentials flow.
+├── MDEAuth.psm1                # MDE authentication helpersThe module is automatically loaded by the Azure Functions runtime via `profile.ps1`.
 
-```powershell
-$token = Connect-MDE -TenantId "tenant-id" -AppId "app-id" -ClientSecret "secret"
-```
+├── MDEConfig.psm1              # Configuration management
 
-**Parameters:**
-- `TenantId` - Azure AD Tenant ID
-- `AppId` - Application (Client) ID from App Registration
-- `ClientSecret` - Client Secret (string or SecureString)
+├── MDEDevice.psm1              # Device actions## Authentication
 
-**Returns:** Token hashtable containing AccessToken, TokenType, ExpiresAt, and TenantId
+├── MDEThreatIntel.psm1         # Threat indicators
 
-## Device Operations (MDEDevice.psm1)
+├── MDEHunting.psm1             # Advanced hunting### Connect-MDE
 
-### Invoke-DeviceIsolation
+├── MDEIncident.psm1            # Incident management
+
+├── MDEDetection.psm1           # Custom detectionsAuthenticates to the Microsoft Defender for Endpoint API using client credentials flow.
+
+├── MDELiveResponse.psm1        # Live response
+
+├── MDOEmailRemediation.psm1    # Email security (Defender for Office 365)```powershell
+
+├── DefenderForCloud.psm1       # Cloud security operations$token = Connect-MDE -TenantId "tenant-id" -AppId "app-id" -ClientSecret "secret"
+
+├── DefenderForIdentity.psm1    # Identity threat detection```
+
+├── EntraIDIdentity.psm1        # Entra ID management
+
+├── IntuneDeviceManagement.psm1 # Intune operations**Parameters:**
+
+├── AzureInfrastructure.psm1    # Azure security- `TenantId` - Azure AD Tenant ID
+
+├── ConditionalAccess.psm1      # Conditional Access policies- `AppId` - Application (Client) ID from App Registration
+
+├── ValidationHelper.psm1       # Input validation- `ClientSecret` - Client Secret (string or SecureString)
+
+└── LoggingHelper.psm1          # Structured logging
+
+```**Returns:** Token hashtable containing AccessToken, TokenType, ExpiresAt, and TenantId
+
+
+
+---## Device Operations (MDEDevice.psm1)
+
+
+
+## Usage in Azure Functions### Invoke-DeviceIsolation
+
 Isolates device(s) from the network.
 
+This module is automatically loaded by all worker functions:
+
 ```powershell
-Invoke-DeviceIsolation -Token $token -DeviceIds @("device-id") -Comment "Suspected compromise" -IsolationType "Full"
-```
+
+```powershellInvoke-DeviceIsolation -Token $token -DeviceIds @("device-id") -Comment "Suspected compromise" -IsolationType "Full"
+
+# Auto-imported in profile.ps1```
+
+Import-Module DefenderXDRC2XSOAR
 
 ### Invoke-DeviceUnisolation
-Releases device(s) from isolation.
 
-```powershell
-Invoke-DeviceUnisolation -Token $token -DeviceIds @("device-id") -Comment "Threat remediated"
+# Use in worker functionsReleases device(s) from isolation.
+
+$token = Get-MicrosoftGraphToken -TenantId $tenantId
+
+$devices = Get-MDEDevices -Token $token```powershell
+
+```Invoke-DeviceUnisolation -Token $token -DeviceIds @("device-id") -Comment "Threat remediated"
+
 ```
+
+---
 
 ### Invoke-RestrictAppExecution
-Restricts application execution on device(s).
 
-```powershell
-Invoke-RestrictAppExecution -Token $token -DeviceIds @("device-id") -Comment "Suspicious activity"
-```
+## Key FeaturesRestricts application execution on device(s).
 
-### Invoke-UnrestrictAppExecution
+
+
+### Centralized Authentication (AuthManager.psm1)```powershell
+
+- Multi-tenant supportInvoke-RestrictAppExecution -Token $token -DeviceIds @("device-id") -Comment "Suspicious activity"
+
+- Token caching (5-min expiry buffer)```
+
+- Microsoft Graph, Defender ATP, Azure Management APIs
+
+- Secure credential handling### Invoke-UnrestrictAppExecution
+
 Removes application execution restriction.
 
-```powershell
-Invoke-UnrestrictAppExecution -Token $token -DeviceIds @("device-id") -Comment "Investigation completed"
-```
+### Device Management (MDEDevice.psm1)
 
-### Invoke-AntivirusScan
+- Isolate/unisolate devices```powershell
+
+- Run antivirus scansInvoke-UnrestrictAppExecution -Token $token -DeviceIds @("device-id") -Comment "Investigation completed"
+
+- Collect investigation packages```
+
+- Restrict app execution
+
+- Manage machine tags### Invoke-AntivirusScan
+
 Initiates antivirus scan on device(s).
 
-```powershell
-Invoke-AntivirusScan -Token $token -DeviceIds @("device-id") -ScanType "Full" -Comment "Routine scan"
-```
+### Threat Intelligence (MDEThreatIntel.psm1)
 
-### Invoke-CollectInvestigationPackage
-Collects investigation package from device(s).
+- Submit file/URL/IP/certificate indicators```powershell
 
-```powershell
+- List and remove indicatorsInvoke-AntivirusScan -Token $token -DeviceIds @("device-id") -ScanType "Full" -Comment "Routine scan"
+
+- Advanced filtering```
+
+
+
+### Advanced Hunting (MDEHunting.psm1)### Invoke-CollectInvestigationPackage
+
+- Execute KQL queriesCollects investigation package from device(s).
+
+- Query result caching
+
+- Schema exploration```powershell
+
 Invoke-CollectInvestigationPackage -Token $token -DeviceIds @("device-id") -Comment "Security investigation"
-```
 
-### Invoke-StopAndQuarantineFile
-Stops and quarantines a file across all devices.
+### Incident Management (MDEIncident.psm1)```
+
+- List incidents with filtering
+
+- Update incident properties### Invoke-StopAndQuarantineFile
+
+- Add commentsStops and quarantines a file across all devices.
+
+- Incident enrichment
 
 ```powershell
-Invoke-StopAndQuarantineFile -Token $token -Sha1 "file-hash" -Comment "Malware detected"
-```
 
-### Get-DeviceInfo
-Gets information about a specific device.
+### Email Security (MDOEmailRemediation.psm1)Invoke-StopAndQuarantineFile -Token $token -Sha1 "file-hash" -Comment "Malware detected"
 
-```powershell
-Get-DeviceInfo -Token $token -DeviceId "device-id"
-```
+- Remediate phishing emails```
 
-### Get-AllDevices
+- Submit threats for analysis
+
+- Remove forwarding rules### Get-DeviceInfo
+
+- Quarantine managementGets information about a specific device.
+
+
+
+### Cloud Security (DefenderForCloud.psm1)```powershell
+
+- Security alertsGet-DeviceInfo -Token $token -DeviceId "device-id"
+
+- Recommendations```
+
+- Secure score
+
+- Defender plans management### Get-AllDevices
+
 Gets all devices in the tenant.
 
-```powershell
-Get-AllDevices -Token $token -Filter "riskScore eq 'High'"
-```
+### Identity Protection (DefenderForIdentity.psm1)
+
+- Identity alerts```powershell
+
+- Lateral movement pathsGet-AllDevices -Token $token -Filter "riskScore eq 'High'"
+
+- Exposed credentials```
+
+- Suspicious activities
 
 ## Threat Intelligence (MDEThreatIntel.psm1)
 
+---
+
 ### Add-FileIndicator
-Adds file indicator to MDE.
 
-```powershell
+## ConfigurationAdds file indicator to MDE.
+
+
+
+### Azure Function App Settings```powershell
+
 Add-FileIndicator -Token $token -Sha256 "hash" -Title "Malware" -Severity "High" -Action "Block"
-```
 
-### Remove-FileIndicator
-Removes file indicator from MDE.
+``````
 
-```powershell
+SPN_ID          = <multi-tenant-app-id>
+
+SPN_SECRET      = <app-secret>### Remove-FileIndicator
+
+```Removes file indicator from MDE.
+
+
+
+### Standalone Configuration```powershell
+
 Remove-FileIndicator -Token $token -IndicatorId "indicator-id"
+
+```powershell```
+
+# Save configuration locally
+
+Save-MDEConfiguration -Config @{### Add-IPIndicator
+
+    TenantId = "your-tenant-id"Adds IP address indicator.
+
+    AppId = "your-app-id"
+
+    ClientSecret = (ConvertTo-SecureString "your-secret" -AsPlainText -Force)```powershell
+
+}Add-IPIndicator -Token $token -IPAddress "1.2.3.4" -Title "C2 Server" -Severity "High" -Action "Block"
+
 ```
 
-### Add-IPIndicator
-Adds IP address indicator.
+# Load configuration
 
-```powershell
-Add-IPIndicator -Token $token -IPAddress "1.2.3.4" -Title "C2 Server" -Severity "High" -Action "Block"
-```
+$config = Get-MDEConfiguration### Add-URLIndicator
 
-### Add-URLIndicator
-Adds URL or domain indicator.
+```Adds URL or domain indicator.
 
-```powershell
+
+
+---```powershell
+
 Add-URLIndicator -Token $token -URL "malicious.com" -Title "Phishing Site" -Severity "High" -Action "Block"
-```
 
-### Get-AllIndicators
+## API Permissions Required```
+
+
+
+See [PERMISSIONS.md](../../PERMISSIONS.md) for complete list:### Get-AllIndicators
+
 Gets all threat indicators.
 
-```powershell
-Get-AllIndicators -Token $token -Filter "severity eq 'High'"
-```
+- Microsoft Graph (Security, User, Device)
 
-## Advanced Hunting (MDEHunting.psm1)
+- Windows Defender ATP (Machine, Alert, Incident)```powershell
 
-### Invoke-AdvancedHunting
+- Office 365 ExchangeGet-AllIndicators -Token $token -Filter "severity eq 'High'"
+
+- Azure Service Management```
+
+
+
+---## Advanced Hunting (MDEHunting.psm1)
+
+
+
+## Examples### Invoke-AdvancedHunting
+
 Executes an advanced hunting query.
 
-```powershell
-$query = @"
-DeviceProcessEvents
-| where Timestamp > ago(7d)
-| where ProcessCommandLine has "powershell"
-| take 100
-"@
+### Get Device and Isolate
 
-$results = Invoke-AdvancedHunting -Token $token -Query $query
+```powershell
+
+```powershell$query = @"
+
+# Get tokenDeviceProcessEvents
+
+$token = Get-DefenderToken -TenantId $tenantId -AppId $appId -AppSecret $appSecret| where Timestamp > ago(7d)
+
+| where ProcessCommandLine has "powershell"
+
+# Find device| take 100
+
+$device = Get-MDEDevices -Token $token -Filter "computerDnsName eq 'DESKTOP-ABC123'""@
+
+
+
+# Isolate device$results = Invoke-AdvancedHunting -Token $token -Query $query
+
+Invoke-MDEIsolateDevice -Token $token -MachineId $device.id -Comment "Suspicious activity detected"```
+
 ```
 
 ## Incident Management (MDEIncident.psm1)
 
+### Run Advanced Hunting Query
+
 ### Get-SecurityIncidents
-Gets security incidents.
 
-```powershell
-Get-SecurityIncidents -Token $token -Filter "severity eq 'High'"
-```
+```powershellGets security incidents.
 
-## Custom Detections (MDEDetection.psm1)
+$query = @"
 
-### Get-CustomDetections
-Gets all custom detection rules.
+DeviceProcessEvents```powershell
 
-```powershell
+| where Timestamp > ago(1h)Get-SecurityIncidents -Token $token -Filter "severity eq 'High'"
+
+| where ProcessCommandLine contains "powershell"```
+
+| project Timestamp, DeviceName, ProcessCommandLine
+
+"@## Custom Detections (MDEDetection.psm1)
+
+
+
+$results = Invoke-MDEAdvancedHunting -Token $token -Query $query### Get-CustomDetections
+
+```Gets all custom detection rules.
+
+
+
+### Remediate Email```powershell
+
 Get-CustomDetections -Token $token
-```
 
-## Live Response (MDELiveResponse.psm1)
+```powershell```
 
-### Start-MDELiveResponseSession
-Initiates a Live Response session.
+Invoke-MDORemediateEmail `
 
-```powershell
+    -Token $token `## Live Response (MDELiveResponse.psm1)
+
+    -MessageId "AAMkAGI2..." `
+
+    -RemediationType "SoftDelete"### Start-MDELiveResponseSession
+
+```Initiates a Live Response session.
+
+
+
+---```powershell
+
 Start-MDELiveResponseSession -Token $token -DeviceId "device-id" -Comment "Investigation"
-```
 
-### Get-MDELiveResponseSession
+## Worker Functions```
+
+
+
+Each worker function uses these modules:### Get-MDELiveResponseSession
+
 Gets Live Response session status.
 
-```powershell
-Get-MDELiveResponseSession -Token $token -SessionId "session-id"
-```
+- **MDOWorker** → MDOEmailRemediation.psm1
 
-## Azure Functions Integration
+- **MDCWorker** → DefenderForCloud.psm1```powershell
 
-The module is used by Azure Functions through the following pattern:
+- **MDIWorker** → DefenderForIdentity.psm1Get-MDELiveResponseSession -Token $token -SessionId "session-id"
 
-```powershell
-# In function run.ps1
+- **EntraIDWorker** → EntraIDIdentity.psm1```
+
+- **IntuneWorker** → IntuneDeviceManagement.psm1
+
+- **AzureWorker** → AzureInfrastructure.psm1## Azure Functions Integration
+
+
+
+All workers use:The module is used by Azure Functions through the following pattern:
+
+- AuthManager.psm1 (authentication)
+
+- ValidationHelper.psm1 (validation)```powershell
+
+- LoggingHelper.psm1 (logging)# In function run.ps1
+
 using namespace System.Net
+
+---
 
 param($Request, $TriggerMetadata)
 
-# Get credentials from environment
-$appId = $env:APPID
-$secretId = $env:SECRETID
-$tenantId = $Request.Body.tenantId
+## Logging
 
-# Authenticate
-$token = Connect-MDE -TenantId $tenantId -AppId $appId -ClientSecret $secretId
+# Get credentials from environment
+
+All modules use structured logging via LoggingHelper:$appId = $env:APPID
+
+$secretId = $env:SECRETID
+
+```powershell$tenantId = $Request.Body.tenantId
+
+Write-LogInfo "Device isolated successfully" -Context @{
+
+    deviceId = $deviceId# Authenticate
+
+    action = "Isolate"$token = Connect-MDE -TenantId $tenantId -AppId $appId -ClientSecret $secretId
+
+}
 
 # Perform operations
-$devices = Get-AllDevices -Token $token
 
-# Return results
-Push-OutputBinding -Name Response -Value ([HttpResponseContext]@{
+Write-LogError "Failed to isolate device" -Error $_.Exception -Context @{$devices = Get-AllDevices -Token $token
+
+    deviceId = $deviceId
+
+}# Return results
+
+```Push-OutputBinding -Name Response -Value ([HttpResponseContext]@{
+
     StatusCode = [HttpStatusCode]::OK
-    Body = $devices | ConvertTo-Json
+
+---    Body = $devices | ConvertTo-Json
+
 })
-```
 
-## API Permissions Required
+## Error Handling```
 
-The App Registration must have the following API permissions:
 
-### Microsoft Threat Protection / Microsoft Defender
-- `Machine.Isolate` - Isolate/unisolate devices
-- `Machine.RestrictExecution` - Restrict app execution
-- `Machine.Scan` - Run antivirus scans
-- `Machine.CollectForensics` - Collect investigation packages
-- `Machine.StopAndQuarantine` - Stop and quarantine files
+
+Consistent error handling across all modules:## API Permissions Required
+
+
+
+```powershellThe App Registration must have the following API permissions:
+
+try {
+
+    # API call### Microsoft Threat Protection / Microsoft Defender
+
+} catch {- `Machine.Isolate` - Isolate/unisolate devices
+
+    Write-LogError "Operation failed" -Error $_.Exception- `Machine.RestrictExecution` - Restrict app execution
+
+    throw- `Machine.Scan` - Run antivirus scans
+
+}- `Machine.CollectForensics` - Collect investigation packages
+
+```- `Machine.StopAndQuarantine` - Stop and quarantine files
+
 - `Machine.Read.All` - Read device information
-- `Machine.ReadWrite.All` - Full device management
+
+---- `Machine.ReadWrite.All` - Full device management
+
 - `Ti.ReadWrite.All` - Manage threat indicators
-- `AdvancedQuery.Read.All` - Execute advanced hunting queries
+
+## Testing- `AdvancedQuery.Read.All` - Execute advanced hunting queries
+
 - `SecurityIncident.Read.All` - Read security incidents
-- `SecurityIncident.ReadWrite.All` - Manage security incidents
-- `CustomDetections.ReadWrite.All` - Manage custom detections
+
+```powershell- `SecurityIncident.ReadWrite.All` - Manage security incidents
+
+# Test authentication- `CustomDetections.ReadWrite.All` - Manage custom detections
+
+Test-DefenderAuth -TenantId $tenantId -AppId $appId -AppSecret $appSecret
 
 All permissions should be granted as **Application permissions** (not Delegated).
 
-## Error Handling
+# Test device query
+
+Get-MDEDevices -Token $token -Top 5## Error Handling
+
+```
 
 All functions use try-catch blocks and throw exceptions on errors. The Azure Functions will catch these and return appropriate HTTP error responses.
 
-```powershell
-try {
-    $result = Invoke-DeviceIsolation -Token $token -DeviceIds @("id") -Comment "Test"
-} catch {
-    Write-Error $_.Exception.Message
-    throw
-}
-```
+---
 
-## Multi-Tenant Support
+```powershell
+
+## Contributingtry {
+
+    $result = Invoke-DeviceIsolation -Token $token -DeviceIds @("id") -Comment "Test"
+
+When adding new capabilities:} catch {
+
+    Write-Error $_.Exception.Message
+
+1. Follow PowerShell best practices    throw
+
+2. Use AuthManager for token acquisition}
+
+3. Add ValidationHelper checks```
+
+4. Include LoggingHelper logging
+
+5. Add error handling## Multi-Tenant Support
+
+6. Update this README
 
 The module supports multi-tenant scenarios by accepting the `TenantId` parameter in `Connect-MDE`. Each request can target a different tenant by specifying the appropriate tenant ID.
 
+---
+
 ## Logging
+
+## Version History
 
 Use `Write-Verbose` for detailed logging and `Write-Error` for errors. Azure Functions will capture these in Application Insights.
 
-```powershell
-Write-Verbose "Processing device isolation for device: $deviceId"
-Write-Error "Failed to isolate device: $($_.Exception.Message)"
+- **v2.3.0** - Specialized worker architecture with 50 actions
+
+- **v2.2.0** - Consolidated XDR orchestrator```powershell
+
+- **v2.1.0** - Multi-tenant support with centralized authWrite-Verbose "Processing device isolation for device: $deviceId"
+
+- **v1.0.0** - Initial releaseWrite-Error "Failed to isolate device: $($_.Exception.Message)"
+
 ```
 
+---
+
 ## Rate Limiting
+
+**Part of DefenderXDR v2.3.0 Platform** 🚀
 
 The MDE API has rate limits. Implement retry logic with exponential backoff for production scenarios.
 

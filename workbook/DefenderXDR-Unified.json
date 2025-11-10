@@ -1,0 +1,529 @@
+{
+  "version": "Notebook/1.0",
+  "items": [
+    {
+      "type": 1,
+      "content": {
+        "json": "# 🛡️ DefenderXDR Unified Console\n\n## Enterprise Security Orchestration & Automated Response\n\n**Platform:** Microsoft Security Suite | **Version:** 2.3.0 | **Status:** Production\n\n---\n\n### 🎯 Capabilities\n- **Incident Management** - Triage, investigate, and resolve security incidents\n- **Alert Correlation** - Multi-source alert aggregation and analysis\n- **Entity Investigation** - Deep dive into users, devices, IPs, and files\n- **Automated Response** - One-click remediation across all Microsoft security products\n- **Multi-Tenant** - Azure Lighthouse support for MSP scenarios\n\n---"
+      },
+      "name": "header-text"
+    },
+    {
+      "type": 9,
+      "content": {
+        "version": "KqlParameterItem/1.0",
+        "crossComponentResources": ["value::all"],
+        "parameters": [
+          {
+            "id": "function-app-param",
+            "version": "KqlParameterItem/1.0",
+            "name": "FunctionApp",
+            "label": "🔧 DefenderXDR Function App",
+            "type": 5,
+            "isRequired": true,
+            "isGlobal": true,
+            "query": "Resources | where type =~ 'microsoft.web/sites' and kind contains 'functionapp' | project id, name, resourceGroup, subscriptionId | order by name asc",
+            "crossComponentResources": ["value::all"],
+            "typeSettings": {
+              "additionalResourceOptions": [],
+              "showDefault": false
+            },
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources"
+          },
+          {
+            "id": "workspace-param",
+            "version": "KqlParameterItem/1.0",
+            "name": "Workspace",
+            "label": "📊 Log Analytics Workspace",
+            "type": 5,
+            "isRequired": true,
+            "isGlobal": true,
+            "query": "Resources | where type =~ 'microsoft.operationalinsights/workspaces' | project id, name, resourceGroup | order by name asc",
+            "crossComponentResources": ["value::all"],
+            "typeSettings": {
+              "additionalResourceOptions": [],
+              "showDefault": false
+            },
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources"
+          },
+          {
+            "id": "subscription-hidden",
+            "version": "KqlParameterItem/1.0",
+            "name": "Subscription",
+            "type": 1,
+            "isRequired": true,
+            "isGlobal": true,
+            "query": "Resources | where id == '{FunctionApp}' | project value = subscriptionId",
+            "crossComponentResources": ["value::all"],
+            "isHiddenWhenLocked": true,
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources"
+          },
+          {
+            "id": "resourcegroup-hidden",
+            "version": "KqlParameterItem/1.0",
+            "name": "ResourceGroup",
+            "type": 1,
+            "isRequired": true,
+            "isGlobal": true,
+            "query": "Resources | where id == '{FunctionApp}' | project value = resourceGroup",
+            "crossComponentResources": ["value::all"],
+            "isHiddenWhenLocked": true,
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources"
+          },
+          {
+            "id": "functionappname-hidden",
+            "version": "KqlParameterItem/1.0",
+            "name": "FunctionAppName",
+            "type": 1,
+            "isRequired": true,
+            "isGlobal": true,
+            "query": "Resources | where id == '{FunctionApp}' | project value = name",
+            "crossComponentResources": ["value::all"],
+            "isHiddenWhenLocked": true,
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources"
+          },
+          {
+            "id": "tenant-selector",
+            "version": "KqlParameterItem/1.0",
+            "name": "TenantId",
+            "label": "🏢 Microsoft 365 Tenant",
+            "type": 2,
+            "isRequired": true,
+            "isGlobal": true,
+            "query": "ResourceContainers | where type == 'microsoft.resources/subscriptions' | project tenantId | distinct tenantId | project value = tenantId, label = strcat('🏢 ', tenantId) | order by label asc",
+            "crossComponentResources": ["value::all"],
+            "typeSettings": {
+              "additionalResourceOptions": [],
+              "selectFirstItem": true,
+              "showDefault": false
+            },
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources"
+          },
+          {
+            "id": "timerange-param",
+            "version": "KqlParameterItem/1.0",
+            "name": "TimeRange",
+            "label": "⏰ Time Range",
+            "type": 4,
+            "isRequired": true,
+            "isGlobal": true,
+            "value": {
+              "durationMs": 86400000
+            },
+            "typeSettings": {
+              "selectableValues": [
+                {"durationMs": 3600000, "label": "Last hour"},
+                {"durationMs": 14400000, "label": "Last 4 hours"},
+                {"durationMs": 43200000, "label": "Last 12 hours"},
+                {"durationMs": 86400000, "label": "Last 24 hours"},
+                {"durationMs": 172800000, "label": "Last 2 days"},
+                {"durationMs": 604800000, "label": "Last 7 days"},
+                {"durationMs": 2592000000, "label": "Last 30 days"}
+              ],
+              "allowCustom": true
+            }
+          },
+          {
+            "id": "autorefresh-param",
+            "version": "KqlParameterItem/1.0",
+            "name": "AutoRefresh",
+            "label": "🔄 Auto Refresh",
+            "type": 2,
+            "isGlobal": true,
+            "value": "30000",
+            "jsonData": "[\n  {\"value\": \"0\", \"label\": \"Off\"},\n  {\"value\": \"10000\", \"label\": \"10 seconds\"},\n  {\"value\": \"30000\", \"label\": \"30 seconds\"},\n  {\"value\": \"60000\", \"label\": \"1 minute\"},\n  {\"value\": \"300000\", \"label\": \"5 minutes\"}\n]",
+            "typeSettings": {
+              "additionalResourceOptions": [],
+              "showDefault": false
+            }
+          }
+        ],
+        "style": "pills",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "name": "global-parameters"
+    },
+    {
+      "type": 11,
+      "content": {
+        "version": "LinkItem/1.0",
+        "style": "tabs",
+        "links": [
+          {
+            "id": "dashboard-link",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "📊 Dashboard",
+            "subTarget": "Dashboard",
+            "style": "link"
+          },
+          {
+            "id": "incidents-link",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "🚨 Incidents",
+            "subTarget": "Incidents",
+            "style": "link"
+          },
+          {
+            "id": "alerts-link",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "⚠️ Alerts",
+            "subTarget": "Alerts",
+            "style": "link"
+          },
+          {
+            "id": "entities-link",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "🔍 Entities",
+            "subTarget": "Entities",
+            "style": "link"
+          },
+          {
+            "id": "devices-link",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "💻 Devices",
+            "subTarget": "Devices",
+            "style": "link"
+          },
+          {
+            "id": "response-link",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "⚡ Response Actions",
+            "subTarget": "ResponseActions",
+            "style": "link"
+          }
+        ]
+      },
+      "name": "navigation-tabs"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "## 📊 Security Operations Dashboard\n\n**Real-time metrics and trends across your Microsoft security stack**"
+            },
+            "name": "dashboard-header"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "SecurityIncident\n| where TimeGenerated {TimeRange}\n| summarize TotalIncidents = count() by bin(TimeGenerated, 1h)\n| order by TimeGenerated asc\n| project TimeGenerated, TotalIncidents",
+              "size": 0,
+              "title": "Incidents Over Time",
+              "timeContext": {
+                "durationMs": 0
+              },
+              "timeContextFromParameter": "TimeRange",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "crossComponentResources": ["{Workspace}"],
+              "visualization": "areachart"
+            },
+            "customWidth": "50",
+            "name": "incidents-chart"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "SecurityAlert\n| where TimeGenerated {TimeRange}\n| summarize TotalAlerts = count() by AlertSeverity\n| project Severity = AlertSeverity, Count = TotalAlerts\n| order by Count desc",
+              "size": 3,
+              "title": "Alerts by Severity",
+              "timeContext": {
+                "durationMs": 0
+              },
+              "timeContextFromParameter": "TimeRange",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "crossComponentResources": ["{Workspace}"],
+              "visualization": "piechart"
+            },
+            "customWidth": "50",
+            "name": "alerts-severity-chart"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "union\n  (SecurityIncident | where TimeGenerated {TimeRange} | summarize Value = count() | extend Metric = \"Total Incidents\"),\n  (SecurityIncident | where TimeGenerated {TimeRange} and Status in (\"Active\", \"New\") | summarize Value = count() | extend Metric = \"Active Incidents\"),\n  (SecurityAlert | where TimeGenerated {TimeRange} | summarize Value = count() | extend Metric = \"Total Alerts\"),\n  (SecurityAlert | where TimeGenerated {TimeRange} and AlertSeverity == \"High\" | summarize Value = count() | extend Metric = \"High Severity Alerts\"),\n  (DeviceInfo | summarize Value = dcount(DeviceId) | extend Metric = \"Monitored Devices\"),\n  (IdentityInfo | summarize Value = dcount(AccountObjectId) | extend Metric = \"Monitored Identities\")\n| project Metric, Value",
+              "size": 4,
+              "title": "Security Metrics",
+              "timeContext": {
+                "durationMs": 0
+              },
+              "timeContextFromParameter": "TimeRange",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "crossComponentResources": ["{Workspace}"],
+              "visualization": "tiles",
+              "tileSettings": {
+                "titleContent": {
+                  "columnMatch": "Metric",
+                  "formatter": 1
+                },
+                "leftContent": {
+                  "columnMatch": "Value",
+                  "formatter": 12,
+                  "formatOptions": {
+                    "palette": "auto"
+                  }
+                },
+                "showBorder": true
+              }
+            },
+            "name": "metrics-tiles"
+          }
+        ],
+        "exportParameters": true
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "Dashboard"
+      },
+      "name": "dashboard-tab"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "## 🚨 Incident Management\n\n**Investigate and respond to security incidents with automated actions**\n\n### Quick Actions\n- Select incidents to view details and related entities\n- Execute response actions using ARM template buttons (requires confirmation)\n- View incident timeline and related alerts"
+            },
+            "name": "incidents-header"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "incident-severity-filter",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "SeverityFilter",
+                  "label": "Severity",
+                  "type": 2,
+                  "isRequired": false,
+                  "multiSelect": true,
+                  "quote": "'",
+                  "delimiter": ",",
+                  "jsonData": "[\n  {\"value\": \"High\", \"label\": \"High\"},\n  {\"value\": \"Medium\", \"label\": \"Medium\"},\n  {\"value\": \"Low\", \"label\": \"Low\"},\n  {\"value\": \"Informational\", \"label\": \"Informational\"}\n]",
+                  "value": ["High", "Medium"],
+                  "typeSettings": {
+                    "additionalResourceOptions": [],
+                    "showDefault": false
+                  }
+                },
+                {
+                  "id": "incident-status-filter",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "StatusFilter",
+                  "label": "Status",
+                  "type": 2,
+                  "isRequired": false,
+                  "multiSelect": true,
+                  "quote": "'",
+                  "delimiter": ",",
+                  "jsonData": "[\n  {\"value\": \"New\", \"label\": \"New\"},\n  {\"value\": \"Active\", \"label\": \"Active\"},\n  {\"value\": \"Resolved\", \"label\": \"Resolved\"},\n  {\"value\": \"Closed\", \"label\": \"Closed\"}\n]",
+                  "value": ["New", "Active"],
+                  "typeSettings": {
+                    "additionalResourceOptions": [],
+                    "showDefault": false
+                  }
+                },
+                {
+                  "id": "selected-incident-param",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "SelectedIncidentId",
+                  "label": "Selected Incident",
+                  "type": 1,
+                  "value": "",
+                  "description": "Click on incident in table to populate"
+                }
+              ],
+              "style": "pills",
+              "queryType": 0
+            },
+            "name": "incident-filters"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "SecurityIncident\n| where TimeGenerated {TimeRange}\n| where Severity in ({SeverityFilter}) or isempty('{SeverityFilter}')\n| where Status in ({StatusFilter}) or isempty('{StatusFilter}')\n| extend \n    IncidentId = IncidentNumber,\n    IncidentName = Title,\n    CreatedTime = TimeGenerated,\n    LastModified = LastModifiedTime,\n    Owner = tostring(Owner.assignedTo),\n    Classification = tostring(Classification)\n| project \n    CreatedTime,\n    IncidentId,\n    IncidentName,\n    Severity,\n    Status,\n    Owner,\n    AlertsCount,\n    Classification,\n    LastModified\n| order by CreatedTime desc\n| take 100",
+              "size": 0,
+              "title": "Security Incidents ({SeverityFilter:label}, {StatusFilter:label})",
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "timeContext": {
+                "durationMs": 0
+              },
+              "timeContextFromParameter": "TimeRange",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "crossComponentResources": ["{Workspace}"],
+              "gridSettings": {
+                "formatters": [
+                  {
+                    "columnMatch": "IncidentId",
+                    "formatter": 7,
+                    "formatOptions": {
+                      "linkTarget": "parameter",
+                      "linkLabel": "🔍 Select",
+                      "linkIsContextBlade": false,
+                      "parameterName": "SelectedIncidentId",
+                      "parameterValue": "{IncidentId}"
+                    }
+                  },
+                  {
+                    "columnMatch": "Severity",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "icons",
+                      "thresholdsGrid": [
+                        {"operator": "==", "thresholdValue": "High", "representation": "critical", "text": "🔴 {0}"},
+                        {"operator": "==", "thresholdValue": "Medium", "representation": "warning", "text": "🟡 {0}"},
+                        {"operator": "==", "thresholdValue": "Low", "representation": "info", "text": "🔵 {0}"},
+                        {"operator": "Default", "representation": "success", "text": "⚪ {0}"}
+                      ]
+                    }
+                  },
+                  {
+                    "columnMatch": "Status",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "icons",
+                      "thresholdsGrid": [
+                        {"operator": "==", "thresholdValue": "New", "representation": "pending", "text": "🆕 {0}"},
+                        {"operator": "==", "thresholdValue": "Active", "representation": "2", "text": "⚡ {0}"},
+                        {"operator": "==", "thresholdValue": "Resolved", "representation": "success", "text": "✅ {0}"},
+                        {"operator": "Default", "representation": "Blank", "text": "{0}"}
+                      ]
+                    }
+                  }
+                ],
+                "filter": true,
+                "sortBy": [
+                  {
+                    "itemKey": "CreatedTime",
+                    "sortOrder": 2
+                  }
+                ]
+              },
+              "sortBy": [
+                {
+                  "itemKey": "CreatedTime",
+                  "sortOrder": 2
+                }
+              ]
+            },
+            "name": "incidents-grid"
+          },
+          {
+            "type": 12,
+            "content": {
+              "version": "NotebookGroup/1.0",
+              "groupType": "editable",
+              "title": "📋 Incident Details - {SelectedIncidentId}",
+              "expandable": true,
+              "expanded": true,
+              "items": [
+                {
+                  "type": 3,
+                  "content": {
+                    "version": "KqlItem/1.0",
+                    "query": "SecurityIncident\n| where IncidentNumber == \"{SelectedIncidentId}\"\n| extend \n    IncidentUrl = strcat('https://security.microsoft.com/incidents/', IncidentNumber),\n    Entities = tostring(AdditionalData.alertProductNames)\n| project \n    IncidentNumber,\n    Title,\n    Description,\n    Severity,\n    Status,\n    Classification,\n    CreatedTime = TimeGenerated,\n    LastModified = LastModifiedTime,\n    Owner = tostring(Owner.assignedTo),\n    AlertsCount,\n    Entities,\n    IncidentUrl",
+                    "size": 0,
+                    "title": "Incident Information",
+                    "timeContext": {
+                      "durationMs": 0
+                    },
+                    "timeContextFromParameter": "TimeRange",
+                    "queryType": 0,
+                    "resourceType": "microsoft.operationalinsights/workspaces",
+                    "crossComponentResources": ["{Workspace}"],
+                    "gridSettings": {
+                      "formatters": [
+                        {
+                          "columnMatch": "IncidentUrl",
+                          "formatter": 7,
+                          "formatOptions": {
+                            "linkTarget": "Url",
+                            "linkLabel": "🔗 Open in Defender Portal"
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "conditionalVisibility": {
+                    "parameterName": "SelectedIncidentId",
+                    "comparison": "isNotEqualTo"
+                  },
+                  "name": "incident-details"
+                },
+                {
+                  "type": 3,
+                  "content": {
+                    "version": "KqlItem/1.0",
+                    "query": "SecurityAlert\n| where TimeGenerated {TimeRange}\n| where IncidentNumber == \"{SelectedIncidentId}\"\n| extend \n    AlertName = DisplayName,\n    AlertTime = TimeGenerated\n| project \n    AlertTime,\n    AlertName,\n    AlertSeverity,\n    ProviderName,\n    Tactics,\n    Techniques,\n    Entities\n| order by AlertTime desc",
+                    "size": 0,
+                    "title": "Related Alerts",
+                    "timeContext": {
+                      "durationMs": 0
+                    },
+                    "timeContextFromParameter": "TimeRange",
+                    "queryType": 0,
+                    "resourceType": "microsoft.operationalinsights/workspaces",
+                    "crossComponentResources": ["{Workspace}"]
+                  },
+                  "conditionalVisibility": {
+                    "parameterName": "SelectedIncidentId",
+                    "comparison": "isNotEqualTo"
+                  },
+                  "name": "related-alerts"
+                }
+              ]
+            },
+            "conditionalVisibility": {
+              "parameterName": "SelectedIncidentId",
+              "comparison": "isNotEqualTo"
+            },
+            "name": "incident-details-group"
+          }
+        ],
+        "exportParameters": true
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "Incidents"
+      },
+      "name": "incidents-tab"
+    }
+  ],
+  "fallbackResourceIds": [],
+  "fromTemplateId": "sentinel-DefenderXDR-Unified",
+  "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
+}

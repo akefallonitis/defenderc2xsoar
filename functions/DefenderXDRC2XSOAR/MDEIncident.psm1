@@ -1,7 +1,7 @@
 <#
 .SYNOPSIS
-    Incident management module for MDE Automator Local
-    
+    Incident management module for DefenderXDR C2 XSOAR
+
 .DESCRIPTION
     Handles security incident operations in Microsoft Defender for Endpoint
 #>

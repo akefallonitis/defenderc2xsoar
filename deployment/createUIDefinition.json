@@ -10,7 +10,7 @@
         "label": "Function App Name",
         "defaultValue": "",
         "toolTip": "Enter a globally unique name for your function app. This will be used to create the Azure Function App resource.",
-        "placeholder": "mde-automator-func-prod",
+        "placeholder": "defenderxdr-func-prod",
         "constraints": {
           "required": true,
           "regex": "^[a-z0-9][a-z0-9-]{1,58}[a-z0-9]$",

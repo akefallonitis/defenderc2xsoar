@@ -1,7 +1,7 @@
 {
   "$schema": "https://aka.ms/azure-quickstart-templates-metadata-schema#",
   "type": "QuickStart",
-  "itemDisplayName": "MDE Automator - Defender for Endpoint Automation",
+  "itemDisplayName": "DefenderXDR C2 XSOAR - Microsoft Security Orchestration Platform",
   "description": "Deploy an Azure Function App for Microsoft Defender for Endpoint automation with workbook-based UI. Includes managed identity support and multi-tenant capabilities.",
   "summary": "Azure Function App for MDE automation with workbook integration",
   "githubUsername": "akefallonitis",

@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    Configuration management module for MDE Automator Local
+    Configuration management module for DefenderXDR C2 XSOAR
     
 .DESCRIPTION
     Handles saving and loading configuration securely
@@ -14,7 +14,7 @@ function Get-ConfigPath {
     [CmdletBinding()]
     param()
     
-    $configDir = Join-Path $env:USERPROFILE ".mdeautomator"
+    $configDir = Join-Path $env:USERPROFILE ".defenderxdrc2xsoar"
     if (-not (Test-Path $configDir)) {
         New-Item -ItemType Directory -Path $configDir -Force | Out-Null
     }

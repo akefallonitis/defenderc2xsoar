@@ -1,7 +1,7 @@
 <#
 .SYNOPSIS
-    Advanced Hunting module for MDE Automator Local
-    
+    Advanced Hunting module for DefenderXDR C2 XSOAR
+
 .DESCRIPTION
     Handles advanced hunting queries in Microsoft Defender for Endpoint
 #>

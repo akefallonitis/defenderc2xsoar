@@ -6,7 +6,7 @@ param(
     [string]$TemplateFile = "azuredeploy.json",
     
     [Parameter(Mandatory=$false)]
-    [string]$ResourceGroup = "rg-mde-automator-test",
+    [string]$ResourceGroup = "rg-defenderxdr-test",
     
     [Parameter(Mandatory=$false)]
     [string]$Location = "eastus"

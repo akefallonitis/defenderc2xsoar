@@ -1,7 +1,7 @@
 <#
 .SYNOPSIS
-    Custom detection module for MDE Automator Local
-    
+    Custom detection module for DefenderXDR C2 XSOAR
+
 .DESCRIPTION
     Handles custom detection rule operations in Microsoft Defender for Endpoint
 #>

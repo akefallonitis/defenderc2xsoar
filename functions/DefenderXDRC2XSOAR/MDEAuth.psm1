@@ -1,7 +1,7 @@
 <#
 .SYNOPSIS
-    Authentication module for MDE Automator Local
-    
+    Authentication module for DefenderXDR C2 XSOAR
+
 .DESCRIPTION
     Handles authentication to Microsoft Defender for Endpoint API using App Registration
 #>

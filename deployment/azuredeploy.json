@@ -235,7 +235,7 @@
     {
       "type": "Microsoft.Insights/workbooks",
       "apiVersion": "2021-03-08",
-      "name": "[guid(resourceGroup().id, 'mde-automator-workbook')]",
+      "name": "[guid(resourceGroup().id, 'defenderxdr-workbook')]",
       "location": "[parameters('location')]",
       "kind": "shared",
       "tags": {
