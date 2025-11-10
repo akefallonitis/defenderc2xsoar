@@ -178,6 +178,24 @@ try {
             $result.details = "Cancelled action $actionId"
             $result.cancelResult = $cancelResult
         }
+        "Offboard Device" {
+            if ($deviceIdList.Count -eq 0) {
+                throw "Device ID required for offboarding"
+            }
+            $commentText = if ($comment) { $comment } else { "Offboarded via Azure Function" }
+            $response = Invoke-DeviceOffboard -Token $token -DeviceId $deviceIdList[0] -Comment $commentText
+            $result.details = "Device offboarding initiated for device"
+            $result.actionId = $response.id
+        }
+        "Start Investigation" {
+            if ($deviceIdList.Count -eq 0) {
+                throw "Device ID required for automated investigation"
+            }
+            $commentText = if ($comment) { $comment } else { "Investigation via Azure Function" }
+            $response = Start-AutomatedInvestigation -Token $token -DeviceId $deviceIdList[0] -Comment $commentText
+            $result.details = "Automated investigation started"
+            $result.investigationId = $response.id
+        }
         default {
             $result.status = "Unknown"
             $result.message = "Unknown action type: $action"

@@ -1,14 +1,17 @@
-# DefenderC2 XSOAR
+# DefenderXDRC2XSOAR
 
-**Command & Control for Microsoft Defender for Endpoint** - A modern automation platform inspired by [MDEAutomator](https://github.com/msdirtbag/MDEAutomator), offering flexible deployment options for security operations teams.
+**Full Microsoft Defender XDR Command & Control** - A comprehensive automation platform for Microsoft security ecosystem including MDE, MDO, MDI, Entra ID, Intune, and Azure. Inspired by [MDEAutomator](https://github.com/msdirtbag/MDEAutomator), now expanded to cover the entire Microsoft XDR stack.
 
-## ✅ PRODUCTION READY - Version 1.0.0
+## ✅ PRODUCTION READY - Version 2.0.0
 
-This package is validated and ready for deployment with all critical fixes applied:
-- ✅ **ARM Actions Fixed** - Proper Type 11 LinkItem format with armActionContext
-- ✅ **Function Authentication Fixed** - All functions use authLevel: "function" 
-- ✅ **Auto-populated Function Keys** - Workbook automatically retrieves keys via ARM API
-- ✅ **Documentation Cleaned** - Organized and production-ready
+This package provides full XDR capabilities with validated deployment:
+- ✅ **Full XDR Coverage** - 40+ actions across all Microsoft security services
+- ✅ **Email Remediation (MDO)** - Soft/hard delete, quarantine, threat submission
+- ✅ **Identity Protection** - User management, risk assessment, conditional access
+- ✅ **Endpoint Security (MDE)** - Complete device control and investigation
+- ✅ **Intune Integration** - Device management and compliance
+- ✅ **Azure Security** - Infrastructure protection and network controls
+- ✅ **Unified Module** - DefenderXDRC2XSOAR PowerShell module (v2.0.0)
 
 **Quick Start**: See [DEPLOYMENT_READY_FINAL.md](DEPLOYMENT_READY_FINAL.md) for complete deployment guide.
 
@@ -20,12 +23,16 @@ Deploy the complete DefenderC2 solution (Azure Functions + Workbook) with one cl
 
 This will deploy:
 - ✅ Azure Function App (PowerShell 7.4 runtime)
-- ✅ 6 DefenderC2 Functions with function-level authentication
-- ✅ DefenderC2 Complete Workbook with ARM actions and auto-populated keys
+- ✅ 7 DefenderXDR Functions with function-level authentication
+  - DefenderC2Dispatcher (MDE actions)
+  - DefenderXDRManager (MDO, Entra ID, Intune, Azure)
+  - DefenderC2Orchestrator (unified operations)
+  - DefenderC2TIManager, HuntManager, IncidentManager, CDManager
+- ✅ DefenderXDRC2XSOAR Complete Workbook with ARM actions
 - ✅ Storage Account and App Service Plan
 - ✅ Managed Identity configuration
 
-> **Note**: You'll need to provide your multi-tenant App Registration credentials during deployment. See [DEPLOYMENT_PACKAGE.md](DEPLOYMENT_PACKAGE.md) for setup instructions.
+> **Note**: You'll need to provide your multi-tenant App Registration credentials with appropriate permissions during deployment. See [PERMISSIONS.md](PERMISSIONS.md) for complete permission requirements.
 
 ---
 
@@ -211,46 +218,74 @@ Add `?code={FunctionKey}` to URL only if needed.
 
 ## Features
 
-### 🎯 Core Capabilities
+### 🎯 Full Microsoft Defender XDR Capabilities
 
-Both deployment options provide comprehensive MDE automation:
+DefenderXDRC2XSOAR provides **40+ security actions** across the entire Microsoft security stack:
 
-#### 1. **Device Actions (Defender C2)**
-   - Isolate/Unisolate devices
-   - Collect investigation packages
-   - Run antivirus scans
-   - Restrict/Unrestrict app execution
-   - Stop & quarantine files
-   - Live Response operations (run scripts, get/put files)
+#### 1. **📧 Email Remediation (MDO - Microsoft Defender for Office 365)** - 8 Actions
+   - **Soft/Hard Delete Email** - Remove malicious emails from mailboxes
+   - **Move to Junk/Inbox** - Quarantine or restore emails
+   - **Submit Email Threats** - Report phishing to Microsoft
+   - **Submit URL Threats** - Report malicious URLs
+   - **Block URLs** - Add time-of-click URL blocking
+   - **Remove Mail Forwarding** - Disable external forwarding rules
 
-#### 2. **Threat Intelligence Management**
+#### 2. **👤 Identity & Access Management (Entra ID & Identity Protection)** - 6 Actions
+   - **Disable/Enable Users** - Control user account access
+   - **Reset Passwords** - Force password resets with next sign-in requirement
+   - **Confirm User Compromised** - Mark users as compromised for automated response
+   - **Dismiss User Risk** - Clear false positive risk detections
+   - **Revoke Sessions** - Force sign-out across all devices
+   - **Query Risk Detections** - Investigate identity risks
+
+#### 3. **🖥️ Endpoint Security (MDE - Microsoft Defender for Endpoint)** - 11 Actions
+   - **Isolate/Unisolate Devices** - Full or selective network isolation
+   - **Restrict/Unrestrict App Execution** - Control code execution
+   - **Run Antivirus Scans** - Quick or full scans
+   - **Collect Investigation Package** - Gather forensic data
+   - **Stop & Quarantine Files** - Block malicious files
+   - **Offboard Machines** - Remove devices from MDE
+   - **Start Automated Investigation** - Trigger AIR investigations
+   - **Live Response Operations** - Run scripts, get/put files
+   - **View Device Status** - Query device information
+   - **Manage Actions** - Track and cancel actions
+
+#### 4. **🔐 Conditional Access & Policies (Entra ID P1+)** - 6 Actions
+   - **Create Named Locations** - Define trusted/blocked IP ranges
+   - **Update Named Locations** - Modify IP-based policies
+   - **Create CA Policies** - Build conditional access rules
+   - **Sign-In Risk Policies** - Respond to risky sign-ins
+   - **User Risk Policies** - Handle compromised accounts
+   - **Query Locations** - Review location policies
+
+#### 5. **📱 Device Management (Intune)** - 6 Actions
+   - **Remote Lock** - Lock devices remotely
+   - **Wipe Device** - Full or selective wipe
+   - **Retire Device** - Remove company data only
+   - **Sync Device** - Force policy sync
+   - **Run Defender Scan** - Initiate Windows Defender scan
+   - **Query Managed Devices** - Get device inventory
+
+#### 6. **☁️ Azure Infrastructure Security** - 5 Actions
+   - **Add NSG Deny Rules** - Block IPs/ports at network level
+   - **Stop Azure VMs** - Shut down compromised VMs
+   - **Disable Storage Public Access** - Secure storage accounts
+   - **Remove VM Public IPs** - Eliminate internet exposure
+   - **Query Azure VMs** - Get VM inventory
+
+#### 7. **🔍 Threat Intelligence & Hunting**
    - File indicators (SHA1/SHA256 hashes)
    - Network indicators (IPs, URLs, domains)
    - Certificate indicators
-   - Bulk operations via CSV import
-   - Custom detection rule management
+   - Advanced KQL hunting queries
+   - Custom detection rules
+   - Bulk IOC operations
 
-#### 3. **Action Management**
-   - View recent machine actions
-   - Check action status
-   - Cancel pending actions (safety switch)
-   - View action results and outputs
-
-#### 4. **Advanced Hunting**
-   - Execute KQL queries against MDE
-   - Scheduled hunting operations
-   - Query library management
-   - Result analysis and export
-
-#### 5. **Incident Management**
+#### 8. **🎯 Incident Management**
    - View and filter security incidents
    - Update incident status and classification
    - Investigation comments and notes
    - Incident summaries and reports
-
-#### 6. **Custom Detection Rules**
-   - List custom detection rules
-   - Create/update/delete rules
    - Backup and restore detections
    - Rule management and versioning
 
