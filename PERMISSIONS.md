@@ -1,6 +1,11 @@
-# DefenderXDRC2XSOAR - Required Permissions
+# DefenderXDRC2XSOAR - Required Permissions (v2.1.0)
 
-This document outlines all required permissions for the DefenderXDRC2XSOAR solution to function across all Microsoft security services.
+This document outlines all required permissions for the DefenderXDRC2XSOAR v2.1.0 solution to function across all Microsoft security services.
+
+**NEW in v2.1.0:**
+- ✅ Microsoft Defender for Cloud (MDC) permissions
+- ✅ Microsoft Defender for Identity (MDI) permissions
+- ✅ Centralized authentication with token caching
 
 ## App Registration Requirements
 
@@ -208,6 +213,71 @@ Azure RBAC Roles (assigned to Service Principal):
 - Disable storage account public access
 - Remove public IPs from VMs
 - Query Azure resources
+
+### 7. Microsoft Defender for Cloud (MDC) - NEW v2.1.0
+```
+Azure RBAC Roles (assigned to Service Principal):
+- Security Reader (minimum for read operations)
+- Security Admin (required for write operations)
+- Contributor (for JIT access and infrastructure changes)
+```
+
+**API Access:**
+- Microsoft.Security/alerts/read
+- Microsoft.Security/alerts/write
+- Microsoft.Security/assessments/read
+- Microsoft.Security/pricings/read
+- Microsoft.Security/pricings/write
+- Microsoft.Security/secureScores/read
+- Microsoft.Security/regulatoryComplianceStandards/read
+- Microsoft.Security/jitNetworkAccessPolicies/read
+- Microsoft.Security/jitNetworkAccessPolicies/write
+- Microsoft.Security/jitNetworkAccessPolicies/initiate/action
+- Microsoft.Security/autoProvisioningSettings/read
+- Microsoft.Security/autoProvisioningSettings/write
+
+**Actions Enabled:**
+- Get and update security alerts
+- Retrieve security recommendations
+- Get secure score
+- Get regulatory compliance status
+- Enable/disable Defender plans
+- Configure auto-provisioning
+- Manage Just-in-Time VM access
+
+### 8. Microsoft Defender for Identity (MDI) - NEW v2.1.0
+```
+Microsoft Graph API (Application):
+- SecurityEvents.Read.All (read MDI alerts)
+- SecurityAlert.ReadWrite.All (read/write MDI alerts)
+- SecurityEvents.ReadWrite.All (update alerts)
+- IdentityRiskyUser.Read.All (read risky users)
+```
+
+**Actions Enabled:**
+- Get MDI security alerts
+- Update alert status and classification
+- Detect lateral movement paths
+- Get suspicious activities
+- Find exposed credentials
+- Detect account enumeration
+- Detect privilege escalation
+- Get reconnaissance activities
+- Get identity secure score
+- Monitor sensor health
+- Check domain controller coverage
+
+## Permission Matrix by Service
+
+| Service | API | Permission Type | Key Permissions |
+|---------|-----|-----------------|-----------------|
+| **MDE** | Defender API | Application | Machine.*, Alert.*, Ti.*, AdvancedQuery.* |
+| **MDO** | Graph API | Application | SecurityAnalyzedMessage.ReadWrite.All, ThreatSubmission.* |
+| **MDC** | Azure RM | RBAC Role | Security Admin, Contributor |
+| **MDI** | Graph API | Application | SecurityAlert.ReadWrite.All, SecurityEvents.* |
+| **Entra ID** | Graph API | Application | User.ReadWrite.All, Directory.ReadWrite.All, IdentityRiskyUser.* |
+| **Intune** | Graph API | Application | DeviceManagement*.ReadWrite.All |
+| **Azure** | Azure RM | RBAC Role | Network Contributor, VM Contributor, Storage Contributor |
 
 ## Admin Consent Requirements
 

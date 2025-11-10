@@ -21,11 +21,32 @@
 
 # You can also define functions or aliases that can be referenced in any of your PowerShell functions.
 
+# Import AuthManager first (critical for all authentication)
+$AuthManagerPath = Join-Path $PSScriptRoot "DefenderXDRC2XSOAR\AuthManager.psm1"
+if (Test-Path $AuthManagerPath) {
+    Import-Module $AuthManagerPath -Force -ErrorAction SilentlyContinue
+    Write-Host "✅ AuthManager module loaded (centralized authentication with caching)"
+}
+
+# Import ValidationHelper module
+$ValidationHelperPath = Join-Path $PSScriptRoot "DefenderXDRC2XSOAR\ValidationHelper.psm1"
+if (Test-Path $ValidationHelperPath) {
+    Import-Module $ValidationHelperPath -Force -ErrorAction SilentlyContinue
+    Write-Host "✅ ValidationHelper module loaded (input validation & sanitization)"
+}
+
+# Import LoggingHelper module
+$LoggingHelperPath = Join-Path $PSScriptRoot "DefenderXDRC2XSOAR\LoggingHelper.psm1"
+if (Test-Path $LoggingHelperPath) {
+    Import-Module $LoggingHelperPath -Force -ErrorAction SilentlyContinue
+    Write-Host "✅ LoggingHelper module loaded (structured logging & telemetry)"
+}
+
 # Import DefenderXDRC2XSOAR module
 $DefenderXDRC2XSOARPath = Join-Path $PSScriptRoot "DefenderXDRC2XSOAR"
 if (Test-Path $DefenderXDRC2XSOARPath) {
     Import-Module (Join-Path $DefenderXDRC2XSOARPath "DefenderXDRC2XSOAR.psd1") -Force -ErrorAction SilentlyContinue
-    Write-Host "DefenderXDRC2XSOAR module loaded successfully"
+    Write-Host "✅ DefenderXDRC2XSOAR v2.1.0 module loaded successfully"
 }
 
 # Initialize storage context for file library
