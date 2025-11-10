@@ -615,7 +615,108 @@ function Stop-MachineAction {
     }
 }
 
+function Invoke-DeviceOffboard {
+    <#
+    .SYNOPSIS
+        Offboards a device from Microsoft Defender for Endpoint
+        
+    .PARAMETER Token
+        Authentication token from Connect-MDE
+        
+    .PARAMETER DeviceId
+        Device ID to offboard
+        
+    .PARAMETER Comment
+        Reason for offboarding
+        
+    .EXAMPLE
+        Invoke-DeviceOffboard -Token $token -DeviceId "device-id" -Comment "Device decommissioned"
+    #>
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true)]
+        [hashtable]$Token,
+        
+        [Parameter(Mandatory = $true)]
+        [string]$DeviceId,
+        
+        [Parameter(Mandatory = $true)]
+        [string]$Comment
+    )
+    
+    $headers = Get-MDEAuthHeaders -Token $Token
+    
+    try {
+        $uri = "$script:MDEApiBase/machines/$DeviceId/offboard"
+        
+        $body = @{
+            Comment = $Comment
+        } | ConvertTo-Json
+        
+        $response = Invoke-RestMethod -Method Post -Uri $uri -Headers $headers -Body $body
+        
+        Write-Verbose "Successfully initiated offboarding for device: $DeviceId"
+        
+        return $response
+        
+    } catch {
+        Write-Error "Failed to offboard device $DeviceId : $($_.Exception.Message)"
+        throw
+    }
+}
+
+function Start-AutomatedInvestigation {
+    <#
+    .SYNOPSIS
+        Triggers an automated investigation on a device
+        
+    .PARAMETER Token
+        Authentication token from Connect-MDE
+        
+    .PARAMETER DeviceId
+        Device ID to investigate
+        
+    .PARAMETER Comment
+        Reason for investigation
+        
+    .EXAMPLE
+        Start-AutomatedInvestigation -Token $token -DeviceId "device-id" -Comment "Suspicious activity detected"
+    #>
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true)]
+        [hashtable]$Token,
+        
+        [Parameter(Mandatory = $true)]
+        [string]$DeviceId,
+        
+        [Parameter(Mandatory = $true)]
+        [string]$Comment
+    )
+    
+    $headers = Get-MDEAuthHeaders -Token $Token
+    
+    try {
+        $uri = "$script:MDEApiBase/machines/$DeviceId/startInvestigation"
+        
+        $body = @{
+            Comment = $Comment
+        } | ConvertTo-Json
+        
+        $response = Invoke-RestMethod -Method Post -Uri $uri -Headers $headers -Body $body
+        
+        Write-Verbose "Successfully triggered investigation for device: $DeviceId"
+        
+        return $response
+        
+    } catch {
+        Write-Error "Failed to start investigation on device $DeviceId : $($_.Exception.Message)"
+        throw
+    }
+}
+
 Export-ModuleMember -Function Invoke-DeviceIsolation, Invoke-DeviceUnisolation, Invoke-RestrictAppExecution, 
     Invoke-UnrestrictAppExecution, Invoke-AntivirusScan, Invoke-CollectInvestigationPackage, 
-    Invoke-StopAndQuarantineFile, Get-DeviceInfo, Get-AllDevices, Get-MachineActionStatus, 
+    Invoke-StopAndQuarantineFile, Invoke-DeviceOffboard, Start-AutomatedInvestigation,
+    Get-DeviceInfo, Get-AllDevices, Get-MachineActionStatus, 
     Get-AllMachineActions, Stop-MachineAction
