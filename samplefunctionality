@@ -1,0 +1,243 @@
+📊 COMPLETE SUMMARY - 40 ACTIONS
+Category	Actions	API	Coverage
+Email Remediation (MDO)	8	Graph Beta	100% Graph
+User/Account (Entra ID)	6	Graph V1.0	100% Graph
+Device/Endpoint (MDE)	9	Defender API + Graph	11% Graph, 89% Defender
+Conditional Access	6	Graph V1.0/Beta	100% Graph
+Intune Device Mgmt	4	Graph V1.0	100% Graph
+Azure Infrastructure	5	Azure REST	100% Azure
+Investigations (AIR)	2	Defender API	100% Defender
+TOTAL	40	Multiple	Mixed
+🛡️ MICROSOFT DEFENDER FOR OFFICE 365 (MDO) - 8 ACTIONS
+#	Action	PowerShell Code Snippet	Documentation
+1	Soft Delete Email	powershell<br>$uri = "https://graph.microsoft.com/beta/security/collaboration/analyzedEmails/remediate"<br>$body = @{<br>    displayName = "Soft delete phishing email"<br>    action = "softDelete"<br>    analyzedEmails = @(@{<br>        networkMessageId = "message-id-here"<br>        recipientEmailAddress = "user@domain.com"<br>    })<br>} | ConvertTo-Json -Depth 5<br>Invoke-MgGraphRequest -Method POST -Uri $uri -Body $body<br>	Remediate Email
+2	Hard Delete Email	powershell<br>$uri = "https://graph.microsoft.com/beta/security/collaboration/analyzedEmails/remediate"<br>$body = @{<br>    displayName = "Hard delete malicious email"<br>    action = "hardDelete"<br>    analyzedEmails = @(@{<br>        networkMessageId = "message-id-here"<br>        recipientEmailAddress = "user@domain.com"<br>    })<br>} | ConvertTo-Json -Depth 5<br>Invoke-MgGraphRequest -Method POST -Uri $uri -Body $body<br>	Remediate Email
+3	Move Email to Junk (Quarantine)	powershell<br>$uri = "https://graph.microsoft.com/beta/security/collaboration/analyzedEmails/remediate"<br>$body = @{<br>    action = "moveToJunk"<br>    analyzedEmails = @(@{<br>        networkMessageId = "message-id-here"<br>        recipientEmailAddress = "user@domain.com"<br>    })<br>} | ConvertTo-Json -Depth 5<br>Invoke-MgGraphRequest -Method POST -Uri $uri -Body $body<br>	Remediate Email
+4	Move to Inbox (Restore)	powershell<br>$uri = "https://graph.microsoft.com/beta/security/collaboration/analyzedEmails/remediate"<br>$body = @{<br>    action = "moveToInbox"<br>    analyzedEmails = @(@{<br>        networkMessageId = "message-id-here"<br>        recipientEmailAddress = "user@domain.com"<br>    })<br>} | ConvertTo-Json -Depth 5<br>Invoke-MgGraphRequest -Method POST -Uri $uri -Body $body<br>	Remediate Email
+5	Submit Email Threat	powershell<br>$params = @{<br>    "@odata.type" = "#microsoft.graph.security.emailUrlThreatSubmission"<br>    category = "phishing"<br>    recipientEmailAddress = "user@domain.com"<br>    messageUrl = "https://graph.microsoft.com/beta/users/user-id/messages/message-id"<br>}<br>Invoke-MgBetaSecurityThreatSubmissionEmailThreat -BodyParameter $params<br>	Email Threat Submission
+6	Submit URL Threat	powershell<br>$uri = "https://graph.microsoft.com/beta/security/threatSubmission/urlThreats"<br>$body = @{<br>    "@odata.type" = "#microsoft.graph.security.urlThreatSubmission"<br>    category = "phishing"<br>    url = "https://malicious-url.com"<br>} | ConvertTo-Json<br>Invoke-MgGraphRequest -Method POST -Uri $uri -Body $body<br>	Threat Submission
+7	Block URL (Add IOC)	powershell<br>$params = @{<br>    action = "block"<br>    targetProduct = "Microsoft Defender ATP"<br>    url = "https://malicious-url.com"<br>    threatType = "MaliciousUrl"<br>    expirationDateTime = (Get-Date).AddDays(90).ToString("o")<br>    description = "Blocking phishing URL"<br>}<br>New-MgBetaSecurityTiIndicator -BodyParameter $params<br>	TI Indicators
+8	Turn Off External Mail Forwarding	powershell<br>$userId = "user@domain.com"<br>$rules = Get-MgUserMailFolderMessageRule -UserId $userId -MailFolderId "Inbox"<br>foreach ($rule in $rules) {<br>    if ($rule.Actions.ForwardTo) {<br>        Remove-MgUserMailFolderMessageRule -UserId $userId `<br>            -MailFolderId "Inbox" -MessageRuleId $rule.Id<br>        Write-Host "Removed forwarding rule: $($rule.DisplayName)"<br>    }<br>}<br>	Message Rules
+👤 MICROSOFT ENTRA ID & IDENTITY PROTECTION - 6 ACTIONS
+#	Action	PowerShell Code Snippet	Documentation
+9	Disable User Account	powershell<br>$userId = "user@domain.com"<br>Update-MgUser -UserId $userId -AccountEnabled:$false<br>Write-Host "User account disabled: $userId"<br>	Update User
+10	Enable User Account	powershell<br>$userId = "user@domain.com"<br>Update-MgUser -UserId $userId -AccountEnabled:$true<br>Write-Host "User account enabled: $userId"<br>	Update User
+11	Reset User Password	powershell<br>$userId = "user@domain.com"<br>$newPassword = "TempP@ssw0rd123!"<br>$passwordProfile = @{<br>    Password = $newPassword<br>    ForceChangePasswordNextSignIn = $true<br>}<br>Update-MgUser -UserId $userId -PasswordProfile $passwordProfile<br>Write-Host "Password reset for: $userId"<br>	Update User
+12	Confirm User Compromised	powershell<br>Import-Module Microsoft.Graph.Identity.SignIns<br>$userId = "user-guid-here"<br>Confirm-MgRiskyUserCompromised -UserIds @($userId)<br>Write-Host "User confirmed as compromised: $userId"<br>	Confirm Compromised
+13	Dismiss User as Compromised	powershell<br>Import-Module Microsoft.Graph.Identity.SignIns<br>$userId = "user-guid-here"<br>Invoke-MgDismissRiskyUser -UserIds @($userId)<br>Write-Host "User risk dismissed: $userId"<br>	Dismiss Risky User
+14	Revoke User Sessions	powershell<br>$userId = "user@domain.com"<br>Revoke-MgUserSignInSession -UserId $userId<br>Write-Host "All sessions revoked for: $userId"<br>	Revoke Sessions
+🖥️ MICROSOFT DEFENDER FOR ENDPOINT (MDE) - 9 ACTIONS
+Authentication Setup
+PowerShell
+$tenantId = "your-tenant-id"
+$clientId = "your-client-id"
+$clientSecret = "your-client-secret"
+$resource = "https://api.securitycenter.microsoft.com"
+$body = @{
+    client_id = $clientId
+    client_secret = $clientSecret
+    scope = "$resource/.default"
+    grant_type = "client_credentials"
+}
+$tokenResponse = Invoke-RestMethod -Method Post `
+    -Uri "https://login.microsoftonline.com/$tenantId/oauth2/v2.0/token" -Body $body
+$token = $tokenResponse.access_token
+$headers = @{ Authorization = "Bearer $token" }
+#	Action	PowerShell Code Snippet	Documentation
+15	Isolate Device	powershell<br>$machineId = "machine-guid-here"<br>$uri = "https://api.securitycenter.microsoft.com/api/machines/$machineId/isolate"<br>$body = @{<br>    Comment = "Isolating device due to threat detection"<br>    IsolationType = "Full"<br>} | ConvertTo-Json<br>$response = Invoke-RestMethod -Method Post -Uri $uri -Headers $headers `<br>    -Body $body -ContentType "application/json"<br>Write-Host "Device isolated. Action ID: $($response.id)"<br>	Isolate Machine
+16	Release from Isolation (Unisolate)	powershell<br>$machineId = "machine-guid-here"<br>$uri = "https://api.securitycenter.microsoft.com/api/machines/$machineId/unisolate"<br>$body = @{ Comment = "Threat remediated, releasing" } | ConvertTo-Json<br>$response = Invoke-RestMethod -Method Post -Uri $uri -Headers $headers `<br>    -Body $body -ContentType "application/json"<br>Write-Host "Device released. Action ID: $($response.id)"<br>	Unisolate Machine
+17	Restrict Code Execution	powershell<br>$machineId = "machine-guid-here"<br>$uri = "https://api.securitycenter.microsoft.com/api/machines/$machineId/restrictCodeExecution"<br>$body = @{ Comment = "Restricting execution" } | ConvertTo-Json<br>$response = Invoke-RestMethod -Method Post -Uri $uri -Headers $headers `<br>    -Body $body -ContentType "application/json"<br>Write-Host "Code execution restricted. Action ID: $($response.id)"<br>	Restrict Code Execution
+18	Release Code Execution (Unrestrict)	powershell<br>$machineId = "machine-guid-here"<br>$uri = "https://api.securitycenter.microsoft.com/api/machines/$machineId/unrestrictCodeExecution"<br>$body = @{ Comment = "Threat cleared, unrestricting" } | ConvertTo-Json<br>$response = Invoke-RestMethod -Method Post -Uri $uri -Headers $headers `<br>    -Body $body -ContentType "application/json"<br>Write-Host "Code execution unrestricted. Action ID: $($response.id)"<br>	Unrestrict Code Execution
+19	Collect Investigation Package	powershell<br>$machineId = "machine-guid-here"<br>$uri = "https://api.securitycenter.microsoft.com/api/machines/$machineId/collectInvestigationPackage"<br>$body = @{ Comment = "Collecting forensics for investigation" } | ConvertTo-Json<br>$response = Invoke-RestMethod -Method Post -Uri $uri -Headers $headers `<br>    -Body $body -ContentType "application/json"<br>Write-Host "Collection started. Action ID: $($response.id)"<br>	Collect Investigation Package
+20	Stop and Quarantine File	powershell<br>$fileSha1 = "file-sha1-hash-here"<br>$uri = "https://api.securitycenter.microsoft.com/api/files/$fileSha1/stopAndQuarantineFile"<br>$body = @{ Comment = "Quarantining malicious file" } | ConvertTo-Json<br>$response = Invoke-RestMethod -Method Post -Uri $uri -Headers $headers `<br>    -Body $body -ContentType "application/json"<br>Write-Host "File quarantined. Action ID: $($response.id)"<br>	Stop and Quarantine File
+21	Run Antivirus Scan	powershell<br># Option 1: Graph API for Intune devices<br>Connect-MgGraph -Scopes "DeviceManagementManagedDevices.ReadWrite.All"<br>$deviceId = "intune-device-id"<br>Invoke-MgBetaScanDeviceManagementManagedDeviceWindowsDefender `<br>    -ManagedDeviceId $deviceId -QuickScan:$false<br><br># Option 2: Defender API<br>$machineId = "machine-guid-here"<br>$uri = "https://api.securitycenter.microsoft.com/api/machines/$machineId/runAntiVirusScan"<br>$body = @{ Comment = "Running full scan"; ScanType = "Full" } | ConvertTo-Json<br>Invoke-RestMethod -Method Post -Uri $uri -Headers $headers `<br>    -Body $body -ContentType "application/json"<br>	Run AV Scan / Intune Scan
+22	Offboard Machine	powershell<br>$machineId = "machine-guid-here"<br>$uri = "https://api.securitycenter.microsoft.com/api/machines/$machineId/offboard"<br>$body = @{ Comment = "Offboarding device from Defender" } | ConvertTo-Json<br>$response = Invoke-RestMethod -Method Post -Uri $uri -Headers $headers `<br>    -Body $body -ContentType "application/json"<br>Write-Host "Device offboarded. Action ID: $($response.id)"<br>	Offboard Machine
+23	Run Live Response	powershell<br>$machineId = "machine-guid-here"<br>$uri = "https://api.securitycenter.microsoft.com/api/machines/$machineId/liveResponse"<br>$body = @{<br>    Commands = @(@{<br>        Type = "RunScript"<br>        Parameters = @{ ScriptName = "YourScript.ps1" }<br>    })<br>} | ConvertTo-Json -Depth 5<br>$response = Invoke-RestMethod -Method Post -Uri $uri -Headers $headers `<br>    -Body $body -ContentType "application/json"<br>Write-Host "Live response session started"<br>	Run Live Response
+🔐 CONDITIONAL ACCESS & IDENTITY PROTECTION - 6 ACTIONS
+#	Action	PowerShell Code Snippet	Documentation
+24	Create Named Location (Trusted IPs)	powershell<br>Import-Module Microsoft.Graph.Identity.SignIns<br>$params = @{<br>    "@odata.type" = "#microsoft.graph.ipNamedLocation"<br>    DisplayName = "Corporate Office IPs"<br>    IsTrusted = $true<br>    IpRanges = @(<br>        @{<br>            "@odata.type" = "#microsoft.graph.iPv4CidrRange"<br>            CidrAddress = "203.0.113.0/24"<br>        },<br>        @{<br>            "@odata.type" = "#microsoft.graph.iPv4CidrRange"<br>            CidrAddress = "198.51.100.0/24"<br>        }<br>    )<br>}<br>New-MgIdentityConditionalAccessNamedLocation -BodyParameter $params<br>Write-Host "Named location created"<br>	Create Named Location
+25	Update Named Location (Block IPs)	powershell<br>$locationId = "location-guid-here"<br>$params = @{<br>    DisplayName = "Blocked Malicious IPs"<br>    IsTrusted = $false<br>    IpRanges = @(@{<br>        "@odata.type" = "#microsoft.graph.iPv4CidrRange"<br>        CidrAddress = "192.0.2.0/24"<br>    })<br>}<br>Update-MgIdentityConditionalAccessNamedLocation -NamedLocationId $locationId `<br>    -BodyParameter $params<br>Write-Host "Named location updated to block IPs"<br>	Update Named Location
+26	Create CA Policy (Block Location)	powershell<br>$params = @{<br>    DisplayName = "Block Access from Untrusted Locations"<br>    State = "enabled"<br>    Conditions = @{<br>        Users = @{ IncludeUsers = @("All") }<br>        Locations = @{ IncludeLocations = @("location-guid-here") }<br>    }<br>    GrantControls = @{<br>        Operator = "OR"<br>        BuiltInControls = @("block")<br>    }<br>}<br>New-MgIdentityConditionalAccessPolicy -BodyParameter $params<br>Write-Host "Conditional Access policy created"<br>	Create CA Policy
+27	Configure Sign-In Risk Policy	powershell<br>$params = @{<br>    DisplayName = "Require MFA for Risky Sign-Ins"<br>    State = "enabled"<br>    Conditions = @{<br>        Users = @{ IncludeUsers = @("All") }<br>        SignInRiskLevels = @("high", "medium")<br>    }<br>    GrantControls = @{<br>        Operator = "OR"<br>        BuiltInControls = @("mfa")<br>    }<br>}<br>New-MgIdentityConditionalAccessPolicy -BodyParameter $params<br>Write-Host "Sign-in risk policy configured"<br>	Risk Policies
+28	Configure User Risk Policy	powershell<br>$params = @{<br>    DisplayName = "Require Password Change for High Risk Users"<br>    State = "enabled"<br>    Conditions = @{<br>        Users = @{ IncludeUsers = @("All") }<br>        UserRiskLevels = @("high")<br>    }<br>    GrantControls = @{<br>        Operator = "AND"<br>        BuiltInControls = @("mfa", "passwordChange")<br>    }<br>}<br>New-MgIdentityConditionalAccessPolicy -BodyParameter $params<br>Write-Host "User risk policy configured"<br>	Risk Policies
+29	Query Risk Detections	powershell<br>$startDate = (Get-Date).AddDays(-1).ToString("yyyy-MM-ddTHH:mm:ssZ")<br>$risks = Get-MgIdentityProtectionRiskDetection `<br>    -Filter "riskLevel eq 'high' and detectedDateTime ge $startDate" -Top 50<br>foreach ($risk in $risks) {<br>    Write-Host "Risk: $($risk.RiskType) - User: $($risk.UserDisplayName) - Level: $($risk.RiskLevel)"<br>}<br>	Risk Detections
+📱 MICROSOFT INTUNE - 4 ACTIONS
+#	Action	PowerShell Code Snippet	Documentation
+30	Remote Lock Device	powershell<br>Import-Module Microsoft.Graph.DeviceManagement.Actions<br>$deviceId = "intune-device-id"<br>Invoke-MgRemoteLockDeviceManagementManagedDevice -ManagedDeviceId $deviceId<br>Write-Host "Device locked remotely: $deviceId"<br>	Remote Lock
+31	Wipe Device	powershell<br>$deviceId = "intune-device-id"<br>$params = @{<br>    KeepEnrollmentData = $false<br>    KeepUserData = $false<br>    MacOsUnlockCode = ""<br>}<br>Invoke-MgWipeDeviceManagementManagedDevice -ManagedDeviceId $deviceId `<br>    -BodyParameter $params<br>Write-Host "Device wipe initiated: $deviceId"<br>	Wipe Device
+32	Retire Device	powershell<br>$deviceId = "intune-device-id"<br>Invoke-MgRetireDeviceManagementManagedDevice -ManagedDeviceId $deviceId<br>Write-Host "Device retired (company data removed): $deviceId"<br>	Retire Device
+33	Sync Device	powershell<br>$deviceId = "intune-device-id"<br>Sync-MgDeviceManagementManagedDevice -ManagedDeviceId $deviceId<br>Write-Host "Device sync requested: $deviceId"<br>	Sync Device
+☁️ AZURE INFRASTRUCTURE SECURITY - 5 ACTIONS
+Authentication Setup
+PowerShell
+Install-Module Az.Accounts, Az.Network, Az.Compute, Az.Storage -Scope CurrentUser
+Connect-AzAccount
+Set-AzContext -SubscriptionId "your-subscription-id"
+#	Action	PowerShell Code Snippet	Documentation
+34	Add NSG Deny Rule (Firewall)	powershell<br>$nsg = Get-AzNetworkSecurityGroup -Name "MyNSG" -ResourceGroupName "MyRG"<br>$nsg | Add-AzNetworkSecurityRuleConfig `<br>    -Name "DenyRDP" `<br>    -Description "Block RDP from internet" `<br>    -Access Deny `<br>    -Protocol Tcp `<br>    -Direction Inbound `<br>    -Priority 100 `<br>    -SourceAddressPrefix Internet `<br>    -SourcePortRange * `<br>    -DestinationAddressPrefix * `<br>    -DestinationPortRange 3389 | Set-AzNetworkSecurityGroup<br>Write-Host "NSG deny rule added for RDP"<br>	NSG Rules
+35	Remove VM Public IP	powershell<br>$nic = Get-AzNetworkInterface -Name "MyVM-NIC" -ResourceGroupName "MyRG"<br>$nic.IpConfigurations[0].PublicIpAddress = $null<br>Set-AzNetworkInterface -NetworkInterface $nic<br>Write-Host "Public IP removed from VM"<br>	Remove Public IP
+36	Block Storage Account Public Access	powershell<br>Set-AzStorageAccount `<br>    -ResourceGroupName "MyRG" `<br>    -Name "mystorageaccount" `<br>    -PublicNetworkAccess Disabled<br>Write-Host "Storage account public access disabled"<br>	Storage Public Access
+37	Stop Azure VM	powershell<br>Stop-AzVM `<br>    -ResourceGroupName "MyRG" `<br>    -Name "MyVM" `<br>    -Force<br>Write-Host "VM stopped and deallocated"<br>	Stop VM
+38	Disable VM Network Access	powershell<br>$nsg = New-AzNetworkSecurityGroup -Name "EmergencyDenyAll-NSG" `<br>    -ResourceGroupName "MyRG" -Location "EastUS"<br>$nsg | Add-AzNetworkSecurityRuleConfig `<br>    -Name "DenyAllInbound" `<br>    -Access Deny `<br>    -Protocol * `<br>    -Direction Inbound `<br>    -Priority 100 `<br>    -SourceAddressPrefix * `<br>    -SourcePortRange * `<br>    -DestinationAddressPrefix * `<br>    -DestinationPortRange * | Set-AzNetworkSecurityGroup<br>$vnet = Get-AzVirtualNetwork -Name "MyVNet" -ResourceGroupName "MyRG"<br>$subnet = Get-AzVirtualNetworkSubnetConfig -Name "MySubnet" -VirtualNetwork $vnet<br>$subnet.NetworkSecurityGroup = $nsg<br>Set-AzVirtualNetwork -VirtualNetwork $vnet<br>Write-Host "VM network access completely blocked"<br>	NSG Configuration
+🔍 AUTOMATED INVESTIGATIONS & RESPONSE (AIR) - 2 ACTIONS
+#	Action	PowerShell Code Snippet	Documentation
+39	Trigger AIR Investigation	powershell<br>$machineId = "machine-guid-here"<br>$uri = "https://api.security.microsoft.com/api/machines/$machineId/startInvestigation"<br>$body = @{<br>    Comment = "Triggering automated investigation due to suspicious activity"<br>} | ConvertTo-Json<br>$response = Invoke-RestMethod -Method Post -Uri $uri -Headers $headers `<br>    -Body $body -ContentType "application/json"<br>Write-Host "Investigation started. Investigation ID: $($response.id)"<br>	Start Investigation
+40	List Pending Actions	powershell<br>$uri = "https://api.securitycenter.microsoft.com/api/machineactions"<br>$actions = Invoke-RestMethod -Method Get -Uri $uri -Headers $headers<br>foreach ($action in $actions.value | Where-Object {$_.status -eq "Pending"}) {<br>    Write-Host "Action: $($action.type) - Machine: $($action.machineId) - Status: $($action.status)"<br>}<br>	List Machine Actions
+🔧 AUTHENTICATION & SETUP
+Microsoft Graph Authentication
+PowerShell
+# Install modules
+Install-Module Microsoft.Graph -Scope CurrentUser -Force
+Install-Module Microsoft.Graph.Beta -Scope CurrentUser -Force
+
+# Interactive authentication
+Connect-MgGraph -Scopes @(
+    "SecurityAnalyzedMessage.ReadWrite.All",
+    "ThreatSubmission.ReadWrite.All",
+    "ThreatIndicators.ReadWrite.OwnedBy",
+    "IdentityRiskyUser.ReadWrite.All",
+    "User.ReadWrite.All",
+    "Directory.ReadWrite.All",
+    "Policy.ReadWrite.ConditionalAccess",
+    "DeviceManagementManagedDevices.ReadWrite.All",
+    "MailboxSettings.ReadWrite"
+)
+
+# Service Principal authentication (automation)
+$tenantId = "your-tenant-id"
+$clientId = "your-client-id"
+$clientSecret = "your-client-secret" | ConvertTo-SecureString -AsPlainText -Force
+$credential = New-Object System.Management.Automation.PSCredential($clientId, $clientSecret)
+Connect-MgGraph -TenantId $tenantId -ClientSecretCredential $credential
+Defender API Authentication
+PowerShell
+function Get-DefenderToken {
+    param(
+        [string]$TenantId,
+        [string]$ClientId,
+        [string]$ClientSecret
+    )
+    $resource = "https://api.securitycenter.microsoft.com"
+    $body = @{
+        client_id = $ClientId
+        client_secret = $ClientSecret
+        scope = "$resource/.default"
+        grant_type = "client_credentials"
+    }
+    $tokenResponse = Invoke-RestMethod -Method Post `
+        -Uri "https://login.microsoftonline.com/$TenantId/oauth2/v2.0/token" -Body $body
+    return @{ Authorization = "Bearer $($tokenResponse.access_token)" }
+}
+
+$defenderHeaders = Get-DefenderToken -TenantId $tenantId -ClientId $clientId -ClientSecret $clientSecret
+Azure Management Authentication
+PowerShell
+Install-Module Az.Accounts, Az.Network, Az.Compute, Az.Storage -Scope CurrentUser -Force
+Connect-AzAccount
+Set-AzContext -SubscriptionId "your-subscription-id"
+📋 PERMISSIONS REQUIRED
+Microsoft Graph Application Permissions
+Code
+SecurityAnalyzedMessage.ReadWrite.All      # Email remediation
+ThreatSubmission.ReadWrite.All             # Threat submissions
+ThreatIndicators.ReadWrite.OwnedBy         # IOC management
+IdentityRiskyUser.ReadWrite.All            # Identity Protection (Entra ID P2 required)
+User.ReadWrite.All                         # User management
+Directory.ReadWrite.All                    # Directory operations
+Policy.ReadWrite.ConditionalAccess         # Conditional Access (Entra ID P1+ required)
+DeviceManagementManagedDevices.ReadWrite.All  # Intune devices
+MailboxSettings.ReadWrite                  # Mail rules
+Defender API Permissions
+Code
+Machine.Isolate
+Machine.RestrictExecution
+Machine.Scan
+Machine.CollectForensics
+Machine.StopAndQuarantine
+Machine.Offboard
+Machine.LiveResponse
+Alert.ReadWrite.All
+Azure RBAC Roles
+Code
+Security Admin              # For NSG and security operations
+Network Contributor         # For network changes
+Virtual Machine Contributor # For VM operations
+Storage Account Contributor # For storage operations
+🎯 COMPLETE INCIDENT RESPONSE EXAMPLE
+PowerShell
+<#
+.SYNOPSIS
+    Complete XDR incident response across all Microsoft security products
+.DESCRIPTION
+    Responds to security incidents across Microsoft 365, Defender, Entra ID, Intune, and Azure
+#>
+
+# === STEP 1: CONNECT TO ALL SERVICES ===
+Write-Host "=== Connecting to Microsoft Security Services ===" -ForegroundColor Cyan
+
+Connect-MgGraph -Scopes "SecurityAnalyzedMessage.ReadWrite.All","User.ReadWrite.All","DeviceManagementManagedDevices.ReadWrite.All","Policy.ReadWrite.ConditionalAccess"
+$defenderHeaders = Get-DefenderToken -TenantId $tenantId -ClientId $clientId -ClientSecret $clientSecret
+Connect-AzAccount
+
+# === STEP 2: INCIDENT PARAMETERS ===
+$compromisedUser = "compromised.user@domain.com"
+$maliciousEmailId = "message-network-id"
+$maliciousDeviceId = "device-guid"
+$maliciousIP = "192.0.2.50"
+
+# === STEP 3: USER REMEDIATION ===
+Write-Host "`n=== Remediating Compromised User ===" -ForegroundColor Yellow
+Update-MgUser -UserId $compromisedUser -AccountEnabled:$false
+$newPassword = "TempP@ss$(Get-Random -Minimum 1000 -Maximum 9999)!"
+Update-MgUser -UserId $compromisedUser -PasswordProfile @{ Password = $newPassword; ForceChangePasswordNextSignIn = $true }
+Revoke-MgUserSignInSession -UserId $compromisedUser
+$userGuid = (Get-MgUser -UserId $compromisedUser).Id
+Confirm-MgRiskyUserCompromised -UserIds @($userGuid)
+Write-Host "✓ User remediated" -ForegroundColor Green
+
+# === STEP 4: EMAIL REMEDIATION ===
+Write-Host "`n=== Remediating Malicious Email ===" -ForegroundColor Yellow
+$uri = "https://graph.microsoft.com/beta/security/collaboration/analyzedEmails/remediate"
+$body = @{ action = "hardDelete"; analyzedEmails = @(@{ networkMessageId = $maliciousEmailId; recipientEmailAddress = $compromisedUser }) } | ConvertTo-Json
+Invoke-MgGraphRequest -Method POST -Uri $uri -Body $body
+Write-Host "✓ Email deleted" -ForegroundColor Green
+
+# === STEP 5: DEVICE REMEDIATION ===
+Write-Host "`n=== Remediating Compromised Device ===" -ForegroundColor Yellow
+$isolateUri = "https://api.securitycenter.microsoft.com/api/machines/$maliciousDeviceId/isolate"
+$isolateBody = @{ Comment = "Auto-isolated"; IsolationType = "Full" } | ConvertTo-Json
+Invoke-RestMethod -Method Post -Uri $isolateUri -Headers $defenderHeaders -Body $isolateBody
+Write-Host "✓ Device isolated" -ForegroundColor Green
+
+# === STEP 6: CONDITIONAL ACCESS ===
+Write-Host "`n=== Updating Conditional Access ===" -ForegroundColor Yellow
+$locationParams = @{
+    "@odata.type" = "#microsoft.graph.ipNamedLocation"
+    DisplayName = "Blocked-$(Get-Date -Format 'yyyyMMdd')"
+    IsTrusted = $false
+    IpRanges = @(@{ "@odata.type" = "#microsoft.graph.iPv4CidrRange"; CidrAddress = "$maliciousIP/32" })
+}
+New-MgIdentityConditionalAccessNamedLocation -BodyParameter $locationParams
+Write-Host "✓ IP blocked in CA" -ForegroundColor Green
+
+# === STEP 7: AZURE NETWORK ===
+Write-Host "`n=== Updating Azure NSG ===" -ForegroundColor Yellow
+$nsg = Get-AzNetworkSecurityGroup -Name "Production-NSG" -ResourceGroupName "Production-RG"
+$nsg | Add-AzNetworkSecurityRuleConfig -Name "Block-$maliciousIP" -Access Deny -Protocol * -Direction Inbound -Priority 100 -SourceAddressPrefix $maliciousIP -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange * | Set-AzNetworkSecurityGroup
+Write-Host "✓ NSG rule added" -ForegroundColor Green
+
+Write-Host "`n=== Incident Response Complete ===" -ForegroundColor Cyan
+📚 KEY DOCUMENTATION LINKS
+Core Documentation
+Microsoft Defender XDR Remediation Actions
+Microsoft Graph Security API
+Analyzed Email Remediate
+Defender Endpoint Machine Actions
+Identity Protection APIs
+Conditional Access Policies
+Intune Device Actions
+Azure Network Security Groups
+Document Version: 5.0 - COMPLETE POWERSHELL EDITION
+Total Actions: 40
+Last Updated: 2025-01-10 09:35:36 UTC
+Coverage: MDE, MDO, MDI, Entra ID, Intune, Azure, AIR
