@@ -1,28 +1,33 @@
-# Deployment Guide
+# DefenderXDRC2XSOAR - Deployment Guide
 
-This guide provides step-by-step instructions for deploying the DefenderC2 workbook-based MDE automation solution.
+This guide provides step-by-step instructions for deploying the DefenderXDRC2XSOAR solution with full Microsoft Defender XDR automation capabilities.
 
 ## 🚀 Quick Start: One-Click Deployment
 
-Deploy DefenderC2 with a single click using the Azure Portal:
+Deploy DefenderXDRC2XSOAR with a single click using the Azure Portal:
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fakefallonitis%2Fdefenderc2xsoar%2Fmain%2Fdeployment%2Fazuredeploy.json)
 
 **What gets deployed automatically:**
 - ✅ Azure Function App (PowerShell 7.4 runtime)
-- ✅ 6 DefenderC2 Functions with anonymous authentication
-- ✅ DefenderC2 Command & Control Workbook with auto-discovery
+- ✅ 7 DefenderXDR Functions:
+  - DefenderC2Dispatcher (MDE actions)
+  - DefenderXDRManager (MDO, Entra ID, Intune, Azure)
+  - DefenderC2TIManager, HuntManager, IncidentManager, CDManager, Orchestrator
+- ✅ DefenderXDRC2XSOAR Workbook with auto-discovery
+- ✅ DefenderXDRC2XSOAR PowerShell Module (v2.0.0) with 40+ functions
 - ✅ Storage Account and App Service Plan (Consumption tier)
 - ✅ Managed Identity configuration
 
 **You'll need:**
-- Multi-tenant App Registration with MDE API permissions (see [Prerequisites](#prerequisites))
+- Multi-tenant App Registration with XDR API permissions (see [PERMISSIONS.md](PERMISSIONS.md))
 - Application (Client) ID
 - Client Secret
+- Appropriate Microsoft 365/Azure licenses (see [Prerequisites](#prerequisites))
 
 **After deployment:**
 - Navigate to Azure Monitor → Workbooks
-- Open "DefenderC2 Command & Control Console"
+- Open "DefenderXDRC2XSOAR Console"
 - Select your subscription and workspace
 - Everything else auto-discovers! 🎉
 
@@ -43,9 +48,17 @@ Before starting the deployment, ensure you have:
 
 - **Azure Subscription** with permissions to create resources
 - **Global Administrator** or **Application Administrator** role in Entra ID
-- **Microsoft Defender for Endpoint** (MDE) licenses
+- **Required Licenses:**
+  - Microsoft 365 E5 or Microsoft 365 E5 Security (for full XDR)
+  - Microsoft Defender for Office 365 Plan 2 (for email remediation)
+  - Microsoft Defender for Endpoint P2 (for endpoint actions)
+  - Entra ID Premium P1 (for Conditional Access)
+  - Entra ID Premium P2 (for Identity Protection)
+  - Microsoft Intune (for device management)
 - **Azure CLI** or **PowerShell** for deployment (optional)
 - **Access to target tenants** for multi-tenant scenarios
+
+> **📖 For detailed permission requirements, see [PERMISSIONS.md](PERMISSIONS.md)**
 
 ### Required Tools
 
