@@ -452,6 +452,252 @@ function Get-AzureKeyVaults {
     }
 }
 
+# ============================================================================
+# DEFENDER FOR CLOUD (MDC) INFRASTRUCTURE FUNCTIONS
+# Consolidated from DefenderForCloud.psm1 - Infrastructure-specific actions
+# Alert retrieval moved to unified Graph API security/alerts_v2
+# ============================================================================
+
+function Get-DefenderSecurityRecommendations {
+    <#
+    .SYNOPSIS
+        Gets security recommendations from Microsoft Defender for Cloud
+    
+    .PARAMETER Token
+        Azure Resource Manager access token (hashtable)
+    
+    .PARAMETER SubscriptionId
+        Azure subscription ID
+    #>
+    param(
+        [Parameter(Mandatory=$true)]
+        $Token,
+        
+        [Parameter(Mandatory=$true)]
+        [string]$SubscriptionId
+    )
+    
+    $accessToken = if ($Token -is [hashtable]) { $Token.AccessToken } else { $Token }
+    
+    $uri = "https://management.azure.com/subscriptions/$SubscriptionId/providers/Microsoft.Security/assessments?api-version=2020-01-01"
+    
+    $headers = @{
+        "Authorization" = "Bearer $accessToken"
+        "Content-Type" = "application/json"
+    }
+    
+    try {
+        $response = Invoke-RestMethod -Method Get -Uri $uri -Headers $headers
+        Write-Host "Retrieved $($response.value.Count) security recommendations"
+        return $response.value
+    } catch {
+        Write-Error "Failed to retrieve security recommendations: $($_.Exception.Message)"
+        throw
+    }
+}
+
+function Get-DefenderSecureScore {
+    <#
+    .SYNOPSIS
+        Gets Microsoft Defender for Cloud secure score
+    
+    .PARAMETER Token
+        Azure Resource Manager access token (hashtable)
+    
+    .PARAMETER SubscriptionId
+        Azure subscription ID
+    #>
+    param(
+        [Parameter(Mandatory=$true)]
+        $Token,
+        
+        [Parameter(Mandatory=$true)]
+        [string]$SubscriptionId
+    )
+    
+    $accessToken = if ($Token -is [hashtable]) { $Token.AccessToken } else { $Token }
+    
+    $uri = "https://management.azure.com/subscriptions/$SubscriptionId/providers/Microsoft.Security/secureScores?api-version=2020-01-01"
+    
+    $headers = @{
+        "Authorization" = "Bearer $accessToken"
+        "Content-Type" = "application/json"
+    }
+    
+    try {
+        $response = Invoke-RestMethod -Method Get -Uri $uri -Headers $headers
+        Write-Host "Retrieved secure score for subscription"
+        return $response.value
+    } catch {
+        Write-Error "Failed to retrieve secure score: $($_.Exception.Message)"
+        throw
+    }
+}
+
+function Get-DefenderPlans {
+    <#
+    .SYNOPSIS
+        Gets all Defender for Cloud plans and their status
+    
+    .PARAMETER Token
+        Azure Resource Manager access token (hashtable)
+    
+    .PARAMETER SubscriptionId
+        Azure subscription ID
+    #>
+    param(
+        [Parameter(Mandatory=$true)]
+        $Token,
+        
+        [Parameter(Mandatory=$true)]
+        [string]$SubscriptionId
+    )
+    
+    $accessToken = if ($Token -is [hashtable]) { $Token.AccessToken } else { $Token }
+    
+    $uri = "https://management.azure.com/subscriptions/$SubscriptionId/providers/Microsoft.Security/pricings?api-version=2024-01-01"
+    
+    $headers = @{
+        "Authorization" = "Bearer $accessToken"
+        "Content-Type" = "application/json"
+    }
+    
+    try {
+        $response = Invoke-RestMethod -Method Get -Uri $uri -Headers $headers
+        Write-Host "Retrieved $($response.value.Count) Defender plans"
+        return $response.value
+    } catch {
+        Write-Error "Failed to retrieve Defender plans: $($_.Exception.Message)"
+        throw
+    }
+}
+
+function Enable-DefenderPlan {
+    <#
+    .SYNOPSIS
+        Enables a specific Defender plan in Defender for Cloud
+    
+    .PARAMETER Token
+        Azure Resource Manager access token (hashtable)
+    
+    .PARAMETER SubscriptionId
+        Azure subscription ID
+    
+    .PARAMETER PlanName
+        Plan name: VirtualMachines, SqlServers, AppServices, StorageAccounts, etc.
+    #>
+    param(
+        [Parameter(Mandatory=$true)]
+        $Token,
+        
+        [Parameter(Mandatory=$true)]
+        [string]$SubscriptionId,
+        
+        [Parameter(Mandatory=$true)]
+        [string]$PlanName
+    )
+    
+    $accessToken = if ($Token -is [hashtable]) { $Token.AccessToken } else { $Token }
+    
+    $uri = "https://management.azure.com/subscriptions/$SubscriptionId/providers/Microsoft.Security/pricings/$PlanName`?api-version=2024-01-01"
+    
+    $headers = @{
+        "Authorization" = "Bearer $accessToken"
+        "Content-Type" = "application/json"
+    }
+    
+    $body = @{
+        properties = @{
+            pricingTier = "Standard"
+        }
+    } | ConvertTo-Json
+    
+    try {
+        $response = Invoke-RestMethod -Method Put -Uri $uri -Headers $headers -Body $body
+        Write-Host "Enabled Defender plan: $PlanName"
+        return $response
+    } catch {
+        Write-Error "Failed to enable Defender plan: $($_.Exception.Message)"
+        throw
+    }
+}
+
+function Get-DefenderRegulatoryCompliance {
+    <#
+    .SYNOPSIS
+        Gets regulatory compliance assessment from Defender for Cloud
+    
+    .PARAMETER Token
+        Azure Resource Manager access token (hashtable)
+    
+    .PARAMETER SubscriptionId
+        Azure subscription ID
+    #>
+    param(
+        [Parameter(Mandatory=$true)]
+        $Token,
+        
+        [Parameter(Mandatory=$true)]
+        [string]$SubscriptionId
+    )
+    
+    $accessToken = if ($Token -is [hashtable]) { $Token.AccessToken } else { $Token }
+    
+    $uri = "https://management.azure.com/subscriptions/$SubscriptionId/providers/Microsoft.Security/regulatoryComplianceStandards?api-version=2019-01-01-preview"
+    
+    $headers = @{
+        "Authorization" = "Bearer $accessToken"
+        "Content-Type" = "application/json"
+    }
+    
+    try {
+        $response = Invoke-RestMethod -Method Get -Uri $uri -Headers $headers
+        Write-Host "Retrieved $($response.value.Count) compliance standards"
+        return $response.value
+    } catch {
+        Write-Error "Failed to retrieve regulatory compliance: $($_.Exception.Message)"
+        throw
+    }
+}
+
+function Get-JitAccessPolicies {
+    <#
+    .SYNOPSIS
+        Gets Just-in-Time (JIT) VM access policies
+    
+    .PARAMETER Token
+        Azure Resource Manager access token (hashtable)
+    
+    .PARAMETER SubscriptionId
+        Azure subscription ID
+    #>
+    param(
+        [Parameter(Mandatory=$true)]
+        $Token,
+        
+        [Parameter(Mandatory=$true)]
+        [string]$SubscriptionId
+    )
+    
+    $accessToken = if ($Token -is [hashtable]) { $Token.AccessToken } else { $Token }
+    
+    $uri = "https://management.azure.com/subscriptions/$SubscriptionId/providers/Microsoft.Security/jitNetworkAccessPolicies?api-version=2020-01-01"
+    
+    $headers = @{
+        "Authorization" = "Bearer $accessToken"
+        "Content-Type" = "application/json"
+    }
+    
+    try {
+        $response = Invoke-RestMethod -Method Get -Uri $uri -Headers $headers
+        Write-Host "Retrieved $($response.value.Count) JIT access policies"
+        return $response.value
+    } catch {
+        Write-Error "Failed to retrieve JIT policies: $($_.Exception.Message)"
+        throw
+    }
+}
+
 # Export functions
 Export-ModuleMember -Function @(
     'Get-AzureAccessToken',
@@ -463,5 +709,11 @@ Export-ModuleMember -Function @(
     'Get-AzureResourceGroups',
     'Get-AzureNSGs',
     'Get-AzureStorageAccounts',
-    'Get-AzureKeyVaults'
+    'Get-AzureKeyVaults',
+    'Get-DefenderSecurityRecommendations',
+    'Get-DefenderSecureScore',
+    'Get-DefenderPlans',
+    'Enable-DefenderPlan',
+    'Get-DefenderRegulatoryCompliance',
+    'Get-JitAccessPolicies'
 )

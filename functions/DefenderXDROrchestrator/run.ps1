@@ -88,7 +88,7 @@ try {
     Import-Module "$modulePath\MDOEmailRemediation.psm1" -Force -ErrorAction Stop
     Import-Module "$modulePath\EntraIDIdentity.psm1" -Force -ErrorAction Stop
     Import-Module "$modulePath\IntuneDeviceManagement.psm1" -Force -ErrorAction Stop
-    Import-Module "$modulePath\DefenderForCloud.psm1" -Force -ErrorAction Stop
+    # DefenderForCloud.psm1 REMOVED - functionality consolidated into AzureInfrastructure.psm1
     Import-Module "$modulePath\DefenderForIdentity.psm1" -Force -ErrorAction Stop
     Import-Module "$modulePath\AzureInfrastructure.psm1" -Force -ErrorAction Stop
     Write-Host "✅ All service modules loaded successfully"
@@ -195,8 +195,8 @@ if (-not $appId -or -not $secretId) {
     return
 }
 
-# Validate service parameter
-$validServices = @("MDE", "MDO", "MDC", "MDI", "EntraID", "Intune", "Azure")
+# Validate service parameter (MDC removed - consolidated into Azure)
+$validServices = @("MDE", "MDO", "MDI", "EntraID", "Intune", "Azure")
 if ($service -notin $validServices) {
     Push-OutputBinding -Name Response -Value ([HttpResponseContext]@{
         StatusCode = [HttpStatusCode]::BadRequest
@@ -535,68 +535,11 @@ try {
         }
         
         # ====================================================================
-        # MICROSOFT DEFENDER FOR CLOUD (MDC)
+        # NOTE: MDC (Microsoft Defender for Cloud) CONSOLIDATED INTO AZURE SERVICE
+        # MDC alerts accessible via unified GetAllAlerts (Graph API security/alerts_v2)
+        # MDC infrastructure actions (recommendations, secure score, Defender plans)
+        # now available under Azure service above
         # ====================================================================
-        
-        "MDC" {
-            Write-Host "[$correlationId] Processing MDC action: $action"
-            
-            # Authenticate to Azure RM for MDC operations
-            $tokenString = Get-OAuthToken -TenantId $tenantId -AppId $appId -ClientSecret $secretId -Service "Azure"
-            $token = @{
-                AccessToken = $tokenString
-                TokenType = "Bearer"
-                ExpiresIn = 3600
-                ExpiresAt = (Get-Date).AddHours(1)
-                TenantId = $tenantId
-            }
-            
-            # Extract MDC-specific parameters
-            $subscriptionId = $Request.Query.subscriptionId ?? $Request.Body.subscriptionId
-            $alertId = $Request.Query.alertId ?? $Request.Body.alertId
-            $status = $Request.Query.status ?? $Request.Body.status
-            $filter = $Request.Query.filter ?? $Request.Body.filter
-            $defenderPlan = $Request.Query.defenderPlan ?? $Request.Body.defenderPlan
-            
-            if (-not $subscriptionId) { throw "Subscription ID required for MDC operations. Provide 'subscriptionId' parameter in request." }
-            
-            switch -Wildcard ($action) {
-                "GetSecurityAlerts" {
-                    $filterParam = if ($filter) { @{ Filter = $filter } } else { @{} }
-                    $alerts = Get-MDCSecurityAlerts -Token $token -SubscriptionId $subscriptionId @filterParam
-                    $result.data = @{ count = $alerts.Count; value = $alerts | Select-Object -First 100 }
-                }
-                "GetSecurityRecommendations" {
-                    $recommendations = Get-MDCSecurityRecommendations -Token $token -SubscriptionId $subscriptionId
-                    $result.data = @{ count = $recommendations.Count; value = $recommendations | Select-Object -First 100 }
-                }
-                "GetRecommendations" {
-                    $recommendations = Get-MDCSecurityRecommendations -Token $token -SubscriptionId $subscriptionId
-                    $result.data = @{ count = $recommendations.Count; value = $recommendations | Select-Object -First 100 }
-                }
-                "UpdateSecurityAlert" {
-                    if (-not $alertId -or -not $status) { throw "Alert ID and status required" }
-                    $response = Update-MDCSecurityAlert -Token $token -SubscriptionId $subscriptionId -AlertId $alertId -Status $status
-                    $result.data = @{ message = "Alert status updated"; alertId = $alertId; status = $status; response = $response }
-                }
-                "GetSecureScore" {
-                    $secureScore = Get-MDCSecureScore -Token $token -SubscriptionId $subscriptionId
-                    $result.data = @{ secureScore = $secureScore }
-                }
-                "EnableDefenderPlan" {
-                    if (-not $defenderPlan) { throw "Defender plan name required" }
-                    $response = Enable-MDCDefenderPlan -Token $token -SubscriptionId $subscriptionId -PlanName $defenderPlan
-                    $result.data = @{ message = "Defender plan enabled"; plan = $defenderPlan; response = $response }
-                }
-                "GetDefenderPlans" {
-                    $plans = Get-MDCDefenderPlans -Token $token -SubscriptionId $subscriptionId
-                    $result.data = @{ plans = $plans }
-                }
-                default {
-                    throw "Unknown MDC action: $action"
-                }
-            }
-        }
         
         # ====================================================================
         # MICROSOFT DEFENDER FOR IDENTITY (MDI)
@@ -884,6 +827,32 @@ try {
                 "GetKeyVaults" {
                     $keyVaults = Get-AzureKeyVaults -Token $token -SubscriptionId $subscriptionId -ResourceGroup $resourceGroup
                     $result.data = @{ count = $keyVaults.Count; keyVaults = $keyVaults }
+                }
+                "GetSecurityRecommendations" {
+                    $recommendations = Get-DefenderSecurityRecommendations -Token $token -SubscriptionId $subscriptionId
+                    $result.data = @{ count = $recommendations.Count; value = $recommendations | Select-Object -First 100 }
+                }
+                "GetSecureScore" {
+                    $secureScore = Get-DefenderSecureScore -Token $token -SubscriptionId $subscriptionId
+                    $result.data = @{ value = $secureScore }
+                }
+                "GetDefenderPlans" {
+                    $plans = Get-DefenderPlans -Token $token -SubscriptionId $subscriptionId
+                    $result.data = @{ value = $plans }
+                }
+                "EnableDefenderPlan" {
+                    $planName = $Request.Query.planName ?? $Request.Body.planName
+                    if (-not $planName) { throw "Defender plan name required" }
+                    $response = Enable-DefenderPlan -Token $token -SubscriptionId $subscriptionId -PlanName $planName
+                    $result.data = @{ message = "Defender plan enabled"; plan = $planName; response = $response }
+                }
+                "GetRegulatoryCompliance" {
+                    $compliance = Get-DefenderRegulatoryCompliance -Token $token -SubscriptionId $subscriptionId
+                    $result.data = @{ count = $compliance.Count; value = $compliance }
+                }
+                "GetJitAccessPolicies" {
+                    $policies = Get-JitAccessPolicies -Token $token -SubscriptionId $subscriptionId
+                    $result.data = @{ count = $policies.Count; value = $policies }
                 }
                 default {
                     throw "Unknown Azure action: $action"
