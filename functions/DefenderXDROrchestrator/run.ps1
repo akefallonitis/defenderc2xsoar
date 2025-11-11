@@ -464,11 +464,47 @@ try {
                         $result.data = @{ count = $incidents.Count; incidents = $incidents | Select-Object -First 100 }
                     }
                 }
+                "SubmitIndicator" {
+                    # CRITICAL XDR ACTION: Unified IOC submission (file/IP/URL/domain)
+                    # Automatically blocks threats across all endpoints
+                    if (-not $indicatorValue) { throw "Indicator value required (file hash, IP, URL, or domain)" }
+                    if (-not $indicatorType) { throw "Indicator type required: FileSha256, IpAddress, Url, or DomainName" }
+                    
+                    $indicatorTitle = if ($title) { $title } else { "Threat Indicator - XDR Auto-Block" }
+                    $indicatorSeverity = if ($severity) { $severity } else { "High" }
+                    $indicatorAction = if ($actionParam) { $actionParam } else { "Block" }
+                    $indicatorDescription = if ($description) { $description } else { "Auto-submitted via DefenderC2XSOAR" }
+                    
+                    switch ($indicatorType) {
+                        "FileSha256" {
+                            $response = Add-FileIndicator -Token $token -Sha256 $indicatorValue -Title $indicatorTitle -Severity $indicatorSeverity -Action $indicatorAction -Description $indicatorDescription
+                        }
+                        "IpAddress" {
+                            $response = Add-IPIndicator -Token $token -IPAddress $indicatorValue -Title $indicatorTitle -Severity $indicatorSeverity -Action $indicatorAction -Description $indicatorDescription
+                        }
+                        { $_ -in @("Url", "DomainName") } {
+                            $response = Add-URLIndicator -Token $token -URL $indicatorValue -Title $indicatorTitle -Severity $indicatorSeverity -Action $indicatorAction -Description $indicatorDescription
+                        }
+                        default {
+                            throw "Invalid indicator type. Use: FileSha256, IpAddress, Url, or DomainName"
+                        }
+                    }
+                    
+                    $result.data = @{
+                        message = "Threat indicator submitted - will be blocked across all endpoints"
+                        indicatorId = $response.id
+                        indicatorValue = $indicatorValue
+                        indicatorType = $indicatorType
+                        action = $indicatorAction
+                        severity = $indicatorSeverity
+                    }
+                }
                 "AddFileIndicator" {
+                    # Legacy action - use SubmitIndicator instead
                     if (-not $indicatorValue) { throw "File hash required" }
                     $indicatorTitle = if ($title) { $title } else { "Indicator via XDROrchestrator" }
                     $indicatorSeverity = if ($severity) { $severity } else { "Medium" }
-                    $response = Add-FileIndicator -Token $token -Sha256 $indicatorValue -Title $indicatorTitle -Severity $indicatorSeverity
+                    $response = Add-FileIndicator -Token $token -Sha256 $indicatorValue -Title $indicatorTitle -Severity $indicatorSeverity -Action "Block"
                     $result.data = @{ indicatorId = $response.id; indicator = $indicatorValue }
                 }
                 "GetAllIndicators" {
@@ -673,10 +709,31 @@ try {
                         throw
                     }
                 }
-                "CreateNamedLocation" {
-                    if (-not $locationName -or -not $ipRanges) { throw "Location name and IP ranges required" }
-                    $response = New-NamedLocation -Token $token -LocationName $locationName -IPRanges $ipRanges
-                    $result.data = @{ message = "Named location created"; location = $locationName; response = $response }
+                "GetNamedLocations" {
+                    $locations = Get-NamedLocations -Token $token
+                    $result.data = @{ count = $locations.Count; value = $locations }
+                }
+                "AddIPToNamedLocation" {
+                    # CRITICAL XDR ACTION: Block malicious IPs at identity layer
+                    $locationName = $Request.Query.locationName ?? $Request.Body.locationName
+                    $ipAddresses = $Request.Query.ipAddresses ?? $Request.Body.ipAddresses
+                    $isTrusted = $Request.Query.isTrusted ?? $Request.Body.isTrusted ?? $false
+                    
+                    if (-not $locationName -or -not $ipAddresses) {
+                        throw "Location name and IP addresses required. Provide 'locationName' and 'ipAddresses' (array or comma-separated)"
+                    }
+                    
+                    # Handle both array and comma-separated string
+                    $ipArray = if ($ipAddresses -is [array]) { $ipAddresses } else { $ipAddresses -split ',' | ForEach-Object { $_.Trim() } }
+                    
+                    $response = Add-IPToNamedLocation -Token $token -LocationName $locationName -IPAddresses $ipArray -IsTrusted $isTrusted
+                    $result.data = @{
+                        message = "IP(s) added to named location for blocking"
+                        location = $locationName
+                        ipsAdded = $ipArray.Count
+                        ipAddresses = $ipArray
+                        response = $response
+                    }
                 }
                 default {
                     throw "Unknown Entra ID action: $action"

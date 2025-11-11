@@ -328,6 +328,148 @@ function Get-ConditionalAccessPolicies {
     }
 }
 
+function Get-NamedLocations {
+    <#
+    .SYNOPSIS
+        Get all named locations (IP-based Conditional Access policies)
+    
+    .PARAMETER Token
+        Graph API authentication token (string or hashtable)
+    #>
+    param(
+        [Parameter(Mandatory=$true)]
+        $Token
+    )
+    
+    # Handle both string and hashtable token formats
+    $accessToken = if ($Token -is [hashtable]) { $Token.AccessToken } else { $Token }
+    
+    $uri = "https://graph.microsoft.com/v1.0/identity/conditionalAccess/namedLocations"
+    $headers = @{
+        "Authorization" = "Bearer $accessToken"
+        "Content-Type" = "application/json"
+    }
+    
+    try {
+        $response = Invoke-RestMethod -Method Get -Uri $uri -Headers $headers
+        Write-Host "Retrieved $($response.value.Count) named locations"
+        return $response.value
+    } catch {
+        Write-Error "Failed to get named locations: $($_.Exception.Message)"
+        throw
+    }
+}
+
+function Add-IPToNamedLocation {
+    <#
+    .SYNOPSIS
+        Add malicious IP/CIDR to a named location for blocking via Conditional Access
+    
+    .DESCRIPTION
+        Creates or updates an IP-based named location to block attacker IPs across all Microsoft 365 services.
+        This provides network-level threat containment at the identity layer.
+    
+    .PARAMETER Token
+        Graph API authentication token (string or hashtable)
+    
+    .PARAMETER LocationName
+        Name of the named location (e.g., "Blocked IPs - Threat Response")
+    
+    .PARAMETER IPAddresses
+        Array of IP addresses or CIDR ranges to block (e.g., @("1.2.3.4/32", "5.6.7.0/24"))
+    
+    .PARAMETER IsTrusted
+        Whether the location is trusted (should be $false for blocked IPs)
+    
+    .EXAMPLE
+        Add-IPToNamedLocation -Token $token -LocationName "Blocked Threat IPs" -IPAddresses @("192.168.1.100/32") -IsTrusted $false
+    #>
+    param(
+        [Parameter(Mandatory=$true)]
+        $Token,
+        
+        [Parameter(Mandatory=$true)]
+        [string]$LocationName,
+        
+        [Parameter(Mandatory=$true)]
+        [string[]]$IPAddresses,
+        
+        [Parameter(Mandatory=$false)]
+        [bool]$IsTrusted = $false
+    )
+    
+    # Handle both string and hashtable token formats
+    $accessToken = if ($Token -is [hashtable]) { $Token.AccessToken } else { $Token }
+    
+    $headers = @{
+        "Authorization" = "Bearer $accessToken"
+        "Content-Type" = "application/json"
+    }
+    
+    # Check if named location already exists
+    $existingLocations = Get-NamedLocations -Token $Token
+    $existingLocation = $existingLocations | Where-Object { $_.displayName -eq $LocationName }
+    
+    if ($existingLocation) {
+        # Update existing location - append new IPs
+        Write-Host "Updating existing named location: $LocationName"
+        
+        # Get current IP ranges
+        $currentIPs = $existingLocation.ipRanges | ForEach-Object { $_.cidrAddress }
+        
+        # Merge with new IPs (remove duplicates)
+        $allIPs = ($currentIPs + $IPAddresses) | Select-Object -Unique
+        
+        $ipRanges = $allIPs | ForEach-Object {
+            @{ "@odata.type" = "#microsoft.graph.iPv4CidrRange"; cidrAddress = $_ }
+        }
+        
+        $body = @{
+            "@odata.type" = "#microsoft.graph.ipNamedLocation"
+            displayName = $LocationName
+            isTrusted = $IsTrusted
+            ipRanges = $ipRanges
+        } | ConvertTo-Json -Depth 10
+        
+        $uri = "https://graph.microsoft.com/v1.0/identity/conditionalAccess/namedLocations/$($existingLocation.id)"
+        
+        try {
+            $response = Invoke-RestMethod -Method Patch -Uri $uri -Headers $headers -Body $body
+            Write-Host "✅ Added $($IPAddresses.Count) IP(s) to named location '$LocationName' (Total: $($allIPs.Count) IPs)"
+            return $response
+        } catch {
+            Write-Error "Failed to update named location: $($_.Exception.Message)"
+            throw
+        }
+    } else {
+        # Create new named location
+        Write-Host "Creating new named location: $LocationName"
+        
+        $ipRanges = $IPAddresses | ForEach-Object {
+            @{ "@odata.type" = "#microsoft.graph.iPv4CidrRange"; cidrAddress = $_ }
+        }
+        
+        $body = @{
+            "@odata.type" = "#microsoft.graph.ipNamedLocation"
+            displayName = $LocationName
+            isTrusted = $IsTrusted
+            ipRanges = $ipRanges
+        } | ConvertTo-Json -Depth 10
+        
+        $uri = "https://graph.microsoft.com/v1.0/identity/conditionalAccess/namedLocations"
+        
+        try {
+            $response = Invoke-RestMethod -Method Post -Uri $uri -Headers $headers -Body $body
+            Write-Host "✅ Created named location '$LocationName' with $($IPAddresses.Count) IP(s)"
+            Write-Host "⚠️  Create a Conditional Access policy to BLOCK this named location!"
+            return $response
+        } catch {
+            Write-Error "Failed to create named location: $($_.Exception.Message)"
+            throw
+        }
+    }
+}
+
 # Export functions
 Export-ModuleMember -Function @(
     'Set-UserAccountStatus',
@@ -337,5 +479,7 @@ Export-ModuleMember -Function @(
     'Revoke-UserSessions',
     'Get-UserRiskDetections',
     'Get-RiskyUsers',
-    'Get-ConditionalAccessPolicies'
+    'Get-ConditionalAccessPolicies',
+    'Get-NamedLocations',
+    'Add-IPToNamedLocation'
 )

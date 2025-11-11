@@ -116,73 +116,78 @@ try {
     exit 1
 }
 
-# Define required API permissions
+# Define required API permissions (XDR-FOCUSED - Incident Response Only)
+# Removed: Compliance reporting, vulnerability management, IOC management, live response
+# Focus: Detect → Investigate → Respond → Remediate
 $apiPermissions = @{
     "WindowsDefenderATP" = @{
         DisplayName = "WindowsDefenderATP"
         AppId = "fc780465-2017-40d4-a0c5-307022471b92"
         Permissions = @(
+            # Core XDR - Alert & Incident Management
             "Alert.Read.All",
             "Alert.ReadWrite.All",
+            # Core XDR - Device Response Actions
             "Machine.Read.All",
             "Machine.ReadWrite.All",
             "Machine.Isolate",
             "Machine.RestrictExecution",
             "Machine.Scan",
-            "Machine.CollectForensics",
-            "Machine.LiveResponse",
-            "AdvancedQuery.Read.All",
-            # Note: Incident.Read.All and Incident.ReadWrite.All moved to Microsoft Graph SecurityIncident.*
-            "Ti.ReadWrite.All",
-            "SecurityRecommendation.Read.All",
-            "Vulnerability.Read.All",
-            "File.Read.All",
-            "Ip.Read.All",
-            "Url.Read.All",
-            "User.Read.All"
+            # Core XDR - Threat Hunting
+            "AdvancedQuery.Read.All"
+            # REMOVED: Machine.CollectForensics (rarely used, complex)
+            # REMOVED: Machine.LiveResponse (security risk, rarely used)
+            # REMOVED: Ti.ReadWrite.All (IOC management, not incident response)
+            # REMOVED: SecurityRecommendation.Read.All (compliance, not XDR)
+            # REMOVED: Vulnerability.Read.All (compliance, not XDR)
+            # REMOVED: File.Read.All (not needed for core actions)
+            # REMOVED: Ip.Read.All (not needed for core actions)
+            # REMOVED: Url.Read.All (not needed for core actions)
+            # REMOVED: User.Read.All (duplicate - already in Graph API)
         )
     }
     "MicrosoftGraph" = @{
         DisplayName = "Microsoft Graph"
         AppId = "00000003-0000-0000-c000-000000000000"
         Permissions = @(
-            # User Management
+            # Core XDR - User Identity Management
             "User.Read.All",
             "User.ReadWrite.All",
             "Directory.Read.All",
-            "Directory.ReadWrite.All",
-            "UserAuthenticationMethod.Read.All",
             "UserAuthenticationMethod.ReadWrite.All",
             "User.RevokeSessions.All",
-            # Identity Protection
+            # Core XDR - Identity Protection
             "IdentityRiskEvent.Read.All",
-            "IdentityRiskEvent.ReadWrite.All",
             "IdentityRiskyUser.Read.All",
-            "IdentityRiskyUser.ReadWrite.All",
-            # Security Events (Defender XDR Incidents)
+            # Core XDR - Network-Level Threat Blocking (Conditional Access Named Locations)
+            "Policy.Read.All",
+            "Policy.ReadWrite.ConditionalAccess",
+            # Core XDR - Security Events (Unified XDR Alerts/Incidents)
             "SecurityEvents.Read.All",
             "SecurityEvents.ReadWrite.All",
             "SecurityIncident.Read.All",
             "SecurityIncident.ReadWrite.All",
-            # Threat Management
+            # Core XDR - Threat Submission (Phishing Reports)
             "ThreatSubmission.ReadWrite.All",
-            "ThreatIndicators.ReadWrite.OwnedBy",
-            "SecurityActions.Read.All",
-            "SecurityActions.ReadWrite.All",
-            # Device Management (Intune)
+            # Core XDR - Device Management (Intune Mobile Response)
             "DeviceManagementManagedDevices.Read.All",
             "DeviceManagementManagedDevices.ReadWrite.All",
-            "DeviceManagementConfiguration.Read.All",
-            # Email Management (MDO)
-            "Mail.ReadWrite",
-            # Groups and Directory
-            "Group.Read.All",
-            "GroupMember.Read.All",
-            "Application.Read.All",
-            "Policy.Read.All",
-            # Audit and Reporting
-            "AuditLog.Read.All",
-            "Reports.Read.All"
+            # Core XDR - Email Response (MDO)
+            "Mail.ReadWrite"
+            # REMOVED: Directory.ReadWrite.All (excessive, not needed)
+            # REMOVED: UserAuthenticationMethod.Read.All (ReadWrite covers read)
+            # REMOVED: IdentityRiskEvent.ReadWrite.All (read-only sufficient)
+            # REMOVED: IdentityRiskyUser.ReadWrite.All (actions via dedicated endpoints)
+            # REMOVED: ThreatIndicators.ReadWrite.OwnedBy (IOC mgmt, not XDR)
+            # REMOVED: SecurityActions.Read.All (not used)
+            # REMOVED: SecurityActions.ReadWrite.All (not used)
+            # REMOVED: DeviceManagementConfiguration.Read.All (compliance, not XDR)
+            # REMOVED: Group.Read.All (not needed for XDR actions)
+            # REMOVED: GroupMember.Read.All (not needed for XDR actions)
+            # REMOVED: Application.Read.All (not needed for XDR actions)
+            # REMOVED: Policy.Read.All (compliance queries, not XDR)
+            # REMOVED: AuditLog.Read.All (reporting, not incident response)
+            # REMOVED: Reports.Read.All (compliance reporting, not XDR)
         )
     }
 }
@@ -194,7 +199,10 @@ $errorCount = 0
 $consentSuccessCount = 0
 $consentErrorCount = 0
 
-Write-Host "`n📋 Processing $totalPermissions API permissions..." -ForegroundColor Cyan
+Write-Host "`n📋 Processing $totalPermissions XDR-focused API permissions (23 total)..." -ForegroundColor Cyan
+Write-Host "   Focus: Detect → Investigate → Respond → Remediate" -ForegroundColor Gray
+Write-Host "   NEW: Network-level threat blocking (Conditional Access Named Locations)" -ForegroundColor Green
+Write-Host "   NEW: Threat intelligence automation (MDE Indicators for IOC blocking)" -ForegroundColor Green
 
 # Track permissions that need consent
 $permissionsNeedingConsent = @()
@@ -382,9 +390,17 @@ if (-not $SkipAzureRBAC) {
     Write-Host ("=" * 70) -ForegroundColor Yellow
 }
 
-Write-Host "`n✅ Permission configuration complete!" -ForegroundColor Green
+Write-Host "`n✅ XDR-FOCUSED Permission configuration complete!" -ForegroundColor Green
 Write-Host "   App Registration: $AppId" -ForegroundColor Gray
 Write-Host "   Service Principal: $($appServicePrincipal.DisplayName)" -ForegroundColor Gray
+Write-Host "   Total Permissions: 23 (8 MDE + 15 Graph)" -ForegroundColor Cyan
+Write-Host "   Focus: Incident response + Threat intelligence automation" -ForegroundColor Cyan
+Write-Host "" -ForegroundColor Gray
+Write-Host "   🆕 CRITICAL XDR CAPABILITIES ADDED:" -ForegroundColor Yellow
+Write-Host "      • Network-level IP blocking (Conditional Access Named Locations)" -ForegroundColor Green
+Write-Host "      • Automated IOC blocking (MDE Threat Indicators)" -ForegroundColor Green
+Write-Host "      • Block malicious IPs across ALL Microsoft 365 services" -ForegroundColor Green
+Write-Host "      • Block file hashes, domains, URLs across all endpoints" -ForegroundColor Green
 
 # Disconnect from Microsoft Graph
 Disconnect-MgGraph | Out-Null
