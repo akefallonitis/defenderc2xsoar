@@ -56,6 +56,12 @@ using namespace System.Net
 
 param($Request, $TriggerMetadata)
 
+# Import shared modules
+$modulePath = "$PSScriptRoot\..\modules\DefenderXDRIntegrationBridge"
+Import-Module "$modulePath\AuthManager.psm1" -Force -ErrorAction SilentlyContinue
+Import-Module "$modulePath\ValidationHelper.psm1" -Force -ErrorAction SilentlyContinue
+Import-Module "$modulePath\LoggingHelper.psm1" -Force -ErrorAction SilentlyContinue
+
 # Generate correlation ID for request tracking
 $correlationId = [guid]::NewGuid().ToString()
 $startTime = Get-Date
