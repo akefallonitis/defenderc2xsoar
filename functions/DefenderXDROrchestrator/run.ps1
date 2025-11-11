@@ -492,7 +492,9 @@ try {
             $filter = $Request.Query.filter ?? $Request.Body.filter
             $defenderPlan = $Request.Query.defenderPlan ?? $Request.Body.defenderPlan
             
-            if (-not $subscriptionId) { throw "Subscription ID required for MDC operations" }
+            if (-not $subscriptionId) { 
+                throw "Subscription ID is required for MDC operations. Please provide 'subscriptionId' parameter in your request." 
+            }
             
             switch -Wildcard ($action) {
                 "GetSecurityAlerts" {
@@ -637,6 +639,14 @@ try {
                     $detections = Get-UserRiskDetections -Token $token -UserId $userId
                     $result.data = @{ count = $detections.Count; riskDetections = $detections }
                 }
+                "GetRiskyUsers" {
+                    $riskyUsers = Get-RiskyUsers -Token $token
+                    $result.data = @{ count = $riskyUsers.Count; riskyUsers = $riskyUsers | Select-Object -First 100 }
+                }
+                "GetConditionalAccessPolicies" {
+                    $policies = Get-ConditionalAccessPolicies -Token $token
+                    $result.data = @{ count = $policies.Count; policies = $policies }
+                }
                 "CreateNamedLocation" {
                     if (-not $locationName -or -not $ipRanges) { throw "Location name and IP ranges required" }
                     $response = New-NamedLocation -Token $token -LocationName $locationName -IPRanges $ipRanges
@@ -699,6 +709,10 @@ try {
                     $devices = Get-IntuneManagedDevices -Token $token @filterParam
                     $result.data = @{ count = $devices.Count; devices = $devices | Select-Object -First 1000 }
                 }
+                "GetDeviceComplianceStatus" {
+                    $compliance = Get-IntuneDeviceComplianceStatus -Token $token
+                    $result.data = @{ count = $compliance.Count; complianceStatus = $compliance | Select-Object -First 1000 }
+                }
                 default {
                     throw "Unknown Intune action: $action"
                 }
@@ -730,8 +744,14 @@ try {
             $storageAccountName = $Request.Query.storageAccountName ?? $Request.Body.storageAccountName
             $sourceIP = $Request.Query.sourceIP ?? $Request.Body.sourceIP
             
-            if (-not $subscriptionId) { throw "Subscription ID required for Azure operations" }
-            if (-not $resourceGroup) { throw "Resource group required for Azure operations" }
+            if (-not $subscriptionId) { 
+                throw "Subscription ID is required for Azure operations. Please provide 'subscriptionId' parameter in your request." 
+            }
+            
+            # Resource group is required for all actions except GetResourceGroups
+            if (-not $resourceGroup -and $action -ne "GetResourceGroups") { 
+                throw "Resource group is required for this Azure operation. Please provide 'resourceGroup' parameter." 
+            }
             
             switch -Wildcard ($action) {
                 "AddNSGDenyRule" {
@@ -757,6 +777,26 @@ try {
                 "GetVMs" {
                     $vms = Get-AzureVMs -Token $token -SubscriptionId $subscriptionId -ResourceGroup $resourceGroup
                     $result.data = @{ count = $vms.Count; vms = $vms }
+                }
+                "GetResourceGroups" {
+                    $resourceGroups = Get-AzureResourceGroups -Token $token -SubscriptionId $subscriptionId
+                    $result.data = @{ count = $resourceGroups.Count; resourceGroups = $resourceGroups }
+                }
+                "GetVirtualMachines" {
+                    $vms = Get-AzureVMs -Token $token -SubscriptionId $subscriptionId -ResourceGroup $resourceGroup
+                    $result.data = @{ count = $vms.Count; virtualMachines = $vms }
+                }
+                "GetNetworkSecurityGroups" {
+                    $nsgs = Get-AzureNSGs -Token $token -SubscriptionId $subscriptionId -ResourceGroup $resourceGroup
+                    $result.data = @{ count = $nsgs.Count; networkSecurityGroups = $nsgs }
+                }
+                "GetStorageAccounts" {
+                    $storageAccounts = Get-AzureStorageAccounts -Token $token -SubscriptionId $subscriptionId -ResourceGroup $resourceGroup
+                    $result.data = @{ count = $storageAccounts.Count; storageAccounts = $storageAccounts }
+                }
+                "GetKeyVaults" {
+                    $keyVaults = Get-AzureKeyVaults -Token $token -SubscriptionId $subscriptionId -ResourceGroup $resourceGroup
+                    $result.data = @{ count = $keyVaults.Count; keyVaults = $keyVaults }
                 }
                 default {
                     throw "Unknown Azure action: $action"

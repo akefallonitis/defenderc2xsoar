@@ -339,6 +339,119 @@ function Get-AzureVMs {
     }
 }
 
+function Get-AzureResourceGroups {
+    param(
+        [Parameter(Mandatory = $true)]
+        [hashtable]$Token,
+        
+        [Parameter(Mandatory = $true)]
+        [string]$SubscriptionId
+    )
+    
+    try {
+        $headers = @{
+            Authorization = "$($Token.TokenType) $($Token.AccessToken)"
+            "Content-Type" = "application/json"
+        }
+        
+        $uri = "https://management.azure.com/subscriptions/$SubscriptionId/resourcegroups?api-version=2021-04-01"
+        Write-Host "Getting resource groups from: $uri"
+        
+        $response = Invoke-RestMethod -Uri $uri -Method Get -Headers $headers -ErrorAction Stop
+        return $response.value
+    } catch {
+        Write-Error "Failed to get resource groups: $($_.Exception.Message)"
+        throw
+    }
+}
+
+function Get-AzureNSGs {
+    param(
+        [Parameter(Mandatory = $true)]
+        [hashtable]$Token,
+        
+        [Parameter(Mandatory = $true)]
+        [string]$SubscriptionId,
+        
+        [Parameter(Mandatory = $true)]
+        [string]$ResourceGroup
+    )
+    
+    try {
+        $headers = @{
+            Authorization = "$($Token.TokenType) $($Token.AccessToken)"
+            "Content-Type" = "application/json"
+        }
+        
+        $uri = "https://management.azure.com/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.Network/networkSecurityGroups?api-version=2021-02-01"
+        Write-Host "Getting NSGs from: $uri"
+        
+        $response = Invoke-RestMethod -Uri $uri -Method Get -Headers $headers -ErrorAction Stop
+        return $response.value
+    } catch {
+        Write-Error "Failed to get NSGs: $($_.Exception.Message)"
+        throw
+    }
+}
+
+function Get-AzureStorageAccounts {
+    param(
+        [Parameter(Mandatory = $true)]
+        [hashtable]$Token,
+        
+        [Parameter(Mandatory = $true)]
+        [string]$SubscriptionId,
+        
+        [Parameter(Mandatory = $true)]
+        [string]$ResourceGroup
+    )
+    
+    try {
+        $headers = @{
+            Authorization = "$($Token.TokenType) $($Token.AccessToken)"
+            "Content-Type" = "application/json"
+        }
+        
+        $uri = "https://management.azure.com/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.Storage/storageAccounts?api-version=2021-04-01"
+        Write-Host "Getting storage accounts from: $uri"
+        
+        $response = Invoke-RestMethod -Uri $uri -Method Get -Headers $headers -ErrorAction Stop
+        return $response.value
+    } catch {
+        Write-Error "Failed to get storage accounts: $($_.Exception.Message)"
+        throw
+    }
+}
+
+function Get-AzureKeyVaults {
+    param(
+        [Parameter(Mandatory = $true)]
+        [hashtable]$Token,
+        
+        [Parameter(Mandatory = $true)]
+        [string]$SubscriptionId,
+        
+        [Parameter(Mandatory = $true)]
+        [string]$ResourceGroup
+    )
+    
+    try {
+        $headers = @{
+            Authorization = "$($Token.TokenType) $($Token.AccessToken)"
+            "Content-Type" = "application/json"
+        }
+        
+        $uri = "https://management.azure.com/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.KeyVault/vaults?api-version=2021-06-01-preview"
+        Write-Host "Getting key vaults from: $uri"
+        
+        $response = Invoke-RestMethod -Uri $uri -Method Get -Headers $headers -ErrorAction Stop
+        return $response.value
+    } catch {
+        Write-Error "Failed to get key vaults: $($_.Exception.Message)"
+        throw
+    }
+}
+
 # Export functions
 Export-ModuleMember -Function @(
     'Get-AzureAccessToken',
@@ -346,5 +459,9 @@ Export-ModuleMember -Function @(
     'Stop-AzureVM',
     'Disable-StorageAccountPublicAccess',
     'Remove-VMPublicIP',
-    'Get-AzureVMs'
+    'Get-AzureVMs',
+    'Get-AzureResourceGroups',
+    'Get-AzureNSGs',
+    'Get-AzureStorageAccounts',
+    'Get-AzureKeyVaults'
 )

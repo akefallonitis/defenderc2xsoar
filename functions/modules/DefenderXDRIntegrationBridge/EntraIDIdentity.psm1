@@ -262,6 +262,54 @@ function Get-UserRiskDetections {
     }
 }
 
+function Get-RiskyUsers {
+    param(
+        [Parameter(Mandatory = $true)]
+        [hashtable]$Token
+    )
+    
+    try {
+        $headers = @{
+            Authorization = "$($Token.TokenType) $($Token.AccessToken)"
+            "Content-Type" = "application/json"
+        }
+        
+        $uri = "https://graph.microsoft.com/v1.0/identityProtection/riskyUsers"
+        Write-Host "Getting risky users from: $uri"
+        
+        $response = Invoke-RestMethod -Uri $uri -Method Get -Headers $headers -ErrorAction Stop
+        return $response.value
+    }
+    catch {
+        Write-Error "Failed to get risky users: $($_.Exception.Message)"
+        throw
+    }
+}
+
+function Get-ConditionalAccessPolicies {
+    param(
+        [Parameter(Mandatory = $true)]
+        [hashtable]$Token
+    )
+    
+    try {
+        $headers = @{
+            Authorization = "$($Token.TokenType) $($Token.AccessToken)"
+            "Content-Type" = "application/json"
+        }
+        
+        $uri = "https://graph.microsoft.com/v1.0/identity/conditionalAccess/policies"
+        Write-Host "Getting conditional access policies from: $uri"
+        
+        $response = Invoke-RestMethod -Uri $uri -Method Get -Headers $headers -ErrorAction Stop
+        return $response.value
+    }
+    catch {
+        Write-Error "Failed to get conditional access policies: $($_.Exception.Message)"
+        throw
+    }
+}
+
 # Export functions
 Export-ModuleMember -Function @(
     'Set-UserAccountStatus',
@@ -269,5 +317,7 @@ Export-ModuleMember -Function @(
     'Confirm-UserCompromised',
     'Dismiss-UserRisk',
     'Revoke-UserSessions',
-    'Get-UserRiskDetections'
+    'Get-UserRiskDetections',
+    'Get-RiskyUsers',
+    'Get-ConditionalAccessPolicies'
 )

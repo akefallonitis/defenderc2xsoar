@@ -252,6 +252,30 @@ function Get-IntuneManagedDevices {
     }
 }
 
+function Get-IntuneDeviceComplianceStatus {
+    param(
+        [Parameter(Mandatory = $true)]
+        [hashtable]$Token
+    )
+    
+    try {
+        $headers = @{
+            Authorization = "$($Token.TokenType) $($Token.AccessToken)"
+            "Content-Type" = "application/json"
+        }
+        
+        $uri = "https://graph.microsoft.com/v1.0/deviceManagement/managedDevices?`$select=id,deviceName,complianceState,lastSyncDateTime"
+        Write-Host "Getting device compliance status from: $uri"
+        
+        $response = Invoke-RestMethod -Uri $uri -Method Get -Headers $headers -ErrorAction Stop
+        return $response.value
+    }
+    catch {
+        Write-Error "Failed to get device compliance status: $($_.Exception.Message)"
+        throw
+    }
+}
+
 # Export functions
 Export-ModuleMember -Function @(
     'Invoke-IntuneDeviceRemoteLock',
@@ -259,5 +283,6 @@ Export-ModuleMember -Function @(
     'Invoke-IntuneDeviceRetire',
     'Sync-IntuneDevice',
     'Invoke-IntuneDefenderScan',
-    'Get-IntuneManagedDevices'
+    'Get-IntuneManagedDevices',
+    'Get-IntuneDeviceComplianceStatus'
 )
