@@ -83,13 +83,13 @@ try {
     Write-Warning "⚠️  MDE module load failed: $($_.Exception.Message)"
 }
 
-# Import other service modules
-Import-Module "$modulePath\MDOEmailRemediation.psm1" -Force -ErrorAction SilentlyContinue
-Import-Module "$modulePath\EntraIDIdentity.psm1" -Force -ErrorAction SilentlyContinue
-Import-Module "$modulePath\IntuneDeviceManagement.psm1" -Force -ErrorAction SilentlyContinue
-Import-Module "$modulePath\DefenderForCloud.psm1" -Force -ErrorAction SilentlyContinue
-Import-Module "$modulePath\DefenderForIdentity.psm1" -Force -ErrorAction SilentlyContinue
-Import-Module "$modulePath\AzureInfrastructure.psm1" -Force -ErrorAction SilentlyContinue
+# Import other service modules - use Stop to catch import errors
+Import-Module "$modulePath\MDOEmailRemediation.psm1" -Force -ErrorAction Stop
+Import-Module "$modulePath\EntraIDIdentity.psm1" -Force -ErrorAction Stop
+Import-Module "$modulePath\IntuneDeviceManagement.psm1" -Force -ErrorAction Stop
+Import-Module "$modulePath\DefenderForCloud.psm1" -Force -ErrorAction Stop
+Import-Module "$modulePath\DefenderForIdentity.psm1" -Force -ErrorAction Stop
+Import-Module "$modulePath\AzureInfrastructure.psm1" -Force -ErrorAction Stop
 
 # Generate correlation ID for request tracking
 $correlationId = [guid]::NewGuid().ToString()
