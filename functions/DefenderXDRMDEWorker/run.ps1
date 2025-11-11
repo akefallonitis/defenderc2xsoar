@@ -70,18 +70,18 @@ try {
     
     $tokenParams = @{
         TenantId = $tenantId
-        ClientId = $appId
+        AppId = $appId
         ClientSecret = $appSecret
         Service = "MDE"
     }
     
-    $tokenResponse = Get-OAuthToken @tokenParams
+    # Get-OAuthToken returns the token string directly (not an object)
+    $accessToken = Get-OAuthToken @tokenParams
     
-    if (-not $tokenResponse.Success) {
-        throw "Failed to acquire MDE token: $($tokenResponse.Error)"
+    if ([string]::IsNullOrEmpty($accessToken)) {
+        throw "Failed to acquire MDE token"
     }
     
-    $accessToken = $tokenResponse.AccessToken
     $headers = @{
         "Authorization" = "Bearer $accessToken"
         "Content-Type" = "application/json"
