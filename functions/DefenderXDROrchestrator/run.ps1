@@ -83,13 +83,19 @@ try {
     Write-Warning "⚠️  MDE module load failed: $($_.Exception.Message)"
 }
 
-# Import other service modules - use Stop to catch import errors
-Import-Module "$modulePath\MDOEmailRemediation.psm1" -Force -ErrorAction Stop
-Import-Module "$modulePath\EntraIDIdentity.psm1" -Force -ErrorAction Stop
-Import-Module "$modulePath\IntuneDeviceManagement.psm1" -Force -ErrorAction Stop
-Import-Module "$modulePath\DefenderForCloud.psm1" -Force -ErrorAction Stop
-Import-Module "$modulePath\DefenderForIdentity.psm1" -Force -ErrorAction Stop
-Import-Module "$modulePath\AzureInfrastructure.psm1" -Force -ErrorAction Stop
+# Import other service modules - wrap in try-catch to prevent Orchestrator crash
+try {
+    Import-Module "$modulePath\MDOEmailRemediation.psm1" -Force -ErrorAction Stop
+    Import-Module "$modulePath\EntraIDIdentity.psm1" -Force -ErrorAction Stop
+    Import-Module "$modulePath\IntuneDeviceManagement.psm1" -Force -ErrorAction Stop
+    Import-Module "$modulePath\DefenderForCloud.psm1" -Force -ErrorAction Stop
+    Import-Module "$modulePath\DefenderForIdentity.psm1" -Force -ErrorAction Stop
+    Import-Module "$modulePath\AzureInfrastructure.psm1" -Force -ErrorAction Stop
+    Write-Host "✅ All service modules loaded successfully"
+} catch {
+    Write-Warning "⚠️  Service module load failed: $($_.Exception.Message) - Module: $($_.Exception.Source)"
+    # Continue execution - MDE modules are already loaded
+}
 
 # Generate correlation ID for request tracking
 $correlationId = [guid]::NewGuid().ToString()
