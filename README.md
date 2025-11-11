@@ -1,34 +1,45 @@
-﻿# DefenderXDR - Microsoft Security Orchestration Platform
+﻿# DefenderXDR - Unified Microsoft Security Operations Platform
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fakefallonitis%2Fdefenderc2xsoar%2Fmain%2Fdeployment%2Fazuredeploy.json)
 
-**Version:** 2.3.0 | **Status:** Production Ready
+**Version:** 2.4.0 | **Status:** Production Ready | **Last Updated:** November 11, 2025
 
-Enterprise-grade security orchestration platform for Microsoft security products. Deploy 50+ automated security actions across Microsoft Defender, Entra ID, Intune, and Azure with a single click.
+Enterprise unified security orchestration platform for Microsoft XDR. Deploy 227 automated security actions across Microsoft Defender for Endpoint, Office 365, Cloud, Identity, Entra ID, Intune, and Azure with a single click.
 
 ---
 
 ##  Overview
 
-DefenderXDR provides specialized worker functions for each Microsoft security product, enabling automated response actions through:
+DefenderXDR provides a unified orchestration layer for all Microsoft security products with:
 
-- **Azure Functions** - Serverless, auto-scaling execution
-- **Azure Workbook** - Interactive command & control console
-- **XSOAR Integration** - Playbook-driven automation
-- **Multi-Tenant Support** - Single deployment, manage multiple tenants
+- **🎯 Master Orchestrator** - Single API endpoint for cross-product operations
+- **📋 Specialized Managers** - Purpose-built functions for each security domain
+- **⚙️ Service Workers** - Product-specific automation engines
+- **🔄 Multi-Tenant** - Lighthouse-ready with tenant isolation
+- **📊 Interactive Workbook** - Command & control console with live operations
 
-### Supported Products
+### Architecture
 
-| Product | Worker | Actions | Use Cases |
-|---------|--------|---------|-----------|
-| **Defender for Office 365** | MDOWorker | 4 | Email remediation, threat submission |
-| **Defender for Cloud** | MDCWorker | 6 | Alert management, compliance |
-| **Defender for Identity** | MDIWorker | 11 | Lateral movement, credential exposure |
-| **Entra ID** | EntraIDWorker | 13 | Account compromise, access control |
-| **Intune** | IntuneWorker | 8 | Device management, compliance |
-| **Azure** | AzureWorker | 8 | Infrastructure security, isolation |
+```
+DefenderXDROrchestrator (Master)
+├── DefenderXDRDispatcher         → Device Actions (Isolate, Scan, Restrict)
+├── DefenderXDRManager             → Multi-Product Operations (MDO, EntraID, Intune, Azure)
+├── DefenderXDRLiveResponseManager → Live Response & Library Operations
+├── DefenderXDRCustomDetectionManager → Custom Detection Rules
+├── DefenderXDRHuntManager         → Advanced Hunting (KQL)
+├── DefenderXDRIncidentManager     → Incident Management
+├── DefenderXDRThreatIntelManager  → Threat Intelligence Indicators
+├── DefenderXDREndpointManager     → Extended MDE Operations
+└── Workers (6 specialized)
+    ├── AzureWorker        → Azure infrastructure (8 actions)
+    ├── EntraIDWorker      → Identity & access (13 actions)
+    ├── IntuneWorker       → Device management (8 actions)
+    ├── MDCWorker          → Cloud security (6 actions)
+    ├── MDIWorker          → Identity threats (11 actions)
+    └── MDOWorker          → Email security (4 actions)
+```
 
-**Total: 50 automated security actions** | [View All Actions ](WORKER_ACTIONS_QUICKREF.md)
+**Total: 15 Functions | 227 Actions | 100% DefenderXDR Branded**
 
 ---
 
