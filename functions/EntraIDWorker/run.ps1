@@ -3,11 +3,11 @@ using namespace System.Net
 param($Request, $TriggerMetadata)
 
 # Import required modules
-Import-Module "$PSScriptRoot/../DefenderXDRC2XSOAR/AuthManager.psm1" -Force
-Import-Module "$PSScriptRoot/../DefenderXDRC2XSOAR/ValidationHelper.psm1" -Force
-Import-Module "$PSScriptRoot/../DefenderXDRC2XSOAR/LoggingHelper.psm1" -Force
-Import-Module "$PSScriptRoot/../DefenderXDRC2XSOAR/EntraID.psm1" -Force
-Import-Module "$PSScriptRoot/../DefenderXDRC2XSOAR/EntraIDProtection.psm1" -Force
+Import-Module "$PSScriptRoot/../modules/DefenderXDRIntegrationBridge/AuthManager.psm1" -Force
+Import-Module "$PSScriptRoot/../modules/DefenderXDRIntegrationBridge/ValidationHelper.psm1" -Force
+Import-Module "$PSScriptRoot/../modules/DefenderXDRIntegrationBridge/LoggingHelper.psm1" -Force
+Import-Module "$PSScriptRoot/../modules/DefenderXDRIntegrationBridge/EntraID.psm1" -Force
+Import-Module "$PSScriptRoot/../modules/DefenderXDRIntegrationBridge/EntraIDProtection.psm1" -Force
 
 # Extract parameters from request
 $action = $Request.Body.action
