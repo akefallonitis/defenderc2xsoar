@@ -212,7 +212,7 @@
         "[resourceId('Microsoft.Insights/components', variables('appInsightsName'))]"
       ],
       "identity": {
-        "type": "None"
+        "type": "[if(parameters('enableManagedIdentity'), 'SystemAssigned', 'None')]"
       },
       "properties": {
         "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
@@ -284,6 +284,7 @@
       }
     },
     {
+      "condition": "[parameters('enableManagedIdentity')]",
       "type": "Microsoft.Authorization/roleAssignments",
       "apiVersion": "2022-04-01",
       "name": "[guid(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), resourceId('Microsoft.Web/sites', variables('functionAppName')), 'StorageQueueDataContributor')]",
@@ -300,6 +301,7 @@
       }
     },
     {
+      "condition": "[parameters('enableManagedIdentity')]",
       "type": "Microsoft.Authorization/roleAssignments",
       "apiVersion": "2022-04-01",
       "name": "[guid(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), resourceId('Microsoft.Web/sites', variables('functionAppName')), 'StorageTableDataContributor')]",
@@ -316,6 +318,7 @@
       }
     },
     {
+      "condition": "[parameters('enableManagedIdentity')]",
       "type": "Microsoft.Authorization/roleAssignments",
       "apiVersion": "2022-04-01",
       "name": "[guid(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), resourceId('Microsoft.Web/sites', variables('functionAppName')), 'StorageBlobDataContributor')]",
