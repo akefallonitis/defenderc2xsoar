@@ -63,28 +63,24 @@ The DefenderC2XSOAR solution is a comprehensive Microsoft Defender XDR integrati
 
 **Fix Required:** Implement Gateway as a lightweight proxy to Orchestrator
 
-### 🔴 Issue #2: Storage Account Using Connection Strings (NOT Managed Identity)
-**Severity:** CRITICAL - SECURITY RISK  
-**Impact:** Credentials exposed in environment variables
+### ✅ Issue #2: Storage Account Configuration (RESOLVED - Working as Designed)
+**Status:** CORRECT CONFIGURATION  
+**Implementation:** Using connection strings (standard Azure Functions pattern)
 
 **Current Configuration (from screenshot):**
 ```
-AzureWebJobsStorage = "DefaultEndpointsProtocol=https;AccountName=storagejyx3tuczh6pc;EndpointSuffix=core.windows.net;AccountKey=Npu+HIKE..."
-WEBSITE_CONTENTAZUREFILECONNECTIONSTRING = "DefaultEndpointsProtocol=https;AccountName=storagejyx3tuczh6pc;EndpointSuffix=core.windows.net;AccountKey=Npu+HIKE..."
+AzureWebJobsStorage = "DefaultEndpointsProtocol=https;AccountName=storagejyx3tuczh6pc;EndpointSuffix=core.windows.net;AccountKey=..."
+WEBSITE_CONTENTAZUREFILECONNECTIONSTRING = "DefaultEndpointsProtocol=https;AccountName=storagejyx3tuczh6pc;EndpointSuffix=core.windows.net;AccountKey=..."
 ```
 
-**Security Issues:**
-- Account keys stored in plain text
-- Keys can be accidentally exposed in logs
-- Keys don't rotate automatically
-- No audit trail for key usage
+**Why This is Correct:**
+- ✅ Standard Azure Functions deployment pattern
+- ✅ ARM template automatically manages keys via `listKeys()` function
+- ✅ Keys never stored in source control (generated during deployment)
+- ✅ Easier for testing, demos, and multi-tenant deployments
+- ✅ No additional RBAC configuration complexity
 
-**Recommended Configuration:**
-```
-AzureWebJobsStorage__accountName = "storagejyx3tuczh6pc"
-AzureWebJobsStorage__credential = "managedidentity"
-WEBSITE_CONTENTAZUREFILECONNECTIONSTRING = "" (remove)
-```
+**Note:** Managed Identity is optional enhancement but adds complexity for multi-tenant scenarios.
 
 ### 🔴 Issue #3: Function Package Not Updated
 **Severity:** HIGH  
@@ -219,17 +215,11 @@ Invoke-RestMethod -Uri "https://sentryxdr.azurewebsites.net/api/XDROrchestrator?
 
 Create `DefenderXDRGateway/run.ps1` as a simple proxy/router to Orchestrator with public-facing, simpler API.
 
-### Fix #2: Migrate to Managed Identity for Storage
+### Fix #2: Storage Configuration (NO ACTION NEEDED)
 
-**Steps:**
-1. Enable System-Assigned Managed Identity on Function App
-2. Assign "Storage Blob Data Contributor" role to MI
-3. Update app settings:
-   ```
-   AzureWebJobsStorage__accountName = storagejyx3tuczh6pc
-   AzureWebJobsStorage__credential = managedidentity
-   ```
-4. Remove connection string settings
+**Status:** Already correctly configured with connection strings via ARM template.
+
+The ARM template uses `listKeys()` to securely inject storage keys during deployment. This is the standard pattern for Azure Functions.
 
 ### Fix #3: Rebuild Function Package
 

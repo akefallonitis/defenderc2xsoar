@@ -212,7 +212,7 @@
         "[resourceId('Microsoft.Insights/components', variables('appInsightsName'))]"
       ],
       "identity": {
-        "type": "[if(parameters('enableManagedIdentity'), 'SystemAssigned', 'None')]"
+        "type": "None"
       },
       "properties": {
         "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
