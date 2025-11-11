@@ -62,6 +62,21 @@ Import-Module "$modulePath\AuthManager.psm1" -Force -ErrorAction SilentlyContinu
 Import-Module "$modulePath\ValidationHelper.psm1" -Force -ErrorAction SilentlyContinue
 Import-Module "$modulePath\LoggingHelper.psm1" -Force -ErrorAction SilentlyContinue
 
+# Import MDE modules for device operations
+Import-Module "$modulePath\MDEDevice.psm1" -Force -ErrorAction SilentlyContinue
+Import-Module "$modulePath\MDEHunting.psm1" -Force -ErrorAction SilentlyContinue
+Import-Module "$modulePath\MDEIncident.psm1" -Force -ErrorAction SilentlyContinue
+Import-Module "$modulePath\MDEThreatIntel.psm1" -Force -ErrorAction SilentlyContinue
+Import-Module "$modulePath\MDEDetection.psm1" -Force -ErrorAction SilentlyContinue
+
+# Import other service modules
+Import-Module "$modulePath\MDOEmailRemediation.psm1" -Force -ErrorAction SilentlyContinue
+Import-Module "$modulePath\EntraIDIdentity.psm1" -Force -ErrorAction SilentlyContinue
+Import-Module "$modulePath\IntuneDeviceManagement.psm1" -Force -ErrorAction SilentlyContinue
+Import-Module "$modulePath\DefenderForCloud.psm1" -Force -ErrorAction SilentlyContinue
+Import-Module "$modulePath\DefenderForIdentity.psm1" -Force -ErrorAction SilentlyContinue
+Import-Module "$modulePath\AzureInfrastructure.psm1" -Force -ErrorAction SilentlyContinue
+
 # Generate correlation ID for request tracking
 $correlationId = [guid]::NewGuid().ToString()
 $startTime = Get-Date
@@ -216,6 +231,14 @@ try {
         
         "MDE" {
             Write-Host "[$correlationId] Routing to DefenderXDRMDEWorker"
+            
+            # Get MDE OAuth token
+            Write-Host "[$correlationId] Acquiring MDE token for tenant: $tenantId"
+            $token = Get-OAuthToken -TenantId $tenantId -AppId $appId -ClientSecret $secretId -Service "MDE"
+            
+            if (-not $token) {
+                throw "Failed to acquire MDE authentication token"
+            }
             
             # Prepare request for MDE Worker
             $workerRequest = @{
