@@ -360,7 +360,7 @@ try {
                 }
                 "GetDeviceInfo" {
                     if (-not $machineId) { throw "Machine ID required" }
-                    $deviceInfo = Get-DeviceInfo -Token $token -MachineId $machineId
+                    $deviceInfo = Get-DeviceInfo -Token $token -DeviceId $machineId
                     $result.data = @{ device = $deviceInfo }
                 }
                 "GetAllDevices" {
@@ -378,12 +378,23 @@ try {
                     }
                 }
                 "GetIncident*" {
+                    # Incidents are in Microsoft Graph API, not MDE API - need Graph token
+                    Write-Host "[$correlationId] Acquiring Graph token for incidents"
+                    $graphTokenString = Get-OAuthToken -TenantId $tenantId -AppId $appId -ClientSecret $secretId -Service "Graph"
+                    $graphToken = @{
+                        AccessToken = $graphTokenString
+                        TokenType = "Bearer"
+                        ExpiresIn = 3600
+                        ExpiresAt = (Get-Date).AddHours(1)
+                        TenantId = $tenantId
+                    }
+                    
                     if ($incidentId) {
-                        $incident = Get-SecurityIncidents -Token $token -Filter "id eq '$incidentId'"
+                        $incident = Get-SecurityIncidents -Token $graphToken -Filter "id eq '$incidentId'"
                         $result.data = @{ incident = if ($incident) { $incident[0] } else { $null } }
                     } else {
                         $filterParam = if ($filter) { @{ Filter = $filter } } else { @{} }
-                        $incidents = Get-SecurityIncidents -Token $token @filterParam
+                        $incidents = Get-SecurityIncidents -Token $graphToken @filterParam
                         $result.data = @{ count = $incidents.Count; incidents = $incidents | Select-Object -First 100 }
                     }
                 }
