@@ -372,7 +372,67 @@ try {
                 "GetAllDevices" {
                     $filterParam = if ($filter) { @{ Filter = $filter } } else { @{} }
                     $devices = Get-AllDevices -Token $token @filterParam
-                    $result.data = @{ count = $devices.Count; devices = $devices | Select-Object -First 1000 }
+                    $result.data = @{ count = $devices.Count; value = $devices | Select-Object -First 1000 }
+                }
+                "GetAllAlerts" {
+                    # Alerts from Microsoft Graph Security API
+                    Write-Host "[$correlationId] Acquiring Graph token for alerts"
+                    $graphTokenString = Get-OAuthToken -TenantId $tenantId -AppId $appId -ClientSecret $secretId -Service "Graph"
+                    $graphToken = @{
+                        AccessToken = $graphTokenString
+                        TokenType = "Bearer"
+                    }
+                    
+                    try {
+                        $headers = @{
+                            Authorization = "$($graphToken.TokenType) $($graphToken.AccessToken)"
+                            "Content-Type" = "application/json"
+                        }
+                        
+                        $uri = "https://graph.microsoft.com/v1.0/security/alerts_v2"
+                        if ($filter) { $uri += "?`$filter=$filter" }
+                        
+                        $response = Invoke-RestMethod -Uri $uri -Method Get -Headers $headers -ErrorAction Stop
+                        $result.data = @{ count = $response.value.Count; value = $response.value | Select-Object -First 100 }
+                    } catch {
+                        Write-Error "Failed to get alerts: $($_.Exception.Message)"
+                        throw
+                    }
+                }
+                "GetAllIncidents" {
+                    # Incidents from Microsoft Graph Security API
+                    Write-Host "[$correlationId] Acquiring Graph token for incidents"
+                    $graphTokenString = Get-OAuthToken -TenantId $tenantId -AppId $appId -ClientSecret $secretId -Service "Graph"
+                    $graphToken = @{
+                        AccessToken = $graphTokenString
+                        TokenType = "Bearer"
+                    }
+                    
+                    try {
+                        $headers = @{
+                            Authorization = "$($graphToken.TokenType) $($graphToken.AccessToken)"
+                            "Content-Type" = "application/json"
+                        }
+                        
+                        $uri = "https://graph.microsoft.com/v1.0/security/incidents"
+                        if ($filter) { $uri += "?`$filter=$filter" }
+                        
+                        $response = Invoke-RestMethod -Uri $uri -Method Get -Headers $headers -ErrorAction Stop
+                        $result.data = @{ count = $response.value.Count; value = $response.value | Select-Object -First 100 }
+                    } catch {
+                        Write-Error "Failed to get incidents: $($_.Exception.Message)"
+                        throw
+                    }
+                }
+                "RunAdvancedQuery" {
+                    # Advanced hunting query
+                    $queryToExecute = if ($huntQuery) { $huntQuery } elseif ($query) { $query } else { throw "Query required" }
+                    $huntResults = Invoke-AdvancedHunting -Token $token -Query $queryToExecute
+                    $result.data = @{
+                        resultCount = $huntResults.Count
+                        query = $queryToExecute
+                        Results = $huntResults | Select-Object -First 1000
+                    }
                 }
                 "AdvancedHunt*" {
                     $queryToExecute = if ($huntQuery) { $huntQuery } elseif ($query) { $query } else { throw "Query required" }
@@ -504,16 +564,20 @@ try {
                 "GetSecurityAlerts" {
                     $filterParam = if ($filter) { @{ Filter = $filter } } else { @{} }
                     $alerts = Get-MDCSecurityAlerts -Token $token -SubscriptionId $subscriptionId @filterParam
-                    $result.data = @{ count = $alerts.Count; alerts = $alerts | Select-Object -First 100 }
+                    $result.data = @{ count = $alerts.Count; value = $alerts | Select-Object -First 100 }
+                }
+                "GetSecurityRecommendations" {
+                    $recommendations = Get-MDCSecurityRecommendations -Token $token -SubscriptionId $subscriptionId
+                    $result.data = @{ count = $recommendations.Count; value = $recommendations | Select-Object -First 100 }
+                }
+                "GetRecommendations" {
+                    $recommendations = Get-MDCSecurityRecommendations -Token $token -SubscriptionId $subscriptionId
+                    $result.data = @{ count = $recommendations.Count; value = $recommendations | Select-Object -First 100 }
                 }
                 "UpdateSecurityAlert" {
                     if (-not $alertId -or -not $status) { throw "Alert ID and status required" }
                     $response = Update-MDCSecurityAlert -Token $token -SubscriptionId $subscriptionId -AlertId $alertId -Status $status
                     $result.data = @{ message = "Alert status updated"; alertId = $alertId; status = $status; response = $response }
-                }
-                "GetRecommendations" {
-                    $recommendations = Get-MDCSecurityRecommendations -Token $token -SubscriptionId $subscriptionId
-                    $result.data = @{ count = $recommendations.Count; recommendations = $recommendations | Select-Object -First 100 }
                 }
                 "GetSecureScore" {
                     $secureScore = Get-MDCSecureScore -Token $token -SubscriptionId $subscriptionId
@@ -560,7 +624,7 @@ try {
                 "GetAlerts" {
                     $filterParam = if ($filter) { @{ Filter = $filter } } else { @{} }
                     $alerts = Get-MDIAlerts -Token $token @filterParam
-                    $result.data = @{ count = $alerts.Count; alerts = $alerts | Select-Object -First 100 }
+                    $result.data = @{ count = $alerts.Count; value = $alerts | Select-Object -First 100 }
                 }
                 "UpdateAlert" {
                     if (-not $alertId -or -not $status) { throw "Alert ID and status required" }
@@ -645,11 +709,26 @@ try {
                 }
                 "GetRiskyUsers" {
                     $riskyUsers = Get-RiskyUsers -Token $token
-                    $result.data = @{ count = $riskyUsers.Count; riskyUsers = $riskyUsers | Select-Object -First 100 }
+                    $result.data = @{ count = $riskyUsers.Count; value = $riskyUsers | Select-Object -First 100 }
                 }
                 "GetConditionalAccessPolicies" {
                     $policies = Get-ConditionalAccessPolicies -Token $token
-                    $result.data = @{ count = $policies.Count; policies = $policies }
+                    $result.data = @{ count = $policies.Count; value = $policies }
+                }
+                "GetUserById" {
+                    if (-not $userId) { throw "User ID required" }
+                    try {
+                        $headers = @{
+                            Authorization = "$($token.TokenType) $($token.AccessToken)"
+                            "Content-Type" = "application/json"
+                        }
+                        $uri = "https://graph.microsoft.com/v1.0/users/$userId"
+                        $user = Invoke-RestMethod -Uri $uri -Method Get -Headers $headers -ErrorAction Stop
+                        $result.data = $user
+                    } catch {
+                        Write-Error "Failed to get user: $($_.Exception.Message)"
+                        throw
+                    }
                 }
                 "CreateNamedLocation" {
                     if (-not $locationName -or -not $ipRanges) { throw "Location name and IP ranges required" }
@@ -711,11 +790,11 @@ try {
                 "GetManagedDevices" {
                     $filterParam = if ($filter) { @{ Filter = $filter } } else { @{} }
                     $devices = Get-IntuneManagedDevices -Token $token @filterParam
-                    $result.data = @{ count = $devices.Count; devices = $devices | Select-Object -First 1000 }
+                    $result.data = @{ count = $devices.Count; value = $devices | Select-Object -First 1000 }
                 }
                 "GetDeviceComplianceStatus" {
                     $compliance = Get-IntuneDeviceComplianceStatus -Token $token
-                    $result.data = @{ count = $compliance.Count; complianceStatus = $compliance | Select-Object -First 1000 }
+                    $result.data = @{ count = $compliance.Count; value = $compliance | Select-Object -First 1000 }
                 }
                 default {
                     throw "Unknown Intune action: $action"
@@ -774,15 +853,25 @@ try {
                 }
                 "GetVMs" {
                     $vms = Get-AzureVMs -Token $token -SubscriptionId $subscriptionId -ResourceGroup $resourceGroup
-                    $result.data = @{ count = $vms.Count; vms = $vms }
+                    $result.data = @{ count = $vms.Count; value = $vms }
                 }
                 "GetResourceGroups" {
                     $resourceGroups = Get-AzureResourceGroups -Token $token -SubscriptionId $subscriptionId
-                    $result.data = @{ count = $resourceGroups.Count; resourceGroups = $resourceGroups }
+                    $result.data = @{ count = $resourceGroups.Count; value = $resourceGroups }
                 }
                 "GetVirtualMachines" {
-                    $vms = Get-AzureVMs -Token $token -SubscriptionId $subscriptionId -ResourceGroup $resourceGroup
-                    $result.data = @{ count = $vms.Count; virtualMachines = $vms }
+                    try {
+                        $headers = @{
+                            Authorization = "$($token.TokenType) $($token.AccessToken)"
+                            "Content-Type" = "application/json"
+                        }
+                        $uri = "https://management.azure.com/subscriptions/$subscriptionId/providers/Microsoft.Compute/virtualMachines?api-version=2023-03-01"
+                        $response = Invoke-RestMethod -Uri $uri -Method Get -Headers $headers -ErrorAction Stop
+                        $result.data = @{ count = $response.value.Count; value = $response.value }
+                    } catch {
+                        Write-Error "Failed to get VMs: $($_.Exception.Message)"
+                        throw
+                    }
                 }
                 "GetNetworkSecurityGroups" {
                     $nsgs = Get-AzureNSGs -Token $token -SubscriptionId $subscriptionId -ResourceGroup $resourceGroup

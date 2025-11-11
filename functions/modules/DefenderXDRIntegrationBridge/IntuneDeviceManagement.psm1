@@ -7,22 +7,25 @@ function Invoke-IntuneDeviceRemoteLock {
         Remotely locks an Intune-managed device
     
     .PARAMETER Token
-        Graph API authentication token
+        Graph API authentication token (string or hashtable)
     
     .PARAMETER DeviceId
         Intune device ID
     #>
     param(
         [Parameter(Mandatory=$true)]
-        [string]$Token,
+        $Token,
         
         [Parameter(Mandatory=$true)]
         [string]$DeviceId
     )
     
+    # Handle both string and hashtable token formats
+    $accessToken = if ($Token -is [hashtable]) { $Token.AccessToken } else { $Token }
+    
     $uri = "https://graph.microsoft.com/v1.0/deviceManagement/managedDevices/$DeviceId/remoteLock"
     $headers = @{
-        "Authorization" = "Bearer $Token"
+        "Authorization" = "Bearer $accessToken"
         "Content-Type" = "application/json"
     }
     
@@ -42,7 +45,7 @@ function Invoke-IntuneDeviceWipe {
         Wipes an Intune-managed device
     
     .PARAMETER Token
-        Graph API authentication token
+        Graph API authentication token (string or hashtable)
     
     .PARAMETER DeviceId
         Intune device ID
@@ -55,7 +58,7 @@ function Invoke-IntuneDeviceWipe {
     #>
     param(
         [Parameter(Mandatory=$true)]
-        [string]$Token,
+        $Token,
         
         [Parameter(Mandatory=$true)]
         [string]$DeviceId,
@@ -67,9 +70,12 @@ function Invoke-IntuneDeviceWipe {
         [bool]$KeepUserData = $false
     )
     
+    # Handle both string and hashtable token formats
+    $accessToken = if ($Token -is [hashtable]) { $Token.AccessToken } else { $Token }
+    
     $uri = "https://graph.microsoft.com/v1.0/deviceManagement/managedDevices/$DeviceId/wipe"
     $headers = @{
-        "Authorization" = "Bearer $Token"
+        "Authorization" = "Bearer $accessToken"
         "Content-Type" = "application/json"
     }
     
@@ -94,22 +100,25 @@ function Invoke-IntuneDeviceRetire {
         Retires an Intune-managed device (removes company data only)
     
     .PARAMETER Token
-        Graph API authentication token
+        Graph API authentication token (string or hashtable)
     
     .PARAMETER DeviceId
         Intune device ID
     #>
     param(
         [Parameter(Mandatory=$true)]
-        [string]$Token,
+        $Token,
         
         [Parameter(Mandatory=$true)]
         [string]$DeviceId
     )
     
+    # Handle both string and hashtable token formats
+    $accessToken = if ($Token -is [hashtable]) { $Token.AccessToken } else { $Token }
+    
     $uri = "https://graph.microsoft.com/v1.0/deviceManagement/managedDevices/$DeviceId/retire"
     $headers = @{
-        "Authorization" = "Bearer $Token"
+        "Authorization" = "Bearer $accessToken"
         "Content-Type" = "application/json"
     }
     
@@ -129,22 +138,25 @@ function Sync-IntuneDevice {
         Syncs an Intune-managed device
     
     .PARAMETER Token
-        Graph API authentication token
+        Graph API authentication token (string or hashtable)
     
     .PARAMETER DeviceId
         Intune device ID
     #>
     param(
         [Parameter(Mandatory=$true)]
-        [string]$Token,
+        $Token,
         
         [Parameter(Mandatory=$true)]
         [string]$DeviceId
     )
     
+    # Handle both string and hashtable token formats
+    $accessToken = if ($Token -is [hashtable]) { $Token.AccessToken } else { $Token }
+    
     $uri = "https://graph.microsoft.com/v1.0/deviceManagement/managedDevices/$DeviceId/syncDevice"
     $headers = @{
-        "Authorization" = "Bearer $Token"
+        "Authorization" = "Bearer $accessToken"
         "Content-Type" = "application/json"
     }
     
@@ -164,7 +176,7 @@ function Invoke-IntuneDefenderScan {
         Initiates a Windows Defender scan on an Intune-managed device
     
     .PARAMETER Token
-        Graph API authentication token
+        Graph API authentication token (string or hashtable)
     
     .PARAMETER DeviceId
         Intune device ID
@@ -174,7 +186,7 @@ function Invoke-IntuneDefenderScan {
     #>
     param(
         [Parameter(Mandatory=$true)]
-        [string]$Token,
+        $Token,
         
         [Parameter(Mandatory=$true)]
         [string]$DeviceId,
@@ -183,9 +195,12 @@ function Invoke-IntuneDefenderScan {
         [bool]$QuickScan = $true
     )
     
+    # Handle both string and hashtable token formats
+    $accessToken = if ($Token -is [hashtable]) { $Token.AccessToken } else { $Token }
+    
     $uri = "https://graph.microsoft.com/beta/deviceManagement/managedDevices/$DeviceId/windowsDefenderScan"
     $headers = @{
-        "Authorization" = "Bearer $Token"
+        "Authorization" = "Bearer $accessToken"
         "Content-Type" = "application/json"
     }
     
@@ -209,7 +224,7 @@ function Get-IntuneManagedDevices {
         Gets all Intune-managed devices
     
     .PARAMETER Token
-        Graph API authentication token
+        Graph API authentication token (string or hashtable)
     
     .PARAMETER Filter
         OData filter string
@@ -219,7 +234,7 @@ function Get-IntuneManagedDevices {
     #>
     param(
         [Parameter(Mandatory=$true)]
-        [string]$Token,
+        $Token,
         
         [Parameter(Mandatory=$false)]
         [string]$Filter,
@@ -227,6 +242,9 @@ function Get-IntuneManagedDevices {
         [Parameter(Mandatory=$false)]
         [int]$Top = 100
     )
+    
+    # Handle both string and hashtable token formats
+    $accessToken = if ($Token -is [hashtable]) { $Token.AccessToken } else { $Token }
     
     $uri = "https://graph.microsoft.com/v1.0/deviceManagement/managedDevices"
     
@@ -239,7 +257,7 @@ function Get-IntuneManagedDevices {
     }
     
     $headers = @{
-        "Authorization" = "Bearer $Token"
+        "Authorization" = "Bearer $accessToken"
         "Content-Type" = "application/json"
     }
     

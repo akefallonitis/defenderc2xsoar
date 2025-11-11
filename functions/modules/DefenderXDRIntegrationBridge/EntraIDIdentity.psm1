@@ -7,7 +7,7 @@ function Set-UserAccountStatus {
         Enables or disables a user account
     
     .PARAMETER Token
-        Graph API authentication token
+        Graph API authentication token (string or hashtable)
     
     .PARAMETER UserId
         User email address or ID
@@ -17,7 +17,7 @@ function Set-UserAccountStatus {
     #>
     param(
         [Parameter(Mandatory=$true)]
-        [string]$Token,
+        $Token,
         
         [Parameter(Mandatory=$true)]
         [string]$UserId,
@@ -26,9 +26,12 @@ function Set-UserAccountStatus {
         [bool]$Enabled
     )
     
+    # Handle both string and hashtable token formats
+    $accessToken = if ($Token -is [hashtable]) { $Token.AccessToken } else { $Token }
+    
     $uri = "https://graph.microsoft.com/v1.0/users/$UserId"
     $headers = @{
-        "Authorization" = "Bearer $Token"
+        "Authorization" = "Bearer $accessToken"
         "Content-Type" = "application/json"
     }
     
@@ -52,7 +55,7 @@ function Reset-UserPassword {
         Resets a user's password
     
     .PARAMETER Token
-        Graph API authentication token
+        Graph API authentication token (string or hashtable)
     
     .PARAMETER UserId
         User email address or ID
@@ -65,7 +68,7 @@ function Reset-UserPassword {
     #>
     param(
         [Parameter(Mandatory=$true)]
-        [string]$Token,
+        $Token,
         
         [Parameter(Mandatory=$true)]
         [string]$UserId,
@@ -77,9 +80,12 @@ function Reset-UserPassword {
         [bool]$ForceChangeNextSignIn = $true
     )
     
+    # Handle both string and hashtable token formats
+    $accessToken = if ($Token -is [hashtable]) { $Token.AccessToken } else { $Token }
+    
     $uri = "https://graph.microsoft.com/v1.0/users/$UserId"
     $headers = @{
-        "Authorization" = "Bearer $Token"
+        "Authorization" = "Bearer $accessToken"
         "Content-Type" = "application/json"
     }
     
@@ -106,22 +112,25 @@ function Confirm-UserCompromised {
         Confirms a user as compromised in Identity Protection
     
     .PARAMETER Token
-        Graph API authentication token
+        Graph API authentication token (string or hashtable)
     
     .PARAMETER UserIds
         Array of user IDs (GUIDs) to confirm as compromised
     #>
     param(
         [Parameter(Mandatory=$true)]
-        [string]$Token,
+        $Token,
         
         [Parameter(Mandatory=$true)]
         [string[]]$UserIds
     )
     
+    # Handle both string and hashtable token formats
+    $accessToken = if ($Token -is [hashtable]) { $Token.AccessToken } else { $Token }
+    
     $uri = "https://graph.microsoft.com/v1.0/identityProtection/riskyUsers/confirmCompromised"
     $headers = @{
-        "Authorization" = "Bearer $Token"
+        "Authorization" = "Bearer $accessToken"
         "Content-Type" = "application/json"
     }
     
@@ -145,22 +154,25 @@ function Dismiss-UserRisk {
         Dismisses risk for users in Identity Protection
     
     .PARAMETER Token
-        Graph API authentication token
+        Graph API authentication token (string or hashtable)
     
     .PARAMETER UserIds
         Array of user IDs (GUIDs) to dismiss risk
     #>
     param(
         [Parameter(Mandatory=$true)]
-        [string]$Token,
+        $Token,
         
         [Parameter(Mandatory=$true)]
         [string[]]$UserIds
     )
     
+    # Handle both string and hashtable token formats
+    $accessToken = if ($Token -is [hashtable]) { $Token.AccessToken } else { $Token }
+    
     $uri = "https://graph.microsoft.com/v1.0/identityProtection/riskyUsers/dismiss"
     $headers = @{
-        "Authorization" = "Bearer $Token"
+        "Authorization" = "Bearer $accessToken"
         "Content-Type" = "application/json"
     }
     
@@ -184,22 +196,25 @@ function Revoke-UserSessions {
         Revokes all active sessions for a user
     
     .PARAMETER Token
-        Graph API authentication token
+        Graph API authentication token (string or hashtable)
     
     .PARAMETER UserId
         User email address or ID
     #>
     param(
         [Parameter(Mandatory=$true)]
-        [string]$Token,
+        $Token,
         
         [Parameter(Mandatory=$true)]
         [string]$UserId
     )
     
+    # Handle both string and hashtable token formats
+    $accessToken = if ($Token -is [hashtable]) { $Token.AccessToken } else { $Token }
+    
     $uri = "https://graph.microsoft.com/v1.0/users/$UserId/revokeSignInSessions"
     $headers = @{
-        "Authorization" = "Bearer $Token"
+        "Authorization" = "Bearer $accessToken"
         "Content-Type" = "application/json"
     }
     
@@ -219,7 +234,7 @@ function Get-UserRiskDetections {
         Gets risk detections for analysis
     
     .PARAMETER Token
-        Graph API authentication token
+        Graph API authentication token (string or hashtable)
     
     .PARAMETER Filter
         OData filter string
@@ -229,7 +244,7 @@ function Get-UserRiskDetections {
     #>
     param(
         [Parameter(Mandatory=$true)]
-        [string]$Token,
+        $Token,
         
         [Parameter(Mandatory=$false)]
         [string]$Filter,
@@ -237,6 +252,9 @@ function Get-UserRiskDetections {
         [Parameter(Mandatory=$false)]
         [int]$Top = 50
     )
+    
+    # Handle both string and hashtable token formats
+    $accessToken = if ($Token -is [hashtable]) { $Token.AccessToken } else { $Token }
     
     $uri = "https://graph.microsoft.com/v1.0/identityProtection/riskDetections"
     
@@ -249,7 +267,7 @@ function Get-UserRiskDetections {
     }
     
     $headers = @{
-        "Authorization" = "Bearer $Token"
+        "Authorization" = "Bearer $accessToken"
         "Content-Type" = "application/json"
     }
     
