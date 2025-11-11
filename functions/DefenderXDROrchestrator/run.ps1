@@ -58,16 +58,30 @@ param($Request, $TriggerMetadata)
 
 # Import shared modules
 $modulePath = "$PSScriptRoot\..\modules\DefenderXDRIntegrationBridge"
-Import-Module "$modulePath\AuthManager.psm1" -Force -ErrorAction SilentlyContinue
-Import-Module "$modulePath\ValidationHelper.psm1" -Force -ErrorAction SilentlyContinue
-Import-Module "$modulePath\LoggingHelper.psm1" -Force -ErrorAction SilentlyContinue
+
+# Load core dependencies first (required by all modules)
+try {
+    Import-Module "$modulePath\AuthManager.psm1" -Force -ErrorAction Stop
+    Import-Module "$modulePath\ValidationHelper.psm1" -Force -ErrorAction Stop
+    Import-Module "$modulePath\LoggingHelper.psm1" -Force -ErrorAction Stop
+    Import-Module "$modulePath\MDEAuth.psm1" -Force -ErrorAction Stop  # Critical MDE dependency
+    Write-Host "✅ Core modules loaded successfully"
+} catch {
+    Write-Error "❌ CRITICAL: Failed to load core module - $($_.Exception.Message)"
+    throw
+}
 
 # Import MDE modules for device operations
-Import-Module "$modulePath\MDEDevice.psm1" -Force -ErrorAction SilentlyContinue
-Import-Module "$modulePath\MDEHunting.psm1" -Force -ErrorAction SilentlyContinue
-Import-Module "$modulePath\MDEIncident.psm1" -Force -ErrorAction SilentlyContinue
-Import-Module "$modulePath\MDEThreatIntel.psm1" -Force -ErrorAction SilentlyContinue
-Import-Module "$modulePath\MDEDetection.psm1" -Force -ErrorAction SilentlyContinue
+try {
+    Import-Module "$modulePath\MDEDevice.psm1" -Force -ErrorAction Stop
+    Import-Module "$modulePath\MDEHunting.psm1" -Force -ErrorAction Stop
+    Import-Module "$modulePath\MDEIncident.psm1" -Force -ErrorAction Stop
+    Import-Module "$modulePath\MDEThreatIntel.psm1" -Force -ErrorAction Stop
+    Import-Module "$modulePath\MDEDetection.psm1" -Force -ErrorAction Stop
+    Write-Host "✅ MDE modules loaded successfully"
+} catch {
+    Write-Warning "⚠️  MDE module load failed: $($_.Exception.Message)"
+}
 
 # Import other service modules
 Import-Module "$modulePath\MDOEmailRemediation.psm1" -Force -ErrorAction SilentlyContinue
