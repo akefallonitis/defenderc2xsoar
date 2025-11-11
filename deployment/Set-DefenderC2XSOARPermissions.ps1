@@ -8,22 +8,35 @@
     - Azure Resource Manager RBAC (Security Admin, Security Reader)
     
     The script will:
-    1. Connect to Microsoft Graph with admin privileges
-    2. Add all required application permissions
-    3. Grant admin consent automatically
+    1. Connect to Microsoft Graph
+    2. Add all required application permissions to the app registration
+    3. Optionally grant admin consent (requires Global Admin role)
     4. Display permission status
+    
+    TWO-STEP PROCESS:
+    - Step 1: Application Administrator can ADD permissions (use -SkipConsent)
+    - Step 2: Global Administrator must GRANT consent (run without -SkipConsent)
 .PARAMETER AppId
     Application (client) ID of the multi-tenant app registration
 .PARAMETER TenantId
     Azure AD Tenant ID where the app is registered
+.PARAMETER SkipConsent
+    Skip granting admin consent (useful when running as Application Administrator)
+    Use this flag if you only want to add permissions without granting consent.
+    A Global Administrator must run the script again without this flag to grant consent.
 .PARAMETER SkipAzureRBAC
     Skip Azure Resource Manager RBAC role assignment (useful if managing separately)
 .EXAMPLE
+    # Step 1: Add permissions (Application Administrator)
+    .\Set-DefenderC2XSOARPermissions.ps1 -AppId "0b75d6c4-8466-420c-bfc3-8c0c4fadae24" -TenantId "a92a42cd-bf8c-46ba-aa4e-64cbc9e030d9" -SkipConsent
+    
+    # Step 2: Grant admin consent (Global Administrator)
     .\Set-DefenderC2XSOARPermissions.ps1 -AppId "0b75d6c4-8466-420c-bfc3-8c0c4fadae24" -TenantId "a92a42cd-bf8c-46ba-aa4e-64cbc9e030d9"
 .NOTES
     Author: DefenderC2XSOAR Team
     Requires: Microsoft.Graph PowerShell SDK (Install-Module Microsoft.Graph)
-    Required Permissions: Application.ReadWrite.All, AppRoleAssignment.ReadWrite.All
+    Required Scopes: Application.ReadWrite.All (to add permissions), AppRoleAssignment.ReadWrite.All (to grant consent)
+    Required Roles: Application Administrator (to add), Global Administrator (to grant consent)
 #>
 
 [CmdletBinding()]
@@ -35,6 +48,9 @@ param(
     [Parameter(Mandatory = $true)]
     [ValidateScript({ $_ -match '^[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}$' })]
     [string]$TenantId,
+    
+    [Parameter(Mandatory = $false)]
+    [switch]$SkipConsent,
     
     [Parameter(Mandatory = $false)]
     [switch]$SkipAzureRBAC
@@ -56,28 +72,47 @@ if (-not $graphModule) {
 # Connect to Microsoft Graph
 Write-Host "`n🔐 Connecting to Microsoft Graph..." -ForegroundColor Cyan
 Write-Host "   Tenant: $TenantId" -ForegroundColor Gray
-Write-Host "   Required Scopes: Application.ReadWrite.All, AppRoleAssignment.ReadWrite.All" -ForegroundColor Gray
+
+if ($SkipConsent) {
+    Write-Host "   Mode: ADD PERMISSIONS ONLY (Application Administrator)" -ForegroundColor Yellow
+    Write-Host "   Required Scope: Application.ReadWrite.All" -ForegroundColor Gray
+    $scopes = @("Application.ReadWrite.All")
+} else {
+    Write-Host "   Mode: ADD PERMISSIONS + GRANT CONSENT (Global Administrator)" -ForegroundColor Yellow
+    Write-Host "   Required Scopes: Application.ReadWrite.All, AppRoleAssignment.ReadWrite.All" -ForegroundColor Gray
+    $scopes = @("Application.ReadWrite.All", "AppRoleAssignment.ReadWrite.All")
+}
 
 try {
-    Connect-MgGraph -TenantId $TenantId -Scopes "Application.ReadWrite.All", "AppRoleAssignment.ReadWrite.All" -NoWelcome -ErrorAction Stop
+    Connect-MgGraph -TenantId $TenantId -Scopes $scopes -NoWelcome -ErrorAction Stop
     Write-Host "✅ Connected to Microsoft Graph" -ForegroundColor Green
 } catch {
     Write-Host "❌ Failed to connect to Microsoft Graph: $_" -ForegroundColor Red
     exit 1
 }
 
-# Get the service principal for our app
-Write-Host "`n🔍 Finding application service principal..." -ForegroundColor Cyan
+# Get the app registration and service principal
+Write-Host "`n🔍 Finding application..." -ForegroundColor Cyan
 try {
+    # Get app registration first
+    $app = Get-MgApplication -Filter "appId eq '$AppId'" -ErrorAction Stop
+    if (-not $app) {
+        Write-Host "❌ App registration not found for AppId: $AppId" -ForegroundColor Red
+        exit 1
+    }
+    Write-Host "✅ Found app registration: $($app.DisplayName) (ObjectId: $($app.Id))" -ForegroundColor Green
+    
+    # Get service principal
     $appServicePrincipal = Get-MgServicePrincipal -Filter "appId eq '$AppId'" -ErrorAction Stop
     if (-not $appServicePrincipal) {
         Write-Host "❌ Service principal not found for AppId: $AppId" -ForegroundColor Red
-        Write-Host "   Make sure the app registration exists and has a service principal" -ForegroundColor Yellow
-        exit 1
+        Write-Host "   Creating service principal..." -ForegroundColor Yellow
+        $appServicePrincipal = New-MgServicePrincipal -AppId $AppId -ErrorAction Stop
+        Write-Host "✅ Service principal created" -ForegroundColor Green
     }
     Write-Host "✅ Found service principal: $($appServicePrincipal.DisplayName) (ObjectId: $($appServicePrincipal.Id))" -ForegroundColor Green
 } catch {
-    Write-Host "❌ Error finding service principal: $_" -ForegroundColor Red
+    Write-Host "❌ Error finding application: $_" -ForegroundColor Red
     exit 1
 }
 
@@ -147,8 +182,13 @@ $totalPermissions = ($apiPermissions.Values | ForEach-Object { $_.Permissions.Co
 $successCount = 0
 $skipCount = 0
 $errorCount = 0
+$consentSuccessCount = 0
+$consentErrorCount = 0
 
 Write-Host "`n📋 Processing $totalPermissions API permissions..." -ForegroundColor Cyan
+
+# Track permissions that need consent
+$permissionsNeedingConsent = @()
 
 foreach ($api in $apiPermissions.GetEnumerator()) {
     $apiName = $api.Key
@@ -176,6 +216,13 @@ foreach ($api in $apiPermissions.GetEnumerator()) {
     # Get all app roles from the resource
     $appRoles = $resourceSP.AppRoles
     
+    # Get current app permissions
+    $currentApp = Get-MgApplication -ApplicationId $app.Id -Property RequiredResourceAccess -ErrorAction Stop
+    $currentAppPermissions = $currentApp.RequiredResourceAccess
+    
+    # Build list of permissions to add for this API
+    $permissionsToAdd = @()
+    
     foreach ($permissionName in $apiConfig.Permissions) {
         Write-Host "   Processing: $permissionName..." -NoNewline -ForegroundColor Gray
         
@@ -187,45 +234,114 @@ foreach ($api in $apiPermissions.GetEnumerator()) {
             continue
         }
         
-        # Check if permission already assigned
-        try {
-            $existingAssignment = Get-MgServicePrincipalAppRoleAssignment -ServicePrincipalId $appServicePrincipal.Id -ErrorAction Stop | 
-                Where-Object { $_.AppRoleId -eq $appRole.Id -and $_.ResourceId -eq $resourceSP.Id }
-            
-            if ($existingAssignment) {
-                Write-Host " ✓ Already assigned" -ForegroundColor DarkGray
-                $skipCount++
-                continue
-            }
-        } catch {
-            # Permission not assigned, continue to add it
+        # Check if consent already granted (via service principal)
+        $existingAssignment = Get-MgServicePrincipalAppRoleAssignment -ServicePrincipalId $appServicePrincipal.Id -ErrorAction SilentlyContinue | 
+            Where-Object { $_.AppRoleId -eq $appRole.Id -and $_.ResourceId -eq $resourceSP.Id }
+        
+        if ($existingAssignment) {
+            Write-Host " ✓ Already assigned & consented" -ForegroundColor DarkGray
+            $skipCount++
+            continue
         }
         
-        # Assign the permission
+        # Permission needs to be added/consented
+        Write-Host " ➕ Will add" -ForegroundColor Green
+        $successCount++
+        $permissionsToAdd += @{
+            Id = $appRole.Id
+            Type = "Role"
+        }
+        
+        # Track for consent
+        $permissionsNeedingConsent += @{
+            API = $apiConfig.DisplayName
+            Permission = $permissionName
+            AppRoleId = $appRole.Id
+            ResourceId = $resourceSP.Id
+        }
+    }
+    
+    # Update app registration with all permissions for this API
+    if ($permissionsToAdd.Count -gt 0) {
+        try {
+            Write-Host "   Updating app registration with $($permissionsToAdd.Count) new permissions..." -ForegroundColor Cyan
+            
+            # Get existing permissions for this resource
+            $existingResource = $currentAppPermissions | Where-Object { $_.ResourceAppId -eq $apiConfig.AppId }
+            $otherResources = $currentAppPermissions | Where-Object { $_.ResourceAppId -ne $apiConfig.AppId }
+            
+            # Combine existing + new permissions for this resource
+            if ($existingResource) {
+                $allResourcePermissions = @($existingResource.ResourceAccess) + $permissionsToAdd
+            } else {
+                $allResourcePermissions = $permissionsToAdd
+            }
+            
+            # Build new resource access
+            $newResourceAccess = @{
+                ResourceAppId = $apiConfig.AppId
+                ResourceAccess = $allResourcePermissions
+            }
+            
+            # Combine with other resources
+            $allRequiredResourceAccess = @($otherResources) + @($newResourceAccess)
+            
+            # Update app
+            Update-MgApplication -ApplicationId $app.Id -RequiredResourceAccess $allRequiredResourceAccess -ErrorAction Stop
+            Write-Host "   ✅ App registration updated" -ForegroundColor Green
+        } catch {
+            Write-Host "   ❌ Failed to update app: $($_.Exception.Message)" -ForegroundColor Red
+            $errorCount += $permissionsToAdd.Count
+        }
+    }
+}
+
+# Grant admin consent if not skipped
+if (-not $SkipConsent -and $permissionsNeedingConsent.Count -gt 0) {
+    Write-Host "`n🔐 GRANTING ADMIN CONSENT..." -ForegroundColor Yellow
+    Write-Host "   Permissions needing consent: $($permissionsNeedingConsent.Count)" -ForegroundColor Gray
+    
+    foreach ($perm in $permissionsNeedingConsent) {
+        Write-Host "   Consenting: $($perm.Permission) ($($perm.API))..." -NoNewline -ForegroundColor Gray
         try {
             $params = @{
                 PrincipalId = $appServicePrincipal.Id
-                ResourceId = $resourceSP.Id
-                AppRoleId = $appRole.Id
+                ResourceId = $perm.ResourceId
+                AppRoleId = $perm.AppRoleId
             }
             New-MgServicePrincipalAppRoleAssignment -ServicePrincipalId $appServicePrincipal.Id -BodyParameter $params -ErrorAction Stop | Out-Null
-            Write-Host " ✅ Added" -ForegroundColor Green
-            $successCount++
+            Write-Host " ✅ Granted" -ForegroundColor Green
+            $consentSuccessCount++
         } catch {
-            Write-Host " ❌ Failed: $_" -ForegroundColor Red
-            $errorCount++
+            if ($_.Exception.Message -like "*Permission being assigned already exists*") {
+                Write-Host " ✓ Already granted" -ForegroundColor DarkGray
+                $consentSuccessCount++
+            } else {
+                Write-Host " ❌ Failed: $($_.Exception.Message)" -ForegroundColor Red
+                $consentErrorCount++
+            }
         }
     }
 }
 
 # Summary
 Write-Host "`n" + ("=" * 70) -ForegroundColor Cyan
-Write-Host "📊 PERMISSION ASSIGNMENT SUMMARY" -ForegroundColor Cyan
+Write-Host "📊 PERMISSION CONFIGURATION SUMMARY" -ForegroundColor Cyan
 Write-Host ("=" * 70) -ForegroundColor Cyan
 Write-Host "✅ Successfully added:  $successCount permissions" -ForegroundColor Green
-Write-Host "⏭️  Already assigned:    $skipCount permissions" -ForegroundColor Gray
+Write-Host "⏭️  Already in app:      $skipCount permissions" -ForegroundColor Gray
 Write-Host "❌ Failed/Not found:    $errorCount permissions" -ForegroundColor $(if ($errorCount -gt 0) { "Yellow" } else { "Gray" })
 Write-Host "📝 Total processed:     $totalPermissions permissions" -ForegroundColor Cyan
+
+if (-not $SkipConsent) {
+    Write-Host "`n🔐 ADMIN CONSENT:" -ForegroundColor Cyan
+    Write-Host "✅ Successfully granted: $consentSuccessCount permissions" -ForegroundColor Green
+    Write-Host "❌ Failed to grant:      $consentErrorCount permissions" -ForegroundColor $(if ($consentErrorCount -gt 0) { "Red" } else { "Gray" })
+} else {
+    Write-Host "`n⚠️  ADMIN CONSENT SKIPPED" -ForegroundColor Yellow
+    Write-Host "   Permissions added but not consented: $($permissionsNeedingConsent.Count)" -ForegroundColor Yellow
+    Write-Host "   Run script again WITHOUT -SkipConsent flag as Global Administrator to grant consent" -ForegroundColor Yellow
+}
 Write-Host ("=" * 70) -ForegroundColor Cyan
 
 # Azure RBAC Instructions
