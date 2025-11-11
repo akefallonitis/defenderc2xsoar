@@ -492,9 +492,7 @@ try {
             $filter = $Request.Query.filter ?? $Request.Body.filter
             $defenderPlan = $Request.Query.defenderPlan ?? $Request.Body.defenderPlan
             
-            if (-not $subscriptionId) { 
-                throw "Subscription ID is required for MDC operations. Please provide 'subscriptionId' parameter in your request." 
-            }
+            if (-not $subscriptionId) { throw "Subscription ID required for MDC operations. Provide 'subscriptionId' parameter in request." }
             
             switch -Wildcard ($action) {
                 "GetSecurityAlerts" {
@@ -744,14 +742,8 @@ try {
             $storageAccountName = $Request.Query.storageAccountName ?? $Request.Body.storageAccountName
             $sourceIP = $Request.Query.sourceIP ?? $Request.Body.sourceIP
             
-            if (-not $subscriptionId) { 
-                throw "Subscription ID is required for Azure operations. Please provide 'subscriptionId' parameter in your request." 
-            }
-            
-            # Resource group is required for all actions except GetResourceGroups
-            if (-not $resourceGroup -and $action -ne "GetResourceGroups") { 
-                throw "Resource group is required for this Azure operation. Please provide 'resourceGroup' parameter." 
-            }
+            if (-not $subscriptionId) { throw "Subscription ID required for Azure operations. Provide 'subscriptionId' parameter in request." }
+            if (-not $resourceGroup -and $action -notlike "GetResourceGroups") { throw "Resource group required for most Azure operations. Provide 'resourceGroup' parameter in request." }
             
             switch -Wildcard ($action) {
                 "AddNSGDenyRule" {
