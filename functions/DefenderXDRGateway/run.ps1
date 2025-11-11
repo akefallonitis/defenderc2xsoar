@@ -146,42 +146,15 @@ try {
         'POST'
     }
     
-    # Make request to Orchestrator
-    if ($method -eq 'GET') {
-        # Build query string
-        $queryParams = @()
-        foreach ($key in $orchestratorParams.Keys) {
-            $value = [System.Web.HttpUtility]::UrlEncode($orchestratorParams[$key])
-            $queryParams += "$key=$value"
-        }
-        $queryString = $queryParams -join '&'
-        $finalUrl = "$orchestratorUrl`?$queryString"
-        
-        Write-Host "[$correlationId] GET request to: $finalUrl"
-        
-        # Use internal function call (no HTTP overhead)
-        $response = & "$PSScriptRoot\..\DefenderXDROrchestrator\run.ps1" -Request @{
-            Query = $orchestratorParams
-            Body = @{}
-            Method = 'GET'
-        }
-        
-    } else {
-        # POST request
-        Write-Host "[$correlationId] POST request with body"
-        
-        # Use internal function call
-        $response = & "$PSScriptRoot\..\DefenderXDROrchestrator\run.ps1" -Request @{
-            Query = @{}
-            Body = $orchestratorParams
-            Method = 'POST'
-        }
-    }
+    # Forward the request to Orchestrator by modifying the Request object
+    # Gateway acts as a proxy, so we pass through to Orchestrator directly
+    $Request.Body = $orchestratorParams
+    $Request.Query = @{}
     
-    # The Orchestrator returns via Push-OutputBinding, but we can also capture output
-    # For simplicity, we'll just return success since Orchestrator handles the response
+    Write-Host "[$correlationId] Forwarding to Orchestrator"
     
-    Write-Host "[$correlationId] Request completed successfully"
+    # Load and execute Orchestrator directly
+    . "$PSScriptRoot\..\DefenderXDROrchestrator\run.ps1"
     
 } catch {
     $endTime = Get-Date

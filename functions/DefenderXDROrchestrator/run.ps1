@@ -234,10 +234,19 @@ try {
             
             # Get MDE OAuth token
             Write-Host "[$correlationId] Acquiring MDE token for tenant: $tenantId"
-            $token = Get-OAuthToken -TenantId $tenantId -AppId $appId -ClientSecret $secretId -Service "MDE"
+            $tokenString = Get-OAuthToken -TenantId $tenantId -AppId $appId -ClientSecret $secretId -Service "MDE"
             
-            if (-not $token) {
+            if (-not $tokenString) {
                 throw "Failed to acquire MDE authentication token"
+            }
+            
+            # Create token object in format expected by modules
+            $token = @{
+                AccessToken = $tokenString
+                TokenType = "Bearer"
+                ExpiresIn = 3600
+                ExpiresAt = (Get-Date).AddHours(1)
+                TenantId = $tenantId
             }
             
             # Prepare request for MDE Worker
@@ -390,7 +399,14 @@ try {
             Write-Host "[$correlationId] Processing MDO action: $action"
             
             # Authenticate to Graph API for MDO operations
-            $token = Get-OAuthToken -TenantId $tenantId -AppId $appId -ClientSecret $secretId -Service "Graph"
+            $tokenString = Get-OAuthToken -TenantId $tenantId -AppId $appId -ClientSecret $secretId -Service "Graph"
+            $token = @{
+                AccessToken = $tokenString
+                TokenType = "Bearer"
+                ExpiresIn = 3600
+                ExpiresAt = (Get-Date).AddHours(1)
+                TenantId = $tenantId
+            }
             
             # Extract MDO-specific parameters
             $emailId = $Request.Query.emailId ?? $Request.Body.emailId
@@ -435,7 +451,14 @@ try {
             Write-Host "[$correlationId] Processing MDC action: $action"
             
             # Authenticate to Azure RM for MDC operations
-            $token = Get-OAuthToken -TenantId $tenantId -AppId $appId -ClientSecret $secretId -Service "AzureRM"
+            $tokenString = Get-OAuthToken -TenantId $tenantId -AppId $appId -ClientSecret $secretId -Service "Azure"
+            $token = @{
+                AccessToken = $tokenString
+                TokenType = "Bearer"
+                ExpiresIn = 3600
+                ExpiresAt = (Get-Date).AddHours(1)
+                TenantId = $tenantId
+            }
             
             # Extract MDC-specific parameters
             $subscriptionId = $Request.Query.subscriptionId ?? $Request.Body.subscriptionId
@@ -488,7 +511,14 @@ try {
             Write-Host "[$correlationId] Processing MDI action: $action"
             
             # Authenticate to Graph API for MDI operations
-            $token = Get-OAuthToken -TenantId $tenantId -AppId $appId -ClientSecret $secretId -Service "Graph"
+            $tokenString = Get-OAuthToken -TenantId $tenantId -AppId $appId -ClientSecret $secretId -Service "Graph"
+            $token = @{
+                AccessToken = $tokenString
+                TokenType = "Bearer"
+                ExpiresIn = 3600
+                ExpiresAt = (Get-Date).AddHours(1)
+                TenantId = $tenantId
+            }
             
             # Extract MDI-specific parameters
             $alertId = $Request.Query.alertId ?? $Request.Body.alertId
@@ -532,7 +562,14 @@ try {
             Write-Host "[$correlationId] Processing Entra ID action: $action"
             
             # Authenticate to Graph API for Entra ID operations
-            $token = Get-OAuthToken -TenantId $tenantId -AppId $appId -ClientSecret $secretId -Service "Graph"
+            $tokenString = Get-OAuthToken -TenantId $tenantId -AppId $appId -ClientSecret $secretId -Service "Graph"
+            $token = @{
+                AccessToken = $tokenString
+                TokenType = "Bearer"
+                ExpiresIn = 3600
+                ExpiresAt = (Get-Date).AddHours(1)
+                TenantId = $tenantId
+            }
             
             # Extract Entra ID-specific parameters
             $userId = $Request.Query.userId ?? $Request.Body.userId
@@ -594,7 +631,14 @@ try {
             Write-Host "[$correlationId] Processing Intune action: $action"
             
             # Authenticate to Graph API for Intune operations
-            $token = Get-OAuthToken -TenantId $tenantId -AppId $appId -ClientSecret $secretId -Service "Graph"
+            $tokenString = Get-OAuthToken -TenantId $tenantId -AppId $appId -ClientSecret $secretId -Service "Graph"
+            $token = @{
+                AccessToken = $tokenString
+                TokenType = "Bearer"
+                ExpiresIn = 3600
+                ExpiresAt = (Get-Date).AddHours(1)
+                TenantId = $tenantId
+            }
             
             # Extract Intune-specific parameters
             $deviceId = $Request.Query.deviceId ?? $Request.Body.deviceId
@@ -644,7 +688,14 @@ try {
             Write-Host "[$correlationId] Processing Azure action: $action"
             
             # Authenticate to Azure RM for infrastructure operations
-            $token = Get-OAuthToken -TenantId $tenantId -AppId $appId -ClientSecret $secretId -Service "AzureRM"
+            $tokenString = Get-OAuthToken -TenantId $tenantId -AppId $appId -ClientSecret $secretId -Service "Azure"
+            $token = @{
+                AccessToken = $tokenString
+                TokenType = "Bearer"
+                ExpiresIn = 3600
+                ExpiresAt = (Get-Date).AddHours(1)
+                TenantId = $tenantId
+            }
             
             # Extract Azure-specific parameters
             $subscriptionId = $Request.Query.subscriptionId ?? $Request.Body.subscriptionId
