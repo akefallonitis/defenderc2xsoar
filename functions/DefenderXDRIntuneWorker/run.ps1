@@ -3,10 +3,19 @@ using namespace System.Net
 param($Request, $TriggerMetadata)
 
 # Import required modules
-Import-Module "$PSScriptRoot/../modules/DefenderXDRIntegrationBridge/AuthManager.psm1" -Force
-Import-Module "$PSScriptRoot/../modules/DefenderXDRIntegrationBridge/ValidationHelper.psm1" -Force
-Import-Module "$PSScriptRoot/../modules/DefenderXDRIntegrationBridge/LoggingHelper.psm1" -Force
-Import-Module "$PSScriptRoot/../modules/DefenderXDRIntegrationBridge/Intune.psm1" -Force
+# Add module imports and existence checks
+try {
+    Import-Module "$PSScriptRoot/../modules/DefenderXDRIntegrationBridge/AuthManager.psm1" -ErrorAction Stop
+    Import-Module "$PSScriptRoot/../modules/DefenderXDRIntegrationBridge/ValidationHelper.psm1" -ErrorAction Stop
+    Import-Module "$PSScriptRoot/../modules/DefenderXDRIntegrationBridge/LoggingHelper.psm1" -ErrorAction Stop
+    Import-Module "$PSScriptRoot/../modules/DefenderXDRIntegrationBridge/Intune.psm1" -ErrorAction Stop
+} catch {
+    Push-OutputBinding -Name Response -Value ([HttpResponseContext]@{
+        StatusCode = [HttpStatusCode]::InternalServerError
+        Body = @{ error = "Required module import failed: $($_.Exception.Message)" } | ConvertTo-Json
+    })
+    return
+}
 
 # Extract parameters from request
 $action = $Request.Body.action

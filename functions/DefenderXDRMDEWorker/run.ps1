@@ -19,11 +19,29 @@
 
 using namespace System.Net
 
-# Import modules
-Import-Module "$PSScriptRoot\..\modules\DefenderXDRIntegrationBridge\AuthManager.psm1" -Force
-Import-Module "$PSScriptRoot\..\modules\DefenderXDRIntegrationBridge\BlobManager.psm1" -Force
-Import-Module "$PSScriptRoot\..\modules\DefenderXDRIntegrationBridge\ValidationHelper.psm1" -Force
-Import-Module "$PSScriptRoot\..\modules\DefenderXDRIntegrationBridge\LoggingHelper.psm1" -Force
+
+# Robust module import with existence check and error logging
+$moduleBase = "$PSScriptRoot\..\modules\DefenderXDRIntegrationBridge"
+$modules = @(
+    "AuthManager.psm1",
+    "BlobManager.psm1",
+    "ValidationHelper.psm1",
+    "LoggingHelper.psm1"
+)
+foreach ($mod in $modules) {
+    $modPath = Join-Path $moduleBase $mod
+    if (-not (Test-Path $modPath)) {
+        Write-Error "Required module missing: $modPath"
+        $result = @{ success = $false; error = "Required module missing: $modPath"; timestamp = (Get-Date).ToString("o") }
+        Push-OutputBinding -Name Response -Value ([HttpResponseContext]@{
+            StatusCode = [HttpStatusCode]::InternalServerError
+            Body = ($result | ConvertTo-Json -Depth 10)
+            Headers = @{ "Content-Type" = "application/json" }
+        })
+        return
+    }
+    Import-Module $modPath -Force -ErrorAction Stop
+}
 
 param($Request, $TriggerMetadata)
 
@@ -38,27 +56,36 @@ $result = @{
 
 try {
     Write-Host "DefenderXDRMDEWorker invoked"
-    
     # Parse request body
     $requestBody = $Request.Body
-    
     # Extract parameters
     $tenantId = $requestBody.tenantId
     $action = $requestBody.action
     $parameters = $requestBody.parameters
     $correlationId = $requestBody.correlationId
-    
     # Validation
     if ([string]::IsNullOrEmpty($tenantId)) {
         throw "Missing required parameter: tenantId"
     }
-    
     if ([string]::IsNullOrEmpty($action)) {
         throw "Missing required parameter: action"
     }
-    
     $result.action = $action
     Write-Host "Processing MDE action: $action for tenant: $tenantId"
+    # ...existing code...
+}
+catch {
+    $result.success = $false
+    $result.error = $_.Exception.Message
+    $result.timestamp = (Get-Date).ToString("o")
+    Write-Error "DefenderXDRMDEWorker error: $($result.error)"
+    Push-OutputBinding -Name Response -Value ([HttpResponseContext]@{
+        StatusCode = [HttpStatusCode]::InternalServerError
+        Body = ($result | ConvertTo-Json -Depth 10)
+        Headers = @{ "Content-Type" = "application/json" }
+    })
+    return
+}
     
     # Get MDE OAuth token
     $appId = $env:APPID
