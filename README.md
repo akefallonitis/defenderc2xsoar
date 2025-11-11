@@ -2,44 +2,49 @@
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fakefallonitis%2Fdefenderc2xsoar%2Fmain%2Fdeployment%2Fazuredeploy.json)
 
-**Version:** 2.4.0 | **Status:** Production Ready | **Last Updated:** November 11, 2025
+**Version:** 3.0.0 | **Status:** Production Ready | **Last Updated:** November 11, 2025
 
-Enterprise unified security orchestration platform for Microsoft XDR. Deploy 227 automated security actions across Microsoft Defender for Endpoint, Office 365, Cloud, Identity, Entra ID, Intune, and Azure with a single click.
+Enterprise unified security orchestration platform for Microsoft XDR. Deploy 250+ automated security actions across Microsoft Defender for Endpoint, Office 365, Cloud, Identity, Entra ID, Intune, and Azure with **Worker-based architecture** and **Live Response file library**.
 
 ---
 
 ##  Overview
 
-DefenderXDR provides a unified orchestration layer for all Microsoft security products with:
+DefenderXDR v3.0.0 provides unified orchestration with **Worker-based architecture**:
 
-- **🎯 Master Orchestrator** - Single API endpoint for cross-product operations
-- **📋 Specialized Managers** - Purpose-built functions for each security domain
-- **⚙️ Service Workers** - Product-specific automation engines
+- **🎯 Central Gateway** - Single authenticated entry point
+- **📋 Service Orchestrator** - Intelligent routing to specialized Workers
+- **⚙️ 7 Service Workers** - Dedicated processors for MDE, MDO, MDC, MDI, Entra ID, Intune, Azure
 - **🔄 Multi-Tenant** - Lighthouse-ready with tenant isolation
+- **📦 Live Response Library** - Blob Storage for scripts, tools, forensic files
 - **📊 Interactive Workbook** - Command & control console with live operations
 
-### Architecture
+### v3.0.0 Architecture (Worker Pattern)
 
 ```
-DefenderXDROrchestrator (Master)
-├── DefenderXDRDispatcher         → Device Actions (Isolate, Scan, Restrict)
-├── DefenderXDRManager             → Multi-Product Operations (MDO, EntraID, Intune, Azure)
-├── DefenderXDRLiveResponseManager → Live Response & Library Operations
-├── DefenderXDRCustomDetectionManager → Custom Detection Rules
-├── DefenderXDRHuntManager         → Advanced Hunting (KQL)
-├── DefenderXDRIncidentManager     → Incident Management
-├── DefenderXDRThreatIntelManager  → Threat Intelligence Indicators
-├── DefenderXDREndpointManager     → Extended MDE Operations
-└── Workers (6 specialized)
-    ├── AzureWorker        → Azure infrastructure (8 actions)
-    ├── EntraIDWorker      → Identity & access (13 actions)
-    ├── IntuneWorker       → Device management (8 actions)
-    ├── MDCWorker          → Cloud security (6 actions)
-    ├── MDIWorker          → Identity threats (11 actions)
-    └── MDOWorker          → Email security (4 actions)
+DefenderXDRGateway (Entry Point)
+        ↓
+DefenderXDROrchestrator (Central Routing)
+        ↓
+    ┌───┴───┬───────┬───────┬───────┬─────────┬────────┐
+    ↓       ↓       ↓       ↓       ↓         ↓        ↓
+   MDE     MDO     MDC     MDI   EntraID   Intune   Azure
+  Worker  Worker  Worker  Worker  Worker   Worker  Worker
+    ↓       ↓       ↓       ↓       ↓         ↓        ↓
+  Device  Email   Cloud  Identity  IAM    Device    Infra
+  Actions Security Sec    Threats  Mgmt    Mgmt     Sec
+
+Shared Infrastructure:
+├─ Storage Account (3 services)
+│  ├─ Queue Storage    → Bulk operation queuing
+│  ├─ Table Storage    → Status tracking (XDROperationStatus)
+│  └─ Blob Storage     → Live Response file library
+├─ Managed Identity    → Secure keyless storage access
+├─ AuthManager         → Token caching (per tenant)
+└─ 4 Specialized Managers (Hunt, Incident, ThreatIntel, CustomDetection)
 ```
 
-**Total: 15 Functions | 227 Actions | 100% DefenderXDR Branded**
+**Total: 13 Functions | 250+ Actions | Managed Identity Secured**
 
 ---
 
@@ -73,19 +78,55 @@ az deployment group create \
 
 **Deploys:** Function App + Application Insights + Storage + Workbook
 
-### 3. Test
+### 3. Test MDE Worker with Live Response
 
 ```powershell
-$response = Invoke-RestMethod `
-  -Uri "https://<your-app>.azurewebsites.net/api/EntraIDWorker" `
+# Upload script to Live Response library
+$scriptContent = Get-Content "forensics.ps1" -Raw
+$scriptBytes = [System.Text.Encoding]::UTF8.GetBytes($scriptContent)
+$scriptBase64 = [Convert]::ToBase64String($scriptBytes)
+
+$uploadResponse = Invoke-RestMethod `
+  -Uri "https://<your-app>.azurewebsites.net/api/DefenderXDRMDEWorker" `
   -Method Post `
   -Headers @{"x-functions-key"="<key>"} `
   -Body (@{
-    action="GetUser"
+    action="UploadScript"
     tenantId="xxx"
-    userId="user@domain.com"
+    fileName="forensics.ps1"
+    content=$scriptBase64
   }|ConvertTo-Json) `
   -ContentType "application/json"
+
+# Run script on device via Live Response
+$runResponse = Invoke-RestMethod `
+  -Uri "https://<your-app>.azurewebsites.net/api/DefenderXDRMDEWorker" `
+  -Method Post `
+  -Headers @{"x-functions-key"="<key>"} `
+  -Body (@{
+    action="RunScript"
+    tenantId="xxx"
+    machineId="device-id"
+    scriptName="forensics.ps1"
+  }|ConvertTo-Json) `
+  -ContentType "application/json"
+
+# Download file from device
+$getFileResponse = Invoke-RestMethod `
+  -Uri "https://<your-app>.azurewebsites.net/api/DefenderXDRMDEWorker" `
+  -Method Post `
+  -Headers @{"x-functions-key"="<key>"} `
+  -Body (@{
+    action="GetFile"
+    tenantId="xxx"
+    machineId="device-id"
+    filePath="C:\Windows\System32\winevt\Logs\Security.evtx"
+  }|ConvertTo-Json) `
+  -ContentType "application/json"
+
+# Response includes 24-hour SAS URL for download
+$sasUrl = $getFileResponse.data.blobDownloadUrl
+Invoke-WebRequest -Uri $sasUrl -OutFile "Security.evtx"
 ```
 
 ---

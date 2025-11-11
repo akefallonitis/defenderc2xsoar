@@ -1,15 +1,13 @@
-# DefenderXDRC2XSOAR - Required Permissions (v2.1.0)
+# DefenderXDR - Required Permissions (v3.0.0)
 
-This document outlines all required permissions for the DefenderXDRC2XSOAR v2.1.0 solution to function across all Microsoft security services.
+This document outlines all required permissions for the DefenderXDR v3.0.0 solution.
 
-**NEW in v2.1.0:**
-- ✅ Microsoft Defender for Cloud (MDC) permissions
-- ✅ Microsoft Defender for Identity (MDI) permissions
-- ✅ Centralized authentication with token caching
+**NEW in v3.0.0:**
+- ✅ Storage Account RBAC for Managed Identity (Queue, Table, Blob)
+- ✅ Live Response Blob Storage for file library
+- ✅ Keyless authentication with Managed Identity
 
-## App Registration Requirements
-
-You need to create an Azure AD App Registration with the following permissions:
+## 1. App Registration Permissions
 
 ### Microsoft Graph API Permissions (Application Permissions)
 
@@ -81,7 +79,62 @@ For Azure infrastructure management actions, the App Registration (Service Princ
 - `Reader` - Read Azure resources for inventory
 - `Security Admin` - Manage security settings across Azure resources
 
-## License Requirements
+## 2. Storage Account RBAC (v3.0.0 - Managed Identity)
+
+The Function App's **System-Assigned Managed Identity** requires these roles on the Storage Account:
+
+| Role | Purpose | Role Definition ID |
+|------|---------|-------------------|
+| **Storage Queue Data Contributor** | Bulk operation queueing (xdr-{tenantId}-bulk-ops queues) | `974c5e8b-45b9-4653-ba55-5f855dd0fb88` |
+| **Storage Table Data Contributor** | Status tracking (XDROperationStatus table) | `0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3` |
+| **Storage Blob Data Contributor** | Live Response file library (liveresponse container) | `ba92f5b4-2d11-453d-a403-e96b0029c9fe` |
+
+### Setup Commands (PowerShell)
+
+```powershell
+# Get Function App Managed Identity Principal ID
+$functionApp = Get-AzWebApp -ResourceGroupName "<rg>" -Name "<function-app>"
+$principalId = $functionApp.Identity.PrincipalId
+
+# Get Storage Account ID
+$storageAccount = Get-AzStorageAccount -ResourceGroupName "<rg>" -Name "<storage>"
+$storageId = $storageAccount.Id
+
+# Assign 3 RBAC roles
+New-AzRoleAssignment -ObjectId $principalId `
+    -RoleDefinitionName "Storage Queue Data Contributor" `
+    -Scope $storageId
+
+New-AzRoleAssignment -ObjectId $principalId `
+    -RoleDefinitionName "Storage Table Data Contributor" `
+    -Scope $storageId
+
+New-AzRoleAssignment -ObjectId $principalId `
+    -RoleDefinitionName "Storage Blob Data Contributor" `
+    -Scope $storageId
+
+Write-Host "Storage RBAC roles assigned successfully!" -ForegroundColor Green
+```
+
+### Verify Assignments
+
+```powershell
+Get-AzRoleAssignment -ObjectId $principalId -Scope $storageId | 
+    Format-Table DisplayName, RoleDefinitionName, Scope -AutoSize
+```
+
+**Expected Output:**
+```
+DisplayName      RoleDefinitionName               Scope
+-----------      ------------------               -----
+<app-name>       Storage Queue Data Contributor   /subscriptions/.../storageAccounts/<storage>
+<app-name>       Storage Table Data Contributor   /subscriptions/.../storageAccounts/<storage>
+<app-name>       Storage Blob Data Contributor    /subscriptions/.../storageAccounts/<storage>
+```
+
+**Note:** ARM template automatically configures these during deployment if `enableManagedIdentity` is `true`.
+
+## 3. License Requirements
 
 ### Microsoft 365 Licenses
 - **Microsoft 365 E5** or **Microsoft 365 E5 Security** - Full XDR capabilities

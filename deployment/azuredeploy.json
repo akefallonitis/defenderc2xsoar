@@ -114,6 +114,53 @@
       }
     },
     {
+      "type": "Microsoft.Storage/storageAccounts/blobServices",
+      "apiVersion": "2021-08-01",
+      "name": "[concat(variables('storageAccountName'), '/default')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+      ],
+      "properties": {
+        "deleteRetentionPolicy": {
+          "enabled": true,
+          "days": 30
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+      "apiVersion": "2021-08-01",
+      "name": "[concat(variables('storageAccountName'), '/default/liveresponse')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts/blobServices', variables('storageAccountName'), 'default')]"
+      ],
+      "properties": {
+        "publicAccess": "None",
+        "metadata": {
+          "purpose": "DefenderXDR Live Response file library",
+          "version": "3.0.0"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts/tableServices",
+      "apiVersion": "2021-08-01",
+      "name": "[concat(variables('storageAccountName'), '/default')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+      ],
+      "properties": {}
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts/tableServices/tables",
+      "apiVersion": "2021-08-01",
+      "name": "[concat(variables('storageAccountName'), '/default/XDROperationStatus')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts/tableServices', variables('storageAccountName'), 'default')]"
+      ],
+      "properties": {}
+    },
+    {
       "type": "Microsoft.Web/serverfarms",
       "apiVersion": "2021-03-01",
       "name": "[variables('hostingPlanName')]",
@@ -200,6 +247,10 @@
               "value": "[parameters('spnSecret')]"
             },
             {
+              "name": "STORAGE_ACCOUNT_NAME",
+              "value": "[variables('storageAccountName')]"
+            },
+            {
               "name": "WEBSITE_RUN_FROM_PACKAGE",
               "value": "[variables('packageUrl')]"
             },
@@ -230,6 +281,54 @@
           }
         },
         "httpsOnly": true
+      }
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "name": "[guid(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), resourceId('Microsoft.Web/sites', variables('functionAppName')), 'StorageQueueDataContributor')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+      ],
+      "scope": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
+      "properties": {
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '974c5e8b-45b9-4653-ba55-5f855dd0fb88')]",
+        "principalId": "[reference(resourceId('Microsoft.Web/sites', variables('functionAppName')), '2021-03-01', 'full').identity.principalId]",
+        "principalType": "ServicePrincipal",
+        "description": "Allows Function App to manage Queue Storage for bulk operations"
+      }
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "name": "[guid(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), resourceId('Microsoft.Web/sites', variables('functionAppName')), 'StorageTableDataContributor')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+      ],
+      "scope": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
+      "properties": {
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3')]",
+        "principalId": "[reference(resourceId('Microsoft.Web/sites', variables('functionAppName')), '2021-03-01', 'full').identity.principalId]",
+        "principalType": "ServicePrincipal",
+        "description": "Allows Function App to manage Table Storage for status tracking"
+      }
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "name": "[guid(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), resourceId('Microsoft.Web/sites', variables('functionAppName')), 'StorageBlobDataContributor')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+      ],
+      "scope": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
+      "properties": {
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe')]",
+        "principalId": "[reference(resourceId('Microsoft.Web/sites', variables('functionAppName')), '2021-03-01', 'full').identity.principalId]",
+        "principalType": "ServicePrincipal",
+        "description": "Allows Function App to manage Blob Storage for Live Response file library"
       }
     },
     {
