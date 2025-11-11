@@ -3,8 +3,8 @@
     Configure API permissions for DefenderC2XSOAR multi-tenant app registration
 .DESCRIPTION
     This script applies all required API permissions for the DefenderC2XSOAR integration:
-    - Microsoft Defender for Endpoint (19 permissions)
-    - Microsoft Graph (27 permissions)
+    - Microsoft Defender for Endpoint (17 permissions)
+    - Microsoft Graph (29 permissions - includes SecurityIncident.* for XDR incidents)
     - Azure Resource Manager RBAC (Security Admin, Security Reader)
     
     The script will:
@@ -132,8 +132,7 @@ $apiPermissions = @{
             "Machine.CollectForensics",
             "Machine.LiveResponse",
             "AdvancedQuery.Read.All",
-            "Incident.Read.All",
-            "Incident.ReadWrite.All",
+            # Note: Incident.Read.All and Incident.ReadWrite.All moved to Microsoft Graph SecurityIncident.*
             "Ti.ReadWrite.All",
             "SecurityRecommendation.Read.All",
             "Vulnerability.Read.All",
@@ -147,31 +146,41 @@ $apiPermissions = @{
         DisplayName = "Microsoft Graph"
         AppId = "00000003-0000-0000-c000-000000000000"
         Permissions = @(
+            # User Management
             "User.Read.All",
             "User.ReadWrite.All",
             "Directory.Read.All",
             "Directory.ReadWrite.All",
             "UserAuthenticationMethod.Read.All",
             "UserAuthenticationMethod.ReadWrite.All",
+            "User.RevokeSessions.All",
+            # Identity Protection
             "IdentityRiskEvent.Read.All",
             "IdentityRiskEvent.ReadWrite.All",
             "IdentityRiskyUser.Read.All",
             "IdentityRiskyUser.ReadWrite.All",
-            "User.RevokeSessions.All",
+            # Security Events (Defender XDR Incidents)
             "SecurityEvents.Read.All",
             "SecurityEvents.ReadWrite.All",
+            "SecurityIncident.Read.All",
+            "SecurityIncident.ReadWrite.All",
+            # Threat Management
             "ThreatSubmission.ReadWrite.All",
-            "Mail.ReadWrite",
+            "ThreatIndicators.ReadWrite.OwnedBy",
+            "SecurityActions.Read.All",
+            "SecurityActions.ReadWrite.All",
+            # Device Management (Intune)
             "DeviceManagementManagedDevices.Read.All",
             "DeviceManagementManagedDevices.ReadWrite.All",
             "DeviceManagementConfiguration.Read.All",
-            "SecurityActions.Read.All",
-            "SecurityActions.ReadWrite.All",
-            "ThreatIndicators.ReadWrite.OwnedBy",
+            # Email Management (MDO)
+            "Mail.ReadWrite",
+            # Groups and Directory
             "Group.Read.All",
             "GroupMember.Read.All",
             "Application.Read.All",
             "Policy.Read.All",
+            # Audit and Reporting
             "AuditLog.Read.All",
             "Reports.Read.All"
         )
