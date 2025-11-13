@@ -610,20 +610,516 @@ try {
             }
         }
         
+        # ===== V3.2.0 NEW MCAS DLP ACTIONS (4 actions) =====
+        
+        "APPLYDLPPOLICY" {
+            if ([string]::IsNullOrEmpty($body.policyName)) {
+                throw "Missing required parameter: policyName"
+            }
+            
+            Write-XDRLog -Level "Info" -Message "Applying DLP policy to cloud apps" -Data @{
+                PolicyName = $body.policyName
+            }
+            
+            # Create DLP policy using Information Protection
+            $policyBody = @{
+                displayName = $body.policyName
+                description = $body.description ?? "DLP policy for cloud app security"
+                priority = $body.priority ?? 0
+                mode = $body.mode ?? "Enforce"
+                locations = @(
+                    @{
+                        name = "OneDriveForBusiness"
+                        enabled = $true
+                    },
+                    @{
+                        name = "SharePointOnline"
+                        enabled = $true
+                    },
+                    @{
+                        name = "Exchange"
+                        enabled = $body.includeExchange ?? $true
+                    }
+                )
+                rules = @(
+                    @{
+                        name = "Detect sensitive content"
+                        conditions = @{
+                            contentContainsSensitiveInformation = $body.sensitiveTypes ?? @(
+                                @{ name = "Credit Card Number"; minCount = 1 }
+                            )
+                        }
+                        actions = @(
+                            @{
+                                type = $body.action ?? "BlockAccess"
+                            }
+                        )
+                    }
+                )
+            } | ConvertTo-Json -Depth 10
+            
+            $uri = "$graphBase/beta/informationProtection/policy/labels"
+            $policy = Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $policyBody
+            
+            $result = @{
+                policyName = $body.policyName
+                policyId = $policy.id
+                applied = $true
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
+        "BLOCKFILEDOWNLOAD" {
+            if ([string]::IsNullOrEmpty($body.fileId)) {
+                throw "Missing required parameter: fileId"
+            }
+            
+            Write-XDRLog -Level "Warning" -Message "Blocking file download" -Data @{
+                FileId = $body.fileId
+            }
+            
+            # Get file details
+            $fileUri = "$graphBase/v1.0/drives/$($body.driveId)/items/$($body.fileId)"
+            $file = Invoke-RestMethod -Uri $fileUri -Method Get -Headers $headers
+            
+            # Remove download permissions
+            $permissionsUri = "$graphBase/v1.0/drives/$($body.driveId)/items/$($body.fileId)/permissions"
+            $permissions = Invoke-RestMethod -Uri $permissionsUri -Method Get -Headers $headers
+            
+            $revokedCount = 0
+            foreach ($permission in $permissions.value) {
+                if ($permission.roles -contains "read" -or $permission.roles -contains "write") {
+                    try {
+                        $deleteUri = "$graphBase/v1.0/drives/$($body.driveId)/items/$($body.fileId)/permissions/$($permission.id)"
+                        Invoke-RestMethod -Uri $deleteUri -Method Delete -Headers $headers
+                        $revokedCount++
+                    } catch {
+                        Write-XDRLog -Level "Warning" -Message "Failed to revoke permission" -Data @{ PermissionId = $permission.id }
+                    }
+                }
+            }
+            
+            $result = @{
+                fileId = $body.fileId
+                fileName = $file.name
+                downloadBlocked = $true
+                permissionsRevoked = $revokedCount
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
+        "REVOKEFILESHARING" {
+            if ([string]::IsNullOrEmpty($body.fileId)) {
+                throw "Missing required parameter: fileId"
+            }
+            
+            Write-XDRLog -Level "Warning" -Message "Revoking file sharing permissions" -Data @{
+                FileId = $body.fileId
+            }
+            
+            # Get all sharing links
+            $driveId = $body.driveId ?? "root"
+            $permissionsUri = "$graphBase/v1.0/drives/$driveId/items/$($body.fileId)/permissions"
+            $permissions = Invoke-RestMethod -Uri $permissionsUri -Method Get -Headers $headers
+            
+            $revokedLinks = @()
+            foreach ($permission in $permissions.value) {
+                # Revoke sharing links (anonymous, organization, specific people)
+                if ($permission.link) {
+                    try {
+                        $deleteUri = "$graphBase/v1.0/drives/$driveId/items/$($body.fileId)/permissions/$($permission.id)"
+                        Invoke-RestMethod -Uri $deleteUri -Method Delete -Headers $headers
+                        $revokedLinks += @{
+                            permissionId = $permission.id
+                            linkType = $permission.link.type
+                            scope = $permission.link.scope
+                        }
+                    } catch {
+                        Write-XDRLog -Level "Warning" -Message "Failed to revoke link" -Data @{ PermissionId = $permission.id }
+                    }
+                }
+            }
+            
+            $result = @{
+                fileId = $body.fileId
+                driveId = $driveId
+                sharingRevoked = $true
+                revokedLinksCount = $revokedLinks.Count
+                revokedLinks = $revokedLinks
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
+        "DELETESENSITIVEFILE" {
+            if ([string]::IsNullOrEmpty($body.fileId)) {
+                throw "Missing required parameter: fileId"
+            }
+            
+            Write-XDRLog -Level "Warning" -Message "Deleting sensitive file" -Data @{
+                FileId = $body.fileId
+                Reason = $body.reason
+            }
+            
+            $driveId = $body.driveId ?? "root"
+            
+            # Get file metadata first
+            $fileUri = "$graphBase/v1.0/drives/$driveId/items/$($body.fileId)"
+            $file = Invoke-RestMethod -Uri $fileUri -Method Get -Headers $headers
+            
+            # Delete the file
+            Invoke-RestMethod -Uri $fileUri -Method Delete -Headers $headers
+            
+            $result = @{
+                fileId = $body.fileId
+                fileName = $file.name
+                fileSize = $file.size
+                deleted = $true
+                reason = $body.reason ?? "Sensitive content detected"
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
+        # ===== V3.2.0 NEW MCAS SHADOW IT ACTIONS (4 actions) =====
+        
+        "BANCLOUDAPP" {
+            if ([string]::IsNullOrEmpty($body.appId)) {
+                throw "Missing required parameter: appId"
+            }
+            
+            Write-XDRLog -Level "Warning" -Message "Banning cloud application" -Data @{
+                AppId = $body.appId
+            }
+            
+            # Disable service principal to block app access
+            $disableBody = @{
+                accountEnabled = $false
+            } | ConvertTo-Json
+            
+            $uri = "$graphBase/v1.0/servicePrincipals/$($body.appId)"
+            $app = Invoke-RestMethod -Uri $uri -Method Patch -Headers $headers -Body $disableBody
+            
+            # Also revoke all user consents
+            $grantsUri = "$graphBase/v1.0/oauth2PermissionGrants?`$filter=clientId eq '$($body.appId)'"
+            $grants = Invoke-RestMethod -Uri $grantsUri -Method Get -Headers $headers
+            
+            $revokedCount = 0
+            foreach ($grant in $grants.value) {
+                try {
+                    $deleteUri = "$graphBase/v1.0/oauth2PermissionGrants/$($grant.id)"
+                    Invoke-RestMethod -Uri $deleteUri -Method Delete -Headers $headers
+                    $revokedCount++
+                } catch {
+                    Write-XDRLog -Level "Warning" -Message "Failed to revoke grant" -Data @{ GrantId = $grant.id }
+                }
+            }
+            
+            $result = @{
+                appId = $body.appId
+                appName = $app.displayName
+                banned = $true
+                accountDisabled = $true
+                consentsRevoked = $revokedCount
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
+        "SANCTIONCLOUDAPP" {
+            if ([string]::IsNullOrEmpty($body.appId)) {
+                throw "Missing required parameter: appId"
+            }
+            
+            Write-XDRLog -Level "Info" -Message "Sanctioning cloud application" -Data @{
+                AppId = $body.appId
+            }
+            
+            # Enable service principal
+            $enableBody = @{
+                accountEnabled = $true
+                tags = @("WindowsAzureActiveDirectoryIntegratedApp", "Sanctioned")
+            } | ConvertTo-Json
+            
+            $uri = "$graphBase/v1.0/servicePrincipals/$($body.appId)"
+            $app = Invoke-RestMethod -Uri $uri -Method Patch -Headers $headers -Body $enableBody
+            
+            $result = @{
+                appId = $body.appId
+                appName = $app.displayName
+                sanctioned = $true
+                accountEnabled = $true
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
+        "BLOCKAPPCATEGORY" {
+            if ([string]::IsNullOrEmpty($body.category)) {
+                throw "Missing required parameter: category"
+            }
+            
+            Write-XDRLog -Level "Warning" -Message "Blocking app category" -Data @{
+                Category = $body.category
+            }
+            
+            # Get all service principals with specific tag/category
+            $uri = "$graphBase/v1.0/servicePrincipals?`$filter=tags/any(t:t eq '$($body.category)')"
+            $apps = Invoke-RestMethod -Uri $uri -Method Get -Headers $headers
+            
+            $blockedApps = @()
+            foreach ($app in $apps.value) {
+                try {
+                    $disableBody = @{ accountEnabled = $false } | ConvertTo-Json
+                    $updateUri = "$graphBase/v1.0/servicePrincipals/$($app.id)"
+                    Invoke-RestMethod -Uri $updateUri -Method Patch -Headers $headers -Body $disableBody
+                    $blockedApps += @{
+                        appId = $app.id
+                        appName = $app.displayName
+                    }
+                } catch {
+                    Write-XDRLog -Level "Warning" -Message "Failed to block app" -Data @{ AppId = $app.id }
+                }
+            }
+            
+            $result = @{
+                category = $body.category
+                appsFound = $apps.value.Count
+                appsBlocked = $blockedApps.Count
+                blockedApps = $blockedApps
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
+        "ENABLEAPPGOVERNANCE" {
+            Write-XDRLog -Level "Info" -Message "Enabling app governance policies"
+            
+            # Create app governance policy
+            $policyBody = @{
+                displayName = "App Governance - Risk Detection"
+                description = "Automated app risk detection and governance"
+                isEnabled = $true
+                conditions = @{
+                    riskScore = @{
+                        minimumScore = $body.minimumRiskScore ?? 50
+                    }
+                    permissions = @{
+                        highRiskPermissions = $body.monitorPermissions ?? @("Mail.ReadWrite", "Files.ReadWrite.All")
+                    }
+                }
+                actions = @{
+                    notifyAdmins = $true
+                    disableApp = $body.autoDisable ?? $false
+                    requireJustification = $true
+                }
+            } | ConvertTo-Json -Depth 10
+            
+            # Use beta endpoint for app governance
+            $uri = "$graphBase/beta/security/appGovernancePolicies"
+            $policy = Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $policyBody
+            
+            $result = @{
+                policyId = $policy.id
+                policyName = $policy.displayName
+                governanceEnabled = $true
+                autoDisable = $body.autoDisable ?? $false
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
+        # ===== V3.2.0 NEW MCAS SESSION POLICY ACTIONS (4 actions) =====
+        
+        "CREATESESSIONPOLICY" {
+            if ([string]::IsNullOrEmpty($body.policyName)) {
+                throw "Missing required parameter: policyName"
+            }
+            
+            Write-XDRLog -Level "Info" -Message "Creating session control policy" -Data @{
+                PolicyName = $body.policyName
+            }
+            
+            # Create Conditional Access session control policy
+            $policyBody = @{
+                displayName = $body.policyName
+                state = "enabled"
+                conditions = @{
+                    applications = @{
+                        includeApplications = $body.applications ?? @("All")
+                    }
+                    users = @{
+                        includeUsers = $body.users ?? @("All")
+                    }
+                    locations = @{
+                        includeLocations = $body.locations ?? @("All")
+                    }
+                }
+                sessionControls = @{
+                    cloudAppSecurity = @{
+                        cloudAppSecurityType = $body.controlType ?? "monitorOnly"
+                        isEnabled = $true
+                    }
+                    signInFrequency = @{
+                        value = $body.signInFrequency ?? 1
+                        type = "hours"
+                        isEnabled = $true
+                    }
+                }
+            } | ConvertTo-Json -Depth 10
+            
+            $uri = "$graphBase/v1.0/identity/conditionalAccess/policies"
+            $policy = Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $policyBody
+            
+            $result = @{
+                policyId = $policy.id
+                policyName = $policy.displayName
+                controlType = $body.controlType ?? "monitorOnly"
+                created = $true
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
+        "BLOCKDOWNLOADSESSION" {
+            if ([string]::IsNullOrEmpty($body.sessionId)) {
+                throw "Missing required parameter: sessionId"
+            }
+            
+            Write-XDRLog -Level "Warning" -Message "Blocking downloads in session" -Data @{
+                SessionId = $body.sessionId
+            }
+            
+            # Create session policy to block downloads
+            $policyBody = @{
+                displayName = "Block Downloads - Session $($body.sessionId)"
+                state = "enabled"
+                sessionControls = @{
+                    cloudAppSecurity = @{
+                        cloudAppSecurityType = "blockDownloads"
+                        isEnabled = $true
+                    }
+                }
+                conditions = @{
+                    applications = @{
+                        includeApplications = $body.applications ?? @("All")
+                    }
+                    users = @{
+                        includeUsers = @($body.userId)
+                    }
+                }
+            } | ConvertTo-Json -Depth 10
+            
+            $uri = "$graphBase/v1.0/identity/conditionalAccess/policies"
+            $policy = Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $policyBody
+            
+            $result = @{
+                sessionId = $body.sessionId
+                policyId = $policy.id
+                downloadsBlocked = $true
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
+        "ENABLEMONITORONLY" {
+            if ([string]::IsNullOrEmpty($body.policyName)) {
+                throw "Missing required parameter: policyName"
+            }
+            
+            Write-XDRLog -Level "Info" -Message "Enabling monitor-only session policy" -Data @{
+                PolicyName = $body.policyName
+            }
+            
+            # Create monitor-only session policy
+            $policyBody = @{
+                displayName = $body.policyName
+                state = "enabled"
+                conditions = @{
+                    applications = @{
+                        includeApplications = $body.applications ?? @("All")
+                    }
+                    users = @{
+                        includeUsers = $body.users ?? @("All")
+                    }
+                }
+                sessionControls = @{
+                    cloudAppSecurity = @{
+                        cloudAppSecurityType = "monitorOnly"
+                        isEnabled = $true
+                    }
+                }
+            } | ConvertTo-Json -Depth 10
+            
+            $uri = "$graphBase/v1.0/identity/conditionalAccess/policies"
+            $policy = Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $policyBody
+            
+            $result = @{
+                policyId = $policy.id
+                policyName = $policy.displayName
+                monitorOnlyEnabled = $true
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
+        "FORCEREAUTHENTICATION" {
+            if ([string]::IsNullOrEmpty($body.userId)) {
+                throw "Missing required parameter: userId"
+            }
+            
+            Write-XDRLog -Level "Warning" -Message "Forcing re-authentication" -Data @{
+                UserId = $body.userId
+            }
+            
+            # Revoke refresh tokens to force re-auth
+            $uri = "$graphBase/v1.0/users/$($body.userId)/revokeSignInSessions"
+            $revoke = Invoke-RestMethod -Uri $uri -Method Post -Headers $headers
+            
+            # Create session policy requiring immediate re-auth
+            $policyBody = @{
+                displayName = "Force Re-auth - $($body.userId)"
+                state = "enabled"
+                conditions = @{
+                    users = @{
+                        includeUsers = @($body.userId)
+                    }
+                    applications = @{
+                        includeApplications = @("All")
+                    }
+                }
+                sessionControls = @{
+                    signInFrequency = @{
+                        value = 0
+                        type = "hours"
+                        isEnabled = $true
+                    }
+                }
+            } | ConvertTo-Json -Depth 10
+            
+            $policyUri = "$graphBase/v1.0/identity/conditionalAccess/policies"
+            $policy = Invoke-RestMethod -Uri $policyUri -Method Post -Headers $headers -Body $policyBody
+            
+            $result = @{
+                userId = $body.userId
+                sessionsRevoked = $true
+                policyCreated = $true
+                policyId = $policy.id
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
         #endregion
         
         default {
             $supportedActions = @(
-                # OAuth Management
+                # OAuth Management (3 existing)
                 "RevokeOAuthPermissions", "BanRiskyApp", "RevokeUserConsent",
-                # Session Management
+                # Session Management (3 existing)
                 "TerminateActiveSession", "BlockUserFromApp", "RequireReAuthentication",
-                # File Management
+                # File Management (4 existing)
                 "QuarantineCloudFile", "RemoveExternalSharing", "ApplySensitivityLabel", "RestoreFromQuarantine",
-                # Governance & Discovery
-                "BlockUnsanctionedApp", "RemoveAppAccess", "GetOAuthApps", "GetUserAppConsents"
+                # Governance & Discovery (4 existing)
+                "BlockUnsanctionedApp", "RemoveAppAccess", "GetOAuthApps", "GetUserAppConsents",
+                # V3.2.0 DLP (4 new)
+                "ApplyDLPPolicy", "BlockFileDownload", "RevokeFileSharing", "DeleteSensitiveFile",
+                # V3.2.0 Shadow IT (4 new)
+                "BanCloudApp", "SanctionCloudApp", "BlockAppCategory", "EnableAppGovernance",
+                # V3.2.0 Session Policy (4 new)
+                "CreateSessionPolicy", "BlockDownloadSession", "EnableMonitorOnly", "ForceReAuthentication"
             )
-            throw "Unknown action: $action. Supported actions: $($supportedActions -join ', ')"
+            throw "Unknown action: $action. Supported actions (26 total, 12 new in v3.2.0): $($supportedActions -join ', ')"
         }
     }
 

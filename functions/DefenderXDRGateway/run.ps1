@@ -33,10 +33,14 @@ using namespace System.Net
 
 param($Request, $TriggerMetadata)
 
+# Import action tracking module
+Import-Module "$PSScriptRoot\..\modules\DefenderXDRIntegrationBridge\ActionTracker.psm1" -Force
+
 $correlationId = [guid]::NewGuid().ToString()
+$actionId = [guid]::NewGuid().ToString()
 $startTime = Get-Date
 
-Write-Host "[$correlationId] DefenderXDRGateway - Processing request"
+Write-Host "[$correlationId] DefenderXDRGateway - Processing request (ActionId: $actionId)"
 
 # ============================================================================
 # PARAMETER EXTRACTION
@@ -120,12 +124,39 @@ if (-not $action) {
 try {
     Write-Host "[$correlationId] Routing to Orchestrator - Service: $service, Action: $action, Tenant: $($tenantId.Substring(0,8))..."
     
+    # Start action tracking
+    $trackingParams = @{
+        Parameters = @{}
+    }
+    if ($Request.Query) {
+        foreach ($key in $Request.Query.Keys) {
+            if ($key -notin @('code', 'api-version')) {
+                $trackingParams.Parameters[$key] = $Request.Query[$key]
+            }
+        }
+    }
+    if ($requestBody -is [hashtable]) {
+        foreach ($key in $requestBody.Keys) {
+            $trackingParams.Parameters[$key] = $requestBody[$key]
+        }
+    }
+    
+    Start-ActionTracking `
+        -ActionId $actionId `
+        -Action $action `
+        -Service $service `
+        -TenantId $tenantId `
+        -Parameters $trackingParams.Parameters `
+        -InitiatedBy ($Request.Headers['X-MS-CLIENT-PRINCIPAL-NAME'] ?? "Anonymous") `
+        -CorrelationId $correlationId
+    
     # Build payload for Orchestrator (standardize parameter names)
     $orchestratorPayload = @{
         service = $service
         action = $action
         tenantId = $tenantId
         correlationId = $correlationId
+        actionId = $actionId
     }
     
     # Forward ALL other parameters from query string and body
@@ -170,6 +201,13 @@ try {
     $duration = ($endTime - $startTime).TotalMilliseconds
     
     Write-Host "[$correlationId] Orchestrator responded successfully in $([Math]::Round($duration, 2))ms"
+    
+    # Complete action tracking
+    Complete-ActionTracking `
+        -ActionId $actionId `
+        -TenantId $tenantId `
+        -Success $true `
+        -Result $orchestratorResponse
     
     # ============================================================================
     # RESPONSE FORMATTING - JSONPath-Friendly Structure
@@ -247,6 +285,13 @@ try {
     if ($errorDetails) {
         Write-Error "[$correlationId] Error details: $errorDetails"
     }
+    
+    # Complete action tracking with failure
+    Complete-ActionTracking `
+        -ActionId $actionId `
+        -TenantId $tenantId `
+        -Success $false `
+        -ErrorMessage $errorMessage
     
     # Return structured error response
     Push-OutputBinding -Name Response -Value ([HttpResponseContext]@{

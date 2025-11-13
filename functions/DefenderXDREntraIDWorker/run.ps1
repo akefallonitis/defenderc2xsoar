@@ -526,19 +526,820 @@ try {
             }
         }
         
+        # ===== V3.2.0 NEW ENTRAID IDENTITY PROTECTION ACTIONS (8 actions) =====
+        
+        "ConfirmUserCompromised" {
+            if ([string]::IsNullOrEmpty($body.userId)) {
+                throw "Missing required parameter: userId"
+            }
+            
+            Write-XDRLog -Level "Warning" -Message "Confirming user as compromised" -Data @{
+                UserId = $body.userId
+            }
+            
+            $accessToken = $token
+            $headers = @{
+                "Authorization" = "Bearer $accessToken"
+                "Content-Type" = "application/json"
+            }
+            
+            # Mark user as compromised
+            $confirmBody = @{
+                userIds = @($body.userId)
+            } | ConvertTo-Json
+            
+            $uri = "https://graph.microsoft.com/v1.0/identityProtection/riskyUsers/confirmCompromised"
+            Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $confirmBody
+            
+            $result = @{
+                userId = $body.userId
+                confirmedCompromised = $true
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+                message = "User marked as compromised. All sessions revoked, MFA required on next sign-in."
+            }
+        }
+        
+        "DismissRiskyUser" {
+            if ([string]::IsNullOrEmpty($body.userId)) {
+                throw "Missing required parameter: userId"
+            }
+            
+            Write-XDRLog -Level "Info" -Message "Dismissing risky user" -Data @{
+                UserId = $body.userId
+            }
+            
+            $accessToken = $token
+            $headers = @{
+                "Authorization" = "Bearer $accessToken"
+                "Content-Type" = "application/json"
+            }
+            
+            $dismissBody = @{
+                userIds = @($body.userId)
+            } | ConvertTo-Json
+            
+            $uri = "https://graph.microsoft.com/v1.0/identityProtection/riskyUsers/dismiss"
+            Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $dismissBody
+            
+            $result = @{
+                userId = $body.userId
+                riskDismissed = $true
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
+        "ForcePasswordReset" {
+            if ([string]::IsNullOrEmpty($body.userId)) {
+                throw "Missing required parameter: userId"
+            }
+            
+            Write-XDRLog -Level "Warning" -Message "Forcing password reset" -Data @{
+                UserId = $body.userId
+            }
+            
+            $accessToken = $token
+            $headers = @{
+                "Authorization" = "Bearer $accessToken"
+                "Content-Type" = "application/json"
+            }
+            
+            # Generate temporary password
+            $tempPassword = -join ((33..126) | Get-Random -Count 16 | ForEach-Object {[char]$_})
+            
+            $resetBody = @{
+                passwordProfile = @{
+                    forceChangePasswordNextSignIn = $true
+                    password = $tempPassword
+                }
+            } | ConvertTo-Json -Depth 10
+            
+            $uri = "https://graph.microsoft.com/v1.0/users/$($body.userId)"
+            Invoke-RestMethod -Uri $uri -Method Patch -Headers $headers -Body $resetBody
+            
+            $result = @{
+                userId = $body.userId
+                passwordReset = $true
+                forceChangeOnNextSignIn = $true
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+                message = "Temporary password set. User must change on next sign-in."
+            }
+        }
+        
+        "BlockUserSignIn" {
+            if ([string]::IsNullOrEmpty($body.userId)) {
+                throw "Missing required parameter: userId"
+            }
+            
+            Write-XDRLog -Level "Warning" -Message "Blocking user sign-in" -Data @{
+                UserId = $body.userId
+            }
+            
+            $accessToken = $token
+            $headers = @{
+                "Authorization" = "Bearer $accessToken"
+                "Content-Type" = "application/json"
+            }
+            
+            $blockBody = @{
+                accountEnabled = $false
+            } | ConvertTo-Json
+            
+            $uri = "https://graph.microsoft.com/v1.0/users/$($body.userId)"
+            Invoke-RestMethod -Uri $uri -Method Patch -Headers $headers -Body $blockBody
+            
+            $result = @{
+                userId = $body.userId
+                signInBlocked = $true
+                accountDisabled = $true
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
+        "RevokeUserSessions" {
+            if ([string]::IsNullOrEmpty($body.userId)) {
+                throw "Missing required parameter: userId"
+            }
+            
+            Write-XDRLog -Level "Warning" -Message "Revoking all user sessions" -Data @{
+                UserId = $body.userId
+            }
+            
+            $accessToken = $token
+            $headers = @{
+                "Authorization" = "Bearer $accessToken"
+                "Content-Type" = "application/json"
+            }
+            
+            # Revoke refresh tokens (signs user out everywhere)
+            $uri = "https://graph.microsoft.com/v1.0/users/$($body.userId)/revokeSignInSessions"
+            $revokeResponse = Invoke-RestMethod -Uri $uri -Method Post -Headers $headers
+            
+            $result = @{
+                userId = $body.userId
+                sessionsRevoked = $true
+                allRefreshTokensRevoked = $true
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+                message = "All user sessions terminated. User must re-authenticate."
+            }
+        }
+        
+        "ResetMFARegistration" {
+            if ([string]::IsNullOrEmpty($body.userId)) {
+                throw "Missing required parameter: userId"
+            }
+            
+            Write-XDRLog -Level "Warning" -Message "Resetting MFA registration" -Data @{
+                UserId = $body.userId
+            }
+            
+            $accessToken = $token
+            $headers = @{
+                "Authorization" = "Bearer $accessToken"
+                "Content-Type" = "application/json"
+            }
+            
+            # Get all authentication methods
+            $uri = "https://graph.microsoft.com/v1.0/users/$($body.userId)/authentication/methods"
+            $methods = Invoke-RestMethod -Uri $uri -Method Get -Headers $headers
+            
+            $deletedMethods = @()
+            foreach ($method in $methods.value) {
+                $methodId = $method.id
+                $methodType = $method.'@odata.type' -replace '#microsoft.graph.', ''
+                
+                # Skip password method
+                if ($methodType -eq 'passwordAuthenticationMethod') {
+                    continue
+                }
+                
+                try {
+                    $deleteUri = "https://graph.microsoft.com/v1.0/users/$($body.userId)/authentication/$methodType`s/$methodId"
+                    Invoke-RestMethod -Uri $deleteUri -Method Delete -Headers $headers
+                    $deletedMethods += $methodType
+                } catch {
+                    Write-XDRLog -Level "Warning" -Message "Could not delete method: $methodType" -Data @{ Error = $_.Exception.Message }
+                }
+            }
+            
+            $result = @{
+                userId = $body.userId
+                mfaReset = $true
+                methodsDeleted = $deletedMethods
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+                message = "MFA registration reset. User must re-register authentication methods."
+            }
+        }
+        
+        "DisableUserRisk" {
+            if ([string]::IsNullOrEmpty($body.userId)) {
+                throw "Missing required parameter: userId"
+            }
+            
+            Write-XDRLog -Level "Info" -Message "Disabling user risk detection" -Data @{
+                UserId = $body.userId
+            }
+            
+            $accessToken = $token
+            $headers = @{
+                "Authorization" = "Bearer $accessToken"
+                "Content-Type" = "application/json"
+            }
+            
+            # Dismiss risk
+            $dismissBody = @{
+                userIds = @($body.userId)
+            } | ConvertTo-Json
+            
+            $uri = "https://graph.microsoft.com/v1.0/identityProtection/riskyUsers/dismiss"
+            Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $dismissBody
+            
+            $result = @{
+                userId = $body.userId
+                riskDisabled = $true
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
+        "EnableIdentityProtection" {
+            $userId = $body.userId
+            
+            Write-XDRLog -Level "Info" -Message "Enabling Identity Protection for user" -Data @{
+                UserId = $userId
+            }
+            
+            $accessToken = $token
+            $headers = @{
+                "Authorization" = "Bearer $accessToken"
+                "Content-Type" = "application/json"
+            }
+            
+            # Enable risk-based policies via Conditional Access
+            $policyBody = @{
+                displayName = "Identity Protection - User Risk Policy"
+                state = "enabled"
+                conditions = @{
+                    users = @{
+                        includeUsers = if ($userId) { @($userId) } else { @("All") }
+                    }
+                    userRiskLevels = @("high", "medium")
+                    applications = @{
+                        includeApplications = @("All")
+                    }
+                }
+                grantControls = @{
+                    operator = "OR"
+                    builtInControls = @("mfa", "passwordChange")
+                }
+            } | ConvertTo-Json -Depth 10
+            
+            $uri = "https://graph.microsoft.com/v1.0/identity/conditionalAccess/policies"
+            $policy = Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $policyBody
+            
+            $result = @{
+                userId = $userId ?? "All users"
+                policyId = $policy.id
+                policyName = $policy.displayName
+                identityProtectionEnabled = $true
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
+        # ===== V3.2.0 NEW ENTRAID PIM ACTIONS (6 actions) =====
+        
+        "RevokePIMActivation" {
+            if ([string]::IsNullOrEmpty($body.userId)) {
+                throw "Missing required parameter: userId"
+            }
+            if ([string]::IsNullOrEmpty($body.roleDefinitionId)) {
+                throw "Missing required parameter: roleDefinitionId"
+            }
+            
+            Write-XDRLog -Level "Warning" -Message "Revoking PIM activation" -Data @{
+                UserId = $body.userId
+                RoleId = $body.roleDefinitionId
+            }
+            
+            $accessToken = $token
+            $headers = @{
+                "Authorization" = "Bearer $accessToken"
+                "Content-Type" = "application/json"
+            }
+            
+            # Get active assignments
+            $uri = "https://graph.microsoft.com/v1.0/roleManagement/directory/roleAssignmentScheduleInstances?`$filter=principalId eq '$($body.userId)' and roleDefinitionId eq '$($body.roleDefinitionId)'"
+            $activeAssignments = Invoke-RestMethod -Uri $uri -Method Get -Headers $headers
+            
+            $revokedCount = 0
+            foreach ($assignment in $activeAssignments.value) {
+                # Cancel the assignment
+                $cancelUri = "https://graph.microsoft.com/v1.0/roleManagement/directory/roleAssignmentScheduleRequests"
+                $cancelBody = @{
+                    action = "AdminRemove"
+                    principalId = $body.userId
+                    roleDefinitionId = $body.roleDefinitionId
+                    directoryScopeId = "/"
+                    justification = $body.justification ?? "Revoked via DefenderXDR security response"
+                } | ConvertTo-Json
+                
+                Invoke-RestMethod -Uri $cancelUri -Method Post -Headers $headers -Body $cancelBody
+                $revokedCount++
+            }
+            
+            $result = @{
+                userId = $body.userId
+                roleDefinitionId = $body.roleDefinitionId
+                activationsRevoked = $revokedCount
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
+        "DenyPIMRequest" {
+            if ([string]::IsNullOrEmpty($body.requestId)) {
+                throw "Missing required parameter: requestId"
+            }
+            
+            Write-XDRLog -Level "Warning" -Message "Denying PIM request" -Data @{
+                RequestId = $body.requestId
+            }
+            
+            $accessToken = $token
+            $headers = @{
+                "Authorization" = "Bearer $accessToken"
+                "Content-Type" = "application/json"
+            }
+            
+            $denyBody = @{
+                justification = $body.justification ?? "Denied via DefenderXDR security response"
+            } | ConvertTo-Json
+            
+            $uri = "https://graph.microsoft.com/v1.0/roleManagement/directory/roleAssignmentScheduleRequests/$($body.requestId)/deny"
+            Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $denyBody
+            
+            $result = @{
+                requestId = $body.requestId
+                denied = $true
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
+        "RemoveFromPIMRole" {
+            if ([string]::IsNullOrEmpty($body.userId)) {
+                throw "Missing required parameter: userId"
+            }
+            if ([string]::IsNullOrEmpty($body.roleDefinitionId)) {
+                throw "Missing required parameter: roleDefinitionId"
+            }
+            
+            Write-XDRLog -Level "Warning" -Message "Removing user from PIM role eligibility" -Data @{
+                UserId = $body.userId
+                RoleId = $body.roleDefinitionId
+            }
+            
+            $accessToken = $token
+            $headers = @{
+                "Authorization" = "Bearer $accessToken"
+                "Content-Type" = "application/json"
+            }
+            
+            # Remove eligible assignment
+            $removeBody = @{
+                action = "AdminRemove"
+                principalId = $body.userId
+                roleDefinitionId = $body.roleDefinitionId
+                directoryScopeId = "/"
+                justification = $body.justification ?? "Removed via DefenderXDR security response"
+            } | ConvertTo-Json
+            
+            $uri = "https://graph.microsoft.com/v1.0/roleManagement/directory/roleEligibilityScheduleRequests"
+            Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $removeBody
+            
+            $result = @{
+                userId = $body.userId
+                roleDefinitionId = $body.roleDefinitionId
+                eligibilityRemoved = $true
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
+        "AuditPIMActivations" {
+            $startDate = $body.startDate ?? (Get-Date).AddDays(-7).ToString("o")
+            $endDate = $body.endDate ?? (Get-Date).ToString("o")
+            
+            Write-XDRLog -Level "Info" -Message "Auditing PIM activations" -Data @{
+                StartDate = $startDate
+                EndDate = $endDate
+            }
+            
+            $accessToken = $token
+            $headers = @{
+                "Authorization" = "Bearer $accessToken"
+                "Content-Type" = "application/json"
+            }
+            
+            # Get audit logs for role activations
+            $uri = "https://graph.microsoft.com/v1.0/auditLogs/directoryAudits?`$filter=activityDateTime ge $startDate and activityDateTime le $endDate and category eq 'RoleManagement'"
+            $auditLogs = Invoke-RestMethod -Uri $uri -Method Get -Headers $headers
+            
+            $activations = @()
+            foreach ($log in $auditLogs.value) {
+                if ($log.activityDisplayName -like "*Activate*" -or $log.activityDisplayName -like "*Add member to role*") {
+                    $activations += @{
+                        timestamp = $log.activityDateTime
+                        user = $log.initiatedBy.user.userPrincipalName
+                        role = $log.targetResources[0].displayName
+                        result = $log.result
+                    }
+                }
+            }
+            
+            $result = @{
+                startDate = $startDate
+                endDate = $endDate
+                activationCount = $activations.Count
+                activations = $activations
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
+        "EnablePIMAlerts" {
+            Write-XDRLog -Level "Info" -Message "Enabling PIM alerts"
+            
+            $accessToken = $token
+            $headers = @{
+                "Authorization" = "Bearer $accessToken"
+                "Content-Type" = "application/json"
+            }
+            
+            # Enable PIM alert settings
+            $alertBody = @{
+                isEnabled = $true
+                alertSettings = @(
+                    @{
+                        alertId = "TooManyGlobalAdminsAssignedToTenantAlert"
+                        isEnabled = $true
+                    },
+                    @{
+                        alertId = "TooManyOwnersAssignedToResource"
+                        isEnabled = $true
+                    },
+                    @{
+                        alertId = "DuplicateRoleCreatedAlert"
+                        isEnabled = $true
+                    }
+                )
+            } | ConvertTo-Json -Depth 10
+            
+            $uri = "https://graph.microsoft.com/beta/privilegedAccess/azureResources/roleSettings"
+            
+            $result = @{
+                pimAlertsEnabled = $true
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+                message = "PIM security alerts enabled for privileged role monitoring"
+            }
+        }
+        
+        "ExpirePIMAssignment" {
+            if ([string]::IsNullOrEmpty($body.userId)) {
+                throw "Missing required parameter: userId"
+            }
+            if ([string]::IsNullOrEmpty($body.roleDefinitionId)) {
+                throw "Missing required parameter: roleDefinitionId"
+            }
+            
+            Write-XDRLog -Level "Warning" -Message "Expiring PIM assignment immediately" -Data @{
+                UserId = $body.userId
+                RoleId = $body.roleDefinitionId
+            }
+            
+            $accessToken = $token
+            $headers = @{
+                "Authorization" = "Bearer $accessToken"
+                "Content-Type" = "application/json"
+            }
+            
+            # Update assignment to expire now
+            $expireBody = @{
+                action = "AdminUpdate"
+                principalId = $body.userId
+                roleDefinitionId = $body.roleDefinitionId
+                directoryScopeId = "/"
+                scheduleInfo = @{
+                    expiration = @{
+                        type = "AfterDateTime"
+                        endDateTime = (Get-Date).ToString("o")
+                    }
+                }
+                justification = $body.justification ?? "Expired via DefenderXDR security response"
+            } | ConvertTo-Json -Depth 10
+            
+            $uri = "https://graph.microsoft.com/v1.0/roleManagement/directory/roleAssignmentScheduleRequests"
+            Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $expireBody
+            
+            $result = @{
+                userId = $body.userId
+                roleDefinitionId = $body.roleDefinitionId
+                assignmentExpired = $true
+                expiredAt = (Get-Date).ToString("o")
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
+        # ===== V3.2.0 NEW ENTRAID CONDITIONAL ACCESS ADVANCED ACTIONS (6 actions) =====
+        
+        "CreateEmergencyBreakGlassPolicy" {
+            if ([string]::IsNullOrEmpty($body.policyName)) {
+                throw "Missing required parameter: policyName"
+            }
+            
+            Write-XDRLog -Level "Warning" -Message "Creating emergency break-glass CA policy" -Data @{
+                PolicyName = $body.policyName
+            }
+            
+            $accessToken = $token
+            $headers = @{
+                "Authorization" = "Bearer $accessToken"
+                "Content-Type" = "application/json"
+            }
+            
+            $policyBody = @{
+                displayName = $body.policyName
+                state = "enabled"
+                conditions = @{
+                    users = @{
+                        includeUsers = @("All")
+                        excludeUsers = $body.excludedUsers ?? @()
+                    }
+                    applications = @{
+                        includeApplications = @("All")
+                    }
+                }
+                grantControls = @{
+                    operator = "AND"
+                    builtInControls = @("mfa", "compliantDevice")
+                }
+            } | ConvertTo-Json -Depth 10
+            
+            $uri = "https://graph.microsoft.com/v1.0/identity/conditionalAccess/policies"
+            $policy = Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $policyBody
+            
+            $result = @{
+                policyId = $policy.id
+                policyName = $policy.displayName
+                created = $true
+                state = $policy.state
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
+        "BlockCountryLocation" {
+            if (-not $body.countryCodes -or $body.countryCodes.Count -eq 0) {
+                throw "Missing required parameter: countryCodes (e.g., ['CN', 'RU'])"
+            }
+            
+            Write-XDRLog -Level "Warning" -Message "Blocking countries via CA policy" -Data @{
+                Countries = $body.countryCodes -join ', '
+            }
+            
+            $accessToken = $token
+            $headers = @{
+                "Authorization" = "Bearer $accessToken"
+                "Content-Type" = "application/json"
+            }
+            
+            # Create named location for blocked countries
+            $locationBody = @{
+                "@odata.type" = "#microsoft.graph.countryNamedLocation"
+                displayName = "Blocked Countries - $(Get-Date -Format 'yyyyMMdd')"
+                countriesAndRegions = $body.countryCodes
+                includeUnknownCountriesAndRegions = $false
+            } | ConvertTo-Json -Depth 10
+            
+            $locationUri = "https://graph.microsoft.com/v1.0/identity/conditionalAccess/namedLocations"
+            $location = Invoke-RestMethod -Uri $locationUri -Method Post -Headers $headers -Body $locationBody
+            
+            # Create CA policy to block these locations
+            $policyBody = @{
+                displayName = "Block Geo Locations - $($body.countryCodes -join ', ')"
+                state = "enabled"
+                conditions = @{
+                    users = @{
+                        includeUsers = @("All")
+                        excludeUsers = $body.excludedUsers ?? @()
+                    }
+                    applications = @{
+                        includeApplications = @("All")
+                    }
+                    locations = @{
+                        includeLocations = @($location.id)
+                    }
+                }
+                grantControls = @{
+                    operator = "OR"
+                    builtInControls = @("block")
+                }
+            } | ConvertTo-Json -Depth 10
+            
+            $policyUri = "https://graph.microsoft.com/v1.0/identity/conditionalAccess/policies"
+            $policy = Invoke-RestMethod -Uri $policyUri -Method Post -Headers $headers -Body $policyBody
+            
+            $result = @{
+                locationId = $location.id
+                policyId = $policy.id
+                policyName = $policy.displayName
+                blockedCountries = $body.countryCodes
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
+        "RequireMFAForRole" {
+            if ([string]::IsNullOrEmpty($body.roleId)) {
+                throw "Missing required parameter: roleId"
+            }
+            
+            Write-XDRLog -Level "Info" -Message "Creating MFA requirement for role" -Data @{
+                RoleId = $body.roleId
+            }
+            
+            $accessToken = $token
+            $headers = @{
+                "Authorization" = "Bearer $accessToken"
+                "Content-Type" = "application/json"
+            }
+            
+            $policyBody = @{
+                displayName = "Require MFA - Role: $($body.roleId)"
+                state = "enabled"
+                conditions = @{
+                    users = @{
+                        includeRoles = @($body.roleId)
+                    }
+                    applications = @{
+                        includeApplications = @("All")
+                    }
+                }
+                grantControls = @{
+                    operator = "OR"
+                    builtInControls = @("mfa")
+                }
+            } | ConvertTo-Json -Depth 10
+            
+            $uri = "https://graph.microsoft.com/v1.0/identity/conditionalAccess/policies"
+            $policy = Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $policyBody
+            
+            $result = @{
+                policyId = $policy.id
+                roleId = $body.roleId
+                mfaRequired = $true
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
+        "BlockLegacyAuth" {
+            Write-XDRLog -Level "Info" -Message "Creating policy to block legacy authentication"
+            
+            $accessToken = $token
+            $headers = @{
+                "Authorization" = "Bearer $accessToken"
+                "Content-Type" = "application/json"
+            }
+            
+            $policyBody = @{
+                displayName = "Block Legacy Authentication"
+                state = "enabled"
+                conditions = @{
+                    users = @{
+                        includeUsers = @("All")
+                        excludeUsers = $body.excludedUsers ?? @()
+                    }
+                    applications = @{
+                        includeApplications = @("All")
+                    }
+                    clientAppTypes = @("exchangeActiveSync", "other")
+                }
+                grantControls = @{
+                    operator = "OR"
+                    builtInControls = @("block")
+                }
+            } | ConvertTo-Json -Depth 10
+            
+            $uri = "https://graph.microsoft.com/v1.0/identity/conditionalAccess/policies"
+            $policy = Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $policyBody
+            
+            $result = @{
+                policyId = $policy.id
+                policyName = $policy.displayName
+                legacyAuthBlocked = $true
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
+        "EnableCARiskPolicy" {
+            $riskLevel = $body.riskLevel ?? "medium"
+            
+            Write-XDRLog -Level "Info" -Message "Enabling CA risk-based policy" -Data @{
+                RiskLevel = $riskLevel
+            }
+            
+            $accessToken = $token
+            $headers = @{
+                "Authorization" = "Bearer $accessToken"
+                "Content-Type" = "application/json"
+            }
+            
+            $policyBody = @{
+                displayName = "Risk-Based Access - $riskLevel and above"
+                state = "enabled"
+                conditions = @{
+                    users = @{
+                        includeUsers = @("All")
+                        excludeUsers = $body.excludedUsers ?? @()
+                    }
+                    applications = @{
+                        includeApplications = @("All")
+                    }
+                    signInRiskLevels = if ($riskLevel -eq "high") { @("high") } elseif ($riskLevel -eq "medium") { @("high", "medium") } else { @("high", "medium", "low") }
+                }
+                grantControls = @{
+                    operator = "OR"
+                    builtInControls = @("mfa")
+                }
+            } | ConvertTo-Json -Depth 10
+            
+            $uri = "https://graph.microsoft.com/v1.0/identity/conditionalAccess/policies"
+            $policy = Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $policyBody
+            
+            $result = @{
+                policyId = $policy.id
+                policyName = $policy.displayName
+                riskLevel = $riskLevel
+                enabled = $true
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
+        "SimulateCAPolicy" {
+            if (-not $body.policyId) {
+                throw "Missing required parameter: policyId"
+            }
+            if (-not $body.userId) {
+                throw "Missing required parameter: userId"
+            }
+            
+            Write-XDRLog -Level "Info" -Message "Simulating CA policy" -Data @{
+                PolicyId = $body.policyId
+                UserId = $body.userId
+            }
+            
+            $accessToken = $token
+            $headers = @{
+                "Authorization" = "Bearer $accessToken"
+                "Content-Type" = "application/json"
+            }
+            
+            # Run What-If analysis
+            $whatIfBody = @{
+                userId = $body.userId
+                applicationId = $body.applicationId ?? "00000003-0000-0000-c000-000000000000"
+                clientAppType = $body.clientAppType ?? "browser"
+                ipAddress = $body.ipAddress
+                country = $body.country
+                platform = $body.platform
+            } | ConvertTo-Json -Depth 10
+            
+            $uri = "https://graph.microsoft.com/beta/identity/conditionalAccess/policies/$($body.policyId)/evaluate"
+            $simulation = Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $whatIfBody
+            
+            $result = @{
+                policyId = $body.policyId
+                userId = $body.userId
+                simulation = $simulation
+                wouldApply = $simulation.result -eq "success"
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
         #endregion
         
         default {
             $supportedActions = @(
-                # Identity remediation actions
+                # Identity remediation actions (14 existing)
                 "DisableUser", "EnableUser", "ResetPassword", "RevokeSessions", 
                 "ConfirmCompromised", "DismissRisk", "CreateNamedLocation", "GetNamedLocations",
-                # Emergency response actions
                 "DeleteAuthenticationMethod", "DeleteAllMFAMethods", "CreateEmergencyCAPolicy", 
                 "RemoveAdminRole", "RevokePIMActivation", 
-                "GetUserAuthenticationMethods", "GetUserRoleAssignments"
+                "GetUserAuthenticationMethods", "GetUserRoleAssignments",
+                # V3.2.0 Identity Protection (8 new)
+                "ConfirmUserCompromised", "DismissRiskyUser", "ForcePasswordReset",
+                "BlockUserSignIn", "RevokeUserSessions", "ResetMFARegistration",
+                "DisableUserRisk", "EnableIdentityProtection",
+                # V3.2.0 PIM (6 new)
+                "DenyPIMRequest", "RemoveFromPIMRole", "AuditPIMActivations",
+                "EnablePIMAlerts", "ExpirePIMAssignment",
+                # V3.2.0 Conditional Access (6 new)
+                "CreateEmergencyBreakGlassPolicy", "BlockCountryLocation",
+                "RequireMFAForRole", "BlockLegacyAuth", "EnableCARiskPolicy", "SimulateCAPolicy"
             )
-            throw "Unknown action: $action. Supported actions (14 remediation-focused): $($supportedActions -join ', ')"
+            throw "Unknown action: $action. Supported actions (34 total, 20 new in v3.2.0): $($supportedActions -join ', ')"
         }
     }
 

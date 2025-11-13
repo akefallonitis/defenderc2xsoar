@@ -467,19 +467,779 @@ try {
             }
         }
         
+        # ===== V3.2.0 NEW INTUNE ENCRYPTION ACTIONS (6 actions) =====
+        
+        "EnableBitLocker" {
+            if ([string]::IsNullOrEmpty($body.deviceId)) {
+                throw "Missing required parameter: deviceId"
+            }
+            
+            Write-XDRLog -Level "Info" -Message "Enabling BitLocker on device" -Data @{
+                DeviceId = $body.deviceId
+            }
+            
+            $accessToken = $token
+            $headers = @{
+                "Authorization" = "Bearer $accessToken"
+                "Content-Type" = "application/json"
+            }
+            
+            # Create or update BitLocker configuration policy
+            $policyBody = @{
+                displayName = "BitLocker Enforcement - $($body.deviceId)"
+                description = "Emergency BitLocker enablement for device $($body.deviceId)"
+                settings = @(
+                    @{
+                        "@odata.type" = "#microsoft.graph.deviceManagementConfigurationSetting"
+                        settingInstance = @{
+                            "@odata.type" = "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+                            settingDefinitionId = "device_vendor_msft_bitlocker_requiredeviceencryption"
+                            choiceSettingValue = @{
+                                value = "device_vendor_msft_bitlocker_requiredeviceencryption_1"
+                            }
+                        }
+                    }
+                )
+            } | ConvertTo-Json -Depth 10
+            
+            # Target device via policy assignment
+            $uri = "https://graph.microsoft.com/beta/deviceManagement/configurationPolicies"
+            $policy = Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $policyBody
+            
+            # Force sync to apply immediately
+            $syncUri = "https://graph.microsoft.com/v1.0/deviceManagement/managedDevices/$($body.deviceId)/syncDevice"
+            Invoke-RestMethod -Uri $syncUri -Method Post -Headers $headers
+            
+            $result = @{
+                deviceId = $body.deviceId
+                bitLockerEnabled = $true
+                policyId = $policy.id
+                syncInitiated = $true
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
+        "RotateBitLockerKey" {
+            if ([string]::IsNullOrEmpty($body.deviceId)) {
+                throw "Missing required parameter: deviceId"
+            }
+            
+            Write-XDRLog -Level "Warning" -Message "Rotating BitLocker recovery key" -Data @{
+                DeviceId = $body.deviceId
+            }
+            
+            $accessToken = $token
+            $headers = @{
+                "Authorization" = "Bearer $accessToken"
+                "Content-Type" = "application/json"
+            }
+            
+            $uri = "https://graph.microsoft.com/v1.0/deviceManagement/managedDevices/$($body.deviceId)/rotateBitLockerKeys"
+            Invoke-RestMethod -Uri $uri -Method Post -Headers $headers
+            
+            $result = @{
+                deviceId = $body.deviceId
+                keyRotated = $true
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+                message = "BitLocker recovery key rotation initiated. New key will be escrowed to Azure AD."
+            }
+        }
+        
+        "DisableBitLocker" {
+            if ([string]::IsNullOrEmpty($body.deviceId)) {
+                throw "Missing required parameter: deviceId"
+            }
+            
+            Write-XDRLog -Level "Warning" -Message "Disabling BitLocker (emergency only)" -Data @{
+                DeviceId = $body.deviceId
+                Reason = $body.reason
+            }
+            
+            $accessToken = $token
+            $headers = @{
+                "Authorization" = "Bearer $accessToken"
+                "Content-Type" = "application/json"
+            }
+            
+            # Create policy to disable BitLocker
+            $policyBody = @{
+                displayName = "BitLocker Disable - Emergency - $($body.deviceId)"
+                description = "Emergency BitLocker disable. Reason: $($body.reason ?? 'Not specified')"
+                settings = @(
+                    @{
+                        "@odata.type" = "#microsoft.graph.deviceManagementConfigurationSetting"
+                        settingInstance = @{
+                            "@odata.type" = "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance"
+                            settingDefinitionId = "device_vendor_msft_bitlocker_requiredeviceencryption"
+                            choiceSettingValue = @{
+                                value = "device_vendor_msft_bitlocker_requiredeviceencryption_0"
+                            }
+                        }
+                    }
+                )
+            } | ConvertTo-Json -Depth 10
+            
+            $uri = "https://graph.microsoft.com/beta/deviceManagement/configurationPolicies"
+            $policy = Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $policyBody
+            
+            $result = @{
+                deviceId = $body.deviceId
+                bitLockerDisabled = $true
+                policyId = $policy.id
+                reason = $body.reason
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
+        "GetBitLockerRecoveryKey" {
+            if ([string]::IsNullOrEmpty($body.deviceId)) {
+                throw "Missing required parameter: deviceId"
+            }
+            
+            Write-XDRLog -Level "Info" -Message "Retrieving BitLocker recovery keys" -Data @{
+                DeviceId = $body.deviceId
+            }
+            
+            $accessToken = $token
+            $headers = @{
+                "Authorization" = "Bearer $accessToken"
+                "Content-Type" = "application/json"
+            }
+            
+            # Get device BitLocker recovery keys
+            $uri = "https://graph.microsoft.com/v1.0/informationProtection/bitlocker/recoveryKeys?`$filter=deviceId eq '$($body.deviceId)'"
+            $keys = Invoke-RestMethod -Uri $uri -Method Get -Headers $headers
+            
+            $recoveryKeys = @()
+            foreach ($key in $keys.value) {
+                # Get the actual recovery key value (requires additional permission)
+                $keyUri = "https://graph.microsoft.com/v1.0/informationProtection/bitlocker/recoveryKeys/$($key.id)?`$select=key"
+                try {
+                    $keyDetails = Invoke-RestMethod -Uri $keyUri -Method Get -Headers $headers
+                    $recoveryKeys += @{
+                        keyId = $key.id
+                        createdDateTime = $key.createdDateTime
+                        volumeType = $key.volumeType
+                        recoveryKey = $keyDetails.key
+                    }
+                } catch {
+                    $recoveryKeys += @{
+                        keyId = $key.id
+                        createdDateTime = $key.createdDateTime
+                        volumeType = $key.volumeType
+                        recoveryKey = "Permission required to retrieve key"
+                    }
+                }
+            }
+            
+            $result = @{
+                deviceId = $body.deviceId
+                keyCount = $recoveryKeys.Count
+                recoveryKeys = $recoveryKeys
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
+        "EnableFileVault" {
+            if ([string]::IsNullOrEmpty($body.deviceId)) {
+                throw "Missing required parameter: deviceId"
+            }
+            
+            Write-XDRLog -Level "Info" -Message "Enabling FileVault on macOS device" -Data @{
+                DeviceId = $body.deviceId
+            }
+            
+            $accessToken = $token
+            $headers = @{
+                "Authorization" = "Bearer $accessToken"
+                "Content-Type" = "application/json"
+            }
+            
+            # Create FileVault policy for macOS
+            $policyBody = @{
+                "@odata.type" = "#microsoft.graph.macOSEndpointProtectionConfiguration"
+                displayName = "FileVault Enforcement - $($body.deviceId)"
+                description = "Emergency FileVault enablement"
+                fileVaultEnabled = $true
+                fileVaultAllowDeferralUntilSignOut = $false
+                fileVaultNumberOfTimesUserCanIgnore = 0
+                fileVaultDisablePromptAtSignOut = $false
+                fileVaultPersonalRecoveryKeyHelpMessage = "Contact IT for recovery key"
+                fileVaultHidePersonalRecoveryKey = $true
+            } | ConvertTo-Json -Depth 10
+            
+            $uri = "https://graph.microsoft.com/v1.0/deviceManagement/deviceConfigurations"
+            $policy = Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $policyBody
+            
+            $result = @{
+                deviceId = $body.deviceId
+                fileVaultEnabled = $true
+                policyId = $policy.id
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
+        "RotateFileVaultKey" {
+            if ([string]::IsNullOrEmpty($body.deviceId)) {
+                throw "Missing required parameter: deviceId"
+            }
+            
+            Write-XDRLog -Level "Warning" -Message "Rotating FileVault recovery key" -Data @{
+                DeviceId = $body.deviceId
+            }
+            
+            $accessToken = $token
+            $headers = @{
+                "Authorization" = "Bearer $accessToken"
+                "Content-Type" = "application/json"
+            }
+            
+            $uri = "https://graph.microsoft.com/v1.0/deviceManagement/managedDevices/$($body.deviceId)/rotateFileVaultKey"
+            Invoke-RestMethod -Uri $uri -Method Post -Headers $headers
+            
+            $result = @{
+                deviceId = $body.deviceId
+                fileVaultKeyRotated = $true
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+                message = "FileVault recovery key rotation initiated. New key will be escrowed."
+            }
+        }
+        
+        # ===== V3.2.0 NEW INTUNE DEVICE CONFIG ACTIONS (6 actions) =====
+        
+        "DeployConfigProfile" {
+            if ([string]::IsNullOrEmpty($body.profileName)) {
+                throw "Missing required parameter: profileName"
+            }
+            if ([string]::IsNullOrEmpty($body.deviceId)) {
+                throw "Missing required parameter: deviceId"
+            }
+            
+            Write-XDRLog -Level "Info" -Message "Deploying configuration profile to device" -Data @{
+                ProfileName = $body.profileName
+                DeviceId = $body.deviceId
+            }
+            
+            $accessToken = $token
+            $headers = @{
+                "Authorization" = "Bearer $accessToken"
+                "Content-Type" = "application/json"
+            }
+            
+            # Get profile by name
+            $profileUri = "https://graph.microsoft.com/v1.0/deviceManagement/deviceConfigurations?`$filter=displayName eq '$($body.profileName)'"
+            $profiles = Invoke-RestMethod -Uri $profileUri -Method Get -Headers $headers
+            
+            if ($profiles.value.Count -eq 0) {
+                throw "Configuration profile not found: $($body.profileName)"
+            }
+            
+            $profileId = $profiles.value[0].id
+            
+            # Assign profile to device
+            $assignmentBody = @{
+                deviceConfigurationGroupAssignments = @(
+                    @{
+                        targetGroupId = $body.deviceId
+                    }
+                )
+            } | ConvertTo-Json -Depth 10
+            
+            $assignUri = "https://graph.microsoft.com/v1.0/deviceManagement/deviceConfigurations/$profileId/assign"
+            Invoke-RestMethod -Uri $assignUri -Method Post -Headers $headers -Body $assignmentBody
+            
+            # Sync device to apply immediately
+            $syncUri = "https://graph.microsoft.com/v1.0/deviceManagement/managedDevices/$($body.deviceId)/syncDevice"
+            Invoke-RestMethod -Uri $syncUri -Method Post -Headers $headers
+            
+            $result = @{
+                profileName = $body.profileName
+                profileId = $profileId
+                deviceId = $body.deviceId
+                deployed = $true
+                syncInitiated = $true
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
+        "RemoveConfigProfile" {
+            if ([string]::IsNullOrEmpty($body.profileId)) {
+                throw "Missing required parameter: profileId"
+            }
+            if ([string]::IsNullOrEmpty($body.deviceId)) {
+                throw "Missing required parameter: deviceId"
+            }
+            
+            Write-XDRLog -Level "Warning" -Message "Removing configuration profile from device" -Data @{
+                ProfileId = $body.profileId
+                DeviceId = $body.deviceId
+            }
+            
+            $accessToken = $token
+            $headers = @{
+                "Authorization" = "Bearer $accessToken"
+                "Content-Type" = "application/json"
+            }
+            
+            # Remove assignment (unassign from device)
+            $assignmentBody = @{
+                deviceConfigurationGroupAssignments = @()
+            } | ConvertTo-Json -Depth 10
+            
+            $assignUri = "https://graph.microsoft.com/v1.0/deviceManagement/deviceConfigurations/$($body.profileId)/assign"
+            Invoke-RestMethod -Uri $assignUri -Method Post -Headers $headers -Body $assignmentBody
+            
+            # Sync device
+            $syncUri = "https://graph.microsoft.com/v1.0/deviceManagement/managedDevices/$($body.deviceId)/syncDevice"
+            Invoke-RestMethod -Uri $syncUri -Method Post -Headers $headers
+            
+            $result = @{
+                profileId = $body.profileId
+                deviceId = $body.deviceId
+                removed = $true
+                syncInitiated = $true
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
+        "EnableFirewall" {
+            if ([string]::IsNullOrEmpty($body.deviceId)) {
+                throw "Missing required parameter: deviceId"
+            }
+            
+            Write-XDRLog -Level "Info" -Message "Enabling firewall on device" -Data @{
+                DeviceId = $body.deviceId
+            }
+            
+            $accessToken = $token
+            $headers = @{
+                "Authorization" = "Bearer $accessToken"
+                "Content-Type" = "application/json"
+            }
+            
+            # Create firewall enforcement policy
+            $policyBody = @{
+                "@odata.type" = "#microsoft.graph.windows10EndpointProtectionConfiguration"
+                displayName = "Firewall Enforcement - $($body.deviceId)"
+                description = "Emergency firewall enablement"
+                firewallBlockStatefulFTP = $true
+                firewallIdleTimeoutForSecurityAssociationInSeconds = 300
+                firewallPreSharedKeyEncodingMethod = "none"
+                firewallIPSecExemptionsAllowNeighborDiscovery = $false
+                firewallIPSecExemptionsAllowICMP = $false
+                firewallIPSecExemptionsAllowRouterDiscovery = $false
+                firewallIPSecExemptionsAllowDHCP = $true
+                firewallProfileDomain = @{
+                    firewallEnabled = "allowed"
+                    stealthModeBlocked = $false
+                    incomingTrafficBlocked = $false
+                    unicastResponsesToMulticastBroadcastsBlocked = $true
+                    inboundNotificationsBlocked = $false
+                    authorizedApplicationRulesFromGroupPolicyMerged = $true
+                    globalPortRulesFromGroupPolicyMerged = $true
+                    connectionSecurityRulesFromGroupPolicyMerged = $true
+                    policyRulesFromGroupPolicyMerged = $true
+                }
+            } | ConvertTo-Json -Depth 10
+            
+            $uri = "https://graph.microsoft.com/v1.0/deviceManagement/deviceConfigurations"
+            $policy = Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $policyBody
+            
+            $result = @{
+                deviceId = $body.deviceId
+                firewallEnabled = $true
+                policyId = $policy.id
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
+        "DisableUSBStorage" {
+            if ([string]::IsNullOrEmpty($body.deviceId)) {
+                throw "Missing required parameter: deviceId"
+            }
+            
+            Write-XDRLog -Level "Warning" -Message "Disabling USB storage on device" -Data @{
+                DeviceId = $body.deviceId
+            }
+            
+            $accessToken = $token
+            $headers = @{
+                "Authorization" = "Bearer $accessToken"
+                "Content-Type" = "application/json"
+            }
+            
+            # Create policy to block removable storage
+            $policyBody = @{
+                "@odata.type" = "#microsoft.graph.windows10GeneralConfiguration"
+                displayName = "Block USB Storage - $($body.deviceId)"
+                description = "Emergency USB storage blocking for data exfiltration prevention"
+                storageBlockRemovableStorage = $true
+                storageRequireMobileDeviceEncryption = $true
+                usbBlocked = $false
+            } | ConvertTo-Json -Depth 10
+            
+            $uri = "https://graph.microsoft.com/v1.0/deviceManagement/deviceConfigurations"
+            $policy = Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $policyBody
+            
+            $result = @{
+                deviceId = $body.deviceId
+                usbStorageDisabled = $true
+                policyId = $policy.id
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+                message = "USB storage access blocked. USB devices for input (keyboard/mouse) still allowed."
+            }
+        }
+        
+        "EnableDeviceEncryption" {
+            if ([string]::IsNullOrEmpty($body.deviceId)) {
+                throw "Missing required parameter: deviceId"
+            }
+            
+            Write-XDRLog -Level "Info" -Message "Enabling full device encryption" -Data @{
+                DeviceId = $body.deviceId
+            }
+            
+            $accessToken = $token
+            $headers = @{
+                "Authorization" = "Bearer $accessToken"
+                "Content-Type" = "application/json"
+            }
+            
+            # Get device OS type
+            $deviceUri = "https://graph.microsoft.com/v1.0/deviceManagement/managedDevices/$($body.deviceId)"
+            $device = Invoke-RestMethod -Uri $deviceUri -Method Get -Headers $headers
+            
+            $policyBody = $null
+            if ($device.operatingSystem -eq "Windows") {
+                # BitLocker for Windows
+                $policyBody = @{
+                    "@odata.type" = "#microsoft.graph.windows10EndpointProtectionConfiguration"
+                    displayName = "Full Encryption - Windows - $($body.deviceId)"
+                    bitLockerSystemDrivePolicy = @{
+                        encryptionMethod = "aesCbc256"
+                        startupAuthenticationRequired = $true
+                        startupAuthenticationTpmUsage = "required"
+                    }
+                }
+            } elseif ($device.operatingSystem -eq "macOS") {
+                # FileVault for macOS
+                $policyBody = @{
+                    "@odata.type" = "#microsoft.graph.macOSEndpointProtectionConfiguration"
+                    displayName = "Full Encryption - macOS - $($body.deviceId)"
+                    fileVaultEnabled = $true
+                }
+            } else {
+                throw "Unsupported OS for encryption: $($device.operatingSystem)"
+            }
+            
+            $policyBodyJson = $policyBody | ConvertTo-Json -Depth 10
+            $uri = "https://graph.microsoft.com/v1.0/deviceManagement/deviceConfigurations"
+            $policy = Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $policyBodyJson
+            
+            $result = @{
+                deviceId = $body.deviceId
+                operatingSystem = $device.operatingSystem
+                encryptionEnabled = $true
+                policyId = $policy.id
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
+        "BlockCamera" {
+            if ([string]::IsNullOrEmpty($body.deviceId)) {
+                throw "Missing required parameter: deviceId"
+            }
+            
+            Write-XDRLog -Level "Warning" -Message "Blocking camera on device" -Data @{
+                DeviceId = $body.deviceId
+            }
+            
+            $accessToken = $token
+            $headers = @{
+                "Authorization" = "Bearer $accessToken"
+                "Content-Type" = "application/json"
+            }
+            
+            # Create policy to disable camera
+            $policyBody = @{
+                "@odata.type" = "#microsoft.graph.windows10GeneralConfiguration"
+                displayName = "Block Camera - $($body.deviceId)"
+                description = "Emergency camera blocking for privacy/security"
+                cameraBlocked = $true
+            } | ConvertTo-Json -Depth 10
+            
+            $uri = "https://graph.microsoft.com/v1.0/deviceManagement/deviceConfigurations"
+            $policy = Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $policyBody
+            
+            $result = @{
+                deviceId = $body.deviceId
+                cameraBlocked = $true
+                policyId = $policy.id
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
+        # ===== V3.2.0 NEW INTUNE APP MANAGEMENT ACTIONS (4 actions) =====
+        
+        "UninstallApp" {
+            if ([string]::IsNullOrEmpty($body.deviceId)) {
+                throw "Missing required parameter: deviceId"
+            }
+            if ([string]::IsNullOrEmpty($body.appId)) {
+                throw "Missing required parameter: appId"
+            }
+            
+            Write-XDRLog -Level "Warning" -Message "Uninstalling app from device" -Data @{
+                DeviceId = $body.deviceId
+                AppId = $body.appId
+            }
+            
+            $accessToken = $token
+            $headers = @{
+                "Authorization" = "Bearer $accessToken"
+                "Content-Type" = "application/json"
+            }
+            
+            # Update app assignment to uninstall
+            $assignmentBody = @{
+                mobileAppAssignments = @(
+                    @{
+                        "@odata.type" = "#microsoft.graph.mobileAppAssignment"
+                        intent = "uninstall"
+                        target = @{
+                            "@odata.type" = "#microsoft.graph.allLicensedUsersAssignmentTarget"
+                        }
+                    }
+                )
+            } | ConvertTo-Json -Depth 10
+            
+            $uri = "https://graph.microsoft.com/v1.0/deviceManagement/mobileApps/$($body.appId)/assign"
+            Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $assignmentBody
+            
+            # Sync device to apply immediately
+            $syncUri = "https://graph.microsoft.com/v1.0/deviceManagement/managedDevices/$($body.deviceId)/syncDevice"
+            Invoke-RestMethod -Uri $syncUri -Method Post -Headers $headers
+            
+            $result = @{
+                deviceId = $body.deviceId
+                appId = $body.appId
+                uninstallInitiated = $true
+                syncInitiated = $true
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
+        "BlockApp" {
+            if ([string]::IsNullOrEmpty($body.appName)) {
+                throw "Missing required parameter: appName"
+            }
+            
+            Write-XDRLog -Level "Warning" -Message "Blocking application" -Data @{
+                AppName = $body.appName
+            }
+            
+            $accessToken = $token
+            $headers = @{
+                "Authorization" = "Bearer $accessToken"
+                "Content-Type" = "application/json"
+            }
+            
+            # Create app protection policy to block app
+            $policyBody = @{
+                "@odata.type" = "#microsoft.graph.windowsInformationProtectionPolicy"
+                displayName = "Block App - $($body.appName)"
+                description = "Emergency app blocking for security"
+                enforcementLevel = "encryptAndAuditOnly"
+                enterpriseDomain = $body.enterpriseDomain ?? "contoso.com"
+                exemptApps = @()
+                protectedApps = @()
+                smsDisclaimerNotification = "block"
+            } | ConvertTo-Json -Depth 10
+            
+            $uri = "https://graph.microsoft.com/v1.0/deviceManagement/windowsInformationProtectionPolicies"
+            $policy = Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $policyBody
+            
+            $result = @{
+                appName = $body.appName
+                blocked = $true
+                policyId = $policy.id
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
+        "WipeAppData" {
+            if ([string]::IsNullOrEmpty($body.deviceId)) {
+                throw "Missing required parameter: deviceId"
+            }
+            if ([string]::IsNullOrEmpty($body.appId)) {
+                throw "Missing required parameter: appId"
+            }
+            
+            Write-XDRLog -Level "Warning" -Message "Wiping app data on device" -Data @{
+                DeviceId = $body.deviceId
+                AppId = $body.appId
+            }
+            
+            $accessToken = $token
+            $headers = @{
+                "Authorization" = "Bearer $accessToken"
+                "Content-Type" = "application/json"
+            }
+            
+            # Wipe managed app data
+            $uri = "https://graph.microsoft.com/v1.0/deviceManagement/managedDevices/$($body.deviceId)/wipeData"
+            $wipeBody = @{
+                appId = $body.appId
+            } | ConvertTo-Json
+            
+            Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $wipeBody
+            
+            $result = @{
+                deviceId = $body.deviceId
+                appId = $body.appId
+                appDataWiped = $true
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+                message = "Corporate data for app removed. Personal data preserved."
+            }
+        }
+        
+        "RemoveManagedApp" {
+            if ([string]::IsNullOrEmpty($body.userId)) {
+                throw "Missing required parameter: userId"
+            }
+            if ([string]::IsNullOrEmpty($body.appId)) {
+                throw "Missing required parameter: appId"
+            }
+            
+            Write-XDRLog -Level "Warning" -Message "Removing managed app access" -Data @{
+                UserId = $body.userId
+                AppId = $body.appId
+            }
+            
+            $accessToken = $token
+            $headers = @{
+                "Authorization" = "Bearer $accessToken"
+                "Content-Type" = "application/json"
+            }
+            
+            # Remove app protection policy assignment
+            $uri = "https://graph.microsoft.com/v1.0/deviceAppManagement/managedAppStatuses?userId=$($body.userId)"
+            $appStatuses = Invoke-RestMethod -Uri $uri -Method Get -Headers $headers
+            
+            foreach ($status in $appStatuses.value) {
+                if ($status.appIdentifier -eq $body.appId) {
+                    $deleteUri = "https://graph.microsoft.com/v1.0/deviceAppManagement/managedAppRegistrations/$($status.id)"
+                    Invoke-RestMethod -Uri $deleteUri -Method Delete -Headers $headers
+                }
+            }
+            
+            $result = @{
+                userId = $body.userId
+                appId = $body.appId
+                managedAppRemoved = $true
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
+        # ===== V3.2.0 NEW INTUNE EPM ACTIONS (2 actions) =====
+        
+        "RevokeElevation" {
+            if ([string]::IsNullOrEmpty($body.deviceId)) {
+                throw "Missing required parameter: deviceId"
+            }
+            if ([string]::IsNullOrEmpty($body.elevationId)) {
+                throw "Missing required parameter: elevationId"
+            }
+            
+            Write-XDRLog -Level "Warning" -Message "Revoking elevation privilege" -Data @{
+                DeviceId = $body.deviceId
+                ElevationId = $body.elevationId
+            }
+            
+            $accessToken = $token
+            $headers = @{
+                "Authorization" = "Bearer $accessToken"
+                "Content-Type" = "application/json"
+            }
+            
+            # Revoke EPM elevation
+            $uri = "https://graph.microsoft.com/beta/deviceManagement/privilegeManagementElevations/$($body.elevationId)/revoke"
+            Invoke-RestMethod -Uri $uri -Method Post -Headers $headers
+            
+            $result = @{
+                deviceId = $body.deviceId
+                elevationId = $body.elevationId
+                revoked = $true
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+                message = "Elevation privilege revoked immediately."
+            }
+        }
+        
+        "BlockElevationRequest" {
+            if ([string]::IsNullOrEmpty($body.deviceId)) {
+                throw "Missing required parameter: deviceId"
+            }
+            if ([string]::IsNullOrEmpty($body.applicationPath)) {
+                throw "Missing required parameter: applicationPath"
+            }
+            
+            Write-XDRLog -Level "Warning" -Message "Blocking elevation for application" -Data @{
+                DeviceId = $body.deviceId
+                ApplicationPath = $body.applicationPath
+            }
+            
+            $accessToken = $token
+            $headers = @{
+                "Authorization" = "Bearer $accessToken"
+                "Content-Type" = "application/json"
+            }
+            
+            # Create EPM policy to block elevation
+            $policyBody = @{
+                "@odata.type" = "#microsoft.graph.privilegeManagementElevationPolicy"
+                displayName = "Block Elevation - $($body.applicationPath)"
+                description = "Emergency block for suspicious elevation request"
+                elevationType = "deny"
+                targetApplication = @{
+                    filePath = $body.applicationPath
+                    fileHash = $body.fileHash
+                }
+            } | ConvertTo-Json -Depth 10
+            
+            $uri = "https://graph.microsoft.com/beta/deviceManagement/privilegeManagementElevationPolicies"
+            $policy = Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $policyBody
+            
+            $result = @{
+                deviceId = $body.deviceId
+                applicationPath = $body.applicationPath
+                elevationBlocked = $true
+                policyId = $policy.id
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
         #endregion
         
         default {
             $supportedActions = @(
-                # Device remediation actions
+                # Device remediation actions (15 existing)
                 "RemoteLock", "WipeDevice", "RetireDevice", "SyncDevice", "DefenderScan",
-                # Enhanced device management
                 "ResetDevicePasscode", "RebootDeviceNow", "ShutdownDevice",
                 "EnableLostMode", "DisableLostMode", "TriggerComplianceEvaluation",
                 "UpdateDefenderSignatures", "BypassActivationLock", "CleanWindowsDevice",
-                "LogoutSharedAppleDevice"
+                "LogoutSharedAppleDevice",
+                # V3.2.0 Encryption (6 new)
+                "EnableBitLocker", "RotateBitLockerKey", "DisableBitLocker",
+                "GetBitLockerRecoveryKey", "EnableFileVault", "RotateFileVaultKey",
+                # V3.2.0 Device Config (6 new)
+                "DeployConfigProfile", "RemoveConfigProfile", "EnableFirewall",
+                "DisableUSBStorage", "EnableDeviceEncryption", "BlockCamera",
+                # V3.2.0 App Management (4 new)
+                "UninstallApp", "BlockApp", "WipeAppData", "RemoveManagedApp",
+                # V3.2.0 EPM (2 new)
+                "RevokeElevation", "BlockElevationRequest"
             )
-            throw "Unknown action: $action. Supported actions (15 remediation-focused): $($supportedActions -join ', ')"
+            throw "Unknown action: $action. Supported actions (33 total, 18 new in v3.2.0): $($supportedActions -join ', ')"
         }
     }
 

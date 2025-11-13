@@ -1,473 +1,418 @@
-# DefenderXDR Documentation Index# DefenderC2 Documentation Index
+# Documentation Index - v3.2.0
 
-
-
-**Version**: 3.0.0 | **Last Updated**: January 2025## 📚 Complete Guide to DefenderC2 Workbook Documentation
-
-
-
-Quick guide to DefenderXDR documentation. Old docs archived to `archive/old-docs/`.This index helps you quickly find the right documentation for your needs.
-
-
-
-------
-
-
-
-## 📚 Essential Documentation (Start Here)## 🚀 Quick Start
-
-
-
-| Document | Purpose |**New to DefenderC2?** Start here:
-
-|----------|---------|
-
-| **[README.md](README.md)** | Overview, architecture, quick start |1. **[README.md](README.md)** - Project overview and quick start
-
-| **[DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md)** | Complete deployment instructions |2. **[QUICKSTART.md](QUICKSTART.md)** - Fast deployment guide
-
-| **[PERMISSIONS.md](PERMISSIONS.md)** | Required API permissions |3. **[QUICK_VERIFICATION_GUIDE.md](QUICK_VERIFICATION_GUIDE.md)** - 60-second health check
-
-| **[MIGRATION_GUIDE.md](MIGRATION_GUIDE.md)** | Upgrade from v2.x to v3.0 |
+**Microsoft Defender XDR to Azure Sentinel SOAR Integration**  
+**Version**: 3.2.0 | **Last Updated**: November 2025  
+**Status**: Production Ready | **Actions**: 219
 
 ---
 
----
+## Quick Navigation
 
-## 🔧 Deployment & Configuration
-
-## 📊 Reference Documentation
-
-### Deployment Guides
-
-| Document | Purpose |
-
-|----------|---------|- **[DEPLOYMENT.md](DEPLOYMENT.md)** - Complete deployment instructions
-
-| **[XDR_REMEDIATION_ACTION_MATRIX.md](XDR_REMEDIATION_ACTION_MATRIX.md)** | All 213 actions reference |- **[DEPLOYMENT_READY.md](DEPLOYMENT_READY.md)** - Pre-deployment checklist
-
-| **[ACTION_COUNT_VERIFICATION.md](ACTION_COUNT_VERIFICATION.md)** | Verified action counts by worker |- **[DEPLOYMENT_VERIFICATION_CHECKLIST.md](DEPLOYMENT_VERIFICATION_CHECKLIST.md)** - Step-by-step verification (NEW)
-
-| **[WORKBOOK_INTEGRATION_APIS.md](WORKBOOK_INTEGRATION_APIS.md)** | Dynamic workbook integration APIs |
-
-| **[COMPREHENSIVE_CLEANUP_COMPLETE.md](COMPREHENSIVE_CLEANUP_COMPLETE.md)** | Latest cleanup summary |### Configuration Guides
-
-
-
----- **[AZURE_WORKBOOK_BEST_PRACTICES.md](AZURE_WORKBOOK_BEST_PRACTICES.md)** - Best practices for Azure Workbooks
-
-- **[FUNCTION_APP_AUTH_CONFIG.md](FUNCTION_APP_AUTH_CONFIG.md)** - Authentication configuration
-
-## 🏗️ Architecture (v3.0.0)- **[PARAMETER_DEPENDENCY_FLOW.md](PARAMETER_DEPENDENCY_FLOW.md)** - How parameters cascade
-
-
-
-```---
-
-Gateway → Orchestrator → 9 Workers
-
-## 🐛 Troubleshooting
-
-10 Functions | 187 Actions | 7 Shared Modules
-
-```### Problem-Solving Guides
-
-
-
-**Workers**:- **[TROUBLESHOOTING_PARAMETER_BINDING.md](TROUBLESHOOTING_PARAMETER_BINDING.md)** - Comprehensive troubleshooting (NEW)
-
-- MDE (52 actions) - Endpoint security- **[QUICK_VERIFICATION_GUIDE.md](QUICK_VERIFICATION_GUIDE.md)** - 60-second health check (NEW)
-
-- Azure (22) - Infrastructure- **[AUTHENTICATION_TROUBLESHOOTING.md](AUTHENTICATION_TROUBLESHOOTING.md)** - Authentication issues
-
-- Entra ID (20) - Identity & access
-
-- Intune (18) - Device management### Common Issues
-
-- MCAS (14) - Cloud apps
-
-- MDO (12) - Email security- **[ISSUE_RESOLUTION_CUSTOMENDPOINT_PARAMETERS.md](ISSUE_RESOLUTION_CUSTOMENDPOINT_PARAMETERS.md)** - CustomEndpoint fixes
-
-- MDI (11) - Identity threats- **[ISSUE_ANALYSIS_SUMMARY.md](ISSUE_ANALYSIS_SUMMARY.md)** - Complete issue analysis (NEW)
-
-- Plus 2 more workers- **[FUNCTIONAPP_FILTER_FIX.md](FUNCTIONAPP_FILTER_FIX.md)** - FunctionApp dropdown issues
-
-
-
-**Modules** (in `functions/modules/DefenderXDRIntegrationBridge/`):---
-
-- Core: AuthManager, ValidationHelper, LoggingHelper
-
-- Services: 13 service-specific modules## 📖 Technical Documentation
-
-- Utilities: BlobManager, QueueManager, StatusTracker, ConditionalAccess
-
-### Workbook Configuration
+| I want to... | Start here |
+|--------------|------------|
+| Deploy the solution | [README.md](#readmemd) → [DEPLOYMENT_GUIDE.md](#deployment_guidemd) |
+| See all 219 actions | [V3.2.0_COMPLETE_200_PLUS_ACTIONS.md](#v320_complete_200_plus_actionsmd) |
+| Understand architecture | [README.md](#readmemd) (Architecture section) |
+| Configure permissions | [PERMISSIONS.md](#permissionsmd) |
+| Troubleshoot issues | [DEPLOYMENT_GUIDE.md](#deployment_guidemd) (Troubleshooting) |
+| See implementation details | [V3.2.0_IMPLEMENTATION_PROGRESS.md](#v320_implementation_progressmd) |
 
 ---
 
-- **[ARM_ACTION_FIX_SUMMARY.md](ARM_ACTION_FIX_SUMMARY.md)** - ARM action configuration
+## Core Documentation
 
-## 📁 Directory Structure- **[PARAMETER_AUTOPOPULATION_FIX.md](PARAMETER_AUTOPOPULATION_FIX.md)** - Parameter auto-population
+### README.md
+**Primary repository documentation** - Start here!
 
-- **[TENANTID_FUNCTIONAPP_FIX.md](TENANTID_FUNCTIONAPP_FIX.md)** - TenantId discovery fix
+- Complete overview of 219 actions across 6 security services
+- Quick start and deployment instructions
+- Architecture diagram (Gateway → Orchestrator → Workers)
+- Action coverage by service (MDE, MDO, MCAS, EntraID, Intune, Azure)
+- Action tracking features (history, cancellation, audit logging)
+- API reference and usage examples
+- Monitoring and troubleshooting
 
-```- **[WORKBOOK_AUTOPOPULATION_FIX.md](WORKBOOK_AUTOPOPULATION_FIX.md)** - Auto-population fixes
-
-defenderc2xsoar/
-
-├── functions/           ✅ 10 functions (Gateway + Orchestrator + 7 workers + DiagnosticCheck)
-
-### CustomEndpoint Configuration
-
-│   └── modules/DefenderXDRIntegrationBridge/  ✅ 21 shared modules
-
-├── deployment/          ✅ ARM templates, deployment scripts- **[CUSTOMENDPOINT_IMPLEMENTATION_SUMMARY.md](CUSTOMENDPOINT_IMPLEMENTATION_SUMMARY.md)** - CustomEndpoint implementation
-
-├── workbook/            ✅ Azure Workbook JSON- **[WORKBOOK_URLPARAMS_FIX.md](WORKBOOK_URLPARAMS_FIX.md)** - URL parameters fix
-
-├── docs/                ✅ Additional documentation- **[SESSION_SUMMARY.md](SESSION_SUMMARY.md)** - Complete session summary
-
-├── examples/            ✅ Sample code
-
-├── scripts/             ✅ Utility scripts### API Reference
-
-└── archive/             📦 Old docs and standalone modules
-
-```- **[archive/technical-docs/FUNCTIONS_REFERENCE.md](archive/technical-docs/FUNCTIONS_REFERENCE.md)** - Function App API reference
-
-
-
-------
-
-
-
-## 🎯 Quick Reference## ✅ Verification & Testing
-
-
-
-**I want to...**### Validation Tools
-
-
-
-- **Deploy** → README.md, then DEPLOYMENT_GUIDE.md- **[scripts/verify_workbook_config.py](scripts/verify_workbook_config.py)** - Automated configuration validation
-
-- **See available actions** → XDR_REMEDIATION_ACTION_MATRIX.md- **[TESTING_GUIDE.md](TESTING_GUIDE.md)** - Comprehensive testing guide
-
-- **Understand architecture** → ACTION_COUNT_VERIFICATION.md- **[VERIFICATION_SUMMARY.md](VERIFICATION_SUMMARY.md)** - Verification results
-
-- **Integrate workbook** → WORKBOOK_INTEGRATION_APIS.md
-
-- **Upgrade from v2.x** → MIGRATION_GUIDE.md### Test Results
-
-- **View cleanup work** → COMPREHENSIVE_CLEANUP_COMPLETE.md
-
-- **[VERIFICATION_COMPLETE.md](VERIFICATION_COMPLETE.md)** - Complete verification status
-
----- **[WORKBOOK_VERIFICATION_REPORT.md](WORKBOOK_VERIFICATION_REPORT.md)** - Workbook verification report
-
-- **[COMPLETE_VERIFICATION_REPORT.md](COMPLETE_VERIFICATION_REPORT.md)** - All verification results
-
-## 📦 Archived Documentation
+**When to use**: First time user, deployment overview, action catalog
 
 ---
 
-Moved to `archive/old-docs/` (19 files):
+### PERMISSIONS.md
+**Required API permissions for App Registration**
 
-- Old architecture analyses## 📊 Project Status & Summaries
+- Complete list of Microsoft Graph permissions
+- Security API permissions (Microsoft Threat Protection)
+- Intune, Azure Management permissions
+- Permission justifications and scope explanations
+- Setup instructions for App Registration
 
-- Historical implementation plans
-
-- Outdated testing status### Current Status
-
-- Superseded by current docs
-
-- **[PROJECT_COMPLETE.md](PROJECT_COMPLETE.md)** - Overall project completion status
-
-**Note**: `standalone/` directory also archived (no longer used).- **[IMPLEMENTATION_COMPLETE.md](IMPLEMENTATION_COMPLETE.md)** - Implementation status
-
-- **[ISSUE_ANALYSIS_SUMMARY.md](ISSUE_ANALYSIS_SUMMARY.md)** - Latest issue analysis (NEW)
+**When to use**: Setting up App Registration, permission errors
 
 ---
 
-### Change Summaries
+### DEPLOYMENT_GUIDE.md
+**Comprehensive deployment guide**
 
-**Repository**: github.com/akefallonitis/defenderc2xsoar  
+- Prerequisites and requirements
+- Step-by-step deployment (Azure Portal + Manual)
+- Configuration details (App Settings, Managed Identity)
+- Workbook deployment
+- Troubleshooting common issues
+- Post-deployment validation
 
-**Status**: Production Ready  - **[PR_SUMMARY.md](PR_SUMMARY.md)** - Pull request summary
-
-**Actions**: 213 verified across 9 workers- **[WORKBOOK_FIXES_SUMMARY.md](WORKBOOK_FIXES_SUMMARY.md)** - All workbook fixes
-
-- **[CLEANUP_SUMMARY.md](CLEANUP_SUMMARY.md)** - Cleanup operations
-
----
-
-## 🎯 Use Case Specific Guides
-
-### By User Role
-
-#### For Developers
-1. [AZURE_WORKBOOK_BEST_PRACTICES.md](AZURE_WORKBOOK_BEST_PRACTICES.md)
-2. [ARM_ACTION_FIX_SUMMARY.md](ARM_ACTION_FIX_SUMMARY.md)
-3. [CUSTOMENDPOINT_IMPLEMENTATION_SUMMARY.md](CUSTOMENDPOINT_IMPLEMENTATION_SUMMARY.md)
-4. [scripts/verify_workbook_config.py](scripts/verify_workbook_config.py)
-
-#### For Operators
-1. [DEPLOYMENT.md](DEPLOYMENT.md)
-2. [QUICK_VERIFICATION_GUIDE.md](QUICK_VERIFICATION_GUIDE.md) ⭐ NEW
-3. [TROUBLESHOOTING_PARAMETER_BINDING.md](TROUBLESHOOTING_PARAMETER_BINDING.md) ⭐ NEW
-4. [DEPLOYMENT_VERIFICATION_CHECKLIST.md](DEPLOYMENT_VERIFICATION_CHECKLIST.md) ⭐ NEW
-
-#### For End Users
-1. [QUICKSTART.md](QUICKSTART.md)
-2. [README.md](README.md)
-3. [QUICK_REFERENCE.md](QUICK_REFERENCE.md)
-
-### By Problem Type
-
-#### "Workbook not working / stuck in refreshing"
-1. [QUICK_VERIFICATION_GUIDE.md](QUICK_VERIFICATION_GUIDE.md) - Start here ⭐
-2. [TROUBLESHOOTING_PARAMETER_BINDING.md](TROUBLESHOOTING_PARAMETER_BINDING.md) - Detailed help ⭐
-3. [ISSUE_ANALYSIS_SUMMARY.md](ISSUE_ANALYSIS_SUMMARY.md) - Understanding the issue ⭐
-
-#### "Parameters not auto-populating"
-1. [ISSUE_RESOLUTION_CUSTOMENDPOINT_PARAMETERS.md](ISSUE_RESOLUTION_CUSTOMENDPOINT_PARAMETERS.md)
-2. [PARAMETER_AUTOPOPULATION_FIX.md](PARAMETER_AUTOPOPULATION_FIX.md)
-3. [PARAMETER_DEPENDENCY_FLOW.md](PARAMETER_DEPENDENCY_FLOW.md)
-
-#### "Function App dropdown empty"
-1. [FUNCTIONAPP_FILTER_FIX.md](FUNCTIONAPP_FILTER_FIX.md)
-2. [TROUBLESHOOTING_PARAMETER_BINDING.md](TROUBLESHOOTING_PARAMETER_BINDING.md) ⭐
-
-#### "ARM actions failing"
-1. [ARM_ACTION_FIX_SUMMARY.md](ARM_ACTION_FIX_SUMMARY.md)
-2. [BEFORE_AFTER_ARM_ACTIONS.md](BEFORE_AFTER_ARM_ACTIONS.md)
-
-#### "Authentication issues"
-1. [AUTHENTICATION_TROUBLESHOOTING.md](AUTHENTICATION_TROUBLESHOOTING.md)
-2. [FUNCTION_APP_AUTH_CONFIG.md](FUNCTION_APP_AUTH_CONFIG.md)
-
-#### "Deployment issues"
-1. [DEPLOYMENT_VERIFICATION_CHECKLIST.md](DEPLOYMENT_VERIFICATION_CHECKLIST.md) ⭐ NEW
-2. [DEPLOYMENT.md](DEPLOYMENT.md)
-3. [DEPLOYMENT_READY.md](DEPLOYMENT_READY.md)
+**When to use**: Deploying for first time, deployment issues
 
 ---
 
-## 🆕 Latest Documentation (October 2025)
+## Version Documentation
 
-### New Comprehensive Guides
+### V3.2.0_COMPLETE_200_PLUS_ACTIONS.md
+**Complete action catalog** - All 219 actions documented
 
-1. **[TROUBLESHOOTING_PARAMETER_BINDING.md](TROUBLESHOOTING_PARAMETER_BINDING.md)** (10.7 KB)
-   - Complete troubleshooting guide
-   - Common issues and solutions
-   - Diagnostic procedures
-   - Advanced debugging
+- Actions organized by service:
+  - **MDE (52)**: Device isolation, TVM, network protection, custom detection
+  - **MDO (25)**: Email remediation, quarantine, phishing response
+  - **MCAS (23)**: OAuth, DLP, shadow IT, session control
+  - **EntraID (34)**: Identity protection, PIM, Conditional Access
+  - **Intune (33)**: Device management, encryption, app control
+  - **Azure (52)**: Storage, SQL, Arc, WAF, MDC, Sentinel
+- API endpoints and parameters
+- Use cases and examples
 
-2. **[DEPLOYMENT_VERIFICATION_CHECKLIST.md](DEPLOYMENT_VERIFICATION_CHECKLIST.md)** (11.0 KB)
-   - Step-by-step deployment verification
-   - Pre/post-deployment checks
-   - Success criteria
-   - Rollback procedures
-
-3. **[QUICK_VERIFICATION_GUIDE.md](QUICK_VERIFICATION_GUIDE.md)** (5.2 KB)
-   - 60-second health check
-   - Quick command reference
-   - Rapid troubleshooting
-
-4. **[ISSUE_ANALYSIS_SUMMARY.md](ISSUE_ANALYSIS_SUMMARY.md)** (12.6 KB)
-   - Complete issue analysis
-   - Root cause identification
-   - Configuration validation
-   - Solution mapping
+**When to use**: Finding specific actions, understanding capabilities
 
 ---
 
-## 🔍 Finding What You Need
+### V3.2.0_IMPLEMENTATION_PROGRESS.md
+**Implementation details and technical architecture**
 
-### Common Questions
+- Development progress tracking
+- Module dependencies and structure
+- Technical decisions and rationale
+- Testing results and validation
+- Known limitations
 
-**Q: My workbook is stuck refreshing. Where do I start?**  
-A: [QUICK_VERIFICATION_GUIDE.md](QUICK_VERIFICATION_GUIDE.md) → [TROUBLESHOOTING_PARAMETER_BINDING.md](TROUBLESHOOTING_PARAMETER_BINDING.md)
-
-**Q: How do I deploy the workbook?**  
-A: [QUICKSTART.md](QUICKSTART.md) → [DEPLOYMENT.md](DEPLOYMENT.md) → [DEPLOYMENT_VERIFICATION_CHECKLIST.md](DEPLOYMENT_VERIFICATION_CHECKLIST.md)
-
-**Q: How do I verify my configuration is correct?**  
-A: Run `python3 scripts/verify_workbook_config.py` → See [QUICK_VERIFICATION_GUIDE.md](QUICK_VERIFICATION_GUIDE.md)
-
-**Q: What was fixed in the latest updates?**  
-A: [ISSUE_ANALYSIS_SUMMARY.md](ISSUE_ANALYSIS_SUMMARY.md) → [PROJECT_COMPLETE.md](PROJECT_COMPLETE.md)
-
-**Q: How do parameters auto-populate?**  
-A: [PARAMETER_DEPENDENCY_FLOW.md](PARAMETER_DEPENDENCY_FLOW.md) → [PARAMETER_AUTOPOPULATION_FIX.md](PARAMETER_AUTOPOPULATION_FIX.md)
-
-**Q: What are the best practices?**  
-A: [AZURE_WORKBOOK_BEST_PRACTICES.md](AZURE_WORKBOOK_BEST_PRACTICES.md)
+**When to use**: Understanding implementation, technical details
 
 ---
 
-## 📦 Documentation by Category
+## Deployment Documentation
 
-### 🏗️ Architecture & Design
-- AZURE_WORKBOOK_BEST_PRACTICES.md
-- PARAMETER_DEPENDENCY_FLOW.md
-- archive/technical-docs/ARCHITECTURE.md
+All deployment-related files in `deployment/` directory:
 
-### 🔧 Configuration
-- ARM_ACTION_FIX_SUMMARY.md
-- PARAMETER_AUTOPOPULATION_FIX.md
-- TENANTID_FUNCTIONAPP_FIX.md
-- WORKBOOK_AUTOPOPULATION_FIX.md
-- WORKBOOK_URLPARAMS_FIX.md
+### deployment/README.md
+- Deployment options overview
+- Quick links to deployment methods
 
-### 🚀 Deployment
-- DEPLOYMENT.md
-- DEPLOYMENT_READY.md
-- DEPLOYMENT_VERIFICATION_CHECKLIST.md ⭐ NEW
-- QUICKSTART.md
+### deployment/FUNCTION_APP_DEPLOYMENT.md
+- Function App specific deployment details
+- Application settings configuration
+- Managed Identity setup
+- Monitoring and logging setup
 
-### 🐛 Troubleshooting
-- TROUBLESHOOTING_PARAMETER_BINDING.md ⭐ NEW
-- QUICK_VERIFICATION_GUIDE.md ⭐ NEW
-- AUTHENTICATION_TROUBLESHOOTING.md
-- ISSUE_RESOLUTION_CUSTOMENDPOINT_PARAMETERS.md
+### deployment/Configure-AppPermissions.ps1
+**PowerShell script for automated permission configuration**
+- Creates App Registration
+- Grants required API permissions
+- Configures client secrets
 
-### ✅ Verification
-- QUICK_VERIFICATION_GUIDE.md ⭐ NEW
-- DEPLOYMENT_VERIFICATION_CHECKLIST.md ⭐ NEW
-- TESTING_GUIDE.md
-- VERIFICATION_COMPLETE.md
-- scripts/verify_workbook_config.py
+### deployment/Deploy-DefenderC2.ps1
+**PowerShell script for automated deployment**
+- Creates Resource Group
+- Deploys Function App
+- Configures Application Settings
+- Deploys Storage Account
 
-### 📊 Analysis & Reports
-- ISSUE_ANALYSIS_SUMMARY.md ⭐ NEW
-- PROJECT_COMPLETE.md
-- VERIFICATION_SUMMARY.md
-- WORKBOOK_VERIFICATION_REPORT.md
+### deployment/diagnose-function-app.ps1
+**Function App diagnostics tool**
+- Checks Function App status
+- Validates configuration
+- Tests connectivity
 
-### 🔍 Reference
-- QUICK_REFERENCE.md
-- archive/technical-docs/FUNCTIONS_REFERENCE.md
-- REPOSITORY_STRUCTURE.md
+### deployment/test-all-services.ps1
+**Integration testing script**
+- Tests all 6 workers
+- Validates API responses
+- Generates test report
 
----
+### deployment/CUSTOMENDPOINT_GUIDE.md
+- Custom API endpoint configuration
+- Integration patterns
+- Sample requests
 
-## 🛠️ Tools & Scripts
+### deployment/WORKBOOK_PARAMETERS_GUIDE.md
+- Workbook parameter configuration
+- Parameter dependencies
+- Best practices
 
-### Validation Scripts
-```bash
-# Verify workbook configuration
-python3 scripts/verify_workbook_config.py
+### deployment/WORKBOOK_PARAMETERS_REQUIRED.md
+- Mandatory workbook parameters
+- Required settings
+- Validation rules
 
-# Fix workbook queries (if needed)
-python3 scripts/fix-workbook-queries.py
-```
+### deployment/PACKAGE_UPDATE_PROCESS.md
+- Package update procedures
+- Version management
+- Release process
 
-### Azure CLI Commands
-```bash
-# Check CORS
-az functionapp cors show --name ${FUNCTION_APP} --resource-group ${RESOURCE_GROUP}
-
-# Test API endpoint
-curl "https://${FUNCTION_APP}.azurewebsites.net/api/DefenderC2Dispatcher?action=Get%20Devices&tenantId=${TENANT_ID}"
-
-# View logs
-az functionapp log tail --name ${FUNCTION_APP} --resource-group ${RESOURCE_GROUP}
-```
-
-See [QUICK_VERIFICATION_GUIDE.md](QUICK_VERIFICATION_GUIDE.md) for complete command reference.
+### deployment/V2.3.0_DEPLOYMENT_GUIDE.md
+**ARCHIVED** - Old version deployment guide (kept for reference)
 
 ---
 
-## 📅 Documentation Updates
+## Workbook Documentation
 
-### October 13, 2025
-- ✨ Added TROUBLESHOOTING_PARAMETER_BINDING.md
-- ✨ Added DEPLOYMENT_VERIFICATION_CHECKLIST.md
-- ✨ Added QUICK_VERIFICATION_GUIDE.md
-- ✨ Added ISSUE_ANALYSIS_SUMMARY.md
-- ✨ Added DOCUMENTATION_INDEX.md (this file)
+All workbook-related files in `workbook/` directory:
 
-### October 12, 2025
-- ✅ Completed PR #72 - Parameter binding fixes
-- 📝 Created comprehensive fix documentation
-- ✅ Verified all configurations
+### workbook/README.md
+**Azure Sentinel Workbook documentation**
+- Workbook installation instructions
+- Feature overview
+- Tab descriptions
+- Usage examples
 
-See [PROJECT_COMPLETE.md](PROJECT_COMPLETE.md) for complete history.
+### workbook/ARCHITECTURE.md
+- Workbook architecture and design
+- Component structure
+- Data flow diagrams
+- Parameter cascading
 
----
+### workbook/QUICKREF.md
+- Quick reference guide
+- Common operations
+- Action shortcuts
+- Parameter usage
 
-## 🎯 Recommended Reading Paths
+### workbook/DEVICEMANAGER_README.md
+- Device Manager tab documentation
+- MDE device operations
+- Isolation and remediation workflows
 
-### For First-Time Users
-1. README.md
-2. QUICKSTART.md
-3. QUICK_VERIFICATION_GUIDE.md ⭐
-4. DEPLOYMENT_VERIFICATION_CHECKLIST.md ⭐
-
-### For Troubleshooting Issues
-1. QUICK_VERIFICATION_GUIDE.md ⭐
-2. TROUBLESHOOTING_PARAMETER_BINDING.md ⭐
-3. ISSUE_ANALYSIS_SUMMARY.md ⭐
-
-### For Understanding Technical Details
-1. AZURE_WORKBOOK_BEST_PRACTICES.md
-2. PARAMETER_DEPENDENCY_FLOW.md
-3. ARM_ACTION_FIX_SUMMARY.md
-4. ISSUE_ANALYSIS_SUMMARY.md ⭐
-
-### For Deployment Planning
-1. DEPLOYMENT.md
-2. DEPLOYMENT_READY.md
-3. DEPLOYMENT_VERIFICATION_CHECKLIST.md ⭐
-4. TESTING_GUIDE.md
+### Workbook Files
+- `DefenderXDR-v3.0.0.workbook` - Main workbook JSON
+- `DefenderXDR-Complete.json` - Complete workbook
+- `DefenderC2-Hybrid.json` - Hybrid configuration
+- `FileOperations.workbook` - File operations module
 
 ---
 
-## 💡 Tips for Using This Documentation
+## Technical Documentation
 
-1. **Start with Quick Guides** - Use QUICKSTART.md or QUICK_VERIFICATION_GUIDE.md
-2. **Use the Index** - This file helps you find what you need quickly
-3. **Follow Checklists** - Use DEPLOYMENT_VERIFICATION_CHECKLIST.md step-by-step
-4. **Search by Problem** - Look in "By Problem Type" section above
-5. **Check Latest** - New documents marked with ⭐
+### docs/ARM_ACTIONS_CORRECT_PATTERN.md
+- ARM template action patterns
+- Best practices for workbook actions
+- Parameter passing examples
+- Error handling patterns
 
----
+### docs/CUSTOM_ENDPOINT_SAMPLE_QUERIES.md
+- Sample KQL queries for custom endpoints
+- Log Analytics query patterns
+- Use case examples
 
-## 🆘 Getting Help
-
-### Self-Service
-1. Check [QUICK_VERIFICATION_GUIDE.md](QUICK_VERIFICATION_GUIDE.md)
-2. Review [TROUBLESHOOTING_PARAMETER_BINDING.md](TROUBLESHOOTING_PARAMETER_BINDING.md)
-3. Run `python3 scripts/verify_workbook_config.py`
-4. Search this index for your problem
-
-### Community Support
-1. Check GitHub Issues
-2. Review closed issues for similar problems
-3. Check discussions
-
-### Creating an Issue
-Include:
-- Output of `python3 scripts/verify_workbook_config.py`
-- Browser console errors (F12)
-- Function App logs
-- Steps to reproduce
+### docs/WORKBOOK_CUSTOM_ENDPOINT_GUIDE.md
+- Workbook custom endpoint integration
+- Configuration steps
+- Query customization
 
 ---
 
-## 📄 License & Contributing
+## Examples
 
-- **License**: See [LICENSE](LICENSE)
-- **Contributing**: See [CONTRIBUTING.md](CONTRIBUTING.md)
-- **Repository**: https://github.com/akefallonitis/defenderc2xsoar
+### examples/README.md
+- Example configurations
+- Sample playbook implementations
+- Use case demonstrations
+
+### examples/customendpoint-example.json
+- Custom endpoint JSON example
+- Parameter definitions
+- Sample requests and responses
+
+### examples/sample-config.md
+- Sample configuration files
+- Configuration templates
 
 ---
 
-**Index Version:** 1.0  
-**Last Updated:** October 13, 2025  
-**Total Documentation Files:** 50+  
-**New Guides (Oct 2025):** 4 comprehensive guides ⭐
+## Function Architecture
 
-_This index is maintained to help users quickly find relevant documentation. If you can't find what you need, please create an issue._
+### Azure Functions (9 total)
+
+Located in `functions/` directory:
+
+| Function | Purpose | Actions | Status |
+|----------|---------|---------|--------|
+| **DefenderXDRGateway** | HTTP entry point, action tracking | N/A | Core |
+| **DefenderXDROrchestrator** | Service routing logic | N/A | Core |
+| **DefenderXDRAzureWorker** | Azure infrastructure security | 52 | ✅ |
+| **DefenderXDRMDEWorker** | Endpoint protection (MDE) | 52 | ✅ |
+| **DefenderXDRMDOWorker** | Email security (MDO) | 25 | ✅ |
+| **DefenderXDRMCASWorker** | Cloud app security (MCAS) | 23 | ✅ |
+| **DefenderXDREntraIDWorker** | Identity protection | 34 | ✅ |
+| **DefenderXDRIntuneWorker** | Device management | 33 | ✅ |
+| **DiagnosticCheck** | Environment diagnostics | N/A | Utility |
+
+**Total: 219 remediation actions**
+
+### Core Modules
+
+Located in `functions/modules/DefenderXDRIntegrationBridge/`:
+
+| Module | Purpose | Used By |
+|--------|---------|---------|
+| **AuthManager.psm1** | OAuth authentication, token management | All workers |
+| **ValidationHelper.psm1** | Input validation, tenant ID verification | All workers |
+| **LoggingHelper.psm1** | Structured logging (Write-XDRLog) | All workers |
+| **ActionTracker.psm1** | Action tracking, history, audit logging | Gateway |
+
+### Module Functions
+
+**AuthManager.psm1**:
+- `Get-DefenderToken` - Microsoft Threat Protection token
+- `Get-GraphToken` - Microsoft Graph token
+- `Get-SecurityToken` - Security API token
+- `Get-AzureManagementToken` - Azure Management token
+
+**ValidationHelper.psm1**:
+- `Test-TenantId` - Validate tenant ID format
+- `Test-RequiredParameters` - Validate required parameters
+
+**LoggingHelper.psm1**:
+- `Write-XDRLog` - Structured logging with levels (Info, Warning, Error)
+
+**ActionTracker.psm1**:
+- `Start-ActionTracking` - Initialize action tracking
+- `Update-ActionProgress` - Update progress
+- `Complete-ActionTracking` - Mark complete
+- `Request-ActionCancellation` - Request cancellation
+- `Get-ActionHistory` - Retrieve history
+- `Get-ActionAuditTrail` - Get audit trail
+- `Export-ActionAuditLog` - Export logs (JSON/CSV/CEF)
+- `Test-ActionCancellation` - Check cancellation status
+
+---
+
+## API Reference
+
+### Primary Endpoints
+
+**POST /api/Gateway**
+- Main action execution endpoint
+- Request body: `{ action, tenantId, service, body }`
+- Returns: `{ success, action, actionId, result, timestamp }`
+
+**GET /api/DiagnosticCheck**
+- Environment diagnostics
+- Returns: Configuration status, module validation, credential checks
+
+### Action Tracking (PowerShell Module Functions)
+
+Used internally by Gateway and available for custom integrations:
+
+- `Get-ActionHistory -TenantId <id> -Service <service> -StartDate <date>`
+- `Get-ActionAuditTrail -ActionId <id>`
+- `Request-ActionCancellation -ActionId <id> -Reason <reason>`
+- `Export-ActionAuditLog -TenantId <id> -Format JSON|CSV|SIEM`
+
+---
+
+## Archive
+
+The `archive/` directory contains historical documentation:
+
+- **deployment-guides/** - Old deployment documentation
+- **feature-guides/** - Legacy feature guides
+- **github-workflows/** - Old CI/CD workflows
+- **old-deployment-docs/** - Superseded deployment docs
+- **old-docs/** - Previous version documentation
+- **old-modules/** - Deprecated code modules
+- **old-workbook-tests/** - Legacy test files
+- **old-workbooks/** - Previous workbook versions
+- **standalone/** - Old standalone modules
+- **technical-docs/** - Historical technical documentation
+- **working-docs/** - Development notes and planning
+
+**Note**: Archive is kept for reference only. Use current documentation above.
+
+---
+
+## Common Tasks
+
+### Deploying the Solution
+
+1. **Prerequisites** → [PERMISSIONS.md](#permissionsmd)
+2. **Deploy** → [DEPLOYMENT_GUIDE.md](#deployment_guidemd)
+3. **Configure** → [deployment/WORKBOOK_PARAMETERS_GUIDE.md](#deploymentworkbook_parameters_guidemd)
+4. **Verify** → DiagnosticCheck endpoint
+
+### Finding Actions
+
+1. Browse all actions → [V3.2.0_COMPLETE_200_PLUS_ACTIONS.md](#v320_complete_200_plus_actionsmd)
+2. Search by service (MDE, MDO, MCAS, EntraID, Intune, Azure)
+3. Check API parameters in action descriptions
+
+### Troubleshooting
+
+1. **Authentication issues** → [PERMISSIONS.md](#permissionsmd), check App Registration
+2. **Deployment problems** → [DEPLOYMENT_GUIDE.md](#deployment_guidemd) troubleshooting section
+3. **Worker errors** → Check Application Insights logs
+4. **Workbook issues** → [workbook/README.md](#workbookreadmemd)
+
+### Monitoring
+
+1. **Application Insights** - Auto-configured with Function App
+2. **Action History** - Use `Get-ActionHistory` PowerShell function
+3. **Audit Logs** - Use `Export-ActionAuditLog` for SIEM integration
+4. **Diagnostics** - `/api/DiagnosticCheck` endpoint
+
+---
+
+## Quick Links
+
+### Getting Started
+- [README.md](README.md) - Start here
+- [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) - Deploy
+- [PERMISSIONS.md](PERMISSIONS.md) - Configure permissions
+
+### Action Reference
+- [V3.2.0_COMPLETE_200_PLUS_ACTIONS.md](V3.2.0_COMPLETE_200_PLUS_ACTIONS.md) - All 219 actions
+
+### Technical Details
+- [V3.2.0_IMPLEMENTATION_PROGRESS.md](V3.2.0_IMPLEMENTATION_PROGRESS.md) - Implementation
+- [workbook/ARCHITECTURE.md](workbook/ARCHITECTURE.md) - Workbook design
+- [docs/ARM_ACTIONS_CORRECT_PATTERN.md](docs/ARM_ACTIONS_CORRECT_PATTERN.md) - Patterns
+
+### Deployment
+- [deployment/](deployment/) - All deployment files
+- [workbook/](workbook/) - Workbook files
+- [examples/](examples/) - Examples
+
+---
+
+## Support
+
+- **Issues**: GitHub Issues for bug reports and feature requests
+- **Documentation**: This index + linked documents
+- **Diagnostics**: `/api/DiagnosticCheck` endpoint
+- **Logs**: Application Insights (auto-configured)
+
+---
+
+## Version History
+
+### v3.2.0 (Current - November 2025)
+- ✅ 219 total actions (103 existing + 116 new)
+- ✅ Action tracking infrastructure (ActionTracker.psm1)
+- ✅ All 6 security services enhanced
+- ✅ Complete audit logging and cancellation support
+- ✅ Repository cleanup (removed unused modules and docs)
+
+### v3.0.0 (Previous)
+- Initial production release
+- 103 actions across 6 services
+- Basic Gateway/Orchestrator/Workers architecture
+
+---
+
+**Documentation Index v3.2.0**  
+*Last Updated: November 2025*  
+*219 Actions | 6 Security Services | 9 Functions | 4 Core Modules*
