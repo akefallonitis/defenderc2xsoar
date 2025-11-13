@@ -793,14 +793,24 @@ try {
         "AZURE" {
             Write-Host "[$correlationId] Processing Azure action: $action"
             
-            # Authenticate to Azure RM for infrastructure operations
-            $tokenString = Get-OAuthToken -TenantId $tenantId -AppId $appId -ClientSecret $secretId -Service "Azure"
+            # Authenticate to Azure RM - use Managed Identity for same-tenant, App Registration for multi-tenant
+            $useManagedIdentity = [string]::IsNullOrWhiteSpace($appId) -or [string]::IsNullOrWhiteSpace($secretId)
+            
+            if ($useManagedIdentity) {
+                Write-Host "[$correlationId] Using Managed Identity for Azure authentication (same-tenant operations)"
+                $tokenString = Get-OAuthToken -Service "Azure" -UseManagedIdentity
+            } else {
+                Write-Host "[$correlationId] Using App Registration for Azure authentication (multi-tenant operations)"
+                $tokenString = Get-OAuthToken -TenantId $tenantId -AppId $appId -ClientSecret $secretId -Service "Azure"
+            }
+            
             $token = @{
                 AccessToken = $tokenString
                 TokenType = "Bearer"
                 ExpiresIn = 3600
                 ExpiresAt = (Get-Date).AddHours(1)
                 TenantId = $tenantId
+                AuthMethod = if ($useManagedIdentity) { "ManagedIdentity" } else { "AppRegistration" }
             }
             
             # Extract Azure-specific parameters

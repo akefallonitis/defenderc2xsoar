@@ -27,14 +27,16 @@
     },
     "spnId": {
       "type": "string",
+      "defaultValue": "",
       "metadata": {
-        "description": "Multi-tenant App Registration (Service Principal) Client ID"
+        "description": "[OPTIONAL] Multi-tenant App Registration Client ID - only required for multi-tenant Graph/MDE operations. Leave empty to use Managed Identity for same-tenant Azure operations."
       }
     },
     "spnSecret": {
       "type": "securestring",
+      "defaultValue": "",
       "metadata": {
-        "description": "Multi-tenant App Registration (Service Principal) Client Secret"
+        "description": "[OPTIONAL] Multi-tenant App Registration Client Secret - only required for multi-tenant Graph/MDE operations."
       }
     },
     "enableManagedIdentity": {
@@ -332,6 +334,38 @@
         "principalId": "[reference(resourceId('Microsoft.Web/sites', variables('functionAppName')), '2021-03-01', 'full').identity.principalId]",
         "principalType": "ServicePrincipal",
         "description": "Allows Function App to manage Blob Storage for Live Response file library"
+      }
+    },
+    {
+      "condition": "[parameters('enableManagedIdentity')]",
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "name": "[guid(subscription().id, resourceId('Microsoft.Web/sites', variables('functionAppName')), 'VirtualMachineContributor')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]"
+      ],
+      "scope": "[subscription().id]",
+      "properties": {
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '9980e02c-c2be-4d73-94e8-173b1dc7cf3c')]",
+        "principalId": "[reference(resourceId('Microsoft.Web/sites', variables('functionAppName')), '2021-03-01', 'full').identity.principalId]",
+        "principalType": "ServicePrincipal",
+        "description": "Allows Function App Managed Identity to manage VMs for Azure Worker (stop, start, isolate)"
+      }
+    },
+    {
+      "condition": "[parameters('enableManagedIdentity')]",
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "name": "[guid(subscription().id, resourceId('Microsoft.Web/sites', variables('functionAppName')), 'NetworkContributor')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]"
+      ],
+      "scope": "[subscription().id]",
+      "properties": {
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '4d97b98b-1d4f-4787-a291-c67834d212e7')]",
+        "principalId": "[reference(resourceId('Microsoft.Web/sites', variables('functionAppName')), '2021-03-01', 'full').identity.principalId]",
+        "principalType": "ServicePrincipal",
+        "description": "Allows Function App Managed Identity to manage NSGs for Azure Worker (AddNSGDenyRule, firewall rules)"
       }
     },
     {

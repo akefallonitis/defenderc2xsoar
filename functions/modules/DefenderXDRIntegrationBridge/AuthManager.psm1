@@ -61,29 +61,37 @@ function Get-OAuthToken {
         Azure AD Tenant ID
         
     .PARAMETER AppId
-        Application (Client) ID from App Registration
+        Application (Client) ID from App Registration (optional for Azure service with Managed Identity)
         
     .PARAMETER ClientSecret
-        Client Secret from App Registration
+        Client Secret from App Registration (optional for Azure service with Managed Identity)
         
     .PARAMETER Service
         Target service: MDE, Graph, Azure, MDC, MDI
+        
+    .PARAMETER UseManagedIdentity
+        Use Managed Identity instead of App Registration (only for Azure service)
         
     .PARAMETER ForceRefresh
         Force token refresh even if cached token is valid
         
     .EXAMPLE
+        # App Registration auth
         $token = Get-OAuthToken -TenantId "tenant-id" -AppId "app-id" -ClientSecret "secret" -Service "MDE"
+        
+    .EXAMPLE
+        # Managed Identity auth (Azure only)
+        $token = Get-OAuthToken -Service "Azure" -UseManagedIdentity
     #>
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $false)]
         [string]$TenantId,
         
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $false)]
         [string]$AppId,
         
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $false)]
         $ClientSecret,
         
         [Parameter(Mandatory = $true)]
@@ -91,10 +99,60 @@ function Get-OAuthToken {
         [string]$Service,
         
         [Parameter(Mandatory = $false)]
+        [switch]$UseManagedIdentity,
+        
+        [Parameter(Mandatory = $false)]
         [switch]$ForceRefresh
     )
     
     try {
+        # Managed Identity authentication (Azure only)
+        if ($UseManagedIdentity) {
+            if ($Service -ne "Azure" -and $Service -ne "MDC") {
+                throw "Managed Identity authentication only supported for Azure/MDC service (Azure RM API)"
+            }
+            
+            Write-Verbose "Requesting Managed Identity token for $Service"
+            
+            $resource = if ($Service -eq "Azure" -or $Service -eq "MDC") {
+                "https://management.azure.com"
+            }
+            
+            $apiVersion = "2019-08-01"
+            $msiEndpoint = $env:IDENTITY_ENDPOINT
+            $msiSecret = $env:IDENTITY_HEADER
+            
+            if (-not $msiEndpoint) {
+                throw "Managed Identity not available. IDENTITY_ENDPOINT environment variable not set."
+            }
+            
+            $tokenUri = "$($msiEndpoint)?resource=$resource&api-version=$apiVersion"
+            $headers = @{ "X-IDENTITY-HEADER" = $msiSecret }
+            
+            $response = Invoke-RestMethod -Method Get -Uri $tokenUri -Headers $headers
+            
+            # Cache the token
+            $cacheKey = "ManagedIdentity|$Service"
+            $tokenInfo = @{
+                AccessToken = $response.access_token
+                TokenType   = "Bearer"
+                ExpiresIn   = $response.expires_in
+                ExpiresAt   = (Get-Date).AddSeconds([int]$response.expires_in)
+                Service     = $Service
+                AuthMethod  = "ManagedIdentity"
+            }
+            
+            $global:DefenderXDRTokenCache[$cacheKey] = $tokenInfo
+            Write-Verbose "Managed Identity token acquired (expires in $([int](($tokenInfo.ExpiresAt - (Get-Date)).TotalMinutes)) minutes)"
+            
+            return $response.access_token
+        }
+        
+        # App Registration authentication (all services)
+        if (-not $TenantId -or -not $AppId -or -not $ClientSecret) {
+            throw "TenantId, AppId, and ClientSecret are required for App Registration authentication"
+        }
+        
         # Check cache first
         $cacheKey = Get-TokenCacheKey -TenantId $TenantId -Service $Service -AppId $AppId
         
@@ -135,7 +193,7 @@ function Get-OAuthToken {
         }
         
         # Request access token
-        Write-Verbose "Requesting new token for $Service"
+        Write-Verbose "Requesting new token for $Service via App Registration"
         $response = Invoke-RestMethod -Method Post -Uri $tokenUrl -Body $body -ContentType "application/x-www-form-urlencoded"
         
         # Cache the token
