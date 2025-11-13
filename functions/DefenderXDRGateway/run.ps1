@@ -34,7 +34,7 @@ using namespace System.Net
 param($Request, $TriggerMetadata)
 
 # Import action tracking module
-Import-Module "$PSScriptRoot\..\modules\DefenderXDRIntegrationBridge\ActionTracker.psm1" -Force
+Import-Module "$PSScriptRoot\..\modules\ActionTracker.psm1" -Force
 
 $correlationId = [guid]::NewGuid().ToString()
 $actionId = [guid]::NewGuid().ToString()

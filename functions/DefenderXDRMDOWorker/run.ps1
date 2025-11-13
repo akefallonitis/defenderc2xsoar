@@ -46,9 +46,9 @@ if (-not $action) {
         Body = "Missing action parameter"
     })
 try {
-    Import-Module "$PSScriptRoot/../modules/DefenderXDRIntegrationBridge/AuthManager.psm1" -ErrorAction Stop
-    Import-Module "$PSScriptRoot/../modules/DefenderXDRIntegrationBridge/ValidationHelper.psm1" -ErrorAction Stop
-    Import-Module "$PSScriptRoot/../modules/DefenderXDRIntegrationBridge/LoggingHelper.psm1" -ErrorAction Stop
+    Import-Module "$PSScriptRoot/../modules/AuthManager.psm1" -ErrorAction Stop
+    Import-Module "$PSScriptRoot/../modules/ValidationHelper.psm1" -ErrorAction Stop
+    Import-Module "$PSScriptRoot/../modules/LoggingHelper.psm1" -ErrorAction Stop
     # NOTE: Business logic is inline - no external module needed
 } catch {
     Push-OutputBinding -Name Response -Value ([HttpResponseContext]@{

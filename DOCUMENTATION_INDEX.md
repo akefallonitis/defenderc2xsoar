@@ -1,8 +1,8 @@
-# Documentation Index - v3.2.0
+# Documentation Index - v3.3.0
 
 **Microsoft Defender XDR to Azure Sentinel SOAR Integration**  
-**Version**: 3.2.0 | **Last Updated**: November 2025  
-**Status**: Production Ready | **Actions**: 219
+**Version**: 3.3.0 | **Last Updated**: November 2025  
+**Status**: Production Ready | **Actions**: 219 | **Batch Support**: ✅
 
 ---
 
@@ -92,6 +92,19 @@
 - Known limitations
 
 **When to use**: Understanding implementation, technical details
+
+---
+
+### V3.3.0_SIMPLIFICATION_AND_BATCHING.md
+**v3.3.0 Simplification & Batch Processing**
+
+- Architecture simplification (removed IntegrationBridge folder)
+- Comprehensive batch processing support
+- Removed DiagnosticCheck (use Application Insights)
+- BatchHelper.psm1 module documentation
+- Migration guide from v3.2.0
+
+**When to use**: Understanding v3.3.0 changes, batch operations, App Insights
 
 ---
 
@@ -235,7 +248,7 @@ All workbook-related files in `workbook/` directory:
 
 ## Function Architecture
 
-### Azure Functions (9 total)
+### Azure Functions (8 total)
 
 Located in `functions/` directory:
 
@@ -249,13 +262,12 @@ Located in `functions/` directory:
 | **DefenderXDRMCASWorker** | Cloud app security (MCAS) | 23 | ✅ |
 | **DefenderXDREntraIDWorker** | Identity protection | 34 | ✅ |
 | **DefenderXDRIntuneWorker** | Device management | 33 | ✅ |
-| **DiagnosticCheck** | Environment diagnostics | N/A | Utility |
 
 **Total: 219 remediation actions**
 
 ### Core Modules
 
-Located in `functions/modules/DefenderXDRIntegrationBridge/`:
+Located in `functions/modules/`:
 
 | Module | Purpose | Used By |
 |--------|---------|---------|
@@ -263,6 +275,7 @@ Located in `functions/modules/DefenderXDRIntegrationBridge/`:
 | **ValidationHelper.psm1** | Input validation, tenant ID verification | All workers |
 | **LoggingHelper.psm1** | Structured logging (Write-XDRLog) | All workers |
 | **ActionTracker.psm1** | Action tracking, history, audit logging | Gateway |
+| **BatchHelper.psm1** | Batch processing, comma-separated values | All workers |
 
 ### Module Functions
 
@@ -399,7 +412,15 @@ The `archive/` directory contains historical documentation:
 
 ## Version History
 
-### v3.2.0 (Current - November 2025)
+### v3.3.0 (Current - November 2025)
+- ✅ Comprehensive batch processing (comma-separated values)
+- ✅ Simplified module structure (removed IntegrationBridge folder)
+- ✅ Removed DiagnosticCheck (use Application Insights)
+- ✅ Removed MDIWorker (not integrated)
+- ✅ Added BatchHelper.psm1 module
+- ✅ Net reduction: 742 lines of code
+
+### v3.2.0 (November 2025)
 - ✅ 219 total actions (103 existing + 116 new)
 - ✅ Action tracking infrastructure (ActionTracker.psm1)
 - ✅ All 6 security services enhanced
@@ -413,6 +434,6 @@ The `archive/` directory contains historical documentation:
 
 ---
 
-**Documentation Index v3.2.0**  
+**Documentation Index v3.3.0**  
 *Last Updated: November 2025*  
-*219 Actions | 6 Security Services | 9 Functions | 4 Core Modules*
+*219 Actions | 6 Security Services | 8 Functions | 5 Core Modules | Batch Support*

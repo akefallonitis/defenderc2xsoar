@@ -3,9 +3,9 @@ using namespace System.Net
 param($Request, $TriggerMetadata)
 
 # Import required modules
-Import-Module "$PSScriptRoot/../modules/DefenderXDRIntegrationBridge/AuthManager.psm1" -Force
-Import-Module "$PSScriptRoot/../modules/DefenderXDRIntegrationBridge/ValidationHelper.psm1" -Force
-Import-Module "$PSScriptRoot/../modules/DefenderXDRIntegrationBridge/LoggingHelper.psm1" -Force
+Import-Module "$PSScriptRoot/../modules/AuthManager.psm1" -Force
+Import-Module "$PSScriptRoot/../modules/ValidationHelper.psm1" -Force
+Import-Module "$PSScriptRoot/../modules/LoggingHelper.psm1" -Force
 # NOTE: Business logic is inline - no external modules needed
 
 # Extract parameters from request

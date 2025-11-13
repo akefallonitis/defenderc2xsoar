@@ -1,6 +1,6 @@
 # Microsoft Defender XDR to Azure Sentinel SOAR Integration
 
-**Version 3.2.0** - Complete XDR Remediation Action Coverage
+**Version 3.3.0** - Complete XDR Remediation Action Coverage + Batch Processing
 
 ## Overview
 
@@ -10,6 +10,7 @@ Comprehensive Azure Function App integrating Microsoft Defender XDR with Azure S
 
 - ✅ **219 Total Actions** - Complete coverage of Microsoft Defender XDR portal capabilities
 - ✅ **6 Security Services** - MDE, MDO, MCAS, EntraID, Intune, Azure Security
+- ✅ **Batch Processing** - Comma-separated values for bulk operations on all actions
 - ✅ **Action Tracking** - Full audit trail, cancellation support, progress monitoring
 - ✅ **Multi-Tenant** - Isolated execution with tenant-specific authentication
 - ✅ **Workbook Integration** - Azure Sentinel Workbook for visual management
@@ -45,9 +46,9 @@ Microsoft Graph API / Security APIs
 | **EntraID Worker** | Identity protection, PIM, CA | 34 |
 | **Intune Worker** | Device management | 33 |
 | **Azure Worker** | Azure infrastructure security | 52 |
-| **DiagnosticCheck** | Environment diagnostics | N/A |
 
-**Total**: 219 remediation actions
+**Total**: 219 remediation actions  
+**Batch Support**: ✅ All actions support comma-separated values for bulk operations
 
 ## Action Coverage by Service
 
@@ -388,13 +389,12 @@ defenderc2xsoar/
 │   ├── DefenderXDRMCASWorker/   # MCAS cloud apps (23 actions)
 │   ├── DefenderXDREntraIDWorker/ # EntraID identity (34 actions)
 │   ├── DefenderXDRIntuneWorker/  # Intune devices (33 actions)
-│   ├── DiagnosticCheck/         # Environment diagnostics
-│   └── modules/
-│       └── DefenderXDRIntegrationBridge/
-│           ├── AuthManager.psm1      # OAuth authentication
-│           ├── ValidationHelper.psm1 # Input validation
-│           ├── LoggingHelper.psm1    # Structured logging
-│           └── ActionTracker.psm1    # Action tracking/audit
+│   └── modules/            # Shared modules
+│       ├── AuthManager.psm1      # OAuth authentication
+│       ├── ValidationHelper.psm1 # Input validation
+│       ├── LoggingHelper.psm1    # Structured logging
+│       ├── ActionTracker.psm1    # Action tracking/audit
+│       └── BatchHelper.psm1      # Batch processing
 ├── workbook/               # Azure Sentinel Workbook
 ├── PERMISSIONS.md          # Required API permissions
 ├── DEPLOYMENT_GUIDE.md     # Detailed deployment guide
@@ -452,7 +452,15 @@ Request-ActionCancellation -ActionId "unique-action-id" -Reason "Manual interven
 
 ## Version History
 
-### v3.2.0 (2025-11-13) - Current
+### v3.3.0 (2025-11-13) - Current
+- ✅ Comprehensive batch processing (comma-separated values)
+- ✅ Simplified module structure (removed IntegrationBridge folder)
+- ✅ Removed DiagnosticCheck (use Application Insights)
+- ✅ Removed MDIWorker (not integrated)
+- ✅ Added BatchHelper.psm1 module
+- ✅ Net reduction: 742 lines of code
+
+### v3.2.0 (2025-11-13)
 - ✅ 116 new remediation actions added
 - ✅ Total 219 actions (100% XDR coverage)
 - ✅ Action tracking infrastructure
