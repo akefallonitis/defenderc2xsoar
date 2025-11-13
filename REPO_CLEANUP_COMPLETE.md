@@ -97,7 +97,7 @@ defenderc2xsoar/
 ├── COMPREHENSIVE_CLEANUP_COMPLETE.md    ✅ 4.5 KB
 ├── DOCUMENTATION_INDEX.md               ✅ 5.5 KB
 │
-├── functions/                           ✅ 11 functions
+├── functions/                           ✅ 10 functions (Gateway, Orchestrator, 7 workers, DiagnosticCheck)
 │   ├── DefenderXDRGateway/
 │   ├── DefenderXDROrchestrator/
 │   ├── DefenderXDRMDEWorker/
@@ -144,7 +144,7 @@ defenderc2xsoar/
 ### Architecture
 ```
 Gateway → Orchestrator → 9 Workers
-11 Functions | 213 Actions | 21 Modules
+10 Functions | 187 Actions | 7 Shared Modules
 ```
 
 ### Documentation

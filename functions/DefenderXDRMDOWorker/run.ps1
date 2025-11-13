@@ -49,7 +49,7 @@ try {
     Import-Module "$PSScriptRoot/../modules/DefenderXDRIntegrationBridge/AuthManager.psm1" -ErrorAction Stop
     Import-Module "$PSScriptRoot/../modules/DefenderXDRIntegrationBridge/ValidationHelper.psm1" -ErrorAction Stop
     Import-Module "$PSScriptRoot/../modules/DefenderXDRIntegrationBridge/LoggingHelper.psm1" -ErrorAction Stop
-    Import-Module "$PSScriptRoot/../modules/DefenderXDRIntegrationBridge/DefenderForOffice.psm1" -ErrorAction Stop
+    # NOTE: Business logic is inline - no external module needed
 } catch {
     Push-OutputBinding -Name Response -Value ([HttpResponseContext]@{
         StatusCode = [HttpStatusCode]::InternalServerError

@@ -379,7 +379,9 @@ Microsoft does not have native AIR for Azure infrastructure - all actions are ma
 
 ---
 
-## 8. Orchestrator (Cross-Service) - 60 Actions
+## 8. Orchestrator ("Platform Actions") - 47 Actions
+
+**Note**: These actions are handled **directly in the Orchestrator function**, not in a separate worker.
 
 ### ✅ Implemented Actions
 
@@ -392,27 +394,29 @@ Microsoft does not have native AIR for Azure infrastructure - all actions are ma
 - ✅ **UpdateAlert** - Modify alert
 - ✅ **AssignIncident** - Assign to analyst
 - ✅ **ResolveIncident** - Close incident
-- ✅ **AddComment** - Add comment
-- ✅ **ClassifyIncident** - Classify true/false positive
+- ✅ **AddIncidentComment** - Add comment
+- ✅ **CloseIncident** - Mark resolved
 
 #### Advanced Hunting (3)
-- ✅ **RunQuery** - Execute KQL across all services (MDE API: `/advancedqueries/run`)
-- ✅ **SaveQuery** - Store queries in Blob Storage
-- ✅ **GetQueryHistory** - Retrieve query history
+- ✅ **RunAdvancedQuery** - Execute KQL across all services (MDE API: `/advancedqueries/run`)
+- ✅ **RunAdvancedHuntingQuery** - Alias for RunAdvancedQuery
+- ✅ **GetHuntingResults** - Retrieve query history from storage
 
 #### Service Routing (7)
-- ✅ **Route to MDE Worker** - 55 actions
-- ✅ **Route to MDO Worker** - 10 actions
+- ✅ **Route to MDE Worker** - 61 actions
+- ✅ **Route to MDO Worker** - 16 actions
 - ✅ **Route to MDI Worker** - 1 action
 - ✅ **Route to Entra ID Worker** - 14 actions
 - ✅ **Route to Intune Worker** - 15 actions
 - ✅ **Route to Azure Worker** - 18 actions
-- ✅ **Route to MCAS Worker** - 14 actions
+- ✅ **Route to MCAS Worker** - 15 actions
 
-#### Managed Identity Operations (40)
-- All Azure infrastructure actions (NSG, Firewall, VM, Key Vault, Storage, Service Principal)
-- Executed via Function App Managed Identity
-- No App Registration permissions required
+#### Managed Identity Operations (27)
+- All Azure Worker infrastructure actions (18) authenticated via Managed Identity
+- NSG rules (4 actions), Azure Firewall (4 actions), VM operations (4 actions)
+- Key Vault secrets (2 actions), Storage access (2 actions), Service Principals (2 actions)
+- Executed via Function App Managed Identity in Orchestrator
+- No App Registration permissions required for same-tenant Azure operations
 
 ---
 

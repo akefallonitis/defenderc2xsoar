@@ -332,7 +332,7 @@
         "displayName": "DefenderC2 Command & Control Console",
         "serializedData": "[replace(base64ToString(variables('workbookContent')), '__FUNCTION_APP_NAME_PLACEHOLDER__', variables('functionAppName'))]",
         "version": "1.0",
-        "sourceId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name)]",
+        "sourceId": "[resourceGroup().id]",
         "category": "sentinel"
       }
     }

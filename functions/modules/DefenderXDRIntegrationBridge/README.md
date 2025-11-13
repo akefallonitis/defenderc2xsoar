@@ -10,6 +10,8 @@ Version: 2.4.0 | Refactored Architecture | Azure Functions
 
 This module provides **shared utility infrastructure** for the DefenderXDR C2 XSOAR platform. Business logic is embedded directly in worker functions, making this a lightweight utility bridge.
 
+**Note**: The name "DefenderXDRIntegrationBridge" is preserved for backward compatibility, but workers use direct API calls rather than abstraction layers. Only shared utilities (auth, logging, validation) are module-based.
+
 ### Design Philosophy (v2.4.0 Refactoring)
 
 **Before:** 21 modules (3 utilities + 2 duplicates + 16 service-specific)

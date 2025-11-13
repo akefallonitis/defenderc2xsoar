@@ -27,20 +27,26 @@ Enterprise security orchestration for Microsoft XDR with **worker-based architec
 ### Architecture
 
 ```
-DefenderXDRGateway (Entry Point)
+DefenderXDRGateway (HTTP Entry Point)
         ↓
-DefenderXDROrchestrator (Central Routing)
+DefenderXDROrchestrator (Central Router + 47 Platform Actions)
         ↓
-    +-----------------------------------------------------------------------+
-    |       |       |       |       |         |        |        |          |
-   MDE     MDO    MCAS    MDI   EntraID   Intune   Azure   Platform
-  Worker  Worker  Worker Worker  Worker   Worker  Worker   Actions
-   (61)    (16)    (15)    (1)     (14)     (15)    (18)     (47)
-    ↓       ↓       ↓       ↓       ↓         ↓        ↓        ↓
-  Device  Email   Cloud  Alert   Identity  Device  Infra   Managed
-  Actions Sec     Apps   Mgmt      Mgmt     Mgmt    Sec    Identity
+    +-----------------------------------------------------------+
+    |       |       |       |       |       |        |          |
+   MDE     MDO    MCAS    MDI   EntraID  Intune   Azure   [Diagnostic]
+  Worker  Worker  Worker Worker  Worker  Worker   Worker     Check
+   (61)    (16)    (15)    (1)     (14)    (15)     (18)       (1)
+    ↓       ↓       ↓       ↓       ↓       ↓        ↓
+  Device  Email   Cloud  Alert  Identity Device   Infra
+  Actions  Sec    Apps   Mgmt     Mgmt    Mgmt     Sec
 
-Total: 11 Azure Functions | 187 Actions | Least Privilege Design
+Total: 10 Azure Functions | 187 Actions | Least Privilege Design
+
+Orchestrator "Platform Actions" (47):
+  - Unified Incident Management (10)
+  - Advanced Hunting (3)
+  - Service Routing (7)
+  - Managed Identity Auth (27)
 ```
 
 ### Worker Capabilities
@@ -54,7 +60,7 @@ Total: 11 Azure Functions | 187 Actions | Least Privilege Design
 | **Entra ID** | 14 | Identity protection | DisableUser, ResetPassword, RevokeUserSessions, ConfirmCompromised, DismissRisk, CreateNamedLocation |
 | **Intune** | 15 | Device management | RemoteLockDevice, WipeDevice, RetireDevice, RunDefenderScan, UpdateDeviceConfiguration |
 | **Azure** | 18 | Infrastructure | AddNSGDenyRule, StopVM, AddAzureFirewallDenyRule, RotateKeyVaultSecret, DisableServicePrincipal |
-| **Platform** | 47 | Azure RM operations | Via Managed Identity (same-tenant only) |
+| **Orchestrator** | 47 | Platform actions: Incidents, Alerts, Hunting, Routing, MI Auth | Multi-service (Graph, MDE, Azure) |
 
 ---
 
@@ -104,7 +110,7 @@ cd deployment
 ```
 
 **Deploys:**
-- ✅ Function App with 11 functions
+- ✅ Function App with 10 functions (Gateway, Orchestrator, 7 workers, DiagnosticCheck)
 - ✅ Storage Account (blob/queue/table)
 - ✅ Application Insights
 - ✅ Managed Identity (optional, for Azure Worker same-tenant operations)

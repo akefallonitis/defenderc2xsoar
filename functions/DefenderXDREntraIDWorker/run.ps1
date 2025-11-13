@@ -6,8 +6,7 @@ param($Request, $TriggerMetadata)
 Import-Module "$PSScriptRoot/../modules/DefenderXDRIntegrationBridge/AuthManager.psm1" -Force
 Import-Module "$PSScriptRoot/../modules/DefenderXDRIntegrationBridge/ValidationHelper.psm1" -Force
 Import-Module "$PSScriptRoot/../modules/DefenderXDRIntegrationBridge/LoggingHelper.psm1" -Force
-Import-Module "$PSScriptRoot/../modules/DefenderXDRIntegrationBridge/EntraID.psm1" -Force
-Import-Module "$PSScriptRoot/../modules/DefenderXDRIntegrationBridge/EntraIDProtection.psm1" -Force
+# NOTE: Business logic is inline - no external modules needed
 
 # Extract parameters from request
 $action = $Request.Body.action

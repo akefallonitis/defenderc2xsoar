@@ -235,13 +235,13 @@ Write-Host "  ❌ AuditLog.Read.All (not needed for remediation)" -ForegroundCol
 Write-Host ""
 Write-Host "Covers ALL 187 XDR Actions (Action-Focused Only):" -ForegroundColor White
 Write-Host "  - MDO Worker: 16 actions (email remediation)" -ForegroundColor Gray
-Write-Host "  - MDE Worker: 61 actions (device management, -2 query actions)" -ForegroundColor Gray
-Write-Host "  - Entra ID Worker: 14 actions (identity, -6 read actions)" -ForegroundColor Gray
-Write-Host "  - Intune Worker: 15 actions (MDM, -3 read actions)" -ForegroundColor Gray
-Write-Host "  - MDI Worker: 1 action (UpdateAlert only, -10 monitoring)" -ForegroundColor Gray
+Write-Host "  - MDE Worker: 61 actions (device + hunting + TI)" -ForegroundColor Gray
+Write-Host "  - Entra ID Worker: 14 actions (identity protection)" -ForegroundColor Gray
+Write-Host "  - Intune Worker: 15 actions (device management)" -ForegroundColor Gray
+Write-Host "  - MDI Worker: 1 action (alert updates)" -ForegroundColor Gray
 Write-Host "  - MCAS Worker: 15 actions (cloud apps)" -ForegroundColor Gray
-Write-Host "  - Azure Worker: 18 actions (infrastructure +2 firewall, -7 compliance)" -ForegroundColor Gray
-Write-Host "  - Platform Actions: 47 (via Managed Identity)" -ForegroundColor Gray
+Write-Host "  - Azure Worker: 18 actions (infrastructure)" -ForegroundColor Gray
+Write-Host "  - Orchestrator Platform Actions: 47 (incidents, hunting, routing, MI auth)" -ForegroundColor Gray
 Write-Host ""
 
 Write-Host "Next Steps:" -ForegroundColor White

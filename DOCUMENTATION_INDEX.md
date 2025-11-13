@@ -68,7 +68,7 @@ Gateway → Orchestrator → 9 Workers
 
 ## 🐛 Troubleshooting
 
-11 Functions | 213 Actions | 21 Modules
+10 Functions | 187 Actions | 7 Shared Modules
 
 ```### Problem-Solving Guides
 
@@ -116,7 +116,9 @@ Gateway → Orchestrator → 9 Workers
 
 defenderc2xsoar/
 
-├── functions/           ✅ 11 functions (Gateway + Orchestrator + 9 workers)### CustomEndpoint Configuration
+├── functions/           ✅ 10 functions (Gateway + Orchestrator + 7 workers + DiagnosticCheck)
+
+### CustomEndpoint Configuration
 
 │   └── modules/DefenderXDRIntegrationBridge/  ✅ 21 shared modules
 
