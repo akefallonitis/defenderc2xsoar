@@ -109,39 +109,115 @@ https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{reso
 
 ### Required Azure RBAC Roles
 
-**Option 1: Security Admin (Recommended)**
-- **Scope**: Subscription or Resource Group
-- **Permissions**: Read security posture, manage security settings, cannot modify VMs/NSGs
-- **Use case**: Read-only security operations + Defender for Cloud management
+**⚠️ CRITICAL: "Security Admin" role is INSUFFICIENT for Azure remediation actions**
 
-**Option 2: Contributor (More Permissive)**
-- **Scope**: Subscription or Resource Group
-- **Permissions**: Full management of all resources except access control
-- **Use case**: Full Azure C2 capabilities (Stop VMs, Add NSG rules, etc.)
+The Azure Worker performs infrastructure remediation (StopVM, AddNSGDenyRule), which requires **write permissions** on compute and network resources. "Security Admin" only provides read access to security posture.
 
-**Option 3: Custom Role (Least Privilege)**
+#### **Option 1: Virtual Machine Contributor + Network Contributor (Recommended for XDR)**
+
+**Best practice for incident response - assign BOTH roles:**
+
+1. **Virtual Machine Contributor**
+   - **Scope**: Subscription or Resource Group
+   - **Required Actions**:
+     - StopVM, StartVM, RestartVM
+     - RemoveVMPublicIP (remove public IP from compromised VM)
+   - **Permissions**: Read VM configs, start/stop VMs, modify VM settings
+   - **Least privilege**: Only VM management, no network/storage changes
+
+2. **Network Contributor**
+   - **Scope**: Subscription or Resource Group
+   - **Required Actions**:
+     - AddNSGDenyRule (block malicious IPs)
+     - GetNSGs (list network security groups)
+   - **Permissions**: Read/write network security groups, deny rules
+   - **Least privilege**: Only network isolation, no VM/storage changes
+
+**Assignment Commands:**
+```bash
+# Assign VM Contributor
+az role assignment create \
+  --assignee 0b75d6c4-846e-420c-bf53-8c0c4fadae24 \
+  --role "Virtual Machine Contributor" \
+  --scope /subscriptions/{subscription-id}
+
+# Assign Network Contributor
+az role assignment create \
+  --assignee 0b75d6c4-846e-420c-bf53-8c0c4fadae24 \
+  --role "Network Contributor" \
+  --scope /subscriptions/{subscription-id}
+```
+
+#### **Option 2: Contributor (Broader Access - Use with Caution)**
+- **Scope**: Subscription or Resource Group
+- **Permissions**: Full management of ALL resources (VMs, networks, storage, etc.)
+- **Use case**: Full Azure C2 capabilities across all resource types
+- **Warning**: High privilege - use only if managing diverse Azure resources
+- **Not recommended**: Too broad for focused XDR remediation
+
+```bash
+az role assignment create \
+  --assignee 0b75d6c4-846e-420c-bf53-8c0c4fadae24 \
+  --role "Contributor" \
+  --scope /subscriptions/{subscription-id}
+```
+
+#### **Option 3: Custom Role (Absolute Least Privilege)**
+
+**Define custom role with ONLY the exact actions needed:**
+
 ```json
 {
-  "Name": "DefenderXDR C2 Azure Operator",
-  "Description": "Custom role for DefenderXDR C2 Azure operations",
+  "Name": "DefenderXDR Remediation Operator",
+  "Description": "Minimal permissions for DefenderXDR C2 Azure remediation actions",
   "Actions": [
     "Microsoft.Compute/virtualMachines/read",
     "Microsoft.Compute/virtualMachines/powerOff/action",
+    "Microsoft.Compute/virtualMachines/start/action",
     "Microsoft.Compute/virtualMachines/restart/action",
+    "Microsoft.Compute/virtualMachines/write",
     "Microsoft.Network/networkSecurityGroups/read",
     "Microsoft.Network/networkSecurityGroups/write",
     "Microsoft.Network/networkSecurityGroups/securityRules/write",
+    "Microsoft.Network/networkSecurityGroups/securityRules/delete",
+    "Microsoft.Network/publicIPAddresses/read",
+    "Microsoft.Network/publicIPAddresses/delete",
+    "Microsoft.Network/networkInterfaces/read",
+    "Microsoft.Network/networkInterfaces/write",
     "Microsoft.Storage/storageAccounts/read",
     "Microsoft.Storage/storageAccounts/write",
-    "Microsoft.Resources/subscriptions/resourceGroups/read",
-    "Microsoft.Security/*/read"
+    "Microsoft.Resources/subscriptions/resourceGroups/read"
   ],
   "NotActions": [],
+  "DataActions": [],
+  "NotDataActions": [],
   "AssignableScopes": [
     "/subscriptions/{subscription-id}"
   ]
 }
 ```
+
+**Create and assign custom role:**
+```bash
+# Create custom role from JSON file
+az role definition create --role-definition custom-role.json
+
+# Assign custom role
+az role assignment create \
+  --assignee 0b75d6c4-846e-420c-bf53-8c0c4fadae24 \
+  --role "DefenderXDR Remediation Operator" \
+  --scope /subscriptions/{subscription-id}
+```
+
+#### **What About "Security Admin"?**
+
+❌ **Security Admin is NOT sufficient** for Azure Worker remediation actions:
+- **Permissions**: Read security recommendations, manage Defender for Cloud policies
+- **CANNOT**: Stop VMs, modify NSGs, manage network configurations
+- **Use case**: Security monitoring and Defender for Cloud, NOT incident remediation
+- **Result**: Azure Worker actions will fail with 403 Forbidden
+
+**Security Admin is for context/monitoring only - NOT for remediation.**
 
 ---
 
@@ -172,17 +248,34 @@ This grants:
 
 **For EACH subscription** the customer wants to manage:
 
-**Option A: Azure Portal**
+**Option A: Azure Portal (Recommended Roles)**
 1. Navigate to: Azure Portal > Subscriptions > Select subscription
 2. Click "Access control (IAM)"
 3. Click "Add role assignment"
-4. Select role: **"Security Admin"** or **"Contributor"**
+4. Select role: **"Virtual Machine Contributor"**
 5. Assign to: **Service principal** (search by App ID: `0b75d6c4-846e-420c-bf53-8c0c4fadae24`)
-6. Repeat for each subscription
+6. Click "Add role assignment" again
+7. Select role: **"Network Contributor"**
+8. Assign to: **Same service principal**
+9. Repeat for each subscription
 
-**Option B: Azure CLI**
+**Option B: Azure CLI (Fastest)**
 ```bash
-# Assign Security Admin role to app in subscription
+**Option B: Azure CLI (Fastest)**
+```bash
+# Assign Virtual Machine Contributor (for VM remediation)
+az role assignment create \
+  --assignee 0b75d6c4-846e-420c-bf53-8c0c4fadae24 \
+  --role "Virtual Machine Contributor" \
+  --scope /subscriptions/{subscription-id}
+
+# Assign Network Contributor (for network isolation)
+az role assignment create \
+  --assignee 0b75d6c4-846e-420c-bf53-8c0c4fadae24 \
+  --role "Network Contributor" \
+  --scope /subscriptions/{subscription-id}
+
+# OR assign Contributor role for broader access (not recommended)
 az role assignment create \
   --assignee 0b75d6c4-846e-420c-bf53-8c0c4fadae24 \
   --role "Security Admin" \
