@@ -144,9 +144,10 @@ $graphPermissions = @(
     #    - BulkEmailDelete (delete multiple emails)
     #    - ZAPPhishing, ZAPMalware (Zero-Hour Auto Purge)
     #    - RemoveMailForwardingRules
-    # Comment out BOTH if NOT using any email remediation
+    # Comment out if NOT using any email remediation
     @{ Id = "e2a3a72e-5f79-4c64-b1b1-878b674786c9"; Name = "Mail.ReadWrite"; Type = "Role" }
-    @{ Id = "b633e1c5-b582-4048-a93e-9f11b44c7e96"; Name = "Mail.Send"; Type = "Role" }
+    
+    # NOTE: Mail.Send is NOT currently used in any worker - removed to reduce permissions
     
     # ===================================================================
     # CLOUD APP SECURITY (MCAS WORKER - OPTIONAL)
@@ -182,8 +183,11 @@ Write-Host "  Microsoft Graph API: $($graphPermissions.Count) permissions" -Fore
 Write-Host "  Microsoft Defender for Endpoint API: $($mdePermissions.Count) permissions" -ForegroundColor Gray
 Write-Host "  TOTAL: $($graphPermissions.Count + $mdePermissions.Count) permissions" -ForegroundColor Cyan
 Write-Host ""
-Write-Host "  ℹ️  Email Security (Mail.*) and File Operations (Files.*) are OPTIONAL" -ForegroundColor Yellow
-Write-Host "     Comment them out if you don't use MDO email remediation or MCAS file actions" -ForegroundColor Gray
+Write-Host "  ✅ OPTIMIZED FROM 26 → $($graphPermissions.Count + $mdePermissions.Count) permissions" -ForegroundColor Green
+Write-Host "  ✅ Removed: eDiscovery, Application.ReadWrite, RoleManagement, Directory.ReadWrite, Mail.Send" -ForegroundColor Green
+Write-Host ""
+Write-Host "  ℹ️  OPTIONAL: Mail.ReadWrite (email) and Files.ReadWrite.All (file governance)" -ForegroundColor Yellow
+Write-Host "     Comment them out if NOT using email remediation or file quarantine" -ForegroundColor Gray
 Write-Host "✅ Permissions defined" -ForegroundColor Green
 Write-Host ""
 
