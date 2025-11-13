@@ -18,9 +18,11 @@ Enterprise security orchestration for Microsoft XDR with **worker-based architec
 
 - **Action-Focused**: Removed 26 read-only/compliance actions - only remediation left
 - **Reduced Permissions**: 13 app permissions (down from 15) - removed `Policy.Read.All` and `AuditLog.Read.All`
-- **Azure Firewall**: Added network perimeter blocking (AddAzureFirewallDenyRule, RemoveAzureFirewallDenyRule)
+- **Azure Firewall**: Added network perimeter blocking (BlockIPInFirewall, BlockDomainInFirewall)
 - **Cleaner MDI Worker**: Simplified to 1 action (UpdateAlert) - investigation moved to native portals
 - **Clean Codebase**: Removed all legacy references and obsolete documentation
+- **AIR Complete**: All Microsoft AIR (Automated Investigation & Response) capabilities covered
+- **27 Advanced Actions Identified**: See `MISSING_ADVANCED_ACTIONS.md` for infrastructure security roadmap (Azure SQL, WAF, Arc, Cosmos, Storage, Detonation)
 
 ### Architecture
 
@@ -341,11 +343,24 @@ MIT License - See [LICENSE](LICENSE) for details
 
 ## Roadmap
 
-### v3.1.0 (Planned)
+### v3.2.0 (Q1 2025) - Infrastructure Security Enhancement
+- [ ] **RotateBitLockerKeys / RotateFileVaultKey** (Intune EPM)
+- [ ] **RotateStorageAccountKeys / RevokeStorageSAS** (Storage Security)
+- [ ] **BlockSQLIP / DisableSQLPublicAccess** (Azure SQL Security)
+- [ ] **BlockIPInWAF / AddWAFCustomRule** (Application Gateway WAF)
+- [ ] **IsolateArcServer / RunArcCommand** (Azure Arc Hybrid Security)
+- [ ] **RotateCosmosKeys / DisableCosmosPublicAccess** (Cosmos DB Security)
+- [ ] **DetonateFile / GetDetonationReport** (File Sandbox Analysis)
+- [ ] **DismissSecurityAlert / ApplySecurityRecommendation** (MDC Alert Management)
+- [ ] **QuarantineMessage / ReleaseFromQuarantine** (Native Email Quarantine)
+- [ ] **27 total advanced actions** - See `MISSING_ADVANCED_ACTIONS.md`
+
+### v3.3.0 (Q2 2025) - Integration & Automation
 - [ ] Sentinel incident auto-response
 - [ ] Logic Apps connectors
 - [ ] XSOAR playbook templates
 - [ ] Advanced rate limiting
+- [ ] Playbook engine with conditional logic
 - [ ] Webhook notifications
 
 ### v3.2.0 (Planned)
