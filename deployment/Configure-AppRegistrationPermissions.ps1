@@ -95,39 +95,65 @@ Write-Host "Step 2: Defining Required API Permissions..." -ForegroundColor Cyan
 $graphAppId = "00000003-0000-0000-c000-000000000000"
 
 $graphPermissions = @(
-    # Security Operations
+    # ===================================================================
+    # XDR SECURITY OPERATIONS (CORE - REQUIRED)
+    # ===================================================================
+    # Microsoft Defender XDR incident/alert management
     @{ Id = "dc377aa6-52d8-4e23-b271-2a7ae04cedf3"; Name = "SecurityIncident.ReadWrite.All"; Type = "Role" }
     @{ Id = "45cc0394-e837-488b-a098-1918f48d186c"; Name = "SecurityAlert.ReadWrite.All"; Type = "Role" }
     @{ Id = "db06fb33-1953-4b7b-a2ac-f1e2c854f7ae"; Name = "SecurityActions.ReadWrite.All"; Type = "Role" }
+    
+    # Advanced Hunting queries across XDR
     @{ Id = "dd98c7f5-2d42-42d3-a0e4-633161547251"; Name = "ThreatHunting.Read.All"; Type = "Role" }
+    
+    # Threat Intelligence Indicators (IOCs)
     @{ Id = "d665a8d9-5a5b-4ce1-88f8-7f7b0e8e3e0f"; Name = "ThreatIndicators.ReadWrite.OwnedBy"; Type = "Role" }
     
-    # Identity & User Management
-    @{ Id = "741f803b-c850-494e-b5df-cde7c675a1ca"; Name = "User.ReadWrite.All"; Type = "Role" }
-    @{ Id = "50483e42-d915-4231-9639-7fdb7fd190e5"; Name = "UserAuthenticationMethod.ReadWrite.All"; Type = "Role" }
-    @{ Id = "6e472fd1-ad78-48da-a0f0-97ab2c6b769e"; Name = "IdentityRiskyUser.ReadWrite.All"; Type = "Role" }
-    @{ Id = "01c0a623-fc9b-48e9-b794-0756f8e8f067"; Name = "Policy.ReadWrite.ConditionalAccess"; Type = "Role" }
+    # ===================================================================
+    # IDENTITY PROTECTION (ENTRA ID WORKER - REQUIRED)
+    # ===================================================================
+    # User account management (disable, enable, read)
     @{ Id = "df021288-bdef-4463-88db-98f22de89214"; Name = "User.Read.All"; Type = "Role" }
-    @{ Id = "b0afded3-3588-46d8-8b3d-9842eff778da"; Name = "AuditLog.Read.All"; Type = "Role" }
+    @{ Id = "741f803b-c850-494e-b5df-cde7c675a1ca"; Name = "User.ReadWrite.All"; Type = "Role" }
     
-    # Device Management (Intune)
+    # MFA & Authentication methods (reset MFA, force re-auth)
+    @{ Id = "50483e42-d915-4231-9639-7fdb7fd190e5"; Name = "UserAuthenticationMethod.ReadWrite.All"; Type = "Role" }
+    
+    # Identity Risk (risky users, risk detections)
+    @{ Id = "6e472fd1-ad78-48da-a0f0-97ab2c6b769e"; Name = "IdentityRiskyUser.ReadWrite.All"; Type = "Role" }
+    
+    # Conditional Access Policies (emergency CA policy creation)
+    @{ Id = "01c0a623-fc9b-48e9-b794-0756f8e8f067"; Name = "Policy.ReadWrite.ConditionalAccess"; Type = "Role" }
+    
+    # ===================================================================
+    # DEVICE MANAGEMENT (INTUNE WORKER - REQUIRED)
+    # ===================================================================
+    # Device actions (remote lock, wipe, retire, sync)
     @{ Id = "5b07b0dd-2377-4e44-a38d-703f09a0dc3c"; Name = "DeviceManagementManagedDevices.ReadWrite.All"; Type = "Role" }
+    
+    # Device configuration (compliance policies)
     @{ Id = "0883f392-0a7a-443d-8c76-16a6d39c7b63"; Name = "DeviceManagementConfiguration.ReadWrite.All"; Type = "Role" }
     
-    # Email & Collaboration
+    # ===================================================================
+    # EMAIL SECURITY (MDO WORKER - OPTIONAL)
+    # ===================================================================
+    # ⚠️ ONLY if you need email remediation (soft/hard delete, ZAP)
+    # Comment out if NOT using MDO email actions
     @{ Id = "e2a3a72e-5f79-4c64-b1b1-878b674786c9"; Name = "Mail.ReadWrite"; Type = "Role" }
     @{ Id = "b633e1c5-b582-4048-a93e-9f11b44c7e96"; Name = "Mail.Send"; Type = "Role" }
     
-    # File Operations (MCAS)
+    # ===================================================================
+    # CLOUD APP SECURITY (MCAS WORKER - OPTIONAL)
+    # ===================================================================
+    # ⚠️ ONLY if you need file quarantine/sharing control
+    # Comment out if NOT using MCAS file actions
     @{ Id = "75359482-378d-4052-8f01-80520e7db3cd"; Name = "Files.ReadWrite.All"; Type = "Role" }
     
-    # eDiscovery
-    @{ Id = "b2620db1-3bf7-4c5b-9cb9-576d29eac736"; Name = "eDiscovery.ReadWrite.All"; Type = "Role" }
-    
-    # Service Principal & App Management
-    @{ Id = "18a4783c-866b-4cc7-a460-3d5e5662c884"; Name = "Application.ReadWrite.All"; Type = "Role" }
-    @{ Id = "9e3f62cf-ca93-4989-b6ce-bf83c28f9fe8"; Name = "RoleManagement.ReadWrite.Directory"; Type = "Role" }
-    @{ Id = "7ab1d382-f21e-4acd-a863-ba3e13f7da61"; Name = "Directory.ReadWrite.All"; Type = "Role" }
+    # ===================================================================
+    # AUDIT LOGGING (RECOMMENDED)
+    # ===================================================================
+    # Sign-in logs, audit logs for investigation
+    @{ Id = "b0afded3-3588-46d8-8b3d-9842eff778da"; Name = "AuditLog.Read.All"; Type = "Role" }
 )
 
 # Microsoft Defender for Endpoint API permissions
@@ -144,6 +170,10 @@ $mdePermissions = @(
 
 Write-Host "  Microsoft Graph API: $($graphPermissions.Count) permissions" -ForegroundColor Gray
 Write-Host "  Microsoft Defender for Endpoint API: $($mdePermissions.Count) permissions" -ForegroundColor Gray
+Write-Host "  TOTAL: $($graphPermissions.Count + $mdePermissions.Count) permissions" -ForegroundColor Cyan
+Write-Host ""
+Write-Host "  ℹ️  Email Security (Mail.*) and File Operations (Files.*) are OPTIONAL" -ForegroundColor Yellow
+Write-Host "     Comment them out if you don't use MDO email remediation or MCAS file actions" -ForegroundColor Gray
 Write-Host "✅ Permissions defined" -ForegroundColor Green
 Write-Host ""
 
@@ -280,6 +310,13 @@ Write-Host ""
 Write-Host "✅ API permissions configured" -ForegroundColor Green
 Write-Host "✅ Microsoft Graph API: $($graphPermissions.Count) permissions" -ForegroundColor Green
 Write-Host "✅ Microsoft Defender for Endpoint API: $($mdePermissions.Count) permissions" -ForegroundColor Green
+Write-Host "✅ TOTAL: $($graphPermissions.Count + $mdePermissions.Count) LEAST-PRIVILEGE permissions" -ForegroundColor Cyan
+Write-Host ""
+Write-Host "ℹ️  REMOVED (not needed for XDR C2 operations):" -ForegroundColor Yellow
+Write-Host "   ❌ eDiscovery.ReadWrite.All (not used)" -ForegroundColor Gray
+Write-Host "   ❌ Application.ReadWrite.All (not needed)" -ForegroundColor Gray
+Write-Host "   ❌ RoleManagement.ReadWrite.Directory (excessive privilege)" -ForegroundColor Gray
+Write-Host "   ❌ Directory.ReadWrite.All (excessive privilege)" -ForegroundColor Gray
 Write-Host ""
 
 Write-Host "NEXT STEPS:" -ForegroundColor Yellow
