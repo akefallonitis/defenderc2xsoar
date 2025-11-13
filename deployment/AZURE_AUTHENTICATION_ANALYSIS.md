@@ -43,18 +43,24 @@ Worker uses token to call Microsoft APIs
 
 **How it works**:
 1. Create App Registration in Azure AD
-2. Configure API permissions (Graph, MDE)
+2. Configure API permissions (Graph, MDE) - **For Graph/MDE APIs ONLY**
 3. Create client secret
 4. Store APPID + SECRETID in Function App environment variables
 5. Multi-tenant: Customer grants admin consent to your app
+
+**CRITICAL DISTINCTION**:
+- **Graph/MDE APIs**: Use App Registration permissions (configured in Azure Portal)
+- **Azure RM API**: Use Azure RBAC roles (NOT App Registration permissions)
+- Azure Worker uses **Azure Resource Manager API** (`https://management.azure.com`)
+- This is **NOT Microsoft Graph API** - completely separate authentication!
 
 **Pros**:
 - ✅ **Multi-tenant ready** - Works across unlimited customer tenants
 - ✅ **Single credential set** - One app serves all customers
 - ✅ **Customer consent** - Each customer grants permissions independently
-- ✅ **Azure RBAC** - Can be assigned roles in customer subscriptions
+- ✅ **Azure RBAC** - Can be assigned roles in customer subscriptions via Azure Portal/CLI
 - ✅ **Cross-tenant** - Authenticate to any tenant with consent
-- ✅ **Storage access** - Can use connection strings OR RBAC
+- ✅ **Storage access** - Function App internal storage uses connection strings (correct)
 
 **Cons**:
 - ⚠️ **Secret management** - Must rotate secrets (1-2 year expiry)
@@ -65,17 +71,19 @@ Worker uses token to call Microsoft APIs
 ```
 MSP Tenant (Your Tenant)
 ├── App Registration: DefenderXDR C2
+│   ├── Permissions: Graph API, MDE API (for EntraID, MDE, MDO workers)
+│   └── NO Azure RM permissions (those are RBAC-based, not app permissions!)
 ├── Function App: sentryxdr
 └── Credentials: APPID + SECRETID
 
 Customer Tenant A
-├── Admin Consent: Granted to your app
-├── Subscription 1: RBAC assigned (VM Contributor, Network Contributor)
-└── Subscription 2: RBAC assigned
+├── Admin Consent: Granted to your app (Graph + MDE permissions)
+├── Subscription 1: RBAC assigned via Azure Portal/CLI (VM Contributor, Network Contributor)
+└── Subscription 2: RBAC assigned via Azure Portal/CLI
 
 Customer Tenant B
-├── Admin Consent: Granted to your app
-└── Subscription 1: RBAC assigned
+├── Admin Consent: Granted to your app (Graph + MDE permissions)
+└── Subscription 1: RBAC assigned via Azure Portal/CLI
 
 Request Flow:
 POST /api/Gateway {
@@ -83,6 +91,13 @@ POST /api/Gateway {
   "subscriptionId": "customer-sub-1",   ← Specify which subscription
   "action": "StopVM"
 }
+
+Authentication Flow:
+1. Function gets token for Azure RM API (https://management.azure.com/.default)
+2. Token is tenant-specific but uses App Registration credentials
+3. Authorization checked via Azure RBAC (not App Registration permissions)
+4. If app has VM Contributor role in subscription → Action succeeds
+5. If app has NO role in subscription → 403 Forbidden
 ```
 
 ---
@@ -260,16 +275,40 @@ AzureWebJobsStorage__credential = managedidentity
 
 ### Recommendation for Storage Access
 
-**KEEP CONNECTION STRING for Function App runtime storage** because:
-1. It's the standard approach for Azure Functions
-2. Works reliably without permission issues
-3. Connection string is encrypted at rest in Azure
-4. Function App runtime specifically expects connection strings
-5. Managed Identity would conflict with App Registration multi-tenant model
+**✅ CURRENT DEPLOYMENT IS CORRECT** - Connection strings configured properly!
 
-**Use RBAC for customer storage accounts** (if DefenderXDR C2 ever needs to access customer storage):
-- Customer assigns "Storage Blob Data Reader" to your App Registration
-- Your app uses same authentication flow (APPID + SECRETID)
+**Function App Internal Storage** (Connection String - KEEP AS-IS):
+- **Purpose**: Function App runtime internal operations (bindings, state, queues, tables)
+- **Configured in**: `azuredeploy.json` lines 223-228
+- **Environment Variables**:
+  - `AzureWebJobsStorage` = Connection string with storage account key
+  - `WEBSITE_CONTENTAZUREFILECONNECTIONSTRING` = Connection string
+  - `STORAGE_ACCOUNT_NAME` = Storage account name
+- **Why Connection String**:
+  1. ✅ Standard approach for Azure Functions runtime
+  2. ✅ Works reliably without permission issues
+  3. ✅ Automatically configured during deployment
+  4. ✅ Storage account key encrypted at rest in Function App settings
+  5. ✅ Function App runtime specifically expects connection strings
+
+**Storage RBAC Roles** (Managed Identity - ALREADY CONFIGURED!):
+- **Purpose**: Function App Managed Identity access to its own storage (optional enhancement)
+- **Configured in**: `azuredeploy.json` lines 286-347 (3 role assignments)
+- **Roles Assigned**:
+  - `StorageQueueDataContributor` (for bulk operations)
+  - `StorageTableDataContributor` (for status tracking)
+  - `StorageBlobDataContributor` (for Live Response file library)
+- **Why Both Methods**:
+  - Connection string: Required for Function App runtime
+  - RBAC: Additional security layer for application code accessing storage
+  - Both can coexist - connection string for runtime, RBAC for app code
+
+**Customer Storage Accounts** (if needed in future):
+- Customer assigns "Storage Blob Data Reader" to your App Registration (via App ID)
+- Your app authenticates with same APPID + SECRETID
+- Uses Azure RM API to access customer storage
+
+**VERDICT**: ✅ **Deployment configuration is CORRECT** - No changes needed!
 
 ---
 
