@@ -137,16 +137,26 @@ $graphPermissions = @(
     # ===================================================================
     # EMAIL SECURITY (MDO WORKER - OPTIONAL)
     # ===================================================================
-    # ⚠️ ONLY if you need email remediation (soft/hard delete, ZAP)
-    # Comment out if NOT using MDO email actions
+    # ⚠️ ONLY if using these MDO email remediation actions:
+    #    - SoftDeleteEmails, HardDeleteEmails (move to Deleted Items)
+    #    - MoveToJunk, MoveToInbox, MoveToDeletedItems
+    #    - BulkEmailSearch (search across all mailboxes)
+    #    - BulkEmailDelete (delete multiple emails)
+    #    - ZAPPhishing, ZAPMalware (Zero-Hour Auto Purge)
+    #    - RemoveMailForwardingRules
+    # Comment out BOTH if NOT using any email remediation
     @{ Id = "e2a3a72e-5f79-4c64-b1b1-878b674786c9"; Name = "Mail.ReadWrite"; Type = "Role" }
     @{ Id = "b633e1c5-b582-4048-a93e-9f11b44c7e96"; Name = "Mail.Send"; Type = "Role" }
     
     # ===================================================================
     # CLOUD APP SECURITY (MCAS WORKER - OPTIONAL)
     # ===================================================================
-    # ⚠️ ONLY if you need file quarantine/sharing control
-    # Comment out if NOT using MCAS file actions
+    # ⚠️ ONLY if using these MCAS file governance actions:
+    #    - QuarantineCloudFile (move malicious files to quarantine folder)
+    #    - RemoveExternalSharing (revoke external sharing links)
+    #    - ApplySensitivityLabel (apply MIP labels)
+    #    - RestoreFromQuarantine (restore quarantined files)
+    # Comment out if NOT using any file governance operations
     @{ Id = "75359482-378d-4052-8f01-80520e7db3cd"; Name = "Files.ReadWrite.All"; Type = "Role" }
     
     # ===================================================================
