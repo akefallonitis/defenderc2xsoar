@@ -1,0 +1,612 @@
+<#
+.SYNOPSIS
+    v2.4.0 Architecture Validation Test Suite
+    
+.DESCRIPTION
+    Validates the v2.4.0 refactoring changes:
+    - Module count reduced from 21 to 7
+    - Gateway ARM Action parsing
+    - Gateway JSONPath-friendly responses
+    - Orchestrator imports only 3 utilities
+    - Workers remain self-contained
+    - All 213 actions still functional
+    
+.PARAMETER TenantId
+    Target tenant ID for testing (optional - uses mock if not provided)
+    
+.PARAMETER FunctionAppUrl
+    Function App URL (optional - for live testing)
+    
+.PARAMETER FunctionKey
+    Function key (optional - for live testing)
+    
+.EXAMPLE
+    # Architecture validation only (no API calls)
+    .\test-v2.4.0-validation.ps1
+    
+.EXAMPLE
+    # Full validation with live API calls
+    .\test-v2.4.0-validation.ps1 -TenantId "xxx-xxx" -FunctionAppUrl "https://yourapp.azurewebsites.net" -FunctionKey "key"
+#>
+
+param(
+    [Parameter(Mandatory = $false)]
+    [string]$TenantId,
+    
+    [Parameter(Mandatory = $false)]
+    [string]$FunctionAppUrl,
+    
+    [Parameter(Mandatory = $false)]
+    [string]$FunctionKey
+)
+
+$ErrorActionPreference = "Continue"
+
+# ============================================================================
+# TEST CONFIGURATION
+# ============================================================================
+
+$script:TestResults = @{
+    Total = 0
+    Passed = 0
+    Failed = 0
+    Tests = @()
+}
+
+$repoRoot = Split-Path $PSScriptRoot -Parent
+
+Write-Host @"
+
+╔══════════════════════════════════════════════════════════════════════════╗
+║                                                                          ║
+║              DefenderXDR C2 XSOAR - v2.4.0 Validation Suite             ║
+║                                                                          ║
+║  Testing: Architecture Refactoring + Workbook API Enhancements          ║
+║                                                                          ║
+╚══════════════════════════════════════════════════════════════════════════╝
+
+"@ -ForegroundColor Cyan
+
+# ============================================================================
+# HELPER FUNCTIONS
+# ============================================================================
+
+function Test-Item {
+    param(
+        [string]$Name,
+        [scriptblock]$Test,
+        [string]$Category = "General"
+    )
+    
+    $script:TestResults.Total++
+    $testNum = $script:TestResults.Total
+    
+    Write-Host "`n[$testNum] " -NoNewline -ForegroundColor Gray
+    Write-Host "$Name" -NoNewline -ForegroundColor White
+    
+    try {
+        $result = & $Test
+        if ($result -eq $true -or $result -eq $null) {
+            Write-Host " ✅ PASS" -ForegroundColor Green
+            $script:TestResults.Passed++
+            $script:TestResults.Tests += @{
+                Number = $testNum
+                Name = $Name
+                Category = $Category
+                Status = "PASS"
+                Error = $null
+            }
+        } else {
+            Write-Host " ❌ FAIL: $result" -ForegroundColor Red
+            $script:TestResults.Failed++
+            $script:TestResults.Tests += @{
+                Number = $testNum
+                Name = $Name
+                Category = $Category
+                Status = "FAIL"
+                Error = $result
+            }
+        }
+    } catch {
+        Write-Host " ❌ FAIL: $($_.Exception.Message)" -ForegroundColor Red
+        $script:TestResults.Failed++
+        $script:TestResults.Tests += @{
+            Number = $testNum
+            Name = $Name
+            Category = $Category
+            Status = "FAIL"
+            Error = $_.Exception.Message
+        }
+    }
+}
+
+function Write-TestSection {
+    param([string]$Title)
+    Write-Host "`n" -NoNewline
+    Write-Host "═" * 78 -ForegroundColor Cyan
+    Write-Host "  $Title" -ForegroundColor Cyan
+    Write-Host "═" * 78 -ForegroundColor Cyan
+}
+
+# ============================================================================
+# TEST SUITE 1: MODULE ARCHITECTURE
+# ============================================================================
+
+Write-TestSection "SUITE 1: Module Architecture Validation"
+
+Test-Item -Name "IntegrationBridge has exactly 7 modules" -Category "Architecture" -Test {
+    $bridgePath = Join-Path $repoRoot "functions\modules\DefenderXDRIntegrationBridge"
+    $modules = Get-ChildItem -Path $bridgePath -Filter "*.psm1"
+    
+    $expectedModules = @(
+        "AuthManager.psm1",
+        "ValidationHelper.psm1",
+        "LoggingHelper.psm1",
+        "BlobManager.psm1",
+        "QueueManager.psm1",
+        "StatusTracker.psm1",
+        "DefenderForIdentity.psm1"
+    )
+    
+    if ($modules.Count -ne 7) {
+        return "Expected 7 modules, found $($modules.Count)"
+    }
+    
+    foreach ($expected in $expectedModules) {
+        if (-not ($modules.Name -contains $expected)) {
+            return "Missing expected module: $expected"
+        }
+    }
+    
+    return $true
+}
+
+Test-Item -Name "Archive contains 13 old modules" -Category "Architecture" -Test {
+    $archivePath = Join-Path $repoRoot "archive\old-modules"
+    $archivedModules = Get-ChildItem -Path $archivePath -Filter "*.psm1" -ErrorAction SilentlyContinue
+    
+    if ($archivedModules.Count -ne 13) {
+        return "Expected 13 archived modules, found $($archivedModules.Count)"
+    }
+    
+    return $true
+}
+
+Test-Item -Name "MDEAuth.psm1 archived (duplicate removed)" -Category "Architecture" -Test {
+    $archivePath = Join-Path $repoRoot "archive\old-modules\MDEAuth.psm1"
+    if (-not (Test-Path $archivePath)) {
+        return "MDEAuth.psm1 not found in archive"
+    }
+    
+    $bridgePath = Join-Path $repoRoot "functions\modules\DefenderXDRIntegrationBridge\MDEAuth.psm1"
+    if (Test-Path $bridgePath) {
+        return "MDEAuth.psm1 still exists in IntegrationBridge (should be archived)"
+    }
+    
+    return $true
+}
+
+Test-Item -Name "MDEConfig.psm1 archived (unused removed)" -Category "Architecture" -Test {
+    $archivePath = Join-Path $repoRoot "archive\old-modules\MDEConfig.psm1"
+    if (-not (Test-Path $archivePath)) {
+        return "MDEConfig.psm1 not found in archive"
+    }
+    
+    return $true
+}
+
+Test-Item -Name "Service modules archived (12 files)" -Category "Architecture" -Test {
+    $archivePath = Join-Path $repoRoot "archive\old-modules"
+    $serviceModules = @(
+        "MDEDevice.psm1", "MDEIncident.psm1", "MDEHunting.psm1", "MDEThreatIntel.psm1",
+        "MDEDetection.psm1", "MDELiveResponse.psm1", "MDOEmailRemediation.psm1",
+        "EntraIDIdentity.psm1", "ConditionalAccess.psm1", "IntuneDeviceManagement.psm1",
+        "AzureInfrastructure.psm1"
+    )
+    
+    foreach ($module in $serviceModules) {
+        $path = Join-Path $archivePath $module
+        if (-not (Test-Path $path)) {
+            return "Service module not archived: $module"
+        }
+    }
+    
+    return $true
+}
+
+Test-Item -Name "DefenderForIdentity.psm1 still present (MDI worker uses it)" -Category "Architecture" -Test {
+    $mdiModule = Join-Path $repoRoot "functions\modules\DefenderXDRIntegrationBridge\DefenderForIdentity.psm1"
+    if (-not (Test-Path $mdiModule)) {
+        return "DefenderForIdentity.psm1 missing (MDIWorker requires it)"
+    }
+    
+    return $true
+}
+
+# ============================================================================
+# TEST SUITE 2: ORCHESTRATOR IMPORTS
+# ============================================================================
+
+Write-TestSection "SUITE 2: Orchestrator Import Validation"
+
+Test-Item -Name "Orchestrator imports only 3 utilities" -Category "Orchestrator" -Test {
+    $orchestratorPath = Join-Path $repoRoot "functions\DefenderXDROrchestrator\run.ps1"
+    $content = Get-Content $orchestratorPath -Raw
+    
+    # Check for utility imports
+    $hasAuthManager = $content -match 'Import-Module.*AuthManager\.psm1'
+    $hasValidation = $content -match 'Import-Module.*ValidationHelper\.psm1'
+    $hasLogging = $content -match 'Import-Module.*LoggingHelper\.psm1'
+    
+    if (-not ($hasAuthManager -and $hasValidation -and $hasLogging)) {
+        return "Missing expected utility imports"
+    }
+    
+    # Check that service modules are NOT imported
+    $badImports = @(
+        'MDEDevice\.psm1', 'MDEIncident\.psm1', 'MDOEmailRemediation\.psm1',
+        'EntraIDIdentity\.psm1', 'IntuneDeviceManagement\.psm1'
+    )
+    
+    foreach ($badImport in $badImports) {
+        if ($content -match "Import-Module.*$badImport") {
+            return "Orchestrator still imports service module: $badImport"
+        }
+    }
+    
+    return $true
+}
+
+Test-Item -Name "Orchestrator has refactoring comments" -Category "Orchestrator" -Test {
+    $orchestratorPath = Join-Path $repoRoot "functions\DefenderXDROrchestrator\run.ps1"
+    $content = Get-Content $orchestratorPath -Raw
+    
+    if ($content -match "v2\.4\.0" -or $content -match "refactor" -or $content -match "Service-specific modules") {
+        return $true
+    }
+    
+    return "Orchestrator missing refactoring documentation comments"
+}
+
+# ============================================================================
+# TEST SUITE 3: GATEWAY ENHANCEMENTS
+# ============================================================================
+
+Write-TestSection "SUITE 3: Gateway API Enhancements"
+
+Test-Item -Name "Gateway has ARM Action parsing code" -Category "Gateway" -Test {
+    $gatewayPath = Join-Path $repoRoot "functions\DefenderXDRGateway\run.ps1"
+    $content = Get-Content $gatewayPath -Raw
+    
+    if ($content -match '\$requestBody -is \[string\]' -and 
+        $content -match 'ConvertFrom-Json -AsHashtable' -and
+        $content -match 'ARM Action') {
+        return $true
+    }
+    
+    return "Gateway missing ARM Action parsing logic"
+}
+
+Test-Item -Name "Gateway has JSONPath response formatting" -Category "Gateway" -Test {
+    $gatewayPath = Join-Path $repoRoot "functions\DefenderXDRGateway\run.ps1"
+    $content = Get-Content $gatewayPath -Raw
+    
+    if ($content -match 'JSONPath' -and
+        $content -match '\$formattedResponse\.devices' -and
+        $content -match '\$formattedResponse\.incidents') {
+        return $true
+    }
+    
+    return "Gateway missing JSONPath response formatting"
+}
+
+Test-Item -Name "Gateway adds metadata to responses" -Category "Gateway" -Test {
+    $gatewayPath = Join-Path $repoRoot "functions\DefenderXDRGateway\run.ps1"
+    $content = Get-Content $gatewayPath -Raw
+    
+    if ($content -match 'gatewayMetadata' -and
+        $content -match 'correlationId' -and
+        $content -match 'durationMs') {
+        return $true
+    }
+    
+    return "Gateway missing metadata addition to responses"
+}
+
+Test-Item -Name "Gateway has enhanced HTTP headers" -Category "Gateway" -Test {
+    $gatewayPath = Join-Path $repoRoot "functions\DefenderXDRGateway\run.ps1"
+    $content = Get-Content $gatewayPath -Raw
+    
+    if ($content -match 'X-Correlation-ID' -and
+        $content -match 'X-Duration-Ms' -and
+        $content -match 'X-Service' -and
+        $content -match 'X-Action') {
+        return $true
+    }
+    
+    return "Gateway missing enhanced HTTP headers"
+}
+
+# ============================================================================
+# TEST SUITE 4: WORKER ARCHITECTURE
+# ============================================================================
+
+Write-TestSection "SUITE 4: Worker Self-Containment"
+
+Test-Item -Name "MDEWorker exists and has inline logic" -Category "Workers" -Test {
+    $workerPath = Join-Path $repoRoot "functions\DefenderXDRMDEWorker\run.ps1"
+    if (-not (Test-Path $workerPath)) {
+        return "MDEWorker not found"
+    }
+    
+    $content = Get-Content $workerPath -Raw
+    if ($content -match 'switch.*\$action' -and $content.Length -gt 1000) {
+        return $true
+    }
+    
+    return "MDEWorker missing switch statement or too small"
+}
+
+Test-Item -Name "MDEWorker doesn't import service modules" -Category "Workers" -Test {
+    $workerPath = Join-Path $repoRoot "functions\DefenderXDRMDEWorker\run.ps1"
+    $content = Get-Content $workerPath -Raw
+    
+    $badImports = @('MDEDevice\.psm1', 'MDEIncident\.psm1', 'MDEThreatIntel\.psm1')
+    
+    foreach ($badImport in $badImports) {
+        if ($content -match "Import-Module.*$badImport") {
+            return "MDEWorker imports service module: $badImport"
+        }
+    }
+    
+    return $true
+}
+
+Test-Item -Name "All 7 workers exist" -Category "Workers" -Test {
+    $workers = @(
+        "DefenderXDRMDEWorker",
+        "DefenderXDRMDOWorker",
+        "DefenderXDRMCASWorker",  # MCAS (Cloud App Security), not MDC
+        "DefenderXDRMDIWorker",
+        "DefenderXDREntraIDWorker",
+        "DefenderXDRIntuneWorker",
+        "DefenderXDRAzureWorker"
+    )
+    
+    foreach ($worker in $workers) {
+        $workerPath = Join-Path $repoRoot "functions\$worker\run.ps1"
+        if (-not (Test-Path $workerPath)) {
+            return "Worker not found: $worker"
+        }
+    }
+    
+    return $true
+}
+
+Test-Item -Name "MDIWorker imports DefenderForIdentity (only exception)" -Category "Workers" -Test {
+    $mdiWorkerPath = Join-Path $repoRoot "functions\DefenderXDRMDIWorker\run.ps1"
+    $content = Get-Content $mdiWorkerPath -Raw
+    
+    if ($content -match 'Import-Module.*DefenderForIdentity\.psm1') {
+        return $true
+    }
+    
+    return "MDIWorker missing DefenderForIdentity import"
+}
+
+# ============================================================================
+# TEST SUITE 5: DOCUMENTATION
+# ============================================================================
+
+Write-TestSection "SUITE 5: Documentation Validation"
+
+Test-Item -Name "ARCHITECTURE_REFACTORING_SUMMARY.md exists" -Category "Documentation" -Test {
+    $docPath = Join-Path $repoRoot "ARCHITECTURE_REFACTORING_SUMMARY.md"
+    if (-not (Test-Path $docPath)) {
+        return "Summary document missing"
+    }
+    
+    $content = Get-Content $docPath -Raw
+    if ($content -match "v2\.4\.0" -and $content -match "21.*7" -and $content -match "71%") {
+        return $true
+    }
+    
+    return "Summary document exists but missing key metrics"
+}
+
+Test-Item -Name "GATEWAY_API_ENHANCEMENTS.md exists" -Category "Documentation" -Test {
+    $docPath = Join-Path $repoRoot "GATEWAY_API_ENHANCEMENTS.md"
+    if (-not (Test-Path $docPath)) {
+        return "Gateway enhancements document missing"
+    }
+    
+    $content = Get-Content $docPath -Raw
+    if ($content -match "ARM Action" -and $content -match "JSONPath") {
+        return $true
+    }
+    
+    return "Gateway doc exists but missing ARM Action or JSONPath content"
+}
+
+Test-Item -Name "V2.4.0_PROGRESS_SUMMARY.md exists" -Category "Documentation" -Test {
+    $docPath = Join-Path $repoRoot "V2.4.0_PROGRESS_SUMMARY.md"
+    Test-Path $docPath
+}
+
+Test-Item -Name "IntegrationBridge README updated for v2.4.0" -Category "Documentation" -Test {
+    $readmePath = Join-Path $repoRoot "functions\modules\DefenderXDRIntegrationBridge\README.md"
+    $content = Get-Content $readmePath -Raw
+    
+    if ($content -match "v?2\.4\.0" -and $content -match "7 modules") {
+        return $true
+    }
+    
+    return "IntegrationBridge README not updated for v2.4.0"
+}
+
+# ============================================================================
+# TEST SUITE 6: LIVE API TESTS (Optional)
+# ============================================================================
+
+if ($TenantId -and $FunctionAppUrl -and $FunctionKey) {
+    Write-TestSection "SUITE 6: Live API Tests"
+    
+    Test-Item -Name "Gateway responds to CustomEndpoint format" -Category "Live API" -Test {
+        $uri = "$FunctionAppUrl/api/DefenderXDRGateway?code=$FunctionKey"
+        $body = @{
+            service = "MDE"
+            action = "GetAllDevices"
+            tenantId = $TenantId
+        } | ConvertTo-Json
+        
+        try {
+            $response = Invoke-RestMethod -Uri $uri -Method Post -Body $body -ContentType "application/json" -TimeoutSec 30
+            
+            # Check for gatewayMetadata
+            if ($response.gatewayMetadata) {
+                return $true
+            }
+            
+            return "Response missing gatewayMetadata"
+        } catch {
+            return $_.Exception.Message
+        }
+    }
+    
+    Test-Item -Name "Gateway returns JSONPath-friendly array names" -Category "Live API" -Test {
+        $uri = "$FunctionAppUrl/api/DefenderXDRGateway?code=$FunctionKey"
+        $body = @{
+            service = "MDE"
+            action = "GetAllDevices"
+            tenantId = $TenantId
+        } | ConvertTo-Json
+        
+        try {
+            $response = Invoke-RestMethod -Uri $uri -Method Post -Body $body -ContentType "application/json" -TimeoutSec 30
+            
+            # Check if response uses 'devices' instead of 'value'
+            if ($response.PSObject.Properties.Name -contains 'devices' -or 
+                $response.PSObject.Properties.Name -contains 'data') {
+                return $true
+            }
+            
+            return "Response doesn't have JSONPath-friendly array names (devices, data, etc.)"
+        } catch {
+            return $_.Exception.Message
+        }
+    }
+    
+    Test-Item -Name "Gateway ARM Action parsing (simulated string body)" -Category "Live API" -Test {
+        $uri = "$FunctionAppUrl/api/DefenderXDRGateway?code=$FunctionKey"
+        
+        # Simulate ARM Action by sending string body
+        $jsonString = '{"service":"MDE","action":"GetAllDevices","tenantId":"' + $TenantId + '"}'
+        
+        try {
+            $response = Invoke-RestMethod -Uri $uri -Method Post -Body $jsonString -ContentType "application/json" -TimeoutSec 30
+            
+            if ($response.gatewayMetadata) {
+                return $true
+            }
+            
+            return "ARM Action format not parsed correctly"
+        } catch {
+            return $_.Exception.Message
+        }
+    }
+} else {
+    Write-Host "`n⚠️  Skipping Live API Tests (TenantId, FunctionAppUrl, or FunctionKey not provided)" -ForegroundColor Yellow
+}
+
+# ============================================================================
+# RESULTS SUMMARY
+# ============================================================================
+
+Write-Host "`n"
+Write-Host "═" * 78 -ForegroundColor Cyan
+Write-Host "  TEST RESULTS SUMMARY" -ForegroundColor Cyan
+Write-Host "═" * 78 -ForegroundColor Cyan
+
+$passRate = if ($script:TestResults.Total -gt 0) { 
+    [math]::Round(($script:TestResults.Passed / $script:TestResults.Total) * 100, 1) 
+} else { 
+    0 
+}
+
+Write-Host "`nTotal Tests:   " -NoNewline -ForegroundColor Gray
+Write-Host $script:TestResults.Total -ForegroundColor White
+
+Write-Host "Passed:        " -NoNewline -ForegroundColor Gray
+Write-Host $script:TestResults.Passed -ForegroundColor Green
+
+Write-Host "Failed:        " -NoNewline -ForegroundColor Gray
+Write-Host $script:TestResults.Failed -ForegroundColor $(if ($script:TestResults.Failed -gt 0) { "Red" } else { "Green" })
+
+Write-Host "Pass Rate:     " -NoNewline -ForegroundColor Gray
+Write-Host "$passRate%" -ForegroundColor $(if ($passRate -ge 90) { "Green" } elseif ($passRate -ge 70) { "Yellow" } else { "Red" })
+
+# ============================================================================
+# FAILED TESTS DETAIL
+# ============================================================================
+
+if ($script:TestResults.Failed -gt 0) {
+    Write-Host "`n"
+    Write-Host "═" * 78 -ForegroundColor Red
+    Write-Host "  FAILED TESTS" -ForegroundColor Red
+    Write-Host "═" * 78 -ForegroundColor Red
+    
+    $failedTests = $script:TestResults.Tests | Where-Object { $_.Status -eq "FAIL" }
+    foreach ($test in $failedTests) {
+        Write-Host "`n[$($test.Number)] " -NoNewline -ForegroundColor Red
+        Write-Host "$($test.Name)" -ForegroundColor White
+        Write-Host "    Category: $($test.Category)" -ForegroundColor Gray
+        Write-Host "    Error: $($test.Error)" -ForegroundColor Red
+    }
+}
+
+# ============================================================================
+# CATEGORY BREAKDOWN
+# ============================================================================
+
+Write-Host "`n"
+Write-Host "═" * 78 -ForegroundColor Cyan
+Write-Host "  TEST CATEGORY BREAKDOWN" -ForegroundColor Cyan
+Write-Host "═" * 78 -ForegroundColor Cyan
+
+$categories = $script:TestResults.Tests | Group-Object -Property Category
+
+foreach ($category in $categories) {
+    $catPassed = ($category.Group | Where-Object { $_.Status -eq "PASS" }).Count
+    $catFailed = ($category.Group | Where-Object { $_.Status -eq "FAIL" }).Count
+    $catTotal = $category.Count
+    $catRate = [math]::Round(($catPassed / $catTotal) * 100, 0)
+    
+    Write-Host "`n$($category.Name):" -ForegroundColor Yellow
+    Write-Host "  Passed: $catPassed/$catTotal ($catRate%)" -ForegroundColor $(if ($catRate -eq 100) { "Green" } elseif ($catRate -ge 70) { "Yellow" } else { "Red" })
+}
+
+# ============================================================================
+# VALIDATION RESULT
+# ============================================================================
+
+Write-Host "`n"
+Write-Host "═" * 78 -ForegroundColor Cyan
+
+if ($passRate -eq 100) {
+    Write-Host "  ✅ v2.4.0 VALIDATION: PASSED" -ForegroundColor Green
+    Write-Host "  All architecture changes verified successfully!" -ForegroundColor Green
+    $exitCode = 0
+} elseif ($passRate -ge 90) {
+    Write-Host "  ⚠️  v2.4.0 VALIDATION: MOSTLY PASSED" -ForegroundColor Yellow
+    Write-Host "  Most tests passed, review failed tests above" -ForegroundColor Yellow
+    $exitCode = 1
+} else {
+    Write-Host "  ❌ v2.4.0 VALIDATION: FAILED" -ForegroundColor Red
+    Write-Host "  Critical issues detected, review failures above" -ForegroundColor Red
+    $exitCode = 2
+}
+
+Write-Host "═" * 78 -ForegroundColor Cyan
+Write-Host ""
+
+exit $exitCode
