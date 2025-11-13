@@ -3,12 +3,20 @@
     Creates deployment package for DefenderXDR v3.0.0
     
 .DESCRIPTION
-    Bundles all 13 functions + modules into function-package.zip for Azure deployment.
-    Includes all Workers (renamed with DefenderXDR prefix), BlobManager module, and shared modules.
+    Bundles all 11 functions (Gateway + Orchestrator + 9 Workers) + IntegrationBridge modules 
+    into function-package.zip for Azure deployment. Includes BlobManager, QueueManager, and 
+    21 shared modules for unified XDR operations.
     
 .NOTES
     Version: 3.0.0
     Run from deployment/ folder
+    
+    Functions Included:
+    - DefenderXDRGateway (entry point)
+    - DefenderXDROrchestrator (routing)
+    - 9 Workers: MDE, MDO, MCAS, MDI, EntraID, Intune, Azure, + 2 more
+    
+    Total Actions: 213
 #>
 
 param(
@@ -36,7 +44,7 @@ try {
     Copy-Item -Path (Join-Path $functionsPath "requirements.psd1") -Destination $tempPath -Force
     Write-Host "  ✓ host.json, profile.ps1, requirements.psd1" -ForegroundColor Green
     
-    # Copy all 13 functions
+    # Copy all 11 functions (Gateway + Orchestrator + 9 Workers)
     Write-Host "`nCopying functions..." -ForegroundColor Yellow
     
     $functions = @(
@@ -44,15 +52,11 @@ try {
         "DefenderXDROrchestrator",
         "DefenderXDRMDEWorker",
         "DefenderXDRMDOWorker",
-        "DefenderXDRMDCWorker",
+        "DefenderXDRMCASWorker",
         "DefenderXDRMDIWorker",
         "DefenderXDREntraIDWorker",
         "DefenderXDRIntuneWorker",
-        "DefenderXDRAzureWorker",
-        "DefenderXDRHuntManager",
-        "DefenderXDRIncidentManager",
-        "DefenderXDRThreatIntelManager",
-        "DefenderXDRCustomDetectionManager"
+        "DefenderXDRAzureWorker"
     )
     
     $copiedCount = 0

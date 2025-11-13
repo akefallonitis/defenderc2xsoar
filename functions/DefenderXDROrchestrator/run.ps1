@@ -56,46 +56,30 @@ using namespace System.Net
 
 param($Request, $TriggerMetadata)
 
-# Import shared modules
+# Import ONLY shared utility modules
+# Service-specific logic is embedded in workers - no need to import here
 $modulePath = "$PSScriptRoot\..\modules\DefenderXDRIntegrationBridge"
 
-# Load core dependencies first (required by all modules)
 try {
+    # Core shared utilities (used by all workers)
     Import-Module "$modulePath\AuthManager.psm1" -Force -ErrorAction Stop
     Import-Module "$modulePath\ValidationHelper.psm1" -Force -ErrorAction Stop
     Import-Module "$modulePath\LoggingHelper.psm1" -Force -ErrorAction Stop
-    Import-Module "$modulePath\MDEAuth.psm1" -Force -ErrorAction Stop  # Critical MDE dependency
-    Write-Host "✅ Core modules loaded successfully"
+    
+    Write-Host "✅ Shared utility modules loaded (Auth, Validation, Logging)"
+    Write-Host "ℹ️  Service-specific modules removed - workers are self-contained"
 } catch {
-    Write-Error "❌ CRITICAL: Failed to load core module - $($_.Exception.Message)"
+    Write-Error "❌ CRITICAL: Failed to load shared utility module - $($_.Exception.Message)"
     throw
 }
 
-# Import MDE modules for device operations
-try {
-    Import-Module "$modulePath\MDEDevice.psm1" -Force -ErrorAction Stop
-    Import-Module "$modulePath\MDEHunting.psm1" -Force -ErrorAction Stop
-    Import-Module "$modulePath\MDEIncident.psm1" -Force -ErrorAction Stop
-    Import-Module "$modulePath\MDEThreatIntel.psm1" -Force -ErrorAction Stop
-    Import-Module "$modulePath\MDEDetection.psm1" -Force -ErrorAction Stop
-    Write-Host "✅ MDE modules loaded successfully"
-} catch {
-    Write-Warning "⚠️  MDE module load failed: $($_.Exception.Message)"
-}
-
-# Import other service modules - wrap in try-catch to prevent Orchestrator crash
-try {
-    Import-Module "$modulePath\MDOEmailRemediation.psm1" -Force -ErrorAction Stop
-    Import-Module "$modulePath\EntraIDIdentity.psm1" -Force -ErrorAction Stop
-    Import-Module "$modulePath\IntuneDeviceManagement.psm1" -Force -ErrorAction Stop
-    # DefenderForCloud.psm1 REMOVED - functionality consolidated into AzureInfrastructure.psm1
-    Import-Module "$modulePath\DefenderForIdentity.psm1" -Force -ErrorAction Stop
-    Import-Module "$modulePath\AzureInfrastructure.psm1" -Force -ErrorAction Stop
-    Write-Host "✅ All service modules loaded successfully"
-} catch {
-    Write-Warning "⚠️  Service module load failed: $($_.Exception.Message) - Module: $($_.Exception.Source)"
-    # Continue execution - MDE modules are already loaded
-}
+# NOTE: Service-specific modules NO LONGER IMPORTED (architecture refactoring v2.4.0)
+# Previously imported but unused (workers handle business logic directly):
+#   - MDEDevice.psm1, MDEHunting.psm1, MDEIncident.psm1, MDEThreatIntel.psm1, MDEDetection.psm1
+#   - MDOEmailRemediation.psm1
+#   - EntraIDIdentity.psm1, IntuneDeviceManagement.psm1
+#   - AzureInfrastructure.psm1, DefenderForIdentity.psm1
+# These modules have been archived to archive/old-modules/ for reference
 
 # Generate correlation ID for request tracking
 $correlationId = [guid]::NewGuid().ToString()
@@ -918,11 +902,52 @@ try {
         }
         
         # ====================================================================
+        # MICROSOFT CLOUD APP SECURITY (MCAS)
+        # ====================================================================
+        
+        "MCAS" {
+            Write-Host "[$correlationId] Routing to DefenderXDRMCASWorker"
+            
+            # Get Graph OAuth token for MCAS operations
+            Write-Host "[$correlationId] Acquiring Graph token for tenant: $tenantId"
+            $tokenString = Get-OAuthToken -TenantId $tenantId -AppId $appId -ClientSecret $secretId -Service "Graph"
+            
+            if (-not $tokenString) {
+                throw "Failed to acquire Graph authentication token for MCAS"
+            }
+            
+            # Prepare request for MCAS Worker
+            $workerRequest = @{
+                tenantId = $tenantId
+                action = $action
+                parameters = $Request.Body
+                correlationId = $correlationId
+                token = $tokenString
+            }
+            
+            # Call MCAS Worker
+            $workerUrl = "https://$functionAppUrl/api/DefenderXDRMCASWorker"
+            Write-Host "[$correlationId] Calling MCAS Worker: $workerUrl"
+            
+            try {
+                $workerResponse = Invoke-RestMethod -Uri $workerUrl -Method Post -Body ($workerRequest | ConvertTo-Json -Depth 10) -ContentType "application/json" -ErrorAction Stop
+                
+                $result.data = $workerResponse
+                $result.action = $action
+                Write-Host "[$correlationId] MCAS Worker completed successfully"
+            } catch {
+                Write-Error "[$correlationId] MCAS Worker call failed: $($_.Exception.Message)"
+                throw "MCAS Worker execution failed: $($_.Exception.Message)"
+            }
+        }
+        
+        # ====================================================================
         # DEFAULT / UNKNOWN SERVICE
         # ====================================================================
         
         default {
-            throw "Unknown service: $service"
+            $validServices = @("MDE", "MDO", "MDI", "EntraID", "Intune", "Azure", "MCAS")
+            throw "Unknown service: $service. Valid services: $($validServices -join ', ')"
         }
     }
     

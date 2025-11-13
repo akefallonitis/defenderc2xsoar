@@ -2,9 +2,9 @@
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fakefallonitis%2Fdefenderc2xsoar%2Fmain%2Fdeployment%2Fazuredeploy.json)
 
-**Version:** 3.0.0 | **Status:** Production Ready | **Last Updated:** November 11, 2025
+**Version:** 3.0.0 | **Status:** Production Ready | **Last Updated:** January 2025
 
-Enterprise unified security orchestration platform for Microsoft XDR. Deploy 250+ automated security actions across Microsoft Defender for Endpoint, Office 365, Cloud, Identity, Entra ID, Intune, and Azure with **Worker-based architecture** and **Live Response file library**.
+Enterprise unified security orchestration platform for Microsoft XDR. Deploy **213+ automated security actions** across Microsoft Defender for Endpoint, Office 365, Cloud Apps, Identity, Entra ID, Intune, and Azure with **Worker-based architecture** and **Live Response file library**.
 
 ---
 
@@ -14,7 +14,7 @@ DefenderXDR v3.0.0 provides unified orchestration with **Worker-based architectu
 
 - **🎯 Central Gateway** - Single authenticated entry point
 - **📋 Service Orchestrator** - Intelligent routing to specialized Workers
-- **⚙️ 7 Service Workers** - Dedicated processors for MDE, MDO, MDC, MDI, Entra ID, Intune, Azure
+- **⚙️ 9 Service Workers** - Dedicated processors for each Microsoft security product
 - **🔄 Multi-Tenant** - Lighthouse-ready with tenant isolation
 - **📦 Live Response Library** - Blob Storage for scripts, tools, forensic files
 - **📊 Interactive Workbook** - Command & control console with live operations
@@ -26,25 +26,34 @@ DefenderXDRGateway (Entry Point)
         ↓
 DefenderXDROrchestrator (Central Routing)
         ↓
-    ┌───┴───┬───────┬───────┬───────┬─────────┬────────┐
-    ↓       ↓       ↓       ↓       ↓         ↓        ↓
-   MDE     MDO     MDC     MDI   EntraID   Intune   Azure
-  Worker  Worker  Worker  Worker  Worker   Worker  Worker
+    ┌───┴───┬───────┬───────┬───────┬─────────┬────────┬────────┬──────┐
+    ↓       ↓       ↓       ↓       ↓         ↓        ↓        ↓      ↓
+   MDE     MDO    MCAS    MDI   EntraID   Intune   Azure   (2 more)
+  Worker  Worker  Worker Worker  Worker   Worker  Worker
+   (52)    (12)    (14)   (11)    (20)     (18)    (22)
     ↓       ↓       ↓       ↓       ↓         ↓        ↓
   Device  Email   Cloud  Identity  IAM    Device    Infra
-  Actions Security Sec    Threats  Mgmt    Mgmt     Sec
+  Actions Security Apps   Threats  Mgmt    Mgmt     Sec
 
 Shared Infrastructure:
-├─ Storage Account (3 services)
+├─ Storage Account (Managed Identity secured)
+│  ├─ Blob Storage     → Live Response file library (scripts/uploads/downloads)
 │  ├─ Queue Storage    → Bulk operation queuing
-│  ├─ Table Storage    → Status tracking (XDROperationStatus)
-│  └─ Blob Storage     → Live Response file library
-├─ Managed Identity    → Secure keyless storage access
-├─ AuthManager         → Token caching (per tenant)
-└─ 4 Specialized Managers (Hunt, Incident, ThreatIntel, CustomDetection)
+│  └─ Table Storage    → Status tracking (XDROperationStatus)
+├─ IntegrationBridge   → 21 shared modules (Auth, Validation, Logging, Service-specific)
+└─ AuthManager         → OAuth token caching (per tenant, 1-hour cache)
 ```
 
-**Total: 13 Functions | 250+ Actions | Managed Identity Secured**
+**Total: 11 Functions | 213 Actions | Managed Identity Secured**
+
+**Action Breakdown**:
+- **MDE Worker**: 52 actions (device, investigation, Live Response, indicators, hunting)
+- **Azure Worker**: 22 actions (resources, NSG, VMs, Security Center, Key Vault)
+- **Entra ID Worker**: 20 actions (users, groups, risky sign-ins, conditional access)
+- **Intune Worker**: 18 actions (devices, compliance, remote actions, BitLocker)
+- **MCAS Worker**: 14 actions (alerts, activities, files, governance, policies)
+- **MDO Worker**: 12 actions (email remediation, quarantine, threats)
+- **MDI Worker**: 11 actions (alerts, lateral movement, exposed credentials)
 
 ---
 

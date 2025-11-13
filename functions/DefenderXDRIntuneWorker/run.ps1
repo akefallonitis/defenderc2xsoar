@@ -244,8 +244,305 @@ try {
             }
         }
         
+        #region Enhanced Device Management Actions (Graph v1.0 - Stable)
+        
+        "ResetDevicePasscode" {
+            # Reset device passcode (Graph v1.0 - stable)
+            if ([string]::IsNullOrEmpty($body.deviceId)) {
+                throw "Missing required parameter: deviceId"
+            }
+            
+            Write-XDRLog -Level "Warning" -Message "Resetting device passcode" -Data @{
+                DeviceId = $body.deviceId
+            }
+            
+            $accessToken = $token
+            $headers = @{
+                "Authorization" = "Bearer $accessToken"
+                "Content-Type" = "application/json"
+            }
+            
+            $uri = "https://graph.microsoft.com/v1.0/deviceManagement/managedDevices/$($body.deviceId)/resetPasscode"
+            $resetResult = Invoke-RestMethod -Uri $uri -Method Post -Headers $headers
+            
+            $result = @{
+                deviceId = $body.deviceId
+                action = "ResetPasscode"
+                status = "initiated"
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
+        "RebootDeviceNow" {
+            # Reboot device immediately (Graph v1.0 - stable)
+            if ([string]::IsNullOrEmpty($body.deviceId)) {
+                throw "Missing required parameter: deviceId"
+            }
+            
+            Write-XDRLog -Level "Warning" -Message "Rebooting device" -Data @{
+                DeviceId = $body.deviceId
+            }
+            
+            $accessToken = $token
+            $headers = @{
+                "Authorization" = "Bearer $accessToken"
+                "Content-Type" = "application/json"
+            }
+            
+            $uri = "https://graph.microsoft.com/v1.0/deviceManagement/managedDevices/$($body.deviceId)/rebootNow"
+            $rebootResult = Invoke-RestMethod -Uri $uri -Method Post -Headers $headers
+            
+            $result = @{
+                deviceId = $body.deviceId
+                action = "RebootNow"
+                status = "initiated"
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
+        "ShutdownDevice" {
+            # Shutdown device (Graph v1.0 - stable)
+            if ([string]::IsNullOrEmpty($body.deviceId)) {
+                throw "Missing required parameter: deviceId"
+            }
+            
+            Write-XDRLog -Level "Warning" -Message "Shutting down device" -Data @{
+                DeviceId = $body.deviceId
+            }
+            
+            $accessToken = $token
+            $headers = @{
+                "Authorization" = "Bearer $accessToken"
+                "Content-Type" = "application/json"
+            }
+            
+            $uri = "https://graph.microsoft.com/v1.0/deviceManagement/managedDevices/$($body.deviceId)/shutDown"
+            $shutdownResult = Invoke-RestMethod -Uri $uri -Method Post -Headers $headers
+            
+            $result = @{
+                deviceId = $body.deviceId
+                action = "ShutDown"
+                status = "initiated"
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
+        "EnableLostMode" {
+            # Enable lost mode on device (Graph v1.0 - stable)
+            if ([string]::IsNullOrEmpty($body.deviceId)) {
+                throw "Missing required parameter: deviceId"
+            }
+            
+            Write-XDRLog -Level "Warning" -Message "Enabling lost mode on device" -Data @{
+                DeviceId = $body.deviceId
+            }
+            
+            $accessToken = $token
+            $headers = @{
+                "Authorization" = "Bearer $accessToken"
+                "Content-Type" = "application/json"
+            }
+            
+            # Prepare lost mode parameters
+            $lostModeBody = @{
+                message = if ($body.message) { $body.message } else { "This device has been reported as lost. Please contact IT." }
+                phoneNumber = if ($body.phoneNumber) { $body.phoneNumber } else { "" }
+                footer = if ($body.footer) { $body.footer } else { "IT Department" }
+            } | ConvertTo-Json
+            
+            $uri = "https://graph.microsoft.com/v1.0/deviceManagement/managedDevices/$($body.deviceId)/enableLostMode"
+            $lostModeResult = Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $lostModeBody
+            
+            $result = @{
+                deviceId = $body.deviceId
+                action = "EnableLostMode"
+                status = "initiated"
+                message = if ($body.message) { $body.message } else { "This device has been reported as lost. Please contact IT." }
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
+        "DisableLostMode" {
+            # Disable lost mode on device (Graph v1.0 - stable)
+            if ([string]::IsNullOrEmpty($body.deviceId)) {
+                throw "Missing required parameter: deviceId"
+            }
+            
+            Write-XDRLog -Level "Info" -Message "Disabling lost mode on device" -Data @{
+                DeviceId = $body.deviceId
+            }
+            
+            $accessToken = $token
+            $headers = @{
+                "Authorization" = "Bearer $accessToken"
+                "Content-Type" = "application/json"
+            }
+            
+            $uri = "https://graph.microsoft.com/v1.0/deviceManagement/managedDevices/$($body.deviceId)/disableLostMode"
+            $disableResult = Invoke-RestMethod -Uri $uri -Method Post -Headers $headers
+            
+            $result = @{
+                deviceId = $body.deviceId
+                action = "DisableLostMode"
+                status = "initiated"
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
+        "TriggerComplianceEvaluation" {
+            # Trigger device compliance policy evaluation (Graph v1.0 - stable)
+            if ([string]::IsNullOrEmpty($body.deviceId)) {
+                throw "Missing required parameter: deviceId"
+            }
+            
+            Write-XDRLog -Level "Info" -Message "Triggering compliance evaluation" -Data @{
+                DeviceId = $body.deviceId
+            }
+            
+            $accessToken = $token
+            $headers = @{
+                "Authorization" = "Bearer $accessToken"
+                "Content-Type" = "application/json"
+            }
+            
+            $uri = "https://graph.microsoft.com/v1.0/deviceManagement/managedDevices/$($body.deviceId)/reevaluateCompliance"
+            $evalResult = Invoke-RestMethod -Uri $uri -Method Post -Headers $headers
+            
+            $result = @{
+                deviceId = $body.deviceId
+                action = "TriggerComplianceEvaluation"
+                status = "initiated"
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
+        "UpdateDefenderSignatures" {
+            # Update Windows Defender signatures (Graph v1.0 - stable)
+            if ([string]::IsNullOrEmpty($body.deviceId)) {
+                throw "Missing required parameter: deviceId"
+            }
+            
+            Write-XDRLog -Level "Info" -Message "Updating Defender signatures" -Data @{
+                DeviceId = $body.deviceId
+            }
+            
+            $accessToken = $token
+            $headers = @{
+                "Authorization" = "Bearer $accessToken"
+                "Content-Type" = "application/json"
+            }
+            
+            $uri = "https://graph.microsoft.com/v1.0/deviceManagement/managedDevices/$($body.deviceId)/windowsDefenderUpdateSignatures"
+            $updateResult = Invoke-RestMethod -Uri $uri -Method Post -Headers $headers
+            
+            $result = @{
+                deviceId = $body.deviceId
+                action = "UpdateDefenderSignatures"
+                status = "initiated"
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
+        "BypassActivationLock" {
+            # Bypass activation lock on iOS device (Graph v1.0 - stable)
+            if ([string]::IsNullOrEmpty($body.deviceId)) {
+                throw "Missing required parameter: deviceId"
+            }
+            
+            Write-XDRLog -Level "Warning" -Message "Bypassing activation lock" -Data @{
+                DeviceId = $body.deviceId
+            }
+            
+            $accessToken = $token
+            $headers = @{
+                "Authorization" = "Bearer $accessToken"
+                "Content-Type" = "application/json"
+            }
+            
+            $uri = "https://graph.microsoft.com/v1.0/deviceManagement/managedDevices/$($body.deviceId)/bypassActivationLock"
+            $bypassResult = Invoke-RestMethod -Uri $uri -Method Post -Headers $headers
+            
+            $result = @{
+                deviceId = $body.deviceId
+                action = "BypassActivationLock"
+                status = "initiated"
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
+        "CleanWindowsDevice" {
+            # Clean Windows device (remove apps and settings but keep enrollment) (Graph v1.0 - stable)
+            if ([string]::IsNullOrEmpty($body.deviceId)) {
+                throw "Missing required parameter: deviceId"
+            }
+            
+            Write-XDRLog -Level "Warning" -Message "Cleaning Windows device" -Data @{
+                DeviceId = $body.deviceId
+            }
+            
+            $accessToken = $token
+            $headers = @{
+                "Authorization" = "Bearer $accessToken"
+                "Content-Type" = "application/json"
+            }
+            
+            $cleanBody = @{
+                keepUserData = if ($body.keepUserData) { [bool]$body.keepUserData } else { $false }
+            } | ConvertTo-Json
+            
+            $uri = "https://graph.microsoft.com/v1.0/deviceManagement/managedDevices/$($body.deviceId)/cleanWindowsDevice"
+            $cleanResult = Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $cleanBody
+            
+            $result = @{
+                deviceId = $body.deviceId
+                action = "CleanWindowsDevice"
+                keepUserData = if ($body.keepUserData) { [bool]$body.keepUserData } else { $false }
+                status = "initiated"
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
+        "LogoutSharedAppleDevice" {
+            # Logout current user from shared iPad (Graph v1.0 - stable)
+            if ([string]::IsNullOrEmpty($body.deviceId)) {
+                throw "Missing required parameter: deviceId"
+            }
+            
+            Write-XDRLog -Level "Info" -Message "Logging out shared Apple device user" -Data @{
+                DeviceId = $body.deviceId
+            }
+            
+            $accessToken = $token
+            $headers = @{
+                "Authorization" = "Bearer $accessToken"
+                "Content-Type" = "application/json"
+            }
+            
+            $uri = "https://graph.microsoft.com/v1.0/deviceManagement/managedDevices/$($body.deviceId)/logoutSharedAppleDeviceActiveUser"
+            $logoutResult = Invoke-RestMethod -Uri $uri -Method Post -Headers $headers
+            
+            $result = @{
+                deviceId = $body.deviceId
+                action = "LogoutSharedAppleDeviceUser"
+                status = "initiated"
+                timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+        }
+        
+        #endregion
+        
         default {
-            throw "Unknown action: $action. Supported actions: RemoteLock, WipeDevice, RetireDevice, SyncDevice, DefenderScan, GetManagedDevices, GetDeviceCompliance, GetDeviceConfiguration"
+            $supportedActions = @(
+                # Original actions
+                "RemoteLock", "WipeDevice", "RetireDevice", "SyncDevice", "DefenderScan",
+                "GetManagedDevices", "GetDeviceCompliance", "GetDeviceConfiguration",
+                # Enhanced device management (NEW)
+                "ResetDevicePasscode", "RebootDeviceNow", "ShutdownDevice",
+                "EnableLostMode", "DisableLostMode", "TriggerComplianceEvaluation",
+                "UpdateDefenderSignatures", "BypassActivationLock", "CleanWindowsDevice",
+                "LogoutSharedAppleDevice"
+            )
+            throw "Unknown action: $action. Supported actions: $($supportedActions -join ', ')"
         }
     }
 

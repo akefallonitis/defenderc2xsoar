@@ -1,102 +1,201 @@
-# DefenderC2 Documentation Index
+# DefenderXDR Documentation Index# DefenderC2 Documentation Index
 
-## 📚 Complete Guide to DefenderC2 Workbook Documentation
 
-This index helps you quickly find the right documentation for your needs.
+
+**Version**: 3.0.0 | **Last Updated**: January 2025## 📚 Complete Guide to DefenderC2 Workbook Documentation
+
+
+
+Quick guide to DefenderXDR documentation. Old docs archived to `archive/old-docs/`.This index helps you quickly find the right documentation for your needs.
+
+
+
+------
+
+
+
+## 📚 Essential Documentation (Start Here)## 🚀 Quick Start
+
+
+
+| Document | Purpose |**New to DefenderC2?** Start here:
+
+|----------|---------|
+
+| **[README.md](README.md)** | Overview, architecture, quick start |1. **[README.md](README.md)** - Project overview and quick start
+
+| **[DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md)** | Complete deployment instructions |2. **[QUICKSTART.md](QUICKSTART.md)** - Fast deployment guide
+
+| **[PERMISSIONS.md](PERMISSIONS.md)** | Required API permissions |3. **[QUICK_VERIFICATION_GUIDE.md](QUICK_VERIFICATION_GUIDE.md)** - 60-second health check
+
+| **[MIGRATION_GUIDE.md](MIGRATION_GUIDE.md)** | Upgrade from v2.x to v3.0 |
 
 ---
-
-## 🚀 Quick Start
-
-**New to DefenderC2?** Start here:
-
-1. **[README.md](README.md)** - Project overview and quick start
-2. **[QUICKSTART.md](QUICKSTART.md)** - Fast deployment guide
-3. **[QUICK_VERIFICATION_GUIDE.md](QUICK_VERIFICATION_GUIDE.md)** - 60-second health check
 
 ---
 
 ## 🔧 Deployment & Configuration
 
+## 📊 Reference Documentation
+
 ### Deployment Guides
 
-- **[DEPLOYMENT.md](DEPLOYMENT.md)** - Complete deployment instructions
-- **[DEPLOYMENT_READY.md](DEPLOYMENT_READY.md)** - Pre-deployment checklist
-- **[DEPLOYMENT_VERIFICATION_CHECKLIST.md](DEPLOYMENT_VERIFICATION_CHECKLIST.md)** - Step-by-step verification (NEW)
+| Document | Purpose |
 
-### Configuration Guides
+|----------|---------|- **[DEPLOYMENT.md](DEPLOYMENT.md)** - Complete deployment instructions
 
-- **[AZURE_WORKBOOK_BEST_PRACTICES.md](AZURE_WORKBOOK_BEST_PRACTICES.md)** - Best practices for Azure Workbooks
+| **[XDR_REMEDIATION_ACTION_MATRIX.md](XDR_REMEDIATION_ACTION_MATRIX.md)** | All 213 actions reference |- **[DEPLOYMENT_READY.md](DEPLOYMENT_READY.md)** - Pre-deployment checklist
+
+| **[ACTION_COUNT_VERIFICATION.md](ACTION_COUNT_VERIFICATION.md)** | Verified action counts by worker |- **[DEPLOYMENT_VERIFICATION_CHECKLIST.md](DEPLOYMENT_VERIFICATION_CHECKLIST.md)** - Step-by-step verification (NEW)
+
+| **[WORKBOOK_INTEGRATION_APIS.md](WORKBOOK_INTEGRATION_APIS.md)** | Dynamic workbook integration APIs |
+
+| **[COMPREHENSIVE_CLEANUP_COMPLETE.md](COMPREHENSIVE_CLEANUP_COMPLETE.md)** | Latest cleanup summary |### Configuration Guides
+
+
+
+---- **[AZURE_WORKBOOK_BEST_PRACTICES.md](AZURE_WORKBOOK_BEST_PRACTICES.md)** - Best practices for Azure Workbooks
+
 - **[FUNCTION_APP_AUTH_CONFIG.md](FUNCTION_APP_AUTH_CONFIG.md)** - Authentication configuration
-- **[PARAMETER_DEPENDENCY_FLOW.md](PARAMETER_DEPENDENCY_FLOW.md)** - How parameters cascade
 
----
+## 🏗️ Architecture (v3.0.0)- **[PARAMETER_DEPENDENCY_FLOW.md](PARAMETER_DEPENDENCY_FLOW.md)** - How parameters cascade
+
+
+
+```---
+
+Gateway → Orchestrator → 9 Workers
 
 ## 🐛 Troubleshooting
 
-### Problem-Solving Guides
+11 Functions | 213 Actions | 21 Modules
 
-- **[TROUBLESHOOTING_PARAMETER_BINDING.md](TROUBLESHOOTING_PARAMETER_BINDING.md)** - Comprehensive troubleshooting (NEW)
-- **[QUICK_VERIFICATION_GUIDE.md](QUICK_VERIFICATION_GUIDE.md)** - 60-second health check (NEW)
-- **[AUTHENTICATION_TROUBLESHOOTING.md](AUTHENTICATION_TROUBLESHOOTING.md)** - Authentication issues
+```### Problem-Solving Guides
 
-### Common Issues
 
-- **[ISSUE_RESOLUTION_CUSTOMENDPOINT_PARAMETERS.md](ISSUE_RESOLUTION_CUSTOMENDPOINT_PARAMETERS.md)** - CustomEndpoint fixes
-- **[ISSUE_ANALYSIS_SUMMARY.md](ISSUE_ANALYSIS_SUMMARY.md)** - Complete issue analysis (NEW)
-- **[FUNCTIONAPP_FILTER_FIX.md](FUNCTIONAPP_FILTER_FIX.md)** - FunctionApp dropdown issues
 
----
+**Workers**:- **[TROUBLESHOOTING_PARAMETER_BINDING.md](TROUBLESHOOTING_PARAMETER_BINDING.md)** - Comprehensive troubleshooting (NEW)
 
-## 📖 Technical Documentation
+- MDE (52 actions) - Endpoint security- **[QUICK_VERIFICATION_GUIDE.md](QUICK_VERIFICATION_GUIDE.md)** - 60-second health check (NEW)
+
+- Azure (22) - Infrastructure- **[AUTHENTICATION_TROUBLESHOOTING.md](AUTHENTICATION_TROUBLESHOOTING.md)** - Authentication issues
+
+- Entra ID (20) - Identity & access
+
+- Intune (18) - Device management### Common Issues
+
+- MCAS (14) - Cloud apps
+
+- MDO (12) - Email security- **[ISSUE_RESOLUTION_CUSTOMENDPOINT_PARAMETERS.md](ISSUE_RESOLUTION_CUSTOMENDPOINT_PARAMETERS.md)** - CustomEndpoint fixes
+
+- MDI (11) - Identity threats- **[ISSUE_ANALYSIS_SUMMARY.md](ISSUE_ANALYSIS_SUMMARY.md)** - Complete issue analysis (NEW)
+
+- Plus 2 more workers- **[FUNCTIONAPP_FILTER_FIX.md](FUNCTIONAPP_FILTER_FIX.md)** - FunctionApp dropdown issues
+
+
+
+**Modules** (in `functions/modules/DefenderXDRIntegrationBridge/`):---
+
+- Core: AuthManager, ValidationHelper, LoggingHelper
+
+- Services: 13 service-specific modules## 📖 Technical Documentation
+
+- Utilities: BlobManager, QueueManager, StatusTracker, ConditionalAccess
 
 ### Workbook Configuration
 
-- **[ARM_ACTION_FIX_SUMMARY.md](ARM_ACTION_FIX_SUMMARY.md)** - ARM action configuration
-- **[PARAMETER_AUTOPOPULATION_FIX.md](PARAMETER_AUTOPOPULATION_FIX.md)** - Parameter auto-population
-- **[TENANTID_FUNCTIONAPP_FIX.md](TENANTID_FUNCTIONAPP_FIX.md)** - TenantId discovery fix
-- **[WORKBOOK_AUTOPOPULATION_FIX.md](WORKBOOK_AUTOPOPULATION_FIX.md)** - Auto-population fixes
-
-### CustomEndpoint Configuration
-
-- **[CUSTOMENDPOINT_IMPLEMENTATION_SUMMARY.md](CUSTOMENDPOINT_IMPLEMENTATION_SUMMARY.md)** - CustomEndpoint implementation
-- **[WORKBOOK_URLPARAMS_FIX.md](WORKBOOK_URLPARAMS_FIX.md)** - URL parameters fix
-- **[SESSION_SUMMARY.md](SESSION_SUMMARY.md)** - Complete session summary
-
-### API Reference
-
-- **[archive/technical-docs/FUNCTIONS_REFERENCE.md](archive/technical-docs/FUNCTIONS_REFERENCE.md)** - Function App API reference
-
 ---
 
-## ✅ Verification & Testing
+- **[ARM_ACTION_FIX_SUMMARY.md](ARM_ACTION_FIX_SUMMARY.md)** - ARM action configuration
 
-### Validation Tools
+## 📁 Directory Structure- **[PARAMETER_AUTOPOPULATION_FIX.md](PARAMETER_AUTOPOPULATION_FIX.md)** - Parameter auto-population
 
-- **[scripts/verify_workbook_config.py](scripts/verify_workbook_config.py)** - Automated configuration validation
-- **[TESTING_GUIDE.md](TESTING_GUIDE.md)** - Comprehensive testing guide
-- **[VERIFICATION_SUMMARY.md](VERIFICATION_SUMMARY.md)** - Verification results
+- **[TENANTID_FUNCTIONAPP_FIX.md](TENANTID_FUNCTIONAPP_FIX.md)** - TenantId discovery fix
 
-### Test Results
+```- **[WORKBOOK_AUTOPOPULATION_FIX.md](WORKBOOK_AUTOPOPULATION_FIX.md)** - Auto-population fixes
+
+defenderc2xsoar/
+
+├── functions/           ✅ 11 functions (Gateway + Orchestrator + 9 workers)### CustomEndpoint Configuration
+
+│   └── modules/DefenderXDRIntegrationBridge/  ✅ 21 shared modules
+
+├── deployment/          ✅ ARM templates, deployment scripts- **[CUSTOMENDPOINT_IMPLEMENTATION_SUMMARY.md](CUSTOMENDPOINT_IMPLEMENTATION_SUMMARY.md)** - CustomEndpoint implementation
+
+├── workbook/            ✅ Azure Workbook JSON- **[WORKBOOK_URLPARAMS_FIX.md](WORKBOOK_URLPARAMS_FIX.md)** - URL parameters fix
+
+├── docs/                ✅ Additional documentation- **[SESSION_SUMMARY.md](SESSION_SUMMARY.md)** - Complete session summary
+
+├── examples/            ✅ Sample code
+
+├── scripts/             ✅ Utility scripts### API Reference
+
+└── archive/             📦 Old docs and standalone modules
+
+```- **[archive/technical-docs/FUNCTIONS_REFERENCE.md](archive/technical-docs/FUNCTIONS_REFERENCE.md)** - Function App API reference
+
+
+
+------
+
+
+
+## 🎯 Quick Reference## ✅ Verification & Testing
+
+
+
+**I want to...**### Validation Tools
+
+
+
+- **Deploy** → README.md, then DEPLOYMENT_GUIDE.md- **[scripts/verify_workbook_config.py](scripts/verify_workbook_config.py)** - Automated configuration validation
+
+- **See available actions** → XDR_REMEDIATION_ACTION_MATRIX.md- **[TESTING_GUIDE.md](TESTING_GUIDE.md)** - Comprehensive testing guide
+
+- **Understand architecture** → ACTION_COUNT_VERIFICATION.md- **[VERIFICATION_SUMMARY.md](VERIFICATION_SUMMARY.md)** - Verification results
+
+- **Integrate workbook** → WORKBOOK_INTEGRATION_APIS.md
+
+- **Upgrade from v2.x** → MIGRATION_GUIDE.md### Test Results
+
+- **View cleanup work** → COMPREHENSIVE_CLEANUP_COMPLETE.md
 
 - **[VERIFICATION_COMPLETE.md](VERIFICATION_COMPLETE.md)** - Complete verification status
-- **[WORKBOOK_VERIFICATION_REPORT.md](WORKBOOK_VERIFICATION_REPORT.md)** - Workbook verification report
+
+---- **[WORKBOOK_VERIFICATION_REPORT.md](WORKBOOK_VERIFICATION_REPORT.md)** - Workbook verification report
+
 - **[COMPLETE_VERIFICATION_REPORT.md](COMPLETE_VERIFICATION_REPORT.md)** - All verification results
+
+## 📦 Archived Documentation
 
 ---
 
-## 📊 Project Status & Summaries
+Moved to `archive/old-docs/` (19 files):
 
-### Current Status
+- Old architecture analyses## 📊 Project Status & Summaries
+
+- Historical implementation plans
+
+- Outdated testing status### Current Status
+
+- Superseded by current docs
 
 - **[PROJECT_COMPLETE.md](PROJECT_COMPLETE.md)** - Overall project completion status
-- **[IMPLEMENTATION_COMPLETE.md](IMPLEMENTATION_COMPLETE.md)** - Implementation status
+
+**Note**: `standalone/` directory also archived (no longer used).- **[IMPLEMENTATION_COMPLETE.md](IMPLEMENTATION_COMPLETE.md)** - Implementation status
+
 - **[ISSUE_ANALYSIS_SUMMARY.md](ISSUE_ANALYSIS_SUMMARY.md)** - Latest issue analysis (NEW)
+
+---
 
 ### Change Summaries
 
-- **[PR_SUMMARY.md](PR_SUMMARY.md)** - Pull request summary
-- **[WORKBOOK_FIXES_SUMMARY.md](WORKBOOK_FIXES_SUMMARY.md)** - All workbook fixes
+**Repository**: github.com/akefallonitis/defenderc2xsoar  
+
+**Status**: Production Ready  - **[PR_SUMMARY.md](PR_SUMMARY.md)** - Pull request summary
+
+**Actions**: 213 verified across 9 workers- **[WORKBOOK_FIXES_SUMMARY.md](WORKBOOK_FIXES_SUMMARY.md)** - All workbook fixes
+
 - **[CLEANUP_SUMMARY.md](CLEANUP_SUMMARY.md)** - Cleanup operations
 
 ---

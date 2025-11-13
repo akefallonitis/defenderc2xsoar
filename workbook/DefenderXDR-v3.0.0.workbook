@@ -1,0 +1,1145 @@
+{
+  "version": "Notebook/1.0",
+  "items": [
+    {
+      "type": 1,
+      "content": {
+        "json": "# 🛡️ DefenderXDR C2 XSOAR - Investigation & Remediation Console\n## Version 3.0.0 | Multi-Tenant | Incident-Centric | Real-Time Monitoring\n\n**Platform:** Azure Lighthouse | **Workers:** 7 | **Actions:** 166 | **Status:** Production Ready\n\n---\n\n### ⚡ Features: Auto-Refresh Queries | ARM Actions | Live Response Console | Advanced Hunting | File Operations"
+      },
+      "name": "Header"
+    },
+    {
+      "type": 9,
+      "content": {
+        "version": "KqlParameterItem/1.0",
+        "crossComponentResources": ["value::all"],
+        "parameters": [
+          {
+            "id": "lighthouse-tenant",
+            "version": "KqlParameterItem/1.0",
+            "name": "LighthouseTenantId",
+            "label": "Tenant",
+            "type": 6,
+            "isRequired": true,
+            "description": "Select Azure Lighthouse delegated tenant",
+            "typeSettings": {
+              "additionalResourceOptions": [],
+              "showDefault": false
+            },
+            "query": "ResourceContainers | where type == 'microsoft.resources/subscriptions' | project value = subscriptionId, label = name | order by label asc",
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources"
+          },
+          {
+            "id": "subscription-param",
+            "version": "KqlParameterItem/1.0",
+            "name": "Subscription",
+            "label": "Subscription",
+            "type": 6,
+            "isRequired": true,
+            "multiSelect": false,
+            "query": "ResourceContainers | where type == 'microsoft.resources/subscriptions' | project value = subscriptionId, label = name | order by label asc",
+            "crossComponentResources": ["{LighthouseTenantId}"],
+            "typeSettings": {
+              "additionalResourceOptions": [],
+              "showDefault": false
+            },
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources"
+          },
+          {
+            "id": "resourcegroup-param",
+            "version": "KqlParameterItem/1.0",
+            "name": "ResourceGroup",
+            "label": "Resource Group",
+            "type": 2,
+            "isRequired": true,
+            "query": "resources | where subscriptionId == '{Subscription}' and type =~ 'microsoft.web/sites' | project resourceGroup | distinct resourceGroup | order by resourceGroup asc",
+            "crossComponentResources": ["{LighthouseTenantId}"],
+            "typeSettings": {
+              "additionalResourceOptions": [],
+              "showDefault": false
+            },
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources"
+          },
+          {
+            "id": "functionapp-param",
+            "version": "KqlParameterItem/1.0",
+            "name": "FunctionAppName",
+            "label": "Function App",
+            "type": 5,
+            "isRequired": true,
+            "query": "resources | where resourceGroup == '{ResourceGroup}' and type =~ 'microsoft.web/sites' and kind contains 'functionapp' | project id, name | order by name asc | take 50",
+            "crossComponentResources": ["{LighthouseTenantId}"],
+            "typeSettings": {
+              "additionalResourceOptions": [],
+              "showDefault": false
+            },
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources"
+          },
+          {
+            "id": "timerange-param",
+            "version": "KqlParameterItem/1.0",
+            "name": "TimeRange",
+            "label": "Time Range",
+            "type": 4,
+            "isRequired": true,
+            "value": {
+              "durationMs": 604800000
+            },
+            "typeSettings": {
+              "selectableValues": [
+                {
+                  "durationMs": 300000
+                },
+                {
+                  "durationMs": 900000
+                },
+                {
+                  "durationMs": 3600000
+                },
+                {
+                  "durationMs": 14400000
+                },
+                {
+                  "durationMs": 86400000
+                },
+                {
+                  "durationMs": 604800000
+                },
+                {
+                  "durationMs": 2592000000
+                }
+              ],
+              "allowCustom": true
+            }
+          },
+          {
+            "id": "selected-incident",
+            "version": "KqlParameterItem/1.0",
+            "name": "SelectedIncidentId",
+            "label": "Selected Incident",
+            "type": 1,
+            "description": "Automatically set when incident is selected from table",
+            "isHiddenWhenLocked": true,
+            "value": ""
+          },
+          {
+            "id": "selected-alert",
+            "version": "KqlParameterItem/1.0",
+            "name": "SelectedAlertId",
+            "label": "Selected Alert",
+            "type": 1,
+            "description": "Automatically set when alert is selected from table",
+            "isHiddenWhenLocked": true,
+            "value": ""
+          },
+          {
+            "id": "selected-entity",
+            "version": "KqlParameterItem/1.0",
+            "name": "SelectedEntityId",
+            "label": "Selected Entity",
+            "type": 1,
+            "description": "Automatically set when entity is selected",
+            "isHiddenWhenLocked": true,
+            "value": ""
+          },
+          {
+            "id": "selected-entity-type",
+            "version": "KqlParameterItem/1.0",
+            "name": "SelectedEntityType",
+            "label": "Entity Type",
+            "type": 2,
+            "description": "Type of selected entity",
+            "typeSettings": {
+              "additionalResourceOptions": []
+            },
+            "jsonData": "[\"Device\", \"User\", \"File\", \"IP\", \"URL\"]",
+            "value": ""
+          }
+        ],
+        "style": "pills",
+        "queryType": 1,
+        "resourceType": "microsoft.resourcegraph/resources"
+      },
+      "name": "GlobalParameters"
+    },
+    {
+      "type": 11,
+      "content": {
+        "version": "LinkItem/1.0",
+        "style": "tabs",
+        "links": [
+          {
+            "id": "dashboard-tab",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "📊 Dashboard",
+            "subTarget": "Dashboard",
+            "style": "link"
+          },
+          {
+            "id": "incidents-tab",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "🚨 Incidents",
+            "subTarget": "Incidents",
+            "style": "link"
+          },
+          {
+            "id": "entities-tab",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "🔍 Entities",
+            "subTarget": "Entities",
+            "style": "link"
+          },
+          {
+            "id": "workers-tab",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "⚙️ Workers",
+            "subTarget": "Workers",
+            "style": "link"
+          },
+          {
+            "id": "console-tab",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "🖥️ Console",
+            "subTarget": "Console",
+            "style": "link"
+          }
+        ]
+      },
+      "name": "NavigationTabs"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "## 📊 Security Overview\nReal-time security posture across all monitored environments."
+            },
+            "name": "DashboardHeader"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "{\"version\":\"CustomEndpoint/1.0\",\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderXDRGateway\",\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"body\":\"{\\\"service\\\":\\\"MDE\\\",\\\"action\\\":\\\"GetIncidents\\\",\\\"tenantId\\\":\\\"{LighthouseTenantId}\\\",\\\"parameters\\\":{\\\"filter\\\":\\\"status eq 'Active'\\\"}}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.data.incidents[*]\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"IncidentId\"},{\"path\":\"$.incidentName\",\"columnid\":\"Name\"},{\"path\":\"$.severity\",\"columnid\":\"Severity\"},{\"path\":\"$.status\",\"columnid\":\"Status\"},{\"path\":\"$.assignedTo\",\"columnid\":\"AssignedTo\"},{\"path\":\"$.createdTime\",\"columnid\":\"Created\"}]}}]}",
+              "size": 3,
+              "title": "Active Incidents",
+              "showRefreshButton": true,
+              "exportFieldName": "IncidentId",
+              "exportParameterName": "SelectedIncidentId",
+              "queryType": 10,
+              "visualization": "tiles",
+              "tileSettings": {
+                "titleContent": {
+                  "columnMatch": "Name",
+                  "formatter": 1
+                },
+                "leftContent": {
+                  "columnMatch": "Severity",
+                  "formatter": 18,
+                  "formatOptions": {
+                    "thresholdsOptions": "colors",
+                    "thresholdsGrid": [
+                      {
+                        "operator": "==",
+                        "thresholdValue": "High",
+                        "representation": "redBright",
+                        "text": "{0}"
+                      },
+                      {
+                        "operator": "==",
+                        "thresholdValue": "Medium",
+                        "representation": "orange",
+                        "text": "{0}"
+                      },
+                      {
+                        "operator": "Default",
+                        "representation": "yellow",
+                        "text": "{0}"
+                      }
+                    ]
+                  }
+                },
+                "showBorder": true
+              }
+            },
+            "customWidth": "50",
+            "name": "ActiveIncidentsTiles"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "{\"version\":\"CustomEndpoint/1.0\",\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderXDRGateway\",\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"body\":\"{\\\"service\\\":\\\"MDE\\\",\\\"action\\\":\\\"GetDevices\\\",\\\"tenantId\\\":\\\"{LighthouseTenantId}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.data.devices[*]\",\"columns\":[{\"path\":\"$.riskScore\",\"columnid\":\"RiskScore\"},{\"path\":\"$.healthStatus\",\"columnid\":\"HealthStatus\"}]}}]}",
+              "size": 3,
+              "title": "Device Health",
+              "showRefreshButton": true,
+              "queryType": 10,
+              "visualization": "piechart"
+            },
+            "customWidth": "50",
+            "name": "DeviceHealthChart"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "Dashboard"
+      },
+      "name": "DashboardTab"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "## 🚨 Incident Investigation\nSelect an incident to view details, alerts, and entities. Execute remediation actions directly."
+            },
+            "name": "IncidentsHeader"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "{\"version\":\"CustomEndpoint/1.0\",\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderXDRGateway\",\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"body\":\"{\\\"service\\\":\\\"MDE\\\",\\\"action\\\":\\\"GetIncidents\\\",\\\"tenantId\\\":\\\"{LighthouseTenantId}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.data.incidents[*]\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"IncidentId\"},{\"path\":\"$.incidentName\",\"columnid\":\"Name\"},{\"path\":\"$.severity\",\"columnid\":\"Severity\"},{\"path\":\"$.status\",\"columnid\":\"Status\"},{\"path\":\"$.classification\",\"columnid\":\"Classification\"},{\"path\":\"$.assignedTo\",\"columnid\":\"AssignedTo\"},{\"path\":\"$.createdTime\",\"columnid\":\"Created\"},{\"path\":\"$.lastUpdateTime\",\"columnid\":\"Updated\"}]}}]}",
+              "size": 0,
+              "title": "All Incidents (Auto-refresh: 30s)",
+              "showRefreshButton": true,
+              "exportFieldName": "IncidentId",
+              "exportParameterName": "SelectedIncidentId",
+              "showExportToExcel": true,
+              "queryType": 10,
+              "refreshConfig": {
+                "enabled": true,
+                "intervalSeconds": 30
+              },
+              "gridSettings": {
+                "formatters": [
+                  {
+                    "columnMatch": "Severity",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "colors",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "==",
+                          "thresholdValue": "High",
+                          "representation": "redBright"
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Medium",
+                          "representation": "orange"
+                        },
+                        {
+                          "operator": "Default",
+                          "representation": "yellow"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "columnMatch": "Status",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "colors",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Active",
+                          "representation": "redBright"
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Resolved",
+                          "representation": "green"
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "filter": true,
+                "sortBy": [
+                  {
+                    "itemKey": "Created",
+                    "sortOrder": 2
+                  }
+                ]
+              }
+            },
+            "name": "IncidentsTable"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "### 📌 Selected Incident: {SelectedIncidentId}\nPerform remediation actions on devices, users, and files associated with this incident."
+            },
+            "conditionalVisibility": {
+              "parameterName": "SelectedIncidentId",
+              "comparison": "isNotEqualTo",
+              "value": ""
+            },
+            "name": "SelectedIncidentHeader"
+          },
+          {
+            "type": 11,
+            "content": {
+              "version": "LinkItem/1.0",
+              "style": "list",
+              "links": [
+                {
+                  "id": "update-incident",
+                  "linkTarget": "ArmAction",
+                  "linkLabel": "✏️ Update Incident Status",
+                  "armActionContext": {
+                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/host/default/admin/functions/DefenderXDRGateway",
+                    "headers": [
+                      {
+                        "name": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": "{\"service\":\"MDE\",\"action\":\"UpdateIncident\",\"tenantId\":\"{LighthouseTenantId}\",\"parameters\":{\"incidentId\":\"{SelectedIncidentId}\",\"status\":\"InProgress\",\"classification\":\"TruePositive\",\"determination\":\"Malware\"}}",
+                    "httpMethod": "POST",
+                    "description": "# ✏️ Update Incident\n\n**Incident ID:** {SelectedIncidentId}\n\n**Action:** Mark incident as In Progress with TruePositive classification\n\nThis will update the incident status and assign classification. Modify parameters as needed before confirming."
+                  },
+                  "style": "primary"
+                },
+                {
+                  "id": "close-incident",
+                  "linkTarget": "ArmAction",
+                  "linkLabel": "✅ Close Incident",
+                  "armActionContext": {
+                    "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/host/default/admin/functions/DefenderXDRGateway",
+                    "headers": [
+                      {
+                        "name": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": "{\"service\":\"MDE\",\"action\":\"UpdateIncident\",\"tenantId\":\"{LighthouseTenantId}\",\"parameters\":{\"incidentId\":\"{SelectedIncidentId}\",\"status\":\"Resolved\",\"classification\":\"TruePositive\",\"determination\":\"Malware\",\"comment\":\"Remediation completed via workbook\"}}",
+                    "httpMethod": "POST",
+                    "description": "# ✅ Close Incident\n\n**Incident ID:** {SelectedIncidentId}\n\n**Action:** Mark incident as Resolved\n\n⚠️ This will **close** the incident with TruePositive classification. Ensure all remediation actions are complete before proceeding."
+                  },
+                  "style": "secondary"
+                }
+              ]
+            },
+            "conditionalVisibility": {
+              "parameterName": "SelectedIncidentId",
+              "comparison": "isNotEqualTo",
+              "value": ""
+            },
+            "name": "IncidentActions"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "Incidents"
+      },
+      "name": "IncidentsTab"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "## 🔍 Entity Investigation\nSelect entity type to investigate and perform remediation actions."
+            },
+            "name": "EntitiesHeader"
+          },
+          {
+            "type": 11,
+            "content": {
+              "version": "LinkItem/1.0",
+              "style": "tabs",
+              "links": [
+                {
+                  "id": "device-entity",
+                  "cellValue": "entityTab",
+                  "linkTarget": "parameter",
+                  "linkLabel": "💻 Devices",
+                  "subTarget": "Device",
+                  "style": "link"
+                },
+                {
+                  "id": "user-entity",
+                  "cellValue": "entityTab",
+                  "linkTarget": "parameter",
+                  "linkLabel": "👤 Users",
+                  "subTarget": "User",
+                  "style": "link"
+                },
+                {
+                  "id": "ip-entity",
+                  "cellValue": "entityTab",
+                  "linkTarget": "parameter",
+                  "linkLabel": "🌐 IP Addresses",
+                  "subTarget": "IP",
+                  "style": "link"
+                },
+                {
+                  "id": "file-entity",
+                  "cellValue": "entityTab",
+                  "linkTarget": "parameter",
+                  "linkLabel": "📄 Files",
+                  "subTarget": "File",
+                  "style": "link"
+                }
+              ]
+            },
+            "name": "EntityTypeTabs"
+          },
+          {
+            "type": 12,
+            "content": {
+              "version": "NotebookGroup/1.0",
+              "groupType": "editable",
+              "items": [
+                {
+                  "type": 3,
+                  "content": {
+                    "version": "KqlItem/1.0",
+                    "query": "{\"version\":\"CustomEndpoint/1.0\",\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderXDRGateway\",\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"body\":\"{\\\"service\\\":\\\"MDE\\\",\\\"action\\\":\\\"GetDevices\\\",\\\"tenantId\\\":\\\"{LighthouseTenantId}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.data.devices[*]\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"DeviceId\"},{\"path\":\"$.computerDnsName\",\"columnid\":\"DeviceName\"},{\"path\":\"$.osPlatform\",\"columnid\":\"OS\"},{\"path\":\"$.riskScore\",\"columnid\":\"RiskScore\"},{\"path\":\"$.healthStatus\",\"columnid\":\"HealthStatus\"},{\"path\":\"$.lastSeen\",\"columnid\":\"LastSeen\"},{\"path\":\"$.isAadJoined\",\"columnid\":\"AADJoined\"}]}}]}",
+                    "size": 0,
+                    "title": "Devices (Auto-refresh: 30s)",
+                    "showRefreshButton": true,
+                    "exportFieldName": "DeviceId",
+                    "exportParameterName": "SelectedEntityId",
+                    "showExportToExcel": true,
+                    "queryType": 10,
+                    "refreshConfig": {
+                      "enabled": true,
+                      "intervalSeconds": 30
+                    },
+                    "gridSettings": {
+                      "formatters": [
+                        {
+                          "columnMatch": "RiskScore",
+                          "formatter": 8,
+                          "formatOptions": {
+                            "min": 0,
+                            "max": 100,
+                            "palette": "greenRed"
+                          }
+                        },
+                        {
+                          "columnMatch": "HealthStatus",
+                          "formatter": 18,
+                          "formatOptions": {
+                            "thresholdsOptions": "colors",
+                            "thresholdsGrid": [
+                              {
+                                "operator": "==",
+                                "thresholdValue": "Active",
+                                "representation": "green"
+                              },
+                              {
+                                "operator": "Default",
+                                "representation": "gray"
+                              }
+                            ]
+                          }
+                        }
+                      ],
+                      "filter": true
+                    }
+                  },
+                  "name": "DevicesTable"
+                },
+                {
+                  "type": 11,
+                  "content": {
+                    "version": "LinkItem/1.0",
+                    "style": "list",
+                    "links": [
+                      {
+                        "id": "isolate-device",
+                        "linkTarget": "ArmAction",
+                        "linkLabel": "🔒 Isolate Device",
+                        "armActionContext": {
+                          "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/host/default/admin/functions/DefenderXDRGateway",
+                          "headers": [
+                            {
+                              "name": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "body": "{\"service\":\"MDE\",\"action\":\"IsolateDevice\",\"tenantId\":\"{LighthouseTenantId}\",\"parameters\":{\"machineId\":\"{SelectedEntityId}\",\"isolationType\":\"Full\",\"comment\":\"Isolated via v3.0.0 workbook\"}}",
+                          "httpMethod": "POST",
+                          "description": "# 🔒 Device Isolation\n\n**Device ID:** {SelectedEntityId}\n\n**Action:** Full network isolation\n\n⚠️ This will **completely isolate** the device from the network. Users will not be able to access network resources.\n\n**Impact:** High\n\n**Reversible:** Yes (via Unisolate action)\n\nConfirm to proceed with isolation."
+                        },
+                        "style": "primary"
+                      },
+                      {
+                        "id": "unisolate-device",
+                        "linkTarget": "ArmAction",
+                        "linkLabel": "🔓 Unisolate Device",
+                        "armActionContext": {
+                          "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/host/default/admin/functions/DefenderXDRGateway",
+                          "headers": [
+                            {
+                              "name": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "body": "{\"service\":\"MDE\",\"action\":\"UnisolateDevice\",\"tenantId\":\"{LighthouseTenantId}\",\"parameters\":{\"machineId\":\"{SelectedEntityId}\",\"comment\":\"Unisolated via v3.0.0 workbook\"}}",
+                          "httpMethod": "POST",
+                          "description": "# 🔓 Remove Device Isolation\n\n**Device ID:** {SelectedEntityId}\n\n**Action:** Remove network isolation\n\n✅ This will restore network connectivity to the device.\n\nConfirm to proceed."
+                        },
+                        "style": "secondary"
+                      },
+                      {
+                        "id": "run-av-scan",
+                        "linkTarget": "ArmAction",
+                        "linkLabel": "🦠 Run Full AV Scan",
+                        "armActionContext": {
+                          "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/host/default/admin/functions/DefenderXDRGateway",
+                          "headers": [
+                            {
+                              "name": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "body": "{\"service\":\"MDE\",\"action\":\"RunFullAVScan\",\"tenantId\":\"{LighthouseTenantId}\",\"parameters\":{\"machineId\":\"{SelectedEntityId}\",\"comment\":\"Full AV scan via v3.0.0 workbook\"}}",
+                          "httpMethod": "POST",
+                          "description": "# 🦠 Full Antivirus Scan\n\n**Device ID:** {SelectedEntityId}\n\n**Action:** Run full antivirus scan\n\n**Duration:** May take 30-60 minutes\n\n**Impact:** Moderate (CPU usage)\n\nConfirm to initiate full scan."
+                        },
+                        "style": "secondary"
+                      },
+                      {
+                        "id": "collect-investigation-package",
+                        "linkTarget": "ArmAction",
+                        "linkLabel": "📦 Collect Investigation Package",
+                        "armActionContext": {
+                          "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/host/default/admin/functions/DefenderXDRGateway",
+                          "headers": [
+                            {
+                              "name": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "body": "{\"service\":\"MDE\",\"action\":\"CollectInvestigationPackage\",\"tenantId\":\"{LighthouseTenantId}\",\"parameters\":{\"machineId\":\"{SelectedEntityId}\",\"comment\":\"Investigation package via v3.0.0 workbook\"}}",
+                          "httpMethod": "POST",
+                          "description": "# 📦 Collect Investigation Package\n\n**Device ID:** {SelectedEntityId}\n\n**Action:** Collect forensic investigation package\n\n**Contents:** Registry keys, event logs, processes, network connections, scheduled tasks\n\n**Duration:** 10-15 minutes\n\nPackage will be available in Defender portal after collection."
+                        },
+                        "style": "secondary"
+                      }
+                    ]
+                  },
+                  "conditionalVisibility": {
+                    "parameterName": "SelectedEntityId",
+                    "comparison": "isNotEqualTo",
+                    "value": ""
+                  },
+                  "name": "DeviceActions"
+                }
+              ]
+            },
+            "conditionalVisibility": {
+              "parameterName": "entityTab",
+              "comparison": "isEqualTo",
+              "value": "Device"
+            },
+            "name": "DeviceEntityTab"
+          },
+          {
+            "type": 12,
+            "content": {
+              "version": "NotebookGroup/1.0",
+              "groupType": "editable",
+              "items": [
+                {
+                  "type": 3,
+                  "content": {
+                    "version": "KqlItem/1.0",
+                    "query": "{\"version\":\"CustomEndpoint/1.0\",\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderXDRGateway\",\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"body\":\"{\\\"service\\\":\\\"EntraID\\\",\\\"action\\\":\\\"GetRiskyUsers\\\",\\\"tenantId\\\":\\\"{LighthouseTenantId}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.data.users[*]\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"UserId\"},{\"path\":\"$.userPrincipalName\",\"columnid\":\"UPN\"},{\"path\":\"$.riskLevel\",\"columnid\":\"RiskLevel\"},{\"path\":\"$.riskState\",\"columnid\":\"RiskState\"},{\"path\":\"$.riskLastUpdatedDateTime\",\"columnid\":\"LastUpdated\"}]}}]}",
+                    "size": 0,
+                    "title": "Risky Users (Auto-refresh: 30s)",
+                    "showRefreshButton": true,
+                    "exportFieldName": "UserId",
+                    "exportParameterName": "SelectedEntityId",
+                    "showExportToExcel": true,
+                    "queryType": 10,
+                    "refreshConfig": {
+                      "enabled": true,
+                      "intervalSeconds": 30
+                    },
+                    "gridSettings": {
+                      "formatters": [
+                        {
+                          "columnMatch": "RiskLevel",
+                          "formatter": 18,
+                          "formatOptions": {
+                            "thresholdsOptions": "colors",
+                            "thresholdsGrid": [
+                              {
+                                "operator": "==",
+                                "thresholdValue": "high",
+                                "representation": "redBright"
+                              },
+                              {
+                                "operator": "==",
+                                "thresholdValue": "medium",
+                                "representation": "orange"
+                              },
+                              {
+                                "operator": "Default",
+                                "representation": "yellow"
+                              }
+                            ]
+                          }
+                        }
+                      ],
+                      "filter": true
+                    }
+                  },
+                  "name": "UsersTable"
+                },
+                {
+                  "type": 11,
+                  "content": {
+                    "version": "LinkItem/1.0",
+                    "style": "list",
+                    "links": [
+                      {
+                        "id": "disable-user",
+                        "linkTarget": "ArmAction",
+                        "linkLabel": "🚫 Disable User Account",
+                        "armActionContext": {
+                          "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/host/default/admin/functions/DefenderXDRGateway",
+                          "headers": [
+                            {
+                              "name": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "body": "{\"service\":\"EntraID\",\"action\":\"DisableUser\",\"tenantId\":\"{LighthouseTenantId}\",\"parameters\":{\"userId\":\"{SelectedEntityId}\"}}",
+                          "httpMethod": "POST",
+                          "description": "# 🚫 Disable User Account\n\n**User ID:** {SelectedEntityId}\n\n**Action:** Disable Entra ID account\n\n⚠️ This will **immediately prevent** the user from signing in to any Microsoft services.\n\n**Impact:** High - User cannot access email, Teams, SharePoint, etc.\n\n**Reversible:** Yes (via Enable User action)\n\nConfirm to disable account."
+                        },
+                        "style": "primary"
+                      },
+                      {
+                        "id": "revoke-sessions",
+                        "linkTarget": "ArmAction",
+                        "linkLabel": "🔐 Revoke All Sessions",
+                        "armActionContext": {
+                          "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/host/default/admin/functions/DefenderXDRGateway",
+                          "headers": [
+                            {
+                              "name": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "body": "{\"service\":\"EntraID\",\"action\":\"RevokeSessions\",\"tenantId\":\"{LighthouseTenantId}\",\"parameters\":{\"userId\":\"{SelectedEntityId}\"}}",
+                          "httpMethod": "POST",
+                          "description": "# 🔐 Revoke All Sessions\n\n**User ID:** {SelectedEntityId}\n\n**Action:** Revoke all active sessions\n\n✅ This will **sign out** the user from all devices and applications.\n\n**Impact:** Moderate - User must re-authenticate\n\nConfirm to revoke sessions."
+                        },
+                        "style": "secondary"
+                      },
+                      {
+                        "id": "reset-password",
+                        "linkTarget": "ArmAction",
+                        "linkLabel": "🔑 Reset Password",
+                        "armActionContext": {
+                          "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/host/default/admin/functions/DefenderXDRGateway",
+                          "headers": [
+                            {
+                              "name": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "body": "{\"service\":\"EntraID\",\"action\":\"ResetPassword\",\"tenantId\":\"{LighthouseTenantId}\",\"parameters\":{\"userId\":\"{SelectedEntityId}\"}}",
+                          "httpMethod": "POST",
+                          "description": "# 🔑 Reset Password\n\n**User ID:** {SelectedEntityId}\n\n**Action:** Force password reset\n\n✅ This will generate a **temporary password** and force the user to change it at next sign-in.\n\n**Impact:** Moderate - User must update password\n\nConfirm to reset password."
+                        },
+                        "style": "secondary"
+                      },
+                      {
+                        "id": "confirm-compromised",
+                        "linkTarget": "ArmAction",
+                        "linkLabel": "⚠️ Confirm User Compromised",
+                        "armActionContext": {
+                          "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/host/default/admin/functions/DefenderXDRGateway",
+                          "headers": [
+                            {
+                              "name": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "body": "{\"service\":\"EntraID\",\"action\":\"ConfirmCompromised\",\"tenantId\":\"{LighthouseTenantId}\",\"parameters\":{\"userId\":\"{SelectedEntityId}\"}}",
+                          "httpMethod": "POST",
+                          "description": "# ⚠️ Confirm User Compromised\n\n**User ID:** {SelectedEntityId}\n\n**Action:** Mark user as confirmed compromised in Identity Protection\n\n⚠️ This will trigger **automatic remediation policies** including password reset and session revocation.\n\n**Impact:** High\n\nConfirm to mark as compromised."
+                        },
+                        "style": "primary"
+                      }
+                    ]
+                  },
+                  "conditionalVisibility": {
+                    "parameterName": "SelectedEntityId",
+                    "comparison": "isNotEqualTo",
+                    "value": ""
+                  },
+                  "name": "UserActions"
+                }
+              ]
+            },
+            "conditionalVisibility": {
+              "parameterName": "entityTab",
+              "comparison": "isEqualTo",
+              "value": "User"
+            },
+            "name": "UserEntityTab"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "Entities"
+      },
+      "name": "EntitiesTab"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "## 🖥️ Console\nInteractive Live Response and Advanced Hunting console for direct device interaction and threat hunting."
+            },
+            "name": "ConsoleHeader"
+          },
+          {
+            "type": 11,
+            "content": {
+              "version": "LinkItem/1.0",
+              "style": "tabs",
+              "links": [
+                {
+                  "id": "liveresponse-tab",
+                  "cellValue": "consoleTab",
+                  "linkTarget": "parameter",
+                  "linkLabel": "🖥️ Live Response",
+                  "subTarget": "LiveResponse",
+                  "style": "link"
+                },
+                {
+                  "id": "advancedhunting-tab",
+                  "cellValue": "consoleTab",
+                  "linkTarget": "parameter",
+                  "linkLabel": "🔍 Advanced Hunting",
+                  "subTarget": "AdvancedHunting",
+                  "style": "link"
+                }
+              ]
+            },
+            "name": "ConsoleTabs"
+          },
+          {
+            "type": 12,
+            "content": {
+              "version": "NotebookGroup/1.0",
+              "groupType": "editable",
+              "items": [
+                {
+                  "type": 1,
+                  "content": {
+                    "json": "### 🖥️ Live Response Shell\nExecute commands on remote devices in real-time. Start a session, run commands, and view output."
+                  },
+                  "name": "LiveResponseHeader"
+                },
+                {
+                  "type": 9,
+                  "content": {
+                    "version": "KqlParameterItem/1.0",
+                    "parameters": [
+                      {
+                        "id": "lr-device",
+                        "version": "KqlParameterItem/1.0",
+                        "name": "LRDevice",
+                        "label": "Device",
+                        "type": 2,
+                        "description": "Select device for Live Response",
+                        "query": "{\"version\":\"CustomEndpoint/1.0\",\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderXDRGateway\",\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"body\":\"{\\\"service\\\":\\\"MDE\\\",\\\"action\\\":\\\"GetDevices\\\",\\\"tenantId\\\":\\\"{LighthouseTenantId}\\\"}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.data.devices[*]\",\"columns\":[{\"path\":\"$.id\",\"columnid\":\"value\"},{\"path\":\"$.computerDnsName\",\"columnid\":\"label\"}]}}]}",
+                        "typeSettings": {
+                          "additionalResourceOptions": [],
+                          "showDefault": false
+                        },
+                        "queryType": 10
+                      },
+                      {
+                        "id": "lr-command",
+                        "version": "KqlParameterItem/1.0",
+                        "name": "LRCommand",
+                        "label": "Command",
+                        "type": 1,
+                        "description": "Enter command to execute (e.g., processes, registry, connections)",
+                        "value": "processes",
+                        "typeSettings": {
+                          "multiLineText": false
+                        }
+                      }
+                    ],
+                    "style": "pills",
+                    "queryType": 10
+                  },
+                  "name": "LiveResponseParams"
+                },
+                {
+                  "type": 11,
+                  "content": {
+                    "version": "LinkItem/1.0",
+                    "style": "list",
+                    "links": [
+                      {
+                        "id": "start-session",
+                        "linkTarget": "ArmAction",
+                        "linkLabel": "▶️ Start Session",
+                        "armActionContext": {
+                          "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/host/default/admin/functions/DefenderXDRGateway",
+                          "headers": [
+                            {
+                              "name": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "body": "{\"service\":\"MDE\",\"action\":\"StartLiveResponseSession\",\"tenantId\":\"{LighthouseTenantId}\",\"parameters\":{\"machineId\":\"{LRDevice}\",\"comment\":\"Live Response session via v3.0.0 workbook\"}}",
+                          "httpMethod": "POST",
+                          "description": "# ▶️ Start Live Response Session\n\n**Device:** {LRDevice}\n\n**Action:** Initialize Live Response session\n\n✅ This will establish a secure connection to the device for interactive command execution.\n\n**Duration:** Session lasts 10 minutes (auto-extends with activity)\n\nConfirm to start session."
+                        },
+                        "style": "primary"
+                      },
+                      {
+                        "id": "run-command",
+                        "linkTarget": "ArmAction",
+                        "linkLabel": "⚡ Execute Command",
+                        "armActionContext": {
+                          "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/host/default/admin/functions/DefenderXDRGateway",
+                          "headers": [
+                            {
+                              "name": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "body": "{\"service\":\"MDE\",\"action\":\"RunLiveResponseCommand\",\"tenantId\":\"{LighthouseTenantId}\",\"parameters\":{\"machineId\":\"{LRDevice}\",\"command\":\"{LRCommand}\",\"comment\":\"Command via v3.0.0 workbook\"}}",
+                          "httpMethod": "POST",
+                          "description": "# ⚡ Execute Live Response Command\n\n**Device:** {LRDevice}\n\n**Command:** {LRCommand}\n\n**Action:** Run command on device\n\n✅ Command will execute in active Live Response session. Results will appear in output below.\n\nConfirm to execute."
+                        },
+                        "style": "primary"
+                      }
+                    ]
+                  },
+                  "name": "LiveResponseActions"
+                },
+                {
+                  "type": 1,
+                  "content": {
+                    "json": "### 📝 Command Output\nCommand results will appear below. Output auto-refreshes every 5 seconds during active session."
+                  },
+                  "name": "OutputHeader"
+                },
+                {
+                  "type": 3,
+                  "content": {
+                    "version": "KqlItem/1.0",
+                    "query": "{\"version\":\"CustomEndpoint/1.0\",\"method\":\"POST\",\"url\":\"https://{FunctionAppName}.azurewebsites.net/api/DefenderXDRGateway\",\"headers\":[{\"name\":\"Content-Type\",\"value\":\"application/json\"}],\"body\":\"{\\\"service\\\":\\\"MDE\\\",\\\"action\\\":\\\"GetLiveResponseSession\\\",\\\"tenantId\\\":\\\"{LighthouseTenantId}\\\",\\\"parameters\\\":{\\\"machineId\\\":\\\"{LRDevice}\\\"}}\",\"transformers\":[{\"type\":\"jsonpath\",\"settings\":{\"tablePath\":\"$.data.commands[*]\",\"columns\":[{\"path\":\"$.command\",\"columnid\":\"Command\"},{\"path\":\"$.commandStatus\",\"columnid\":\"Status\"},{\"path\":\"$.output\",\"columnid\":\"Output\"},{\"path\":\"$.creationTime\",\"columnid\":\"Executed\"}]}}]}",
+                    "size": 0,
+                    "title": "Session Output (Auto-refresh: 5s)",
+                    "showRefreshButton": true,
+                    "queryType": 10,
+                    "refreshConfig": {
+                      "enabled": true,
+                      "intervalSeconds": 5
+                    },
+                    "gridSettings": {
+                      "formatters": [
+                        {
+                          "columnMatch": "Output",
+                          "formatter": 7,
+                          "formatOptions": {
+                            "linkTarget": "CellDetails",
+                            "linkIsContextBlade": true
+                          }
+                        }
+                      ],
+                      "filter": false
+                    }
+                  },
+                  "conditionalVisibility": {
+                    "parameterName": "LRDevice",
+                    "comparison": "isNotEqualTo",
+                    "value": ""
+                  },
+                  "name": "LiveResponseOutput"
+                },
+                {
+                  "type": 1,
+                  "content": {
+                    "json": "### 📚 Available Commands\n\n| Command | Description |\n|---------|-------------|\n| **processes** | List running processes |\n| **registry** | Query registry keys |\n| **connections** | Show network connections |\n| **drivers** | List loaded drivers |\n| **scheduledtasks** | Show scheduled tasks |\n| **getfile \"path\"** | Download file from device |\n| **putfile \"path\"** | Upload file to device |\n| **remediate file \"path\"** | Quarantine and delete file |\n\n**File Operations:**\n- Upload files via Storage Account → liveresponse/library/ folder first\n- Reference files in putfile command: `putfile \"library/tool.exe\" \"C:\\temp\\tool.exe\"`"
+                  },
+                  "name": "CommandReference"
+                }
+              ]
+            },
+            "conditionalVisibility": {
+              "parameterName": "consoleTab",
+              "comparison": "isEqualTo",
+              "value": "LiveResponse"
+            },
+            "name": "LiveResponseTab"
+          },
+          {
+            "type": 12,
+            "content": {
+              "version": "NotebookGroup/1.0",
+              "groupType": "editable",
+              "items": [
+                {
+                  "type": 1,
+                  "content": {
+                    "json": "### 🔍 Advanced Hunting Console\nExecute KQL queries across 30 days of XDR data. Hunt for threats, investigate incidents, and analyze security events."
+                  },
+                  "name": "AdvancedHuntingHeader"
+                },
+                {
+                  "type": 9,
+                  "content": {
+                    "version": "KqlParameterItem/1.0",
+                    "parameters": [
+                      {
+                        "id": "ah-query",
+                        "version": "KqlParameterItem/1.0",
+                        "name": "AHQuery",
+                        "label": "KQL Query",
+                        "type": 1,
+                        "description": "Enter KQL query (e.g., DeviceProcessEvents | where Timestamp > ago(7d) | take 10)",
+                        "typeSettings": {
+                          "multiLineText": true,
+                          "editorLanguage": "kql",
+                          "multiLineHeight": 10
+                        },
+                        "value": "DeviceProcessEvents\n| where Timestamp > ago(7d)\n| where ProcessCommandLine has \"powershell\"\n| project Timestamp, DeviceName, FileName, ProcessCommandLine, AccountName\n| take 10"
+                      }
+                    ],
+                    "style": "above",
+                    "queryType": 0
+                  },
+                  "name": "AdvancedHuntingParams"
+                },
+                {
+                  "type": 11,
+                  "content": {
+                    "version": "LinkItem/1.0",
+                    "style": "list",
+                    "links": [
+                      {
+                        "id": "run-query",
+                        "linkTarget": "ArmAction",
+                        "linkLabel": "▶️ Run Query",
+                        "armActionContext": {
+                          "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/host/default/admin/functions/DefenderXDRGateway",
+                          "headers": [
+                            {
+                              "name": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "body": "{\"service\":\"MDE\",\"action\":\"AdvancedHuntingRunQuery\",\"tenantId\":\"{LighthouseTenantId}\",\"parameters\":{\"query\":\"{AHQuery}\"}}",
+                          "httpMethod": "POST",
+                          "description": "# ▶️ Run Advanced Hunting Query\n\n**Query:**\n```kql\n{AHQuery}\n```\n\n**Action:** Execute KQL query across XDR data\n\n**Scope:** 30 days of telemetry\n\n**Duration:** 10-30 seconds (depending on query complexity)\n\nConfirm to execute query."
+                        },
+                        "style": "primary"
+                      },
+                      {
+                        "id": "save-query",
+                        "linkTarget": "ArmAction",
+                        "linkLabel": "💾 Save Query",
+                        "armActionContext": {
+                          "path": "/subscriptions/{Subscription}/resourceGroups/{ResourceGroup}/providers/Microsoft.Web/sites/{FunctionAppName}/host/default/admin/functions/DefenderXDRGateway",
+                          "headers": [
+                            {
+                              "name": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "body": "{\"service\":\"MDE\",\"action\":\"SaveQuery\",\"tenantId\":\"{LighthouseTenantId}\",\"parameters\":{\"query\":\"{AHQuery}\",\"name\":\"Workbook Query\"}}",
+                          "httpMethod": "POST",
+                          "description": "# 💾 Save Query\n\n**Action:** Save query to Defender portal\n\n✅ Query will be saved to your personal queries in Advanced Hunting.\n\nConfirm to save."
+                        },
+                        "style": "secondary"
+                      }
+                    ]
+                  },
+                  "name": "AdvancedHuntingActions"
+                },
+                {
+                  "type": 1,
+                  "content": {
+                    "json": "### 📊 Query Results\nResults appear below after query execution. Use filters and export to CSV for further analysis."
+                  },
+                  "name": "ResultsHeader"
+                },
+                {
+                  "type": 1,
+                  "content": {
+                    "json": "### 📚 Query Templates\n\n**Suspicious PowerShell:**\n```kql\nDeviceProcessEvents\n| where Timestamp > ago(7d)\n| where ProcessCommandLine has_any (\"bypass\", \"encoded\", \"downloadstring\")\n| project Timestamp, DeviceName, ProcessCommandLine, AccountName\n```\n\n**Failed Logons:**\n```kql\nDeviceLogonEvents\n| where Timestamp > ago(1d)\n| where ActionType == \"LogonFailed\"\n| summarize FailedAttempts=count() by DeviceName, AccountName\n| where FailedAttempts > 10\n```\n\n**Rare File Hashes:**\n```kql\nDeviceFileEvents\n| where Timestamp > ago(7d)\n| where isnotempty(SHA256)\n| summarize DeviceCount=dcount(DeviceName) by SHA256, FileName\n| where DeviceCount <= 3\n```"
+                  },
+                  "name": "QueryTemplates"
+                }
+              ]
+            },
+            "conditionalVisibility": {
+              "parameterName": "consoleTab",
+              "comparison": "isEqualTo",
+              "value": "AdvancedHunting"
+            },
+            "name": "AdvancedHuntingTab"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "Console"
+      },
+      "name": "ConsoleTab"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "---\n\n**DefenderXDR C2 XSOAR v3.0.0** | © 2024 | [Documentation](https://github.com/akefallonitis/defenderc2xsoar) | [API Reference](WORKER_API_REFERENCE.md)"
+      },
+      "name": "Footer"
+    }
+  ],
+  "fallbackResourceIds": [],
+  "fromTemplateId": "defenderxdr-c2-xsoar-v3.0.0"
+}

@@ -41,11 +41,25 @@ Write-Host "[$correlationId] DefenderXDRGateway - Processing request"
 # ============================================================================
 # PARAMETER EXTRACTION
 # Support both 'tenant' and 'tenantId' for user convenience
+# Support ARM Action format (invoked via Azure Management API) and CustomEndpoint format (direct HTTPS)
 # ============================================================================
 
-$service = $Request.Query.service ?? $Request.Body.service
-$action = $Request.Query.action ?? $Request.Body.action
-$tenantId = $Request.Query.tenantId ?? $Request.Body.tenantId ?? $Request.Query.tenant ?? $Request.Body.tenant
+# ARM Actions from Azure Workbooks come through Azure Management API
+# Request body is string (not hashtable) when invoked via ARM
+$requestBody = $Request.Body
+if ($requestBody -is [string]) {
+    try {
+        $requestBody = $requestBody | ConvertFrom-Json -AsHashtable
+        Write-Host "[$correlationId] Parsed ARM Action request body (invoked via Azure Management API)"
+    } catch {
+        Write-Host "[$correlationId] Could not parse request body as JSON: $_"
+        $requestBody = @{}
+    }
+}
+
+$service = $Request.Query.service ?? $requestBody.service
+$action = $Request.Query.action ?? $requestBody.action
+$tenantId = $Request.Query.tenantId ?? $requestBody.tenantId ?? $Request.Query.tenant ?? $requestBody.tenant
 
 # ============================================================================
 # INPUT VALIDATION
@@ -74,7 +88,7 @@ if (-not $service) {
         Body = @{
             success = $false
             error = "Missing required parameter: service"
-            validServices = @("MDE", "MDO", "MDC", "MDI", "EntraID", "Intune", "Azure")
+            validServices = @("MDE", "MDO", "MDC", "MDI", "EntraID", "Intune", "Azure", "MCAS")
             correlationId = $correlationId
             timestamp = (Get-Date).ToString("o")
         } | ConvertTo-Json
@@ -117,16 +131,17 @@ try {
     # Forward ALL other parameters from query string and body
     if ($Request.Query) {
         foreach ($key in $Request.Query.Keys) {
-            if ($key -notin @('service', 'action', 'tenant', 'tenantId', 'code')) {
+            if ($key -notin @('service', 'action', 'tenant', 'tenantId', 'code', 'api-version')) {
                 $orchestratorPayload[$key] = $Request.Query[$key]
             }
         }
     }
     
-    if ($Request.Body -is [hashtable]) {
-        foreach ($key in $Request.Body.Keys) {
+    # Handle both CustomEndpoint format (hashtable) and ARM Action format (parsed from string)
+    if ($requestBody -is [hashtable]) {
+        foreach ($key in $requestBody.Keys) {
             if ($key -notin @('service', 'action', 'tenant', 'tenantId', 'correlationId')) {
-                $orchestratorPayload[$key] = $Request.Body[$key]
+                $orchestratorPayload[$key] = $requestBody[$key]
             }
         }
     }
@@ -156,14 +171,68 @@ try {
     
     Write-Host "[$correlationId] Orchestrator responded successfully in $([Math]::Round($duration, 2))ms"
     
-    # Forward Orchestrator response to caller
+    # ============================================================================
+    # RESPONSE FORMATTING - JSONPath-Friendly Structure
+    # Ensure responses have clear array paths for Azure Workbook transformers
+    # Examples: $.devices[*], $.incidents[*], $.alerts[*], $.indicators[*]
+    # ============================================================================
+    
+    $formattedResponse = $orchestratorResponse
+    
+    # If response contains data arrays, ensure JSONPath-friendly naming
+    # Common patterns: value[], machines[], alerts[], incidents[], indicators[], etc.
+    if ($orchestratorResponse -is [hashtable]) {
+        # MDE GetAllDevices: value[] → devices[]
+        if ($orchestratorResponse.ContainsKey('value') -and $orchestratorResponse.value -is [array]) {
+            $dataArray = $orchestratorResponse.value
+            
+            # Detect data type and use appropriate array name
+            if ($action -match 'Device|Machine') {
+                $formattedResponse.devices = $dataArray
+                $formattedResponse.Remove('value')
+            }
+            elseif ($action -match 'Incident') {
+                $formattedResponse.incidents = $dataArray
+                $formattedResponse.Remove('value')
+            }
+            elseif ($action -match 'Alert') {
+                $formattedResponse.alerts = $dataArray
+                $formattedResponse.Remove('value')
+            }
+            elseif ($action -match 'Indicator|ThreatIntel') {
+                $formattedResponse.indicators = $dataArray
+                $formattedResponse.Remove('value')
+            }
+            elseif ($action -match 'Hunt|Query') {
+                $formattedResponse.results = $dataArray
+                $formattedResponse.Remove('value')
+            }
+            else {
+                # Keep 'value' but also add generic 'data' for fallback
+                $formattedResponse.data = $dataArray
+            }
+        }
+        
+        # Add Gateway metadata
+        $formattedResponse.gatewayMetadata = @{
+            correlationId = $correlationId
+            durationMs = [Math]::Round($duration, 2)
+            timestamp = (Get-Date).ToString("o")
+            service = $service
+            action = $action
+        }
+    }
+    
+    # Forward formatted response to caller
     Push-OutputBinding -Name Response -Value ([HttpResponseContext]@{
         StatusCode = [HttpStatusCode]::OK
-        Body = $orchestratorResponse | ConvertTo-Json -Depth 10
+        Body = $formattedResponse | ConvertTo-Json -Depth 10 -Compress:$false
         Headers = @{
             "Content-Type" = "application/json"
             "X-Correlation-ID" = $correlationId
             "X-Duration-Ms" = [Math]::Round($duration, 2)
+            "X-Service" = $service
+            "X-Action" = $action
         }
     })
     
