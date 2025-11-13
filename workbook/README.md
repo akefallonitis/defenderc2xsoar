@@ -266,7 +266,7 @@ For issues or questions:
 - Manual configuration required
 - Function key authentication
 - Manual resource entry
-- MDEAutomator branding
+- DefenderC2 branding
 
 ---
 

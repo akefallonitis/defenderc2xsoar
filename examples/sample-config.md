@@ -8,7 +8,7 @@ When you first open the workbook, configure these parameters:
 Subscription: /subscriptions/12345678-1234-1234-1234-123456789abc
 Workspace: /subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/rg-sentinel/providers/Microsoft.OperationalInsights/workspaces/workspace-sentinel
 Target Tenant ID: 87654321-4321-4321-4321-cba987654321
-Function App Base URL: https://mde-automator-prod.azurewebsites.net
+Function App Base URL: https://defenderc2-prod.azurewebsites.net
 Time Range: Last 30 days
 ```
 
@@ -197,14 +197,14 @@ If you manage multiple tenants:
 
 ```
 Target Tenant ID: aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa
-Function App Base URL: https://mde-automator-prod.azurewebsites.net
+Function App Base URL: https://defenderc2-prod.azurewebsites.net
 ```
 
 ### Tenant B (Development)
 
 ```
 Target Tenant ID: bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb
-Function App Base URL: https://mde-automator-prod.azurewebsites.net (same function app!)
+Function App Base URL: https://defenderc2-prod.azurewebsites.net (same function app!)
 ```
 
 **Note**: You use the same function app and app registration for all tenants. Just change the Target Tenant ID parameter when switching between tenants. The app credentials (APPID and SECRETID) are stored securely in the function app's environment variables.

@@ -5,7 +5,7 @@
 set -e
 
 TEMPLATE_FILE="${1:-azuredeploy.json}"
-RESOURCE_GROUP="${2:-rg-mde-automator-test}"
+RESOURCE_GROUP="${2:-rg-defenderc2-test}"
 LOCATION="${3:-eastus}"
 
 echo -e "\033[36mARM Template Validation Script\033[0m"

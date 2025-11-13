@@ -3,17 +3,21 @@
     Configure App Registration API permissions for DefenderXDR C2
     
 .DESCRIPTION
-    Configures the MINIMUM required permissions for DefenderXDR C2 v3.0.0 (ALL 213 actions):
-    - Microsoft Graph API (12 permissions for Entra ID, MDO, Intune, MCAS)
+    Configures the MINIMUM required permissions for DefenderXDR C2 v3.0.0 (187 actions):
+    - Microsoft Graph API (10 permissions for Entra ID, MDO, Intune, MCAS)
     - Microsoft Defender for Endpoint API (3 permissions)
     
-    Total: 15 application permissions (least privilege)
+    Total: 13 application permissions (least privilege, action-focused only)
     
     This script will:
     1. Remove ALL existing permissions (clean slate)
-    2. Add only the 14 required permissions
+    2. Add only the 13 required permissions
     3. Generate admin consent URL
     4. Verify configuration
+    
+    REMOVED PERMISSIONS (v3.0.1):
+    - Policy.Read.All (not needed for remediation - only for read-only policy viewing)
+    - AuditLog.Read.All (not needed for remediation - only for compliance/monitoring)
     
 .PARAMETER AppId
     Application (Client) ID of your App Registration
@@ -89,16 +93,14 @@ try {
     exit 1
 }
 
-# Define required permissions (MINIMUM for v3.0.0 - covers ALL 213 actions)
+# Define required permissions (MINIMUM for v3.0.1 - covers ALL 187 XDR actions)
 $requiredPermissions = @{
-    # Microsoft Graph API
+    # Microsoft Graph API - 10 permissions (action-focused only, no compliance/monitoring)
     "00000003-0000-0000-c000-000000000000" = @(
-        @{ Id = "df021288-bdef-4463-88db-98f22de89214"; Name = "User.Read.All"; Type = "Role" }           # Entra ID - Read users
-        @{ Id = "62a82d76-70ea-41e2-9197-370581804d09"; Name = "Group.Read.All"; Type = "Role" }          # Entra ID - Read groups
-        @{ Id = "dbb9058a-0e50-45d7-ae91-66909b5d4664"; Name = "Policy.Read.All"; Type = "Role" }         # Entra ID - Read policies
-        @{ Id = "b0afded3-3588-46d8-8b3d-9842eff778da"; Name = "AuditLog.Read.All"; Type = "Role" }       # Entra ID - Read audit logs
-        @{ Id = "dc5007c0-2d7d-4c42-879c-2dab87571379"; Name = "IdentityRiskyUser.Read.All"; Type = "Role" } # Entra ID - Read risky users
-        @{ Id = "6e472fd1-ad78-48da-a0f0-97ab2c6b769e"; Name = "IdentityRiskEvent.Read.All"; Type = "Role" } # Entra ID - Read risk events
+        @{ Id = "df021288-bdef-4463-88db-98f22de89214"; Name = "User.Read.All"; Type = "Role" }           # Entra ID - Read users for DisableUser, EnableUser, ResetPassword
+        @{ Id = "62a82d76-70ea-41e2-9197-370581804d09"; Name = "Group.Read.All"; Type = "Role" }          # Entra ID - Read groups (supporting)
+        @{ Id = "dc5007c0-2d7d-4c42-879c-2dab87571379"; Name = "IdentityRiskyUser.Read.All"; Type = "Role" } # Entra ID - Read risky users for DismissRisk
+        @{ Id = "6e472fd1-ad78-48da-a0f0-97ab2c6b769e"; Name = "IdentityRiskEvent.Read.All"; Type = "Role" } # Entra ID - Read risk events for ConfirmCompromised
         @{ Id = "c7fbd983-d9aa-4fa7-84b8-17382c103bc4"; Name = "ThreatIndicators.ReadWrite.OwnedBy"; Type = "Role" } # MDO - Manage threat indicators
         @{ Id = "e2a3a72e-5f79-4c64-b1b1-878b674786c9"; Name = "Mail.ReadWrite"; Type = "Role" }           # MDO - Email remediation (delete, move, quarantine)
         @{ Id = "5e0edab9-c148-49d0-b423-ac253e121825"; Name = "Device.Read.All"; Type = "Role" }          # Intune - Read devices
@@ -181,12 +183,12 @@ $updatedApp = Get-MgApplication -ApplicationId $app.Id
 $totalPermissions = ($updatedApp.RequiredResourceAccess | ForEach-Object { $_.ResourceAccess.Count } | Measure-Object -Sum).Sum
 
 Write-Host "  Total permissions: $totalPermissions" -ForegroundColor Cyan
-Write-Host "  Expected: 15 permissions" -ForegroundColor Cyan
+Write-Host "  Expected: 13 permissions" -ForegroundColor Cyan
 
-if ($totalPermissions -eq 15) {
-    Write-Host "`n✅ VERIFICATION PASSED - 15 permissions configured correctly!`n" -ForegroundColor Green
+if ($totalPermissions -eq 13) {
+    Write-Host "`n✅ VERIFICATION PASSED - 13 permissions configured correctly!`n" -ForegroundColor Green
 } else {
-    Write-Host "`n⚠️  WARNING: Expected 15 permissions but found $totalPermissions" -ForegroundColor Yellow
+    Write-Host "`n⚠️  WARNING: Expected 13 permissions but found $totalPermissions" -ForegroundColor Yellow
 }
 
 # Admin consent
@@ -222,19 +224,24 @@ Write-Host "CONFIGURATION COMPLETE" -ForegroundColor Cyan
 Write-Host "========================================`n" -ForegroundColor Cyan
 
 Write-Host "Configured Permissions Summary:" -ForegroundColor White
-Write-Host "  Microsoft Graph API          : 12 permissions" -ForegroundColor Gray
+Write-Host "  Microsoft Graph API          : 10 permissions" -ForegroundColor Gray
 Write-Host "  Microsoft Defender Endpoint  : 3 permissions" -ForegroundColor Gray
 Write-Host "  ────────────────────────────────────────" -ForegroundColor DarkGray
-Write-Host "  TOTAL                        : 15 permissions" -ForegroundColor Green
+Write-Host "  TOTAL                        : 13 permissions" -ForegroundColor Green
 Write-Host ""
-Write-Host "Covers ALL 213 Actions:" -ForegroundColor White
+Write-Host "Removed Permissions (v3.0.1):" -ForegroundColor Yellow
+Write-Host "  ❌ Policy.Read.All (not needed for remediation)" -ForegroundColor DarkGray
+Write-Host "  ❌ AuditLog.Read.All (not needed for remediation)" -ForegroundColor DarkGray
+Write-Host ""
+Write-Host "Covers ALL 187 XDR Actions (Action-Focused Only):" -ForegroundColor White
 Write-Host "  - MDO Worker: 16 actions (email remediation)" -ForegroundColor Gray
-Write-Host "  - MDE Worker: 63 actions (device management)" -ForegroundColor Gray
-Write-Host "  - Entra ID Worker: 20 actions (identity)" -ForegroundColor Gray
-Write-Host "  - Intune Worker: 18 actions (MDM)" -ForegroundColor Gray
-Write-Host "  - MDI Worker: 11 actions (identity threats)" -ForegroundColor Gray
+Write-Host "  - MDE Worker: 61 actions (device management, -2 query actions)" -ForegroundColor Gray
+Write-Host "  - Entra ID Worker: 14 actions (identity, -6 read actions)" -ForegroundColor Gray
+Write-Host "  - Intune Worker: 15 actions (MDM, -3 read actions)" -ForegroundColor Gray
+Write-Host "  - MDI Worker: 1 action (UpdateAlert only, -10 monitoring)" -ForegroundColor Gray
 Write-Host "  - MCAS Worker: 15 actions (cloud apps)" -ForegroundColor Gray
-Write-Host "  - Azure Worker: 23 actions (infrastructure)" -ForegroundColor Gray
+Write-Host "  - Azure Worker: 18 actions (infrastructure +2 firewall, -7 compliance)" -ForegroundColor Gray
+Write-Host "  - Platform Actions: 47 (via Managed Identity)" -ForegroundColor Gray
 Write-Host ""
 
 Write-Host "Next Steps:" -ForegroundColor White

@@ -285,7 +285,7 @@ functions/
 ├── profile.ps1                  # Module loading script
 ├── requirements.psd1            # PowerShell dependencies
 ├── .funcignore                  # Deployment exclusions
-├── MDEAutomator/               # PowerShell module directory
+├── DefenderC2/               # PowerShell module directory
 │   └── *.psm1                  # Module files
 ├── MDEDispatcher/
 │   ├── function.json           # HTTP trigger bindings
