@@ -187,93 +187,6 @@ try {
             }
         }
         
-        "GetVMs" {
-            if ([string]::IsNullOrEmpty($body.subscriptionId)) {
-                throw "Missing required parameter: subscriptionId"
-            }
-            
-            Write-XDRLog -Level "Info" -Message "Getting Azure VMs" -Data @{
-                SubscriptionId = $body.subscriptionId
-            }
-            
-            $vmListParams = @{
-                Token = $token
-                SubscriptionId = $body.subscriptionId
-            }
-            
-            if ($body.resourceGroup) {
-                $vmListParams.ResourceGroup = $body.resourceGroup
-            }
-            
-            $vms = Get-AzureVMs @vmListParams
-            $result = @{
-                count = $vms.Count
-                vms = $vms
-            }
-        }
-        
-        "GetResourceGroups" {
-            if ([string]::IsNullOrEmpty($body.subscriptionId)) {
-                throw "Missing required parameter: subscriptionId"
-            }
-            
-            Write-XDRLog -Level "Info" -Message "Getting resource groups"
-            $rgParams = @{
-                Token = $token
-                SubscriptionId = $body.subscriptionId
-            }
-            
-            $resourceGroups = Get-AzureResourceGroups @rgParams
-            $result = @{
-                count = $resourceGroups.Count
-                resourceGroups = $resourceGroups
-            }
-        }
-        
-        "GetNSGs" {
-            if ([string]::IsNullOrEmpty($body.subscriptionId)) {
-                throw "Missing required parameter: subscriptionId"
-            }
-            
-            Write-XDRLog -Level "Info" -Message "Getting network security groups"
-            $nsgListParams = @{
-                Token = $token
-                SubscriptionId = $body.subscriptionId
-            }
-            
-            if ($body.resourceGroup) {
-                $nsgListParams.ResourceGroup = $body.resourceGroup
-            }
-            
-            $nsgs = Get-AzureNSGs @nsgListParams
-            $result = @{
-                count = $nsgs.Count
-                nsgs = $nsgs
-            }
-        }
-        
-        "GetStorageAccounts" {
-            if ([string]::IsNullOrEmpty($body.subscriptionId)) {
-                throw "Missing required parameter: subscriptionId"
-            }
-            
-            Write-XDRLog -Level "Info" -Message "Getting storage accounts"
-            $storageListParams = @{
-                Token = $token
-                SubscriptionId = $body.subscriptionId
-            }
-            
-            if ($body.resourceGroup) {
-                $storageListParams.ResourceGroup = $body.resourceGroup
-            }
-            
-            $storageAccounts = Get-AzureStorageAccounts @storageListParams
-            $result = @{
-                count = $storageAccounts.Count
-                storageAccounts = $storageAccounts
-            }
-        }
-        
         #region Azure Firewall Actions (Azure ARM API)
         
         "BlockIPInFirewall" {
@@ -927,19 +840,20 @@ try {
         
         default {
             $supportedActions = @(
-                # Original actions
-                "AddNSGDenyRule", "StopVM", "DisableStoragePublicAccess", "RemoveVMPublicIP",
-                "GetVMs", "GetResourceGroups", "GetNSGs", "GetStorageAccounts",
-                # Azure Firewall (NEW)
+                # Network security
+                "AddNSGDenyRule", "ApplyIsolationNSG",
+                # VM operations
+                "StopVM", "DeallocateVM", "RestartVM", "RemoveVMPublicIP", "RedeployVM", "TakeVMSnapshot",
+                # Azure Firewall
                 "BlockIPInFirewall", "BlockDomainInFirewall", "EnableThreatIntel",
-                # Key Vault (NEW)
+                # Storage security
+                "DisableStoragePublicAccess",
+                # Key Vault
                 "DisableKeyVaultSecret", "RotateKeyVaultKey", "PurgeDeletedSecret",
-                # Service Principals (NEW)
-                "DisableServicePrincipal", "RemoveAppCredentials", "RevokeAppCertificates",
-                # VM Operations (NEW)
-                "DeallocateVM", "RestartVM", "ApplyIsolationNSG", "RedeployVM", "TakeVMSnapshot"
+                # Service Principals
+                "DisableServicePrincipal", "RemoveAppCredentials", "RevokeAppCertificates"
             )
-            throw "Unknown action: $action. Supported actions: $($supportedActions -join ', ')"
+            throw "Unknown action: $action. Supported actions (18 remediation-focused): $($supportedActions -join ', ')"
         }
     }
 

@@ -184,49 +184,6 @@ try {
             }
         }
         
-        "GetRiskDetections" {
-            Write-XDRLog -Level "Info" -Message "Getting risk detections"
-            $riskParams = @{
-                Token = $token
-            }
-            
-            if ($body.userId) {
-                $riskParams.UserId = $body.userId
-            }
-            if ($body.filter) {
-                $riskParams.Filter = $body.filter
-            }
-            if ($body.top) {
-                $riskParams.Top = [int]$body.top
-            }
-            
-            $detections = Get-EntraIDRiskDetections @riskParams
-            $result = @{
-                count = $detections.Count
-                detections = $detections
-            }
-        }
-        
-        "GetRiskyUsers" {
-            Write-XDRLog -Level "Info" -Message "Getting risky users"
-            $riskyParams = @{
-                Token = $token
-            }
-            
-            if ($body.filter) {
-                $riskyParams.Filter = $body.filter
-            }
-            if ($body.top) {
-                $riskyParams.Top = [int]$body.top
-            }
-            
-            $riskyUsers = Get-EntraIDRiskyUsers @riskyParams
-            $result = @{
-                count = $riskyUsers.Count
-                users = $riskyUsers
-            }
-        }
-        
         "CreateNamedLocation" {
             if ([string]::IsNullOrEmpty($body.displayName)) {
                 throw "Missing required parameter: displayName"
@@ -254,82 +211,6 @@ try {
                 locationId = $location.id
                 displayName = $location.displayName
                 created = $true
-            }
-        }
-        
-        "GetConditionalAccessPolicies" {
-            Write-XDRLog -Level "Info" -Message "Getting conditional access policies"
-            $caParams = @{
-                Token = $token
-            }
-            
-            $policies = Get-EntraIDConditionalAccessPolicies @caParams
-            $result = @{
-                count = $policies.Count
-                policies = $policies
-            }
-        }
-        
-        "GetSignInLogs" {
-            Write-XDRLog -Level "Info" -Message "Getting sign-in logs"
-            $signInParams = @{
-                Token = $token
-            }
-            
-            if ($body.userId) {
-                $signInParams.UserId = $body.userId
-            }
-            if ($body.filter) {
-                $signInParams.Filter = $body.filter
-            }
-            if ($body.top) {
-                $signInParams.Top = [int]$body.top
-            }
-            
-            $signIns = Get-EntraIDSignInLogs @signInParams
-            $result = @{
-                count = $signIns.Count
-                signIns = $signIns
-            }
-        }
-        
-        "GetAuditLogs" {
-            Write-XDRLog -Level "Info" -Message "Getting audit logs"
-            $auditParams = @{
-                Token = $token
-            }
-            
-            if ($body.filter) {
-                $auditParams.Filter = $body.filter
-            }
-            if ($body.top) {
-                $auditParams.Top = [int]$body.top
-            }
-            
-            $auditLogs = Get-EntraIDAuditLogs @auditParams
-            $result = @{
-                count = $auditLogs.Count
-                auditLogs = $auditLogs
-            }
-        }
-        
-        "GetUser" {
-            if ([string]::IsNullOrEmpty($body.userId)) {
-                throw "Missing required parameter: userId"
-            }
-            
-            Write-XDRLog -Level "Info" -Message "Getting user details" -Data @{
-                UserId = $body.userId
-            }
-            
-            $userParams = @{
-                Token = $token
-                UserId = $body.userId
-            }
-            
-            $user = Get-EntraIDUser @userParams
-            $result = @{
-                user = $user
             }
         }
         
@@ -650,17 +531,15 @@ try {
         
         default {
             $supportedActions = @(
-                # Original actions
+                # Identity remediation actions
                 "DisableUser", "EnableUser", "ResetPassword", "RevokeSessions", 
-                "ConfirmCompromised", "DismissRisk", "GetRiskDetections", "GetRiskyUsers", 
-                "CreateNamedLocation", "GetConditionalAccessPolicies", "GetSignInLogs", 
-                "GetAuditLogs", "GetUser",
-                # Emergency response actions (NEW)
+                "ConfirmCompromised", "DismissRisk", "CreateNamedLocation", "GetNamedLocations",
+                # Emergency response actions
                 "DeleteAuthenticationMethod", "DeleteAllMFAMethods", "CreateEmergencyCAPolicy", 
                 "RemoveAdminRole", "RevokePIMActivation", 
                 "GetUserAuthenticationMethods", "GetUserRoleAssignments"
             )
-            throw "Unknown action: $action. Supported actions: $($supportedActions -join ', ')"
+            throw "Unknown action: $action. Supported actions (14 remediation-focused): $($supportedActions -join ', ')"
         }
     }
 

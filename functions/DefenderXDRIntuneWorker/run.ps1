@@ -182,68 +182,6 @@ try {
             }
         }
         
-        "GetManagedDevices" {
-            Write-XDRLog -Level "Info" -Message "Getting managed devices"
-            $deviceParams = @{
-                Token = $token
-            }
-            
-            if ($body.filter) {
-                $deviceParams.Filter = $body.filter
-            }
-            if ($body.top) {
-                $deviceParams.Top = [int]$body.top
-            }
-            
-            $devices = Get-IntuneManagedDevices @deviceParams
-            $result = @{
-                count = $devices.Count
-                devices = $devices
-            }
-        }
-        
-        "GetDeviceCompliance" {
-            if ([string]::IsNullOrEmpty($body.deviceId)) {
-                throw "Missing required parameter: deviceId"
-            }
-            
-            Write-XDRLog -Level "Info" -Message "Getting device compliance" -Data @{
-                DeviceId = $body.deviceId
-            }
-            
-            $complianceParams = @{
-                Token = $token
-                DeviceId = $body.deviceId
-            }
-            
-            $compliance = Get-IntuneDeviceCompliance @complianceParams
-            $result = @{
-                deviceId = $body.deviceId
-                compliance = $compliance
-            }
-        }
-        
-        "GetDeviceConfiguration" {
-            if ([string]::IsNullOrEmpty($body.deviceId)) {
-                throw "Missing required parameter: deviceId"
-            }
-            
-            Write-XDRLog -Level "Info" -Message "Getting device configuration" -Data @{
-                DeviceId = $body.deviceId
-            }
-            
-            $configParams = @{
-                Token = $token
-                DeviceId = $body.deviceId
-            }
-            
-            $configuration = Get-IntuneDeviceConfiguration @configParams
-            $result = @{
-                deviceId = $body.deviceId
-                configuration = $configuration
-            }
-        }
-        
         #region Enhanced Device Management Actions (Graph v1.0 - Stable)
         
         "ResetDevicePasscode" {
@@ -533,16 +471,15 @@ try {
         
         default {
             $supportedActions = @(
-                # Original actions
+                # Device remediation actions
                 "RemoteLock", "WipeDevice", "RetireDevice", "SyncDevice", "DefenderScan",
-                "GetManagedDevices", "GetDeviceCompliance", "GetDeviceConfiguration",
-                # Enhanced device management (NEW)
+                # Enhanced device management
                 "ResetDevicePasscode", "RebootDeviceNow", "ShutdownDevice",
                 "EnableLostMode", "DisableLostMode", "TriggerComplianceEvaluation",
                 "UpdateDefenderSignatures", "BypassActivationLock", "CleanWindowsDevice",
                 "LogoutSharedAppleDevice"
             )
-            throw "Unknown action: $action. Supported actions: $($supportedActions -join ', ')"
+            throw "Unknown action: $action. Supported actions (15 remediation-focused): $($supportedActions -join ', ')"
         }
     }
 
