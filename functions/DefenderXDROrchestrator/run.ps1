@@ -58,7 +58,7 @@ param($Request, $TriggerMetadata)
 
 # Import ONLY shared utility modules
 # Service-specific logic is embedded in workers - no need to import here
-$modulePath = "$PSScriptRoot\..\modules\DefenderXDRIntegrationBridge"
+$modulePath = "$PSScriptRoot\..\modules"
 
 try {
     # Core shared utilities (used by all workers)

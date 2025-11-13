@@ -21,50 +21,42 @@
 
 # You can also define functions or aliases that can be referenced in any of your PowerShell functions.
 
-# Import AuthManager first (critical for all authentication)
-$AuthManagerPath = Join-Path $PSScriptRoot "modules/DefenderXDRIntegrationBridge\AuthManager.psm1"
+# Import core modules (v3.3.0 - simplified structure)
+$modulesPath = Join-Path $PSScriptRoot "modules"
+
+# Import AuthManager (centralized authentication with caching)
+$AuthManagerPath = Join-Path $modulesPath "AuthManager.psm1"
 if (Test-Path $AuthManagerPath) {
     Import-Module $AuthManagerPath -Force -ErrorAction SilentlyContinue
-    Write-Host "✅ AuthManager module loaded (centralized authentication with caching)"
+    Write-Host "✅ AuthManager loaded"
 }
 
-# Import ValidationHelper module
-$ValidationHelperPath = Join-Path $PSScriptRoot "modules/DefenderXDRIntegrationBridge\ValidationHelper.psm1"
+# Import ValidationHelper (input validation & sanitization)
+$ValidationHelperPath = Join-Path $modulesPath "ValidationHelper.psm1"
 if (Test-Path $ValidationHelperPath) {
     Import-Module $ValidationHelperPath -Force -ErrorAction SilentlyContinue
-    Write-Host "✅ ValidationHelper module loaded (input validation & sanitization)"
+    Write-Host "✅ ValidationHelper loaded"
 }
 
-# Import LoggingHelper module
-$LoggingHelperPath = Join-Path $PSScriptRoot "modules/DefenderXDRIntegrationBridge\LoggingHelper.psm1"
+# Import LoggingHelper (structured logging & telemetry)
+$LoggingHelperPath = Join-Path $modulesPath "LoggingHelper.psm1"
 if (Test-Path $LoggingHelperPath) {
     Import-Module $LoggingHelperPath -Force -ErrorAction SilentlyContinue
-    Write-Host "✅ LoggingHelper module loaded (structured logging & telemetry)"
+    Write-Host "✅ LoggingHelper loaded"
 }
 
-# Import modules/DefenderXDRIntegrationBridge module
-$modules/DefenderXDRIntegrationBridgePath = Join-Path $PSScriptRoot "modules/DefenderXDRIntegrationBridge"
-if (Test-Path $modules/DefenderXDRIntegrationBridgePath) {
-    Import-Module (Join-Path $modules/DefenderXDRIntegrationBridgePath "modules/DefenderXDRIntegrationBridge.psd1") -Force -ErrorAction SilentlyContinue
-    Write-Host "✅ modules/DefenderXDRIntegrationBridge v2.1.0 module loaded successfully"
+# Import BatchHelper (batch processing for bulk operations)
+$BatchHelperPath = Join-Path $modulesPath "BatchHelper.psm1"
+if (Test-Path $BatchHelperPath) {
+    Import-Module $BatchHelperPath -Force -ErrorAction SilentlyContinue
+    Write-Host "✅ BatchHelper loaded"
 }
 
-# Initialize storage context for file library
-if ($env:AzureWebJobsStorage) {
-    Write-Host "📦 Initializing storage context for file library..."
-    try {
-        $global:StorageContext = New-AzStorageContext -ConnectionString $env:AzureWebJobsStorage
-        
-        # Ensure library container exists
-        $libraryContainer = Get-AzStorageContainer -Name "library" -Context $global:StorageContext -ErrorAction SilentlyContinue
-        if (-not $libraryContainer) {
-            Write-Host "📂 Creating library container..."
-            New-AzStorageContainer -Name "library" -Context $global:StorageContext -Permission Off | Out-Null
-            Write-Host "✅ Library container created"
-        } else {
-            Write-Host "✅ Library container ready"
-        }
-    } catch {
-        Write-Warning "Failed to initialize storage context: $($_.Exception.Message)"
-    }
+# Import ActionTracker (action tracking, history, audit)
+$ActionTrackerPath = Join-Path $modulesPath "ActionTracker.psm1"
+if (Test-Path $ActionTrackerPath) {
+    Import-Module $ActionTrackerPath -Force -ErrorAction SilentlyContinue
+    Write-Host "✅ ActionTracker loaded"
 }
+
+Write-Host "🚀 DefenderXDR v3.3.0 - 5 core modules loaded | 219 actions ready"

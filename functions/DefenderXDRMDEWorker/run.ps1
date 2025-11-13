@@ -21,7 +21,7 @@ using namespace System.Net
 
 
 # Robust module import with existence check and error logging
-$moduleBase = "$PSScriptRoot\..\modules\DefenderXDRIntegrationBridge"
+$moduleBase = "$PSScriptRoot\..\modules"
 $modules = @(
     "AuthManager.psm1",
     "BlobManager.psm1",

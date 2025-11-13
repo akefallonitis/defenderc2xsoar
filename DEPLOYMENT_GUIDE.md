@@ -44,14 +44,15 @@
 - `DefenderXDRThreatIntelManager` - Threat intelligence
 - `DefenderXDRCustomDetectionManager` - Custom rules
 
-**Tier 3 - Workers (Modular Services):**
-- `DefenderXDRMDEWorker` - Microsoft Defender for Endpoint
-- `DefenderXDRMDOWorker` - Microsoft Defender for Office 365
-- `DefenderXDRMDCWorker` - Microsoft Defender for Cloud
-- `DefenderXDRMDIWorker` - Microsoft Defender for Identity
-- `DefenderXDREntraIDWorker` - Entra ID + Identity Protection
-- `DefenderXDRIntuneWorker` - Microsoft Intune
-- `DefenderXDRAzureWorker` - Azure Resource Manager
+**Tier 3 - Workers (Security Service Modules):**
+- `DefenderXDRMDEWorker` - Microsoft Defender for Endpoint (52 actions)
+- `DefenderXDRMDOWorker` - Microsoft Defender for Office 365 (25 actions)
+- `DefenderXDRMCASWorker` - Microsoft Cloud App Security (23 actions)
+- `DefenderXDREntraIDWorker` - EntraID/Azure AD Identity (34 actions)
+- `DefenderXDRIntuneWorker` - Microsoft Intune (33 actions)
+- `DefenderXDRAzureWorker` - Azure Security (52 actions)
+
+**Total**: 8 Azure Functions, 219 remediation actions, 5 core modules
 
 ---
 

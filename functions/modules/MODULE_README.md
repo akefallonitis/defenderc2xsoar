@@ -1,53 +1,46 @@
-# DefenderXDR Integration Bridge
+# DefenderXDR Core Modules
 
 **Shared Utility Modules for Microsoft Security Orchestration**
 
-Version: 2.4.0 | Refactored Architecture | Azure Functions
+Version: 3.3.0 | Simplified Architecture | Azure Functions
 
 ---
 
 ## Architecture Overview
 
-This module provides **shared utility infrastructure** for the DefenderXDR C2 XSOAR platform. Business logic is embedded directly in worker functions, making this a lightweight utility bridge.
+This directory contains **5 core utility modules** for the DefenderXDR integration platform. All business logic is embedded in worker functions - these modules provide only essential shared services.
 
-**Note**: The name "DefenderXDRIntegrationBridge" is preserved for backward compatibility, but workers use direct API calls rather than abstraction layers. Only shared utilities (auth, logging, validation) are module-based.
+### v3.3.0 Simplification
 
-### Design Philosophy (v2.4.0 Refactoring)
+**Before (v3.2.0):** Nested folder structure
+```
+modules/DefenderXDRIntegrationBridge/
+├── AuthManager.psm1
+├── ValidationHelper.psm1
+├── LoggingHelper.psm1
+├── ActionTracker.psm1
+└── DefenderForIdentity.psm1
+```
 
-**Before:** 21 modules (3 utilities + 2 duplicates + 16 service-specific)
-- Service modules imported but unused (workers had inline logic)
-- Duplicate authentication code (MDEAuth vs AuthManager)
-- Slower cold starts (unnecessary imports)
+**After (v3.3.0):** Flat, clean structure
+```
+modules/
+├── AuthManager.psm1      ✅ OAuth authentication
+├── ValidationHelper.psm1 ✅ Input validation
+├── LoggingHelper.psm1    ✅ Structured logging
+├── ActionTracker.psm1    ✅ Action tracking/audit
+└── BatchHelper.psm1      ✅ Batch processing (NEW)
+```
 
-**After:** 7 modules (6 utilities + 1 service)
-- **71% reduction** in module count (21 → 7)
-- Workers remain self-contained with inline logic
-- Orchestrator only imports utilities (no service modules)
-- Faster cold starts & cleaner architecture
+**Result**: 
+- Removed unnecessary folder nesting
+- Removed DefenderForIdentity.psm1 (unused)
+- Added BatchHelper.psm1 for bulk operations
+- Simpler imports: `modules/AuthManager.psm1` vs `modules/DefenderXDRIntegrationBridge/AuthManager.psm1`
 
 ---
 
-## Module Structure
-
-```
-DefenderXDRIntegrationBridge/
-├── DefenderXDRC2XSOAR.psd1        # Module manifest
-│
-├── === SHARED UTILITIES (6) ===
-├── AuthManager.psm1               # Multi-service OAuth with token caching
-├── ValidationHelper.psm1          # Input validation, sanitization, rate limiting
-├── LoggingHelper.psm1             # Structured logging, metrics, Application Insights
-├── BlobManager.psm1               # Live Response file upload/download
-├── QueueManager.psm1              # Batch operation queuing
-├── StatusTracker.psm1             # Long-running operation status tracking
-│
-└── === SERVICE MODULES (1) ===
-    └── DefenderForIdentity.psm1   # MDI-specific Graph API calls
-```
-
-### Archived Modules (v2.4.0)
-
-The following modules have been archived to `archive/old-modules/` as their functionality is now embedded in worker functions:
+## Core Modules (5)
 
 **Service Modules (11):**
 - `MDEDevice.psm1` → Logic in MDEWorker
@@ -201,10 +194,10 @@ Workers import ONLY the utilities they need:
 
 ```powershell
 # DefenderXDRMDEWorker/run.ps1
-Import-Module "$PSScriptRoot/../modules/DefenderXDRIntegrationBridge/AuthManager.psm1"
-Import-Module "$PSScriptRoot/../modules/DefenderXDRIntegrationBridge/ValidationHelper.psm1"
-Import-Module "$PSScriptRoot/../modules/DefenderXDRIntegrationBridge/LoggingHelper.psm1"
-Import-Module "$PSScriptRoot/../modules/DefenderXDRIntegrationBridge/BlobManager.psm1"
+Import-Module "$PSScriptRoot/../modules/AuthManager.psm1"
+Import-Module "$PSScriptRoot/../modules/ValidationHelper.psm1"
+Import-Module "$PSScriptRoot/../modules/LoggingHelper.psm1"
+Import-Module "$PSScriptRoot/../modules/BatchHelper.psm1"
 
 # Then implement business logic inline
 $token = Get-OAuthToken -TenantId $tenantId -Service "ATP"
