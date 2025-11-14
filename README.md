@@ -1,20 +1,20 @@
 # Microsoft Defender XDR to Azure Sentinel SOAR Integration
 
-**Version 3.3.0** - Complete XDR Remediation Action Coverage + Batch Processing
+**Version 3.4.0** - Complete XDR Remediation + Incident/Alert Management
 
 ## Overview
 
-Comprehensive Azure Function App integrating Microsoft Defender XDR with Azure Sentinel, providing **219 automated remediation actions** across the entire Microsoft security stack. This solution enables Security Operations Centers (SOCs) to orchestrate automated response workflows directly from Azure Sentinel.
+Comprehensive Azure Function App integrating Microsoft Defender XDR with Azure Sentinel, providing **246 automated remediation actions** across the entire Microsoft security stack. This solution enables Security Operations Centers (SOCs) to orchestrate automated response workflows directly from Azure Sentinel.
 
 ### Key Capabilities
 
-- ✅ **219 Total Actions** - Complete coverage of Microsoft Defender XDR portal capabilities
-- ✅ **6 Security Services** - MDE, MDO, MCAS, EntraID, Intune, Azure Security
+- ✅ **246 Total Actions** - Complete coverage of Microsoft Defender XDR + incident/alert management
+- ✅ **7 Security Services** - Incidents/Alerts, MDE, MDO, MCAS, EntraID, Intune, Azure Security
 - ✅ **Batch Processing** - Comma-separated values for bulk operations on all actions
-- ✅ **Action Tracking** - Full audit trail, cancellation support, progress monitoring
+- ✅ **Unified Architecture** - 9 functions, 3 streamlined modules, optimized cold start
 - ✅ **Multi-Tenant** - Isolated execution with tenant-specific authentication
 - ✅ **Workbook Integration** - Azure Sentinel Workbook for visual management
-- ✅ **Enterprise Ready** - Production-grade error handling, logging, and monitoring
+- ✅ **Enterprise Ready** - Production-grade error handling, Application Insights tracking
 
 ## Architecture
 
@@ -38,8 +38,9 @@ Microsoft Graph API / Security APIs
 
 | Component | Purpose | Actions |
 |-----------|---------|---------|
-| **Gateway** | HTTP entry, action tracking, routing | N/A |
-| **Orchestrator** | Service routing, orchestration | N/A |
+| **Gateway** | HTTP entry, routing | N/A |
+| **Orchestrator** | Service routing, batch processing | N/A |
+| **Incident Worker** | Incident/alert management | 27 |
 | **MDE Worker** | Endpoint security operations | 52 |
 | **MDO Worker** | Email security operations | 25 |
 | **MCAS Worker** | Cloud app security | 23 |
@@ -47,7 +48,8 @@ Microsoft Graph API / Security APIs
 | **Intune Worker** | Device management | 33 |
 | **Azure Worker** | Azure infrastructure security | 52 |
 
-**Total**: 219 remediation actions  
+**Total**: 246 remediation actions (219 existing + 27 incident/alert)  
+**Modules**: 3 core modules (AuthManager, ValidationHelper, LoggingHelper)  
 **Batch Support**: ✅ All actions support comma-separated values for bulk operations
 
 ## Action Coverage by Service

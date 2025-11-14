@@ -1,8 +1,8 @@
-# Documentation Index - v3.3.0
+# Documentation Index - v3.4.0
 
 **Microsoft Defender XDR to Azure Sentinel SOAR Integration**  
-**Version**: 3.3.0 | **Last Updated**: November 2025  
-**Status**: Production Ready | **Actions**: 219 | **Batch Support**: ✅
+**Version**: 3.4.0 | **Last Updated**: November 14, 2025  
+**Status**: Production Ready | **Actions**: 246 | **Functions**: 9 | **Modules**: 3
 
 ---
 
@@ -11,11 +11,11 @@
 | I want to... | Start here |
 |--------------|------------|
 | Deploy the solution | [README.md](#readmemd) → [DEPLOYMENT_GUIDE.md](#deployment_guidemd) |
-| See all 219 actions | [V3.2.0_COMPLETE_200_PLUS_ACTIONS.md](#v320_complete_200_plus_actionsmd) |
-| Understand architecture | [README.md](#readmemd) (Architecture section) |
+| See all 246 actions | [V3.2.0_COMPLETE_200_PLUS_ACTIONS.md](#v320_complete_200_plus_actionsmd) |
+| Understand v3.4.0 changes | [V3.4.0_IMPLEMENTATION_PROGRESS.md](#v340_implementation_progressmd) |
 | Configure permissions | [PERMISSIONS.md](#permissionsmd) |
 | Troubleshoot issues | [DEPLOYMENT_GUIDE.md](#deployment_guidemd) (Troubleshooting) |
-| See implementation details | [V3.2.0_IMPLEMENTATION_PROGRESS.md](#v320_implementation_progressmd) |
+| See architecture consolidation | [V3.4.0_ARCHITECTURE_CONSOLIDATION.md](#v340_architecture_consolidationmd) |
 
 ---
 
@@ -248,14 +248,15 @@ All workbook-related files in `workbook/` directory:
 
 ## Function Architecture
 
-### Azure Functions (8 total)
+### Azure Functions (9 total)
 
 Located in `functions/` directory:
 
 | Function | Purpose | Actions | Status |
 |----------|---------|---------|--------|
-| **DefenderXDRGateway** | HTTP entry point, action tracking | N/A | Core |
-| **DefenderXDROrchestrator** | Service routing logic | N/A | Core |
+| **DefenderXDRGateway** | HTTP entry point | N/A | Core |
+| **DefenderXDROrchestrator** | Service routing, batch processing | N/A | Core |
+| **DefenderXDRIncidentWorker** | Incident/alert management | 27 | ✨ NEW |
 | **DefenderXDRAzureWorker** | Azure infrastructure security | 52 | ✅ |
 | **DefenderXDRMDEWorker** | Endpoint protection (MDE) | 52 | ✅ |
 | **DefenderXDRMDOWorker** | Email security (MDO) | 25 | ✅ |
@@ -263,19 +264,21 @@ Located in `functions/` directory:
 | **DefenderXDREntraIDWorker** | Identity protection | 34 | ✅ |
 | **DefenderXDRIntuneWorker** | Device management | 33 | ✅ |
 
-**Total: 219 remediation actions**
+**Total: 246 remediation actions (219 existing + 27 incident/alert)**
 
-### Core Modules
+### Core Modules (v3.4.0 - Consolidated)
 
 Located in `functions/modules/`:
 
 | Module | Purpose | Used By |
 |--------|---------|---------|
-| **AuthManager.psm1** | OAuth authentication, token management | All workers |
+| **AuthManager.psm1** | OAuth authentication, token management | All 7 workers |
 | **ValidationHelper.psm1** | Input validation, tenant ID verification | All workers |
 | **LoggingHelper.psm1** | Structured logging (Write-XDRLog) | All workers |
-| **ActionTracker.psm1** | Action tracking, history, audit logging | Gateway |
-| **BatchHelper.psm1** | Batch processing, comma-separated values | All workers |
+
+**Consolidated in v3.4.0**:
+- ❌ **ActionTracker.psm1** → Replaced by Application Insights
+- ❌ **BatchHelper.psm1** → Merged into Orchestrator (inline functions)
 
 ### Module Functions
 
@@ -412,7 +415,15 @@ The `archive/` directory contains historical documentation:
 
 ## Version History
 
-### v3.3.0 (Current - November 2025)
+### v3.4.0 (Current - November 14, 2025)
+- ✅ Module consolidation: 5 → 3 modules (BatchHelper merged, ActionTracker deleted)
+- ✅ New DefenderXDRIncidentWorker: 27 incident/alert management actions
+- ✅ Actions increased: 219 → 246 total actions
+- ✅ Microsoft Graph Security API v2 integration
+- ✅ Performance: Faster cold start (-1 second estimated)
+- ✅ Architecture: 9 functions, 3 core modules, unified incident management
+
+### v3.3.0 (November 2025)
 - ✅ Comprehensive batch processing (comma-separated values)
 - ✅ Simplified module structure (removed IntegrationBridge folder)
 - ✅ Removed DiagnosticCheck (use Application Insights)
@@ -434,6 +445,6 @@ The `archive/` directory contains historical documentation:
 
 ---
 
-**Documentation Index v3.3.0**  
-*Last Updated: November 2025*  
-*219 Actions | 6 Security Services | 8 Functions | 5 Core Modules | Batch Support*
+**Documentation Index v3.4.0**  
+*Last Updated: November 14, 2025*  
+*246 Actions | 7 Services | 9 Functions | 3 Core Modules | Batch Support | Incident/Alert Management*

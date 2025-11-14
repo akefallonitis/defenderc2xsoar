@@ -1,11 +1,11 @@
 {
   "$schema": "https://aka.ms/azure-quickstart-templates-metadata-schema#",
   "type": "QuickStart",
-  "itemDisplayName": "DefenderXDR C2 XSOAR - Microsoft Security Orchestration Platform",
-  "description": "Deploy an Azure Function App for Microsoft Defender for Endpoint automation with workbook-based UI. Includes managed identity support and multi-tenant capabilities.",
-  "summary": "Azure Function App for MDE automation with workbook integration",
+  "itemDisplayName": "DefenderXDR C2 XSOAR - Microsoft Security Orchestration Platform v3.4.0",
+  "description": "Deploy an Azure Function App for Microsoft Defender XDR automation with 246 actions across 6 security services. Includes incident/alert management, batch processing, and workbook-based UI with managed identity support.",
+  "summary": "Azure Function App for Microsoft Defender XDR with 246 automated remediation actions",
   "githubUsername": "akefallonitis",
-  "dateUpdated": "2024-10-04",
+  "dateUpdated": "2025-11-14",
   "tags": {
     "subscriptiontype": "Azure4Student, Free, MSDN, PayAsYouGo",
     "resource": "Functions, Storage",

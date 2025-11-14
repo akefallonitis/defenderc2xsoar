@@ -1,11 +1,12 @@
-# DefenderXDR - Required Permissions (v3.0.0)
+# DefenderXDR - Required Permissions (v3.4.0)
 
-This document outlines all required permissions for the DefenderXDR v3.0.0 solution.
+This document outlines all required permissions for the DefenderXDR v3.4.0 solution.
 
-**NEW in v3.0.0:**
-- ✅ Storage Account RBAC for Managed Identity (Queue, Table, Blob)
-- ✅ Live Response Blob Storage for file library
-- ✅ Keyless authentication with Managed Identity
+**NEW in v3.4.0:**
+- ✅ Microsoft Graph Security API v2 (Incident/Alert Management)
+- ✅ SecurityIncident.Read.All & SecurityIncident.ReadWrite.All
+- ✅ SecurityAlert.Read.All & SecurityAlert.ReadWrite.All
+- ✅ Unified incident management across all Microsoft Defender services
 
 ## 1. App Registration Permissions
 
@@ -30,6 +31,12 @@ This document outlines all required permissions for the DefenderXDR v3.0.0 solut
 #### Intune Device Management
 - `DeviceManagementManagedDevices.ReadWrite.All` - Read and write managed device information
 - `DeviceManagementConfiguration.ReadWrite.All` - Read and write device configurations
+
+#### Incident & Alert Management (Microsoft Graph Security API v2)
+- `SecurityIncident.Read.All` - Read all security incidents
+- `SecurityIncident.ReadWrite.All` - Read and write security incidents
+- `SecurityAlert.Read.All` - Read all security alerts
+- `SecurityAlert.ReadWrite.All` - Read and write security alerts
 
 #### Additional Graph Permissions
 - `SecurityEvents.ReadWrite.All` - Read and write security events
