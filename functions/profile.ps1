@@ -45,18 +45,5 @@ if (Test-Path $LoggingHelperPath) {
     Write-Host "✅ LoggingHelper loaded"
 }
 
-# Import BatchHelper (batch processing for bulk operations)
-$BatchHelperPath = Join-Path $modulesPath "BatchHelper.psm1"
-if (Test-Path $BatchHelperPath) {
-    Import-Module $BatchHelperPath -Force -ErrorAction SilentlyContinue
-    Write-Host "✅ BatchHelper loaded"
-}
-
-# Import ActionTracker (action tracking, history, audit)
-$ActionTrackerPath = Join-Path $modulesPath "ActionTracker.psm1"
-if (Test-Path $ActionTrackerPath) {
-    Import-Module $ActionTrackerPath -Force -ErrorAction SilentlyContinue
-    Write-Host "✅ ActionTracker loaded"
-}
-
-Write-Host "🚀 DefenderXDR v3.3.0 - 5 core modules loaded | 219 actions ready"
+Write-Host "🚀 DefenderXDR v3.4.0 - 3 core modules loaded | 219 actions ready"
+Write-Host "   BatchHelper merged into Orchestrator | ActionTracker → App Insights"

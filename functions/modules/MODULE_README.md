@@ -2,41 +2,46 @@
 
 **Shared Utility Modules for Microsoft Security Orchestration**
 
-Version: 3.3.0 | Simplified Architecture | Azure Functions
+Version: 3.4.0 | Consolidated Architecture | Azure Functions
 
 ---
 
 ## Architecture Overview
 
-This directory contains **5 core utility modules** for the DefenderXDR integration platform. All business logic is embedded in worker functions - these modules provide only essential shared services.
+This directory contains **3 core utility modules** for the DefenderXDR integration platform. All business logic is embedded in worker functions - these modules provide only essential shared services.
 
-### v3.3.0 Simplification
+### v3.4.0 Consolidation
 
-**Before (v3.2.0):** Nested folder structure
-```
-modules/DefenderXDRIntegrationBridge/
-├── AuthManager.psm1
-├── ValidationHelper.psm1
-├── LoggingHelper.psm1
-├── ActionTracker.psm1
-└── DefenderForIdentity.psm1
-```
-
-**After (v3.3.0):** Flat, clean structure
+**Before (v3.3.0):** 5 modules
 ```
 modules/
 ├── AuthManager.psm1      ✅ OAuth authentication
 ├── ValidationHelper.psm1 ✅ Input validation
 ├── LoggingHelper.psm1    ✅ Structured logging
-├── ActionTracker.psm1    ✅ Action tracking/audit
-└── BatchHelper.psm1      ✅ Batch processing (NEW)
+├── ActionTracker.psm1    ❌ Placeholder (not implemented)
+└── BatchHelper.psm1      ❌ Only used by Orchestrator
 ```
 
+**After (v3.4.0):** 3 modules (consolidated)
+```
+modules/
+├── AuthManager.psm1      ✅ OAuth (shared by 7 functions)
+├── ValidationHelper.psm1 ✅ Input validation (complex logic)
+└── LoggingHelper.psm1    ✅ Structured logging (App Insights)
+```
+
+**Changes**:
+- ✅ **Kept AuthManager** - Truly shared (Gateway + Orchestrator + 6 workers)
+- ✅ **Kept ValidationHelper** - Complex validation worth separating
+- ✅ **Kept LoggingHelper** - Structured logging standards
+- ❌ **Merged BatchHelper** → Into Orchestrator (only 1 consumer)
+- ❌ **Deleted ActionTracker** → Use Application Insights (better solution)
+
 **Result**: 
-- Removed unnecessary folder nesting
-- Removed DefenderForIdentity.psm1 (unused)
-- Added BatchHelper.psm1 for bulk operations
-- Simpler imports: `modules/AuthManager.psm1` vs `modules/DefenderXDRIntegrationBridge/AuthManager.psm1`
+- Faster cold starts (-1 second, less module loading)
+- Simpler architecture (3 vs 5 modules)
+- Batch functions inline where used (Orchestrator)
+- App Insights for tracking (industry standard)
 
 ---
 

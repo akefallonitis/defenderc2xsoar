@@ -56,18 +56,71 @@ using namespace System.Net
 
 param($Request, $TriggerMetadata)
 
-# Import ONLY shared utility modules
-# Service-specific logic is embedded in workers - no need to import here
+# ============================================================================
+# BATCH PROCESSING FUNCTIONS (v3.4.0 - merged from BatchHelper.psm1)
+# ============================================================================
+
+function ConvertTo-EntityArray {
+    param(
+        [Parameter(Mandatory=$true)]
+        [AllowNull()]
+        [AllowEmptyString()]
+        $Input,
+        [switch]$TrimWhitespace
+    )
+    
+    if ($null -eq $Input -or $Input -eq "") { return @() }
+    
+    if ($Input -is [Array]) {
+        if ($TrimWhitespace) {
+            return $Input | ForEach-Object { $_.ToString().Trim() } | Where-Object { $_ -ne "" }
+        }
+        return $Input | Where-Object { $_ -ne "" }
+    }
+    
+    $entities = $Input.ToString() -split ',' | Where-Object { $_ -ne "" }
+    if ($TrimWhitespace) {
+        $entities = $entities | ForEach-Object { $_.Trim() }
+    }
+    return $entities
+}
+
+function Test-BatchInput {
+    param(
+        [Parameter(Mandatory=$true)]
+        [AllowNull()]
+        $InputValue,
+        [Parameter(Mandatory=$false)]
+        [string]$ParameterName = "entities"
+    )
+    
+    if ($null -eq $InputValue -or $InputValue -eq "") {
+        throw "Parameter '$ParameterName' is required and cannot be empty"
+    }
+    
+    $entities = ConvertTo-EntityArray -Input $InputValue -TrimWhitespace
+    
+    if ($entities.Count -eq 0) {
+        throw "Parameter '$ParameterName' must contain at least one entity"
+    }
+    
+    Write-Host "📋 Detected $($entities.Count) entities for batch processing"
+    return $entities
+}
+
+# ============================================================================
+# MODULE IMPORTS
+# ============================================================================
+
 $modulePath = "$PSScriptRoot\..\modules"
 
 try {
-    # Core shared utilities (used by all workers)
+    # Core shared utilities (used by multiple functions)
     Import-Module "$modulePath\AuthManager.psm1" -Force -ErrorAction Stop
     Import-Module "$modulePath\ValidationHelper.psm1" -Force -ErrorAction Stop
     Import-Module "$modulePath\LoggingHelper.psm1" -Force -ErrorAction Stop
     
-    Write-Host "✅ Shared utility modules loaded (Auth, Validation, Logging)"
-    Write-Host "ℹ️  Service-specific modules removed - workers are self-contained"
+    Write-Host "✅ v3.4.0 - Core modules loaded (Auth, Validation, Logging) | Batch processing inline"
 } catch {
     Write-Error "❌ CRITICAL: Failed to load shared utility module - $($_.Exception.Message)"
     throw
