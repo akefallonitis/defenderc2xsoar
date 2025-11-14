@@ -24,11 +24,11 @@
 ### README.md
 **Primary repository documentation** - Start here!
 
-- Complete overview of 219 actions across 6 security services
+- Complete overview of 246 actions across 7 security services
 - Quick start and deployment instructions
 - Architecture diagram (Gateway → Orchestrator → Workers)
-- Action coverage by service (MDE, MDO, MCAS, EntraID, Intune, Azure)
-- Action tracking features (history, cancellation, audit logging)
+- Action coverage by service (MDE, MDO, MCAS, EntraID, Intune, Azure, Incidents/Alerts)
+- Native Microsoft API tracking (action status, cancellation, history)
 - API reference and usage examples
 - Monitoring and troubleshooting
 
@@ -295,15 +295,25 @@ Located in `functions/modules/`:
 **LoggingHelper.psm1**:
 - `Write-XDRLog` - Structured logging with levels (Info, Warning, Error)
 
-**ActionTracker.psm1**:
-- `Start-ActionTracking` - Initialize action tracking
-- `Update-ActionProgress` - Update progress
-- `Complete-ActionTracking` - Mark complete
-- `Request-ActionCancellation` - Request cancellation
-- `Get-ActionHistory` - Retrieve history
-- `Get-ActionAuditTrail` - Get audit trail
-- `Export-ActionAuditLog` - Export logs (JSON/CSV/CEF)
-- `Test-ActionCancellation` - Check cancellation status
+### Native API Action Tracking (v3.4.0+)
+
+**MDE Action Tracking** (built into DefenderXDRMDEWorker):
+- `GetActionStatus` - Get action status by ID
+- `GetAllActions` - List all machine actions
+- `CancelAction` - Cancel pending action
+
+**Incident Tracking** (built into DefenderXDRIncidentWorker):
+- `GetIncident` - Get incident details
+- `GetAllIncidents` - List all incidents
+- `UpdateIncident` - Update incident (includes status tracking)
+
+**Alert Tracking** (built into DefenderXDRIncidentWorker):
+- `GetAlert` - Get alert details
+- `GetAllAlerts` - List all alerts
+- `UpdateAlert` - Update alert (includes status tracking)
+
+**Audit Logs**:
+- `GetAuditLogs` (EntraID) - Read directory audit logs (compliance/reporting only)
 
 ---
 
@@ -376,8 +386,8 @@ The `archive/` directory contains historical documentation:
 ### Monitoring
 
 1. **Application Insights** - Auto-configured with Function App
-2. **Action History** - Use `Get-ActionHistory` PowerShell function
-3. **Audit Logs** - Use `Export-ActionAuditLog` for SIEM integration
+2. **Action History** - Use native APIs (GetActionStatus, GetAllIncidents, GetAuditLogs)
+3. **Action Tracking** - See [V3.4.0_FINAL_ANALYSIS.md](V3.4.0_FINAL_ANALYSIS.md) for details
 4. **Diagnostics** - `/api/DiagnosticCheck` endpoint
 
 ---
